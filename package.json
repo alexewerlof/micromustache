@@ -1,0 +1,18 @@
+{
+    "name": "MicroMustache",
+    "version": "0.2.0",
+    "description": "",
+    "main": "src/micromustache.js",
+    "directories": {
+        "test": "test"
+    },
+    "dependencies": {
+        "uglify-js": "*",
+        "markdown": "*"
+    },
+    "scripts": {
+        "test": "open test/test.html"
+    },
+    "author": "Alex Ewerlöf",
+    "license": "Creative Commons 3.0"
+}
