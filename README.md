@@ -1,4 +1,4 @@
-#Altemp
+#MicroMustache
 
 A stripped down mustache-like template engine.
 
@@ -18,23 +18,21 @@ Specially when you need to replace a bunch of variables in a string.
 
 #Why not?
 
-If you have loops or objects in your data, you can't use Altemp.
+MicroMustache is a super quick and super small Mustache implementation.
+To achieve this speed and size, some of Mustache's features are eliminated:
+
+* No iteration over array elements. {{#arrName}} doesn't work
+* No access to object properties. {{objName.propertyName}} doesn't work
+* No partials. {{>partialName}} doesn't work
+* HTML sanetization (you can sanetize it externally if you want). {{{propertyName}}} doesn't work.
+* Inverted selection
+* Set delimiters (you can edit and modify the source code to change it though)
+* Currently variable names can only be alphanumeric (a-z, A-Z, 0-9), no $ or _ or other unicode characters
+
 The algorithm is optimized for quick execution and if your data is anything more complicated than a flat
 dictionary you can use any other alternatives including Mustache.js itself.
 
 #FAQ
-
-##What is not included?
-
-The following features from Mustache are intentionally not present:
-
-* Array traverse (but you can use the function feature to achieve the same effect)
-* Multi-level objects (you can use the function feature to achieve that effect to some extent)
-* Partials
-* HTML sanetization (you can sanetize it externally if you want)
-* Tipple mustache (nothing is sanetized by default)
-* Inverted selection
-* Set delimiters (you can edit and modify the source code to change it though)
 
 ## What's different from Mustache?
 
@@ -54,9 +52,6 @@ The following features however are present (and shared with Mustache):
 * The compile() function (though they don't improve speed, but they make the repetitive code cleaner to read)
 * Comments (technically anything that is not an alphanumeric variable name will be ignored)
 
-##Where does the name come from?
-The name Altemp stands for Alex's Template engine.
-
 ## Why variable names cannot include $ and _ just like Javascript?
 
 For having a faster execution, we only use the \w regular expression.
@@ -66,7 +61,7 @@ Besides every character in the code counts, so a shorter regular expression mean
 
 For more examples see the micromustache-test.js inside the test directory above.
 
-#Future works
+#Upcomming features
 
 * Plugins to change the {{}} to another markup of your choice
 * Plugin for supporting array traversal

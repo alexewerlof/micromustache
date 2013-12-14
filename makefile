@@ -1,10 +1,15 @@
-.PHONY: clean
+.PHONY: clean dist
 
-deploy/micromustache.js: src/micromustache.js
-	uglifyjs src/micromustache.js -o deploy/micromustache.js --compress --mangle
+dist: dist/micromustache.min.js dist/micromustache.js
 
-deploy/readme.html: README.md
-	md2html README.md > deploy/readme.html
+dist/micromustache.min.js: src/micromustache.js
+	uglifyjs src/micromustache.js -o dist/micromustache.min.js --compress --mangle
+
+dist/micromustache.js: src/micromustache.js
+	cp src/micromustache.js dist/micromustache.js
+
+dist/readme.html: README.md
+	md2html README.md > dist/readme.html
 
 clean:
-	rm -rf deploy/*
+	rm -rf dist/*
