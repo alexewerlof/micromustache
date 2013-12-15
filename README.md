@@ -4,8 +4,9 @@ A stripped down mustache-like template engine.
 
 #Why?
 
-I love Mustache but when it's too much overhead for the simple templates I have at hand.
-This library is based on a subset of Mustache's syntax: replacing variable names with their values.
+I love Mustache but sometimes it's too big for the task in hand.
+Sometimes all I need is a simple and robust text replacement.
+MicroMustache is based on a subset of Mustache's syntax: replacing variable names with their values.
 Specially when you need to replace a bunch of variables in a string.
 
 * Tiny (less than 0.5KB)
