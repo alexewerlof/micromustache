@@ -1,8 +1,8 @@
 #Download
 
-[Development Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.js) - 2,487 Bytes
+[Development Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.js) - 2,226 Bytes
 
-[Production Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.min.js) - 448 Bytes
+[Production Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.min.js) - 378 Bytes
 
 #MicroMustache
 
@@ -34,7 +34,7 @@ MicroMustache achieved great speed and small size by dropping the following feat
 * Objects as values: {{ objName.propertyName }}
 * Inverted selection {{^ ...}}
 * Comments: {{! ...}}
-* HTML sanetization: {{{ propertyName }}}
+* HTML sanitization: {{{ propertyName }}}
 * Custom delimiters: <% ... %> instead of {{ ... }}
 
 #Examples

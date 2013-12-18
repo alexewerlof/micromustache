@@ -5,15 +5,23 @@
 
 var MicroMustache = (function () {
 
-    //the object that will be returned as the public interface of this module
-    var exports = {};
-
-    //the regular expression that is used for looking up the variable names
-    exports._rex = /\{?\{\{\s*(.*?)\s*\}\}\}?/g;
-
-    exports._repFn = function (vars) {
-        return function (match, varName) {
-            var value = vars[varName];
+    /**
+     * Replaces every {{variable}} inside the template with values provided by view
+     * @param template {string} the template containing one or more {{key}}
+     * @param view {object} an object containing string (or number) values for every key that is used in the template
+     * @return {string} template with its valid variable names replaced with corresponding values
+     */
+    function render (template, view) {
+        //don't touch the template if it is not a string
+        if (typeof template !== 'string') {
+            return template;
+        }
+        //if view is not a valid object, assume it is an empty object which effectively removes all variable assignments
+        if (typeof view !== 'object' || view === null) {
+            view = {};
+        }
+        return template.replace(/\{?\{\{\s*(.*?)\s*\}\}\}?/g, function (match, varName) {
+            var value = view[varName];
             switch (typeof value) {
                 case 'string':
                 case 'number':
@@ -23,42 +31,28 @@ var MicroMustache = (function () {
                     //if the value is a function, call it passing the variable name
                     return value(varName);
                 default:
-                    //anything else will be replaced with an empty string. This includes object and null.
+                    //anything else will be replaced with an empty string. This includes object, array and null.
                     return '';
             }
-        };
-    };
-
-    /**
-     * Replaces every {{variable}} inside the template with values provided by vars
-     * @param template {string} the template containing one or more {{key}}
-     * @param vars {object} an object containing string (or number) values for every key that is used in the template
-     * @return {string} template with its valid variable names replaced with corresponding values
-     */
-    exports.to_html = exports.render = function (template, vars) {
-        //don't touch the template if it is not a string
-        if (typeof template !== 'string') {
-            return template;
-        }
-        //if vars is not a valid object, assume an empty dictionary which effectively removes all variable assignments
-        if (typeof vars !== 'object' || vars === null) {
-            vars = {};
-        }
-        return template.replace(exports._rex, exports._repFn(vars));
-    };
+        });
+    }
 
     /**
      * This function really doesn't make things particularly faster.
      * However it makes the repeated calls shorter!
      * @param template {string} the template containing one or more {{key}}
-     * @return {function} a function that calls render(template, vars) under the hood
+     * @return {function} a function that calls render(template, view) under the hood
      */
-    exports.compile = function (template) {
+    function compile (template) {
         //create and return a function that will always apply this template under the hood
-        return function (vars) {
-            return exports.render(template, vars);
+        return function (view) {
+            return render(template, view);
         };
-    };
+    }
 
-    return exports;
+    return {
+        render:render,
+        to_html:render,
+        compile:compile
+    };
 })();

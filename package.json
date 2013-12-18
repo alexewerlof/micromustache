@@ -1,6 +1,6 @@
 {
     "name": "MicroMustache",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "A stripped down version of the {{mustache}} template engine with JavaScript",
     "main": "src/micromustache.js",
     "directories": {
