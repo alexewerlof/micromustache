@@ -9,7 +9,7 @@
 A stripped down version of the {{mustache}} template engine with JavaScript.
 It covers the most important use case for Mustache: replacing variables with their names.
 MicroMustache doesn't support partials, array and nested objects.
-It is about 40% faster than Mustache.js and less 93% smaller!
+It is about 40% faster than Mustache.js and 93% smaller!
 
 * Tiny (less than 0.5KB)
 * Super-Quick (just one function call over the native browser layer) [run the comparison] (http://jsperf.com/micromustache-vs-mustache)
