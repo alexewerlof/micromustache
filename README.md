@@ -1,8 +1,8 @@
 #Download
 
-[Development] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.js)
+[Development Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.js) 2,487 Bytes
 
-[Production] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.min.js)
+[Production Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.min.js) 448 Bytes
 
 #MicroMustache
 
