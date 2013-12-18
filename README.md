@@ -1,26 +1,27 @@
 #MicroMustache
 
-A stripped down mustache-like template engine.
+A stripped down version of the {{mustache}} template engine with JavaScript.
+It covers the most important use case for Mustache: replacing variables with their names.
+MicroMustache doesn't support partials, array and nested objects.
+It is about 40% faster than Mustache.js and less 93% smaller!
 
-#New
+* Tiny (less than 0.5KB)
+* Super-Quick (just one function call over the native browser layer) run the comparison live: http://jsperf.com/micromustache-vs-mustache
+* Super efficient (no extra variable created, tested for memory leaks)
+* Familiar to Mustache users (uses the same {{}} convention as well as the render() function)
+* No dependency (No need for JQuery, Underscore, Mustache, etc)
+* Cross-browser compatible
+* Full test coverage with Qunit
 
-For maximum compatibility, this library is extensively tested against Mustache.js [https://github.com/janl/mustache.js].
-So this is a drop-in replacement for mustache.
+#Consistency
+
+For maximum consistency, MicroMustache is extensively tested against [Mustache.js] (https://github.com/janl/mustache.js).
+So this can be used as a drop-in replacement for the full blown heavy Mustache or Handlebars for that matter.
 
 #Why?
 
 I love Mustache but sometimes it's too big for the task in hand.
-Sometimes all I need is a simple and robust text replacement.
-MicroMustache is based on a subset of Mustache's syntax: replacing variable names with their values.
-Specially when you need to replace a bunch of variables in a string.
-
-* Tiny (less than 0.5KB)
-* Super-Quick (just one function call over the native replace() call with linear execution time)
-* Super efficient (no extra variable created, tested for memory leaks)
-* Well-tested (Full coverage of Qunit)
-* Familiar to Mustache users (uses the same {{}} convention as well as the render() function)
-* No dependency (No need for JQuery, Underscore, Mustache, etc)
-* Cross-browser compatibility
+Sometimes all I need is a small, simple, quick and robust text replacement.
 
 #Why not?
 
@@ -65,7 +66,7 @@ Besides every character in the code counts, so a shorter regular expression mean
 
 #Examples
 
-For more examples see the micromustache-test.js inside the test directory above.
+For more examples see the MicroMustache-test.js inside the test directory above.
 
 #Upcomming features
 

@@ -1,5 +1,5 @@
 /*!
- * micromustache.js - Stripped down version of the {{mustache}} template engine with JavaScript
+ * micromustache.js - A stripped down version of the {{mustache}} template engine with JavaScript
  * @license Creative Commons V3
  */
 
