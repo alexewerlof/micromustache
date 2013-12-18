@@ -11,7 +11,7 @@ It covers the most important use case for Mustache: replacing variables with the
 MicroMustache doesn't support partials, array and nested objects.
 It is about 40% faster than Mustache.js and 93% smaller!
 
-* Tiny (less than 0.5KB)
+* Tiny (less than half a kilo byte)
 * Super-Quick (just one function call over the native browser layer) [run the comparison] (http://jsperf.com/micromustache-vs-mustache)
 * Super efficient (no extra variable created, tested for memory leaks)
 * Familiar to Mustache users (uses the same {{}} convention as well as the render() function)
