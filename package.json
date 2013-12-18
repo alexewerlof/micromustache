@@ -1,6 +1,6 @@
 {
-    "name": "MicroMustache",
-    "version": "0.3.0",
+    "name": "micromustache",
+    "version": "1.0.0",
     "description": "",
     "main": "src/micromustache.js",
     "directories": {
@@ -11,7 +11,11 @@
         "markdown": "*"
     },
     "scripts": {
-        "test": "open test/test.html"
+        "test": "open test/micromustache-test.html"
+    },
+    "repository" :{
+        "type" : "git",
+        "url" : "https://github.com/hanifbbz/micromustache"
     },
     "author": "Alex Ewerlöf",
     "license": "Creative Commons 3.0"

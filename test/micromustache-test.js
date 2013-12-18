@@ -84,30 +84,9 @@ test('Value is object or null', function () {
     }), 'ac');
 });
 
-test('Variable name is an empty string', function () {
-    deepEqual(MicroMustache.render('{{}}', {}), '{{}}');
-    deepEqual(MicroMustache.render('{{}}', {'': 'hello'}), '{{}}');
-});
-
-test('Invalid variable names', function () {
-    deepEqual(MicroMustache.render('{{$}}', {'$': 'hello'}), '{{$}}');
-    deepEqual(MicroMustache.render('{{&}}', {'$': 'hello'}), '{{&}}');
-    deepEqual(MicroMustache.render('{{{}}}', {'{}': 'hello'}), '{{{}}}');
-});
-
-test('Triple mustache', function () {
-    //todo: Mustache compatibility?
-    deepEqual(MicroMustache.render('{{{a}}}', {'a': 'hello'}), '{hello}');
-});
-
-test('Nested brackets', function () {
-    //todo: Mustache compatibility?
-    //only {{b}} should be resolved since that is the only valid variable name embedded in '{{' and '}}'
-    deepEqual(MicroMustache.render('{{a{{b}}c}}', {
-        a: '1',
-        b: '2',
-        c: '3'
-    }), '{{a2c}}');
+test('More than one occurance', function () {
+    deepEqual(MicroMustache.render('{{a}}{{a}}{{a}}', {'a': 'hello'}), 'hellohellohello');
+    deepEqual(MicroMustache.render('{{a}}{{b}}{{a}}{{b}}', {'a': '1','b':'2'}), '1212');
 });
 
 test('Compile a template', function () {
@@ -121,4 +100,147 @@ test('Compile an empty string', function () {
     compiled = MicroMustache.compile('');
     deepEqual(typeof compiled, 'function');
     deepEqual(compiled({a: 2}), '');
+});
+
+test('Check the existence of the supported functions', function () {
+    deepEqual(typeof MicroMustache, typeof Mustache);
+
+    deepEqual(typeof MicroMustache.render, typeof Mustache.render);
+
+    deepEqual(typeof MicroMustache.render('',{}), typeof Mustache.render('',{}));
+});
+
+test('Test render() for behaving the same in micromustache', function () {
+    var testCases = [
+        {
+            template:'',
+            data:{}
+        },
+        {
+            template:'{{a}}',
+            data:{a:''}
+        },
+        {
+            template:'{{a}}',
+            data:{a:'1'}
+        },
+        {
+            template:'{{a}}',
+            data:{a:'a'}
+        },
+        {
+            template:'{{a}}',
+            data:{a:'11'}
+        },
+        {
+            template:'{{a}}',
+            data:{a:' '}
+        },
+        {
+            template:' {{a}} ',
+            data:{a:''}
+        },
+        {
+            template:' {{a}} ',
+            data:{a:' '}
+        },
+        {
+            template:' {{a}} {{b}} ',
+            data:{a:' '}
+        },
+        {
+            template:' {{a}} {{b}} ',
+            data:{a:'a',b:'b'}
+        },
+        {
+            template:' {{a}} {{a}} {{a}}',
+            data:{a:'a'}
+        },
+        {
+            template:' {{a}} {{a}} {{a}}',
+            data:{a:'-'}
+        },
+        {
+            template:'{{1}}',
+            data:{'1':'-'}
+        },
+        {
+            template:'{{}}',
+            data:{'':'hello'}
+        },
+        {
+            template:'{{ }}',
+            data:{' ':'-'}
+        },
+        {
+            template:'{{-}}',
+            data:{'-':'-'}
+        },
+        {
+            template:'{{1a}}',
+            data:{'1a':'-'}
+        },
+        {
+            template:'{{a}}',
+            data:{a:null}
+        },
+        {
+            template:'{{a}},{{b}}',
+            data:{a:123,b:null}
+        },
+        {
+            template:'{{a}}',
+            data:null
+        },
+        {
+            template:'{{$}}',
+            data:{'$':'test'}
+        },
+        {
+            template:'{{_}}',
+            data:{'_':'test'}
+        },
+        {
+            template:'{{    }}',
+            data:{'_':'test'}
+        },
+        {
+            template:'{{   a}}',
+            data:{'a':'test'}
+        },
+        {
+            template:'{{a   }}',
+            data:{'a':'test'}
+        },
+        {
+            template:'{{   a   }}',
+            data:{'a':'test'}
+        },
+        {
+            template:'{{%}}',
+            data:{'%':'test'}
+        },
+        {
+            template:'{{var}}',
+            data:{'var':'test'}
+        },
+        {
+            template:'{{{var}}}',
+            data:{'var':'test'}
+        },
+        {
+            template:'{{{{var}}}}',
+            data:{'var':'test'}
+        },
+        {
+            template:'{{a{{b}}c}}',
+            data:{'a':'a','b':'b','c':'c'}
+        },
+    ];
+    for (var i = 0; i < testCases.length; i++) {
+        var testCase = testCases[i];
+        var template = testCase.template;
+        var data = testCase.data;
+        deepEqual(MicroMustache.render(template,data), Mustache.render(template,data),'Template: ' + template + ', data: ' + data );
+    }
 });

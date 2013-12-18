@@ -2,6 +2,11 @@
 
 A stripped down mustache-like template engine.
 
+#New
+
+For maximum compatibility, this library is extensively tested against Mustache.js [https://github.com/janl/mustache.js].
+So this is a drop-in replacement for mustache.
+
 #Why?
 
 I love Mustache but sometimes it's too big for the task in hand.
