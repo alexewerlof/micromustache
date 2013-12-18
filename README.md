@@ -13,16 +13,17 @@ It is about 40% faster than Mustache.js and 93% smaller!
 
 * Tiny (less than half a kilo byte)
 * Super-Quick (just one function call over the native browser layer) [run the comparison] (http://jsperf.com/micromustache-vs-mustache)
-* Super efficient (no extra variable created, tested for memory leaks)
-* Familiar to Mustache users (uses the same {{}} convention as well as the render() function)
+* Super efficient (optimum use of CPU, RAM and your memory bandwidth)
+* Familiar to Mustache users
 * No dependency (No need for JQuery, Underscore, Mustache, etc)
 * Cross-browser compatible
-* Full test coverage with Qunit
+* Full test coverage with Qunit (see the test directory)
 * Consistent with Mustache.js so it is a drop-in replacement for Mustache or Handlebars
 * Supports the following value types: string, number, boolean, function.
   If the value is a function, it'll be called with the name of the variable as its parameter and the resulting value will be used.
-* The render(), to_html and compile() functions are supported from Mustache.js
+* The render(), to_html() and compile() functions are supported from Mustache.js
 * It's just one function. You can drop it into your code or paste it as an AMD module
+* Made in Sweden
 
 #Not included
 
@@ -57,7 +58,6 @@ output = templateEngine(person);
 //output = "MicroMustache is created by Alex Ewerlöf"
 output = templateEngine({first:'Albert',last:'Einstein'});
 //output = "MicroMustache is created by Albert Einstein"
-
 ```
 
 The following functions from Mustache.js are supported:
@@ -69,9 +69,3 @@ MicroMustache.compile(template);//returns a function that accepts the view objec
 ```
 
 For more examples see the micromustache-test.js inside the test directory above.
-
-#Upcomming features
-
-* Plugins to change the {{}} to another markup of your choice
-* Plugin for supporting array traversal
-* Plugin for supporting nested objects
