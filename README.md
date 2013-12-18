@@ -6,67 +6,62 @@ MicroMustache doesn't support partials, array and nested objects.
 It is about 40% faster than Mustache.js and less 93% smaller!
 
 * Tiny (less than 0.5KB)
-* Super-Quick (just one function call over the native browser layer) run the comparison live: http://jsperf.com/micromustache-vs-mustache
+* Super-Quick (just one function call over the native browser layer) [run the comparison] (http://jsperf.com/micromustache-vs-mustache)
 * Super efficient (no extra variable created, tested for memory leaks)
 * Familiar to Mustache users (uses the same {{}} convention as well as the render() function)
 * No dependency (No need for JQuery, Underscore, Mustache, etc)
 * Cross-browser compatible
 * Full test coverage with Qunit
+* Consistent with Mustache.js so it is a drop-in replacement for Mustache or Handlebars
+* Supports the following value types: string, number, boolean, function.
+  If the value is a function, it'll be called with the name of the variable as its parameter and the resulting value will be used.
+* The render(), to_html and compile() functions are supported from Mustache.js
 
-#Consistency
+#Not included
 
-For maximum consistency, MicroMustache is extensively tested against [Mustache.js] (https://github.com/janl/mustache.js).
-So this can be used as a drop-in replacement for the full blown heavy Mustache or Handlebars for that matter.
+MicroMustache achieved great speed and small size by dropping the following features from Mustache:
 
-#Why?
-
-I love Mustache but sometimes it's too big for the task in hand.
-Sometimes all I need is a small, simple, quick and robust text replacement.
-
-#Why not?
-
-MicroMustache is a super quick and super small Mustache implementation.
-To achieve this speed and size, some of Mustache's features are eliminated:
-
-* No iteration over array elements. {{#arrName}} doesn't work
-* No access to object properties. {{objName.propertyName}} doesn't work
-* No partials. {{>partialName}} doesn't work
-* HTML sanetization (you can sanetize it externally if you want). {{{propertyName}}} doesn't work.
-* Inverted selection
-* Set delimiters (you can edit and modify the source code to change it though)
-* Currently variable names can only be alphanumeric (a-z, A-Z, 0-9), no $ or _ or other unicode characters
-
-The algorithm is optimized for quick execution and if your data is anything more complicated than a flat
-dictionary you can use any other alternatives including Mustache.js itself.
-
-#FAQ
-
-## What's different from Mustache?
-
-* only alphanumeric characters are allowed in a variable's name (dollar sign or underline is not allowed)
-* variable names can begin with numbers (but the corresponding key needs to be the string equivalent of that number)
-
-## What features are present?
-
-The following features however are present (and shared with Mustache):
-
-* Marking variables with {{}}
-* Replacing string values
-* Replacing numerical values
-* Replacing boolean values
-* Replacing function values. The function will be called with the name of the key as its only parameter
-* The render() function
-* The compile() function (though they don't improve speed, but they make the repetitive code cleaner to read)
-* Comments (technically anything that is not an alphanumeric variable name will be ignored)
-
-## Why variable names cannot include $ and _ just like Javascript?
-
-For having a faster execution, we only use the \w regular expression.
-Besides every character in the code counts, so a shorter regular expression means a smaller file.
+* Array iterations: {{# ...}}
+* Partials: {{> ...}}
+* Objects as values: {{ objName.propertyName }}
+* Inverted selection {{^ ...}}
+* Comments: {{! ...}}
+* HTML sanetization: {{{ propertyName }}}
+* Custom delimiters: <% ... %> instead of {{ ... }}
 
 #Examples
 
-For more examples see the MicroMustache-test.js inside the test directory above.
+```js
+var person = {
+  first: "Alex",
+  last: "Ewerlöf"
+};
+
+//The render function accepts two parameters: the template and the object that contains a list of key-values to be replaced in template.
+var output = MicroMustache.render("MicroMustache is created by {{first}} {{ last }}", person);
+//output = "MicroMustache is created by Alex Ewerlöf"
+```
+
+Alternatively you can compile the template and get a function that can be used multiple times:
+
+```js
+var templateEngine = MicroMustache.compile("MicroMustache is created by {{first}} {{ last }}");
+output = templateEngine(person);
+//output = "MicroMustache is created by Alex Ewerlöf"
+output = templateEngine({first:'Albert',last:'Einstein'});
+//output = "MicroMustache is created by Albert Einstein"
+
+```
+
+The following functions from Mustache.js are supported:
+
+```js
+MicroMustache.render(template,view);//renders a template based on the data in the view object
+MicroMustache.to_html(template,view);//same as render
+MicroMustache.compile(template);//returns a function that accepts the view object and spits out the rendered string
+```
+
+For more examples see the micromustache-test.js inside the test directory above.
 
 #Upcomming features
 
