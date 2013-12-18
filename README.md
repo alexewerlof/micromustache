@@ -1,7 +1,8 @@
 #Download
 
-[Production] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.js)
-[Development] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.min.js)
+[Development] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.js)
+
+[Production] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.min.js)
 
 #MicroMustache
 
