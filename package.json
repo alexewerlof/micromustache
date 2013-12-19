@@ -1,22 +1,24 @@
 {
-    "name": "MicroMustache",
-    "version": "1.1.0",
+    "name": "micromustache",
+    "version": "1.2.0",
     "description": "A stripped down version of the {{mustache}} template engine with JavaScript",
+    "keywords":["template","mustache","string processing","string replacement","regular expression","template engine","small","quick","light weight"],
     "main": "src/micromustache.js",
     "directories": {
+        "lib":"dist",
         "test": "test"
     },
-    "dependencies": {
-        "uglify-js": "*",
-        "markdown": "*"
+    "devDependencies": {
+        "uglify-js": "2.x"
     },
     "scripts": {
+        "prepublish":"cp src/micromustache.js dist/ & uglifyjs dist/micromustache.js -o dist/micromustache.min.js --compress --mangle",
         "test": "open test/micromustache-test.html"
     },
     "repository" :{
         "type" : "git",
-        "url" : "https://github.com/hanifbbz/micromustache.git"
+        "url" : "http://github.com/hanifbbz/micromustache.git"
     },
     "author": "Alex Ewerlöf",
-    "license": "Creative Commons 3.0"
+    "license": "CC-BY-3.0"
 }

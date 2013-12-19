@@ -4,6 +4,12 @@
 
 [Production Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.min.js) - 378 Bytes
 
+Or use npm:
+
+```bash
+npm install micromustache
+```
+
 #MicroMustache
 
 A stripped down version of the {{mustache}} template engine with JavaScript.
@@ -11,13 +17,17 @@ It covers the most important use case for Mustache: replacing variables with the
 MicroMustache doesn't support partials, array and nested objects.
 It is about 40% faster than Mustache.js and 93% smaller!
 
+#Features
+
 * Tiny (less than half a kilo byte)
-* Super-Quick (just one function call over the native browser layer) [run the comparison] (http://jsperf.com/micromustache-vs-mustache)
+* Super-Quick (just one function call over the native browser layer)
+  [run the comparison] (http://jsperf.com/micromustache-vs-mustache)
 * Super efficient (optimum use of CPU, RAM and your memory bandwidth)
 * Familiar to Mustache users
 * No dependency (No need for JQuery, Underscore, Mustache, etc)
 * Cross-browser compatible
-* Full test coverage with Qunit (see the test directory)
+* Full test coverage with Qunit.
+  (run the tests yourself) [http://htmlpreview.github.com/?https://github.com/hanifbbz/micromustache/blob/master/test/micromustache-test.html]
 * Consistent with Mustache.js so it is a drop-in replacement for Mustache or Handlebars
 * Supports the following value types: string, number, boolean, function.
   If the value is a function, it'll be called with the name of the variable as its parameter and the resulting value will be used.
@@ -25,9 +35,9 @@ It is about 40% faster than Mustache.js and 93% smaller!
 * It's just one function. You can drop it into your code or paste it as an AMD module
 * Made in Sweden
 
-#Not included
+#Limitations
 
-MicroMustache achieved great speed and small size by dropping the following features from Mustache:
+MicroMustache achieved great speed and light weight by dropping the following features from Mustache:
 
 * Array iterations: {{# ...}}
 * Partials: {{> ...}}
@@ -37,7 +47,10 @@ MicroMustache achieved great speed and small size by dropping the following feat
 * HTML sanitization: {{{ propertyName }}}
 * Custom delimiters: <% ... %> instead of {{ ... }}
 
-#Examples
+#How to use
+
+MicroMustache is pretty similar to Mustache so if you know how to use Mustache,
+you can easily replace it with MicroMustache without any code change.
 
 ```js
 var person = {
