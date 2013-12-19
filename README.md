@@ -27,7 +27,7 @@ It is about 40% faster than Mustache.js and 93% smaller!
 * No dependency (No need for JQuery, Underscore, Mustache, etc)
 * Cross-browser compatible
 * Full test coverage with Qunit.
-  (run the tests yourself) [http://htmlpreview.github.com/?https://github.com/hanifbbz/micromustache/blob/master/test/micromustache-test.html]
+  [run the tests yourself] (http://htmlpreview.github.com/?https://github.com/hanifbbz/micromustache/blob/master/test/micromustache-test.html)
 * Consistent with Mustache.js so it is a drop-in replacement for Mustache or Handlebars
 * Supports the following value types: string, number, boolean, function.
   If the value is a function, it'll be called with the name of the variable as its parameter and the resulting value will be used.
