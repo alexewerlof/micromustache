@@ -34,6 +34,8 @@ npm install micromustache
 * The render(), to_html() and compile() functions are supported from Mustache.js
 * It's just one function. You can drop it into your code or paste it as an AMD module
 * Works in browser and node.js
+* Ready to be used as AMD or just copy/pasted into your own code
+* Clean code that passes [jshint] (http://www.jshint.com/)
 * Made in Sweden
 
 #Limitations
