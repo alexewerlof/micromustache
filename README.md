@@ -10,7 +10,7 @@ Or use npm:
 npm install micromustache
 ```
 
-![Logo](https://github.com/hanifbbz/micromustache/tree/master/logo/micromustache-logo-300.png)
+![Logo](https://raw.github.com/hanifbbz/micromustache/master/logo/micromustache-logo-300.png)
 
 #MicroMustache
 
