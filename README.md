@@ -10,6 +10,8 @@ Or use npm:
 npm install micromustache
 ```
 
+![Logo](https://github.com/hanifbbz/micromustache/tree/master/logo/micromustache-logo-300.png)
+
 #MicroMustache
 
 A stripped down version of the {{mustache}} template engine with JavaScript.
@@ -33,6 +35,7 @@ It is about 40% faster than Mustache.js and 93% smaller!
   If the value is a function, it'll be called with the name of the variable as its parameter and the resulting value will be used.
 * The render(), to_html() and compile() functions are supported from Mustache.js
 * It's just one function. You can drop it into your code or paste it as an AMD module
+* Works in browser and node.js
 * Made in Sweden
 
 #Limitations
