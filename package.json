@@ -1,6 +1,6 @@
 {
     "name": "micromustache",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "A stripped down version of the {{mustache}} template engine with JavaScript",
     "keywords":["template","mustache","string processing","string replacement","regular expression","template engine","small","quick","light weight"],
     "main": "src/micromustache.js",

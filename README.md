@@ -11,7 +11,7 @@ It is about 40% faster than Mustache.js and 93% smaller!
 
 [Download Production Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.min.js) - 378 Bytes
 
-Or use npm:
+Or use [npm] (https://npmjs.org/package/micromustache):
 
 ```bash
 npm install micromustache
