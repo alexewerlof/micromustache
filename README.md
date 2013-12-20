@@ -1,23 +1,21 @@
-#Download
+#MicroMustache
 
-[Development Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.js) - 2,226 Bytes
+![Logo](https://raw.github.com/hanifbbz/micromustache/master/logo/micromustache-logo-300.png)
 
-[Production Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.min.js) - 378 Bytes
+A stripped down version of the {{mustache}} template engine with JavaScript.
+It covers the most important use case for Mustache: replacing variables with their names.
+MicroMustache doesn't support partials, array and nested objects.
+It is about 40% faster than Mustache.js and 93% smaller!
+
+[Download Development Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.js) - 2,226 Bytes
+
+[Download Production Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.min.js) - 378 Bytes
 
 Or use npm:
 
 ```bash
 npm install micromustache
 ```
-
-![Logo](https://raw.github.com/hanifbbz/micromustache/master/logo/micromustache-logo-300.png)
-
-#MicroMustache
-
-A stripped down version of the {{mustache}} template engine with JavaScript.
-It covers the most important use case for Mustache: replacing variables with their names.
-MicroMustache doesn't support partials, array and nested objects.
-It is about 40% faster than Mustache.js and 93% smaller!
 
 #Features
 
