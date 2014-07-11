@@ -129,3 +129,13 @@ But for the sake of clarity, here is what the `render()` function does:
 * If the value is a number, boolean or string, replace the `{{...}}` with the value
 * If the value is a function, call it passing what is between `{{` and `}}` and replace the `{{...}}` with the return of the function
 * If the value is an object, array or null, (or anything else) just remove the `{{...}}` part
+
+#Build
+
+If you want to modify the code, here is how to do it.
+
+1. Install Node.js (hence `npm`)
+2. Clone this repository and go to the directory you cloned it
+3. Run `npm install`
+4. Do your changes and run the tests. When you are happy go to the next step.
+5. Run `gulp` and if there's no issue, it should make two new javascript files in the `dist` directory.

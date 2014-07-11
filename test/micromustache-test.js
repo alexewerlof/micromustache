@@ -97,9 +97,9 @@ test('Compile a template', function () {
 });
 
 test('Compile an empty string', function () {
-    compiled = micromustache.compile('');
-    deepEqual(typeof compiled, 'function');
-    deepEqual(compiled({a: 2}), '');
+    var compile = micromustache.compile('');
+    deepEqual(typeof compile, 'function');
+    deepEqual(compile({a: 2}), '');
 });
 
 test('Check the existence of the supported functions', function () {

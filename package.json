@@ -1,24 +1,41 @@
 {
-    "name": "micromustache",
-    "version": "2.0.0",
-    "description": "A stripped down version of the {{mustache}} template engine with JavaScript",
-    "keywords":["template","mustache","string processing","string replacement","regular expression","template engine","small","quick","light weight"],
-    "main": "src/micromustache.js",
-    "directories": {
-        "lib":"dist",
-        "test": "test"
-    },
-    "devDependencies": {
-        "uglify-js": "2.x"
-    },
-    "scripts": {
-        "prepublish":"cp src/micromustache.js dist/ & uglifyjs dist/micromustache.js -o dist/micromustache.min.js --compress --mangle",
-        "test": "open test/micromustache-test.html"
-    },
-    "repository" :{
-        "type" : "git",
-        "url" : "http://github.com/hanifbbz/micromustache.git"
-    },
-    "author": "Alex Ewerlöf",
-    "license": "CC-BY-3.0"
+  "name": "micromustache",
+  "version": "2.0.19",
+  "description": "A stripped down version of the {{mustache}} template engine with JavaScript",
+  "keywords": [
+    "template",
+    "mustache",
+    "string processing",
+    "string replacement",
+    "regular expression",
+    "template engine",
+    "small",
+    "quick",
+    "light weight"
+  ],
+  "main": "src/micromustache.js",
+  "directories": {
+    "lib": "dist",
+    "test": "test"
+  },
+  "devDependencies": {
+    "del": "^0.1.1",
+    "gulp": "^3.8.6",
+    "gulp-bump": "^0.1.10",
+    "gulp-concat": "^2.3.3",
+    "gulp-header": "^1.0.5",
+    "gulp-jshint": "^1.7.1",
+    "gulp-size": "^0.4.0",
+    "gulp-uglify": "^0.3.1",
+    "uglify-js": "2.x"
+  },
+  "scripts": {
+    "test": "open test/micromustache-test.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/hanifbbz/micromustache.git"
+  },
+  "author": "Alex Ewerlöf",
+  "license": "CC-BY-3.0"
 }
