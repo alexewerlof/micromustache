@@ -49,3 +49,5 @@ gulp.task('default', ['minify', 'copy-dev'], function() {
         .pipe(bump({type:'patch'}))
         .pipe(gulp.dest('./'));
 });
+
+//Author: npm publish .

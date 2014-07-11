@@ -1,8 +1,5 @@
 #MicroMustache
 
-TL;DR: if you use Mustache only to replace text with a simple object that containst only
-`String`, `Number` and `Boolean` values, Micromustache can replace Mustache to reduce size and increase speed.
-
 ![Logo](https://raw.github.com/hanifbbz/micromustache/master/logo/micromustache-logo-300.png)
 
 A stripped down version of the {{mustache}} template engine with JavaScript.
@@ -11,9 +8,9 @@ MicroMustache doesn't support partials, array and nested objects.
 It is about 40% faster than Mustache.js and 93% smaller!
 If all you do is variable name replacement, you can easily cut that overhead.
 
-[Download Development Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.js) - 2,226 Bytes
+[Download Development Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.js) - 2,65 KB
 
-[Download Production Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.min.js) - 378 Bytes
+[Download Production Edition] (https://raw.github.com/hanifbbz/micromustache/master/dist/micromustache.min.js) - 0.5 KB
 
 Or use [npm] (https://npmjs.org/package/micromustache):
 
@@ -38,17 +35,18 @@ npm install micromustache
 * The render(), to_html() and compile() functions are supported from Mustache.js
 * It's just one function. You can drop it into your code or paste it as an AMD module
 * Works in browser and node.js
-* Ready to be used as AMD or just copy/pasted into your own code
+* Ready to be used as AMD or just copy/paste into your own code
 * Clean code that passes [jshint] (http://www.jshint.com/)
 * Made in Sweden
 
 #Limitations
 
-MicroMustache achieved great speed and light weight by dropping the following features from Mustache:
+MicroMustache achieves its fast speed and light weight by dropping the following features from Mustache:
 
 * Array iterations: {{# ...}}
 * Partials: {{> ...}}
 * Objects as values: {{ objName.propertyName }}
+* Arrays as values: {{ objName[propertyName] }}
 * Inverted selection {{^ ...}}
 * Comments: {{! ...}}
 * HTML sanitization: {{{ propertyName }}}
