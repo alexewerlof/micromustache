@@ -3,7 +3,18 @@
  * @license Creative Commons V3
  */
 
-var MicroMustache = (function () {
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define([], factory);
+    } else if (typeof exports === 'object') {
+        // Only CommonJS-like environments that support module.exports, like Node.
+        module.exports = factory();
+    } else {
+        // Browser globals (root is window)
+        root.micromustache = factory();
+    }
+}(this, function () {
 
     /**
      * Replaces every {{variable}} inside the template with values provided by view
@@ -31,7 +42,7 @@ var MicroMustache = (function () {
                     //if the value is a function, call it passing the variable name
                     return value(varName);
                 default:
-                    //anything else will be replaced with an empty string. This includes object, array and null.
+                    //anything else will be replaced with an empty string. This includes object, array, date, regexp and null.
                     return '';
             }
         });
@@ -55,4 +66,4 @@ var MicroMustache = (function () {
         to_html:render,
         compile:compile
     };
-})();
+}));

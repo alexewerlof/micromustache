@@ -1,60 +1,60 @@
 test('do not touch non-string template', function () {
-    deepEqual(MicroMustache.render(1), 1);
-    deepEqual(MicroMustache.render(null, {}), null);
-    deepEqual(MicroMustache.render(true, {}), true);
+    deepEqual(micromustache.render(1), 1);
+    deepEqual(micromustache.render(null, {}), null);
+    deepEqual(micromustache.render(true, {}), true);
 });
 
 test('empty string', function () {
-    deepEqual(MicroMustache.render('', {}), '');
+    deepEqual(micromustache.render('', {}), '');
 });
 
 test('no keys', function () {
-    deepEqual(MicroMustache.render('{{i}}', {}), '');
+    deepEqual(micromustache.render('{{i}}', {}), '');
 });
 
 test('non existing key', function () {
-    deepEqual(MicroMustache.render('{{i}}', {j: 1}), '');
+    deepEqual(micromustache.render('{{i}}', {j: 1}), '');
 });
 
 test('Replace only one variable', function () {
-    deepEqual(MicroMustache.render('{{i}}', {i: 'hello'}), 'hello');
-    deepEqual(MicroMustache.render('{{i}} world', {i: 'hello'}), 'hello world');
-    deepEqual(MicroMustache.render('Ohoy! {{i}}', {i: 'hello'}), 'Ohoy! hello');
-    deepEqual(MicroMustache.render('Ohoy! {{i}} world', {i: 'hello'}), 'Ohoy! hello world');
+    deepEqual(micromustache.render('{{i}}', {i: 'hello'}), 'hello');
+    deepEqual(micromustache.render('{{i}} world', {i: 'hello'}), 'hello world');
+    deepEqual(micromustache.render('Ohoy! {{i}}', {i: 'hello'}), 'Ohoy! hello');
+    deepEqual(micromustache.render('Ohoy! {{i}} world', {i: 'hello'}), 'Ohoy! hello world');
 });
 
 test('Replace two variables', function () {
-    deepEqual(MicroMustache.render('{{i}}{{j}}', {i: 'hello', j: 'world'}), 'helloworld');
-    deepEqual(MicroMustache.render('{{i}} {{j}}', {i: 'hello', j: 'world'}), 'hello world');
-    deepEqual(MicroMustache.render('{{i}} {{j}} {{k}}', {i: 'hello', j: 'world'}), 'hello world ');
-    deepEqual(MicroMustache.render('{{var1}} {{var2}}', {var1: 'hello', var2: 'world'}), 'hello world');
+    deepEqual(micromustache.render('{{i}}{{j}}', {i: 'hello', j: 'world'}), 'helloworld');
+    deepEqual(micromustache.render('{{i}} {{j}}', {i: 'hello', j: 'world'}), 'hello world');
+    deepEqual(micromustache.render('{{i}} {{j}} {{k}}', {i: 'hello', j: 'world'}), 'hello world ');
+    deepEqual(micromustache.render('{{var1}} {{var2}}', {var1: 'hello', var2: 'world'}), 'hello world');
 });
 
 test('An empty dictionary will just remove all variables', function () {
-    deepEqual(MicroMustache.render('{{i}}'), '');
-    deepEqual(MicroMustache.render('{{i}}{{j}}'), '');
-    deepEqual(MicroMustache.render('{{i}} {{j}}'), ' ');
-    deepEqual(MicroMustache.render(' {{abc}} {{def}} '), '   ');
+    deepEqual(micromustache.render('{{i}}'), '');
+    deepEqual(micromustache.render('{{i}}{{j}}'), '');
+    deepEqual(micromustache.render('{{i}} {{j}}'), ' ');
+    deepEqual(micromustache.render(' {{abc}} {{def}} '), '   ');
 });
 
 test('Using special characters with dollar sign', function () {
-    deepEqual(MicroMustache.render('{{a}}', {a: '$'}), '$');
-    deepEqual(MicroMustache.render('{{a}}', {a: ' $'}), ' $');
-    deepEqual(MicroMustache.render('{{a}}', {a: '$ '}), '$ ');
-    deepEqual(MicroMustache.render('{{a}}', {a: '$$'}), '$$');
-    deepEqual(MicroMustache.render('{{a}}', {a: '$&'}), '$&');
-    deepEqual(MicroMustache.render('{{a}}', {a: '$`'}), '$`');
-    deepEqual(MicroMustache.render('{{a}}', {a: '$\''}), '$\'');
-    deepEqual(MicroMustache.render('{{a}}', {a: '$1'}), '$1');
+    deepEqual(micromustache.render('{{a}}', {a: '$'}), '$');
+    deepEqual(micromustache.render('{{a}}', {a: ' $'}), ' $');
+    deepEqual(micromustache.render('{{a}}', {a: '$ '}), '$ ');
+    deepEqual(micromustache.render('{{a}}', {a: '$$'}), '$$');
+    deepEqual(micromustache.render('{{a}}', {a: '$&'}), '$&');
+    deepEqual(micromustache.render('{{a}}', {a: '$`'}), '$`');
+    deepEqual(micromustache.render('{{a}}', {a: '$\''}), '$\'');
+    deepEqual(micromustache.render('{{a}}', {a: '$1'}), '$1');
 });
 
 test('Call the value function', function () {
-    deepEqual(MicroMustache.render('{{a}}', {
+    deepEqual(micromustache.render('{{a}}', {
         a: function () {
             return 'world';
         }
     }), 'world');
-    deepEqual(MicroMustache.render('{{var1}}', {
+    deepEqual(micromustache.render('{{var1}}', {
         var1: function (key) {
             return key.toLocaleUpperCase();
         }
@@ -62,22 +62,22 @@ test('Call the value function', function () {
 });
 
 test('Value is number, boolean', function () {
-    deepEqual(MicroMustache.render('{{a}}', {a: true}), 'true');
-    deepEqual(MicroMustache.render('{{a}}', {a: false}), 'false');
-    deepEqual(MicroMustache.render('{{a}}', {a: 0}), '0');
-    deepEqual(MicroMustache.render('{{a}}', {a: 1}), '1');
-    deepEqual(MicroMustache.render('{{a}}', {a: 999}), '999');
-    deepEqual(MicroMustache.render('{{a}}', {a: Number.NaN}), 'NaN');
+    deepEqual(micromustache.render('{{a}}', {a: true}), 'true');
+    deepEqual(micromustache.render('{{a}}', {a: false}), 'false');
+    deepEqual(micromustache.render('{{a}}', {a: 0}), '0');
+    deepEqual(micromustache.render('{{a}}', {a: 1}), '1');
+    deepEqual(micromustache.render('{{a}}', {a: 999}), '999');
+    deepEqual(micromustache.render('{{a}}', {a: Number.NaN}), 'NaN');
 });
 
 test('Value is object or null', function () {
-    deepEqual(MicroMustache.render('a{{b}}c', {
+    deepEqual(micromustache.render('a{{b}}c', {
         b: null
     }), 'ac');
-    deepEqual(MicroMustache.render('a{{b}}c', {
+    deepEqual(micromustache.render('a{{b}}c', {
         b: {}
     }), 'ac');
-    deepEqual(MicroMustache.render('a{{b}}c', {
+    deepEqual(micromustache.render('a{{b}}c', {
         b: {
             b: 'hi'
         }
@@ -85,29 +85,33 @@ test('Value is object or null', function () {
 });
 
 test('More than one occurance', function () {
-    deepEqual(MicroMustache.render('{{a}}{{a}}{{a}}', {'a': 'hello'}), 'hellohellohello');
-    deepEqual(MicroMustache.render('{{a}}{{b}}{{a}}{{b}}', {'a': '1','b':'2'}), '1212');
+    deepEqual(micromustache.render('{{a}}{{a}}{{a}}', {'a': 'hello'}), 'hellohellohello');
+    deepEqual(micromustache.render('{{a}}{{b}}{{a}}{{b}}', {'a': '1','b':'2'}), '1212');
 });
 
 test('Compile a template', function () {
-    var compiled = MicroMustache.compile('Hello {{name}}!');
+    var compiled = micromustache.compile('Hello {{name}}!');
     deepEqual(typeof compiled, 'function');
     deepEqual(compiled({name: 'Alex'}), 'Hello Alex!');
     deepEqual(compiled({family: 'Alex'}), 'Hello !');
 });
 
 test('Compile an empty string', function () {
-    compiled = MicroMustache.compile('');
+    compiled = micromustache.compile('');
     deepEqual(typeof compiled, 'function');
     deepEqual(compiled({a: 2}), '');
 });
 
 test('Check the existence of the supported functions', function () {
-    deepEqual(typeof MicroMustache, typeof Mustache);
+    deepEqual(typeof micromustache, typeof Mustache);
 
-    deepEqual(typeof MicroMustache.render, typeof Mustache.render);
+    deepEqual(typeof micromustache.render, typeof Mustache.render);
 
-    deepEqual(typeof MicroMustache.render('',{}), typeof Mustache.render('',{}));
+    deepEqual(typeof micromustache.render('',{}), typeof Mustache.render('',{}));
+});
+
+test('Access array elements', function () {
+    deepEqual(micromustache.render('I like {{0}}, {{1}} and {{2}}',[ "orange", "apple", "lemon" ]),'I like orange, apple and lemon');
 });
 
 test('Test render() for behaving the same in micromustache', function () {
@@ -193,6 +197,42 @@ test('Test render() for behaving the same in micromustache', function () {
             data:null
         },
         {
+            template:'{{a}}',
+            data:{}
+        },
+        {
+            template:'{{a}}',
+            data:{a:true}
+        },
+        {
+            template:'{{a}}',
+            data:{a:false}
+        },
+        {
+            template:'{{a}}',
+            data:{a:Math.NaN}
+        },
+        {
+            template:'{{a}}',
+            data:{a:Number.POSITIVE_INFINITY}
+        },
+        {
+            template:'{{a}}',
+            data:{a:Number.NEGATIVE_INFINITY}
+        },
+        {
+            template:'{{a}}',
+            data:{a:0}
+        },
+        {
+            template:'{{a}}',
+            data:{a:0.1}
+        },
+        {
+            template:'{{a}}',
+            data:{a:0.00001}
+        },
+        {
             template:'{{$}}',
             data:{'$':'test'}
         },
@@ -236,11 +276,15 @@ test('Test render() for behaving the same in micromustache', function () {
             template:'{{a{{b}}c}}',
             data:{'a':'a','b':'b','c':'c'}
         },
+        {
+            template:'I like {{0}}, {{1}} and {{2}}',
+            data:[ "orange", "apple", "lemon" ]
+        }
     ];
     for (var i = 0; i < testCases.length; i++) {
         var testCase = testCases[i];
         var template = testCase.template;
         var data = testCase.data;
-        deepEqual(MicroMustache.render(template,data), Mustache.render(template,data),'Template: ' + template + ', data: ' + data );
+        deepEqual(micromustache.render(template,data), Mustache.render(template,data),'Template: ' + template + ', data: ' + JSON.stringify(data) );
     }
 });
