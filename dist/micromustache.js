@@ -1,4 +1,4 @@
-/*! micromustache v.2.0.20 
+/*! micromustache v.2.1.20 
  * A stripped down version of the {{mustache}} template engine with JavaScript
  * @license CC-BY-3.0
  */
