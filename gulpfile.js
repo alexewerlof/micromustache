@@ -4,23 +4,26 @@ var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
 var size   = require('gulp-size');
 var rename = require('gulp-rename');
-var bump   = require('gulp-bump');
 var header = require('gulp-header');
+var install= require("gulp-install");
 var del    = require('del');
 var pkg    = require('./package.json');
 
 var src = './src/*.js';
 
+//remove publishable resources
 gulp.task('clean', function(cb) {
     del(['dist/**/*'], cb);
 });
 
+//check the source code for quality
 gulp.task('jshint', function() {
     gulp.src(src)
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
 
+//copy the plain source code (with comments and pretty formatting) into the dist folder
 gulp.task('copy-dev', ['jshint'], function() {
     var headerTemplate = [
         "/*! <%= pkg.name %> v.<%= pkg.version %> ",
@@ -35,6 +38,7 @@ gulp.task('copy-dev', ['jshint'], function() {
         .pipe(size());
 });
 
+//minify the source into the dist folder
 gulp.task('minify', ['jshint'], function() {
     gulp.src(src)
         .pipe(uglify())
@@ -44,10 +48,12 @@ gulp.task('minify', ['jshint'], function() {
         .pipe(size());
 });
 
+//the default task will minify and copy the development version into the dist folder
 gulp.task('default', ['minify', 'copy-dev'], function() {
-    gulp.src('package.json')
-        .pipe(bump({type:'patch'}))
-        .pipe(gulp.dest('./'));
 });
 
-//Author: npm publish .
+//make it ready to publish using node and bower
+gulp.task('publish', function() {
+    gulp.src(['./bower.json', './package.json'])
+        .pipe(install());
+});
