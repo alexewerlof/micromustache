@@ -28,6 +28,7 @@ gulp.task('copy-dev', ['jshint'], function() {
     var headerTemplate = [
         "/*! <%= pkg.name %> v.<%= pkg.version %> ",
         " * <%= pkg.description %>",
+        " * <%= pkg.repository.url %>",
         " * @license <%= pkg.license %>",
         " */",
         ""

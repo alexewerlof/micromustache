@@ -1,5 +1,6 @@
-/*! micromustache v.2.1.21 
+/*! micromustache v.2.1.22 
  * A stripped down version of the {{mustache}} template engine with JavaScript
+ * http://github.com/hanifbbz/micromustache.git
  * @license CC-BY-3.0
  */
 (function (root, factory) {
