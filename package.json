@@ -1,6 +1,6 @@
 {
   "name": "micromustache",
-  "version": "2.1.20",
+  "version": "2.1.21",
   "description": "A stripped down version of the {{mustache}} template engine with JavaScript",
   "keywords": [
     "template",
@@ -13,7 +13,7 @@
     "quick",
     "light weight"
   ],
-  "main": "src/micromustache.js",
+  "main": "dist/micromustache.js",
   "directories": {
     "lib": "dist",
     "test": "test"
