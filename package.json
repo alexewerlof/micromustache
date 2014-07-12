@@ -21,8 +21,6 @@
   "devDependencies": {
     "del": "^0.1.1",
     "gulp": "^3.8.6",
-    "gulp-bump": "^0.1.10",
-    "gulp-concat": "^2.3.3",
     "gulp-git": "^0.4.3",
     "gulp-header": "^1.0.5",
     "gulp-install": "^0.1.8",

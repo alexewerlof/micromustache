@@ -5,7 +5,6 @@ var uglify = require('gulp-uglify');
 var size   = require('gulp-size');
 var rename = require('gulp-rename');
 var header = require('gulp-header');
-var install= require("gulp-install");
 var del    = require('del');
 var pkg    = require('./package.json');
 
@@ -51,10 +50,4 @@ gulp.task('minify', ['jshint'], function() {
 
 //the default task will minify and copy the development version into the dist folder
 gulp.task('default', ['minify', 'copy-dev'], function() {
-});
-
-//make it ready to publish using node and bower
-gulp.task('publish', function() {
-    gulp.src(['./bower.json', './package.json'])
-        .pipe(install());
 });
