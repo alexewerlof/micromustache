@@ -23,6 +23,8 @@
     "gulp": "^3.8.6",
     "gulp-git": "^0.4.3",
     "gulp-install": "^0.1.8",
+    "gulp-nodeunit": "0.0.5",
+    "gulp-nodeunit-runner": "^0.2.2",
     "gulp-size": "^0.4.0",
     "gulp-uglify": "^0.3.1",
     "mustache": "^0.8.2",

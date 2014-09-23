@@ -1,11 +1,13 @@
 var gulp = require('gulp');
 
-var uglify        = require('gulp-uglify');
-var size          = require('gulp-size');
-var rename        = require('gulp-rename');
-var del           = require('del');
-var micromustache = require('./src/micromustache.js'); //yes micromustache is used in its own Gulpfile!
-var pkg           = require('./package.json');
+var uglify        = require('gulp-uglify'),
+    size          = require('gulp-size'),
+    rename        = require('gulp-rename'),
+    del           = require('del'),
+    nodeunit = require('gulp-nodeunit'),
+    //yes micromustache is used in its own Gulpfile!
+    micromustache = require('./src/micromustache.js'),
+    pkg           = require('./package.json');
 
 var path = {
     src : './src',
@@ -56,5 +58,6 @@ gulp.task('release', ['minify', 'dev'], function() {
     console.info('Run these commands:');
     console.info('git tag -a v' + pkg.version + ' -m "Release version ' + pkg.version + '"');
     console.info('npm publish');
-    return true;
+    return gulp.src('test/*.js')
+        .pipe(nodeunit());
 });
