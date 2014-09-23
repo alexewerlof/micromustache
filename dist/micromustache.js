@@ -1,8 +1,3 @@
-/*! micromustache v.2.1.22 
- * A stripped down version of the {{mustache}} template engine with JavaScript
- * http://github.com/hanifbbz/micromustache.git
- * @license CC-BY-3.0
- */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
@@ -18,6 +13,7 @@
 
     /**
      * Replaces every {{variable}} inside the template with values provided by view
+     * If the value is a function, call it passing the name of the variable as the only argument.
      * @param template {string} the template containing one or more {{key}}
      * @param view {object} an object containing string (or number) values for every key that is used in the template
      * @return {string} template with its valid variable names replaced with corresponding values
