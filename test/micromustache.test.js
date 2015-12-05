@@ -325,3 +325,14 @@ exports.testRender = function (test) {
     }
     test.done();
 };
+
+
+// function args 
+exports.testFunctionArgs = function (test) {
+    test.deepEqual(micromustache.render('{{foo:one:two}}', {
+      foo: function(){
+        return JSON.stringify(arguments);
+      }
+    }), '{"0":"foo","1":"one","2":"two"}');
+    test.done();
+};

@@ -46,6 +46,8 @@ Micromustache achieves faster speed and smaller size by dropping:
 * HTML sanitization: *{{{ propertyName }}}*
 * Custom delimiters: *<% ... %> instead of {{ ... }}*
 
+However, micromustache *is* very modular, so you can easily [extend it to a fullfledged template engine](https://gist.github.com/coderofsalvation/93610d527c7b8534567f)
+
 #How to use
 
 micromustache is pretty similar to Mustache so if you know how to use Mustache, you already know Micromustache.
