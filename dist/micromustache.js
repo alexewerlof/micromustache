@@ -28,7 +28,7 @@
             view = {};
         }
         return template.replace(/\{?\{\{\s*(.*?)\s*\}\}\}?/g, function (match, varName) {
-            var value = view[varName];
+            var value = view[ varName ] || view[ varName.split(':')[0] ];
             switch (typeof value) {
                 case 'string':
                 case 'number':
@@ -36,7 +36,7 @@
                     return value;
                 case 'function':
                     //if the value is a function, call it passing the variable name
-                    return value(varName);
+                    return value.apply( view, varName.split(':').slice(1) );
                 default:
                     //anything else will be replaced with an empty string. This includes object, array, date, regexp and null.
                     return '';
