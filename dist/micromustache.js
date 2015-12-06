@@ -28,7 +28,7 @@
             view = {};
         }
         return template.replace(/\{?\{\{\s*(.*?)\s*\}\}\}?/g, function (match, varName) {
-            var value = view[ varName.split(':')[0] ];
+            var value = view[ varName ] || view[ varName.split(':')[0] ];
             switch (typeof value) {
                 case 'string':
                 case 'number':
