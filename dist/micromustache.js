@@ -36,7 +36,7 @@
                     return value;
                 case 'function':
                     //if the value is a function, call it passing the variable name
-                    return value.apply( view, varName.split(':') );
+                    return value.apply( view, varName.split(':').slice(1) );
                 default:
                     //anything else will be replaced with an empty string. This includes object, array, date, regexp and null.
                     return '';
