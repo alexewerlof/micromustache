@@ -1,3 +1,6 @@
+[![GitHub issues](https://img.shields.io/github/issues/userpixel/micromustache.svg?style=flat-square)](https://github.com/userpixel/micromustache/issues)
+
+
 # micromustache
 
 ![Logo](https://raw.github.com/hanifbbz/micromustache/master/logo/micromustache-logo-300.png)
