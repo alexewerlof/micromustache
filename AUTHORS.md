@@ -1,1 +1,0 @@
-Alex Ewerlöf (http://www.userpixel.com)

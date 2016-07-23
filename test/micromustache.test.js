@@ -1,327 +1,201 @@
-var Mustache = require('mustache');
-var micromustache = require('../src/micromustache.js');
+const assert = require('chai').assert;
+const micromustache = require('../src/micromustache.js');
 
-//do not touch non-string template
-exports.testNonStringTemplate = function (test) {
-    test.deepEqual(micromustache.render(1), 1);
-    test.deepEqual(micromustache.render(null, {}), null);
-    test.deepEqual(micromustache.render(true, {}), true);
-    test.done();
-};
+describe('micromustache', function() {
+  describe('#render()', function() {
+    it('should not touch non-string templates', function() {
+      assert.deepEqual(micromustache.render(1), 1);
+      assert.deepEqual(micromustache.render(null, {}), null);
+      assert.deepEqual(micromustache.render(true, {}), true);
+    });
 
-//empty string
-exports.testEmptyString = function (test) {
-    test.deepEqual(micromustache.render('', {}), '');
-    test.done();
-};
+    it('returns an empty string if the template is empty', function() {
+      assert.deepEqual(micromustache.render('', {}), '');
+      assert.deepEqual(micromustache.render('', {
+        a: 'b'
+      }), '');
+    });
 
-//no keys
-exports.testNoKeys = function (test) {
-    test.deepEqual(micromustache.render('{{i}}', {}), '');
-    test.done();
-};
+    it('assumes empty value if there are no key in the object',
+      function() {
+        assert.deepEqual(micromustache.render('{{i}}', {}), '');
+      });
 
-//non existing key
-exports.testNonExistingKey = function (test) {
-    test.deepEqual(micromustache.render('{{i}}', {j: 1}), '');
-    test.done();
-};
+    it('assumes empty value if the key is missing', function() {
+      assert.deepEqual(micromustache.render('{{i}}', {
+        j: 1
+      }), '');
+    });
 
-//Replace only one variable
-exports.testReplaceOnlyOneVariable = function (test) {
-    test.deepEqual(micromustache.render('{{i}}', {i: 'hello'}), 'hello');
-    test.deepEqual(micromustache.render('{{i}} world', {i: 'hello'}), 'hello world');
-    test.deepEqual(micromustache.render('Ohoy! {{i}}', {i: 'hello'}), 'Ohoy! hello');
-    test.deepEqual(micromustache.render('Ohoy! {{i}} world', {i: 'hello'}), 'Ohoy! hello world');
-    test.done();
-};
+    it('Replace only one variable', function() {
+      assert.deepEqual(micromustache.render('{{i}}', {
+        i: 'hello'
+      }), 'hello');
+      assert.deepEqual(micromustache.render('{{i}} world', {
+        i: 'hello'
+      }), 'hello world');
+      assert.deepEqual(micromustache.render('Ohoy! {{i}}', {
+        i: 'hello'
+      }), 'Ohoy! hello');
+      assert.deepEqual(micromustache.render('Ohoy! {{i}} world', {
+        i: 'hello'
+      }), 'Ohoy! hello world');
+    });
 
-//Replace two variables
-exports.testReplaceTwoVariables = function (test) {
-    test.deepEqual(micromustache.render('{{i}}{{j}}', {i: 'hello', j: 'world'}), 'helloworld');
-    test.deepEqual(micromustache.render('{{i}} {{j}}', {i: 'hello', j: 'world'}), 'hello world');
-    test.deepEqual(micromustache.render('{{i}} {{j}} {{k}}', {i: 'hello', j: 'world'}), 'hello world ');
-    test.deepEqual(micromustache.render('{{var1}} {{var2}}', {var1: 'hello', var2: 'world'}), 'hello world');
-    test.done();
-};
+    it('Replace two variables', function() {
+      assert.deepEqual(micromustache.render('{{i}}{{j}}', {
+        i: 'hello',
+        j: 'world'
+      }), 'helloworld');
+      assert.deepEqual(micromustache.render('{{i}} {{j}}', {
+        i: 'hello',
+        j: 'world'
+      }), 'hello world');
+      assert.deepEqual(micromustache.render('{{i}} {{j}} {{k}}', {
+        i: 'hello',
+        j: 'world'
+      }), 'hello world ');
+      assert.deepEqual(micromustache.render('{{var1}} {{var2}}', {
+        var1: 'hello',
+        var2: 'world'
+      }), 'hello world');
+    });
 
-//An empty dictionary will just remove all variables
-exports.testEmptyObject = function (test) {
-    test.deepEqual(micromustache.render('{{i}}'), '');
-    test.deepEqual(micromustache.render('{{i}}{{j}}'), '');
-    test.deepEqual(micromustache.render('{{i}} {{j}}'), ' ');
-    test.deepEqual(micromustache.render(' {{abc}} {{def}} '), '   ');
-    test.done();
-};
+    it('An empty dictionary will just remove all variables', function() {
+      assert.deepEqual(micromustache.render('{{i}}'), '');
+      assert.deepEqual(micromustache.render('{{i}}{{j}}'), '');
+      assert.deepEqual(micromustache.render('{{i}} {{j}}'), ' ');
+      assert.deepEqual(micromustache.render(' {{abc}} {{def}} '),
+        '   ');
+    });
 
-//Using special characters with dollar sign
-exports.testSpecialCharacters = function (test) {
-    test.deepEqual(micromustache.render('{{a}}', {a: '$'}), '$');
-    test.deepEqual(micromustache.render('{{a}}', {a: ' $'}), ' $');
-    test.deepEqual(micromustache.render('{{a}}', {a: '$ '}), '$ ');
-    test.deepEqual(micromustache.render('{{a}}', {a: '$$'}), '$$');
-    test.deepEqual(micromustache.render('{{a}}', {a: '$&'}), '$&');
-    test.deepEqual(micromustache.render('{{a}}', {a: '$`'}), '$`');
-    test.deepEqual(micromustache.render('{{a}}', {a: '$\''}), '$\'');
-    test.deepEqual(micromustache.render('{{a}}', {a: '$1'}), '$1');
-    test.done();
-};
+    it('Allows using $ as a value', function() {
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: '$'
+      }), '$');
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: ' $'
+      }), ' $');
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: '$ '
+      }), '$ ');
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: '$$'
+      }), '$$');
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: '$&'
+      }), '$&');
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: '$`'
+      }), '$`');
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: '$\''
+      }), '$\'');
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: '$1'
+      }), '$1');
+    });
 
-//Call the value function
-exports.testValueFunction = function (test) {
-    test.deepEqual(micromustache.render('{{a}}', {
-        a: function () {
-            return 'world';
+    it('Calls the function if the value is a function', function() {
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: function() {
+          return 'world';
         }
-    }), 'world');
-    test.deepEqual(micromustache.render('{{var1}}', {
-        var1: function (key) {
-            return key.toLocaleUpperCase();
+      }), 'world');
+      assert.deepEqual(micromustache.render('{{var1}}', {
+        var1: function(key) {
+          return key.toLocaleUpperCase();
         }
-    }), 'VAR1');
-    test.done();
-};
+      }), 'VAR1');
+    });
 
-//Value is number, boolean
-exports.testValueNumberBoolean = function (test) {
-    test.deepEqual(micromustache.render('{{a}}', {a: true}), 'true');
-    test.deepEqual(micromustache.render('{{a}}', {a: false}), 'false');
-    test.deepEqual(micromustache.render('{{a}}', {a: 0}), '0');
-    test.deepEqual(micromustache.render('{{a}}', {a: 1}), '1');
-    test.deepEqual(micromustache.render('{{a}}', {a: 999}), '999');
-    test.deepEqual(micromustache.render('{{a}}', {a: Number.NaN}), 'NaN');
-    test.done();
-};
+    it('deals with boolean values properly', function() {
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: true
+      }), 'true');
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: false
+      }), 'false');
+    });
 
-//Value is object or null
-exports.testValueObjectNull = function (test) {
-    test.deepEqual(micromustache.render('a{{b}}c', {
+    it('deals with numerical values properly', function() {
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: 0
+      }), '0');
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: 1
+      }), '1');
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: 999
+      }), '999');
+      assert.deepEqual(micromustache.render('{{a}}', {
+        a: Number.NaN
+      }), 'NaN');
+    });
+
+    it('ignores object or null values', function() {
+      assert.deepEqual(micromustache.render('a{{b}}c', {
         b: null
-    }), 'ac');
-    test.deepEqual(micromustache.render('a{{b}}c', {
+      }), 'ac');
+      assert.deepEqual(micromustache.render('a{{b}}c', {
         b: {}
-    }), 'ac');
-    test.deepEqual(micromustache.render('a{{b}}c', {
+      }), 'ac');
+      assert.deepEqual(micromustache.render('a{{b}}c', {
         b: {
-            b: 'hi'
+          b: 'hi'
         }
-    }), 'ac');
-    test.done();
-};
+      }), 'ac');
+    });
 
-//More than one occurrence
-exports.testValueReoccurance = function (test) {
-    test.deepEqual(micromustache.render('{{a}}{{a}}{{a}}', {'a': 'hello'}), 'hellohellohello');
-    test.deepEqual(micromustache.render('{{a}}{{b}}{{a}}{{b}}', {'a': '1','b':'2'}), '1212');
-    test.done();
-};
+    it('can handle more than one occurance of the variable in template',
+      function() {
+        assert.deepEqual(micromustache.render('{{a}}{{a}}{{a}}', {
+          'a': 'hello'
+        }), 'hellohellohello');
+        assert.deepEqual(micromustache.render('{{a}}{{b}}{{a}}{{b}}', {
+          'a': '1',
+          'b': '2'
+        }), '1212');
+      });
 
-//Compile a template
-exports.testCompile = function (test) {
-    var compiled = micromustache.compile('Hello {{name}}!');
-    test.deepEqual(typeof compiled, 'function');
-    test.deepEqual(compiled({name: 'Alex'}), 'Hello Alex!');
-    test.deepEqual(compiled({family: 'Alex'}), 'Hello !');
-    test.done();
-};
+    it('can accesses array elements', function() {
+      assert.deepEqual(micromustache.render(
+        'I like {{0}}, {{1}} and {{2}}', [
+          "orange", "apple", "lemon"
+        ]), 'I like orange, apple and lemon');
 
-//Compile an empty string
-exports.testCompileEmpty = function (test) {
-    var compile = micromustache.compile('');
-    test.deepEqual(typeof compile, 'function');
-    test.deepEqual(compile({a: 2}), '');
-    test.done();
-};
+      assert.deepEqual(micromustache.render('{{length}}', []), '0');
+    });
+  });
 
-//Check the existence of the supported functions
-exports.testCheckFunction = function (test) {
-    test.deepEqual(typeof micromustache, typeof Mustache);
+  describe('#compile()', function() {
+    it('compiles a template', function() {
+      var compiled = micromustache.compile('Hello {{name}}!');
+      assert.deepEqual(typeof compiled, 'function');
+      assert.deepEqual(compiled({
+        name: 'Alex'
+      }), 'Hello Alex!');
+      assert.deepEqual(compiled({
+        family: 'Alex'
+      }), 'Hello !');
+    });
 
-    test.deepEqual(typeof micromustache.render, typeof Mustache.render);
+    it('Compiles an empty template', function() {
+      var compile = micromustache.compile('');
+      assert.deepEqual(typeof compile, 'function');
+      assert.deepEqual(compile({
+        a: 2
+      }), '');
+    });
+  });
 
-    test.deepEqual(typeof micromustache.render('',{}), typeof Mustache.render('',{}));
-    test.done();
-};
+  describe('#to_html()', function() {
+    it('has a to_html() function', function() {
+      assert.isFunction(micromustache.to_html);
+    });
 
-//Access array elements
-exports.testArray = function (test) {
-    test.deepEqual(micromustache.render('I like {{0}}, {{1}} and {{2}}',[ "orange", "apple", "lemon" ]),'I like orange, apple and lemon');
-    test.done();
-};
-
-//Test render() for behaving the same in micromustache
-exports.testRender = function (test) {
-    var testCases = [
-        {
-            template:'',
-            data:{}
-        },
-        {
-            template:'{{a}}',
-            data:{a:''}
-        },
-        {
-            template:'{{a}}',
-            data:{a:'1'}
-        },
-        {
-            template:'{{a}}',
-            data:{a:'a'}
-        },
-        {
-            template:'{{a}}',
-            data:{a:'11'}
-        },
-        {
-            template:'{{a}}',
-            data:{a:' '}
-        },
-        {
-            template:' {{a}} ',
-            data:{a:''}
-        },
-        {
-            template:' {{a}} ',
-            data:{a:' '}
-        },
-        {
-            template:' {{a}} {{b}} ',
-            data:{a:' '}
-        },
-        {
-            template:' {{a}} {{b}} ',
-            data:{a:'a',b:'b'}
-        },
-        {
-            template:' {{a}} {{a}} {{a}}',
-            data:{a:'a'}
-        },
-        {
-            template:' {{a}} {{a}} {{a}}',
-            data:{a:'-'}
-        },
-        {
-            template:'{{1}}',
-            data:{'1':'-'}
-        },
-        {
-            template:'{{}}',
-            data:{'':'hello'}
-        },
-        {
-            template:'{{ }}',
-            data:{' ':'-'}
-        },
-        {
-            template:'{{-}}',
-            data:{'-':'-'}
-        },
-        {
-            template:'{{1a}}',
-            data:{'1a':'-'}
-        },
-        {
-            template:'{{a}}',
-            data:{a:null}
-        },
-        {
-            template:'{{a}},{{b}}',
-            data:{a:123,b:null}
-        },
-        {
-            template:'{{a}}',
-            data:null
-        },
-        {
-            template:'{{a}}',
-            data:{}
-        },
-        {
-            template:'{{a}}',
-            data:{a:true}
-        },
-        {
-            template:'{{a}}',
-            data:{a:false}
-        },
-        {
-            template:'{{a}}',
-            data:{a:Math.NaN}
-        },
-        {
-            template:'{{a}}',
-            data:{a:Number.POSITIVE_INFINITY}
-        },
-        {
-            template:'{{a}}',
-            data:{a:Number.NEGATIVE_INFINITY}
-        },
-        {
-            template:'{{a}}',
-            data:{a:0}
-        },
-        {
-            template:'{{a}}',
-            data:{a:0.1}
-        },
-        {
-            template:'{{a}}',
-            data:{a:0.00001}
-        },
-        {
-            template:'{{$}}',
-            data:{'$':'test'}
-        },
-        {
-            template:'{{_}}',
-            data:{'_':'test'}
-        },
-        {
-            template:'{{    }}',
-            data:{'_':'test'}
-        },
-        {
-            template:'{{   a}}',
-            data:{'a':'test'}
-        },
-        {
-            template:'{{a   }}',
-            data:{'a':'test'}
-        },
-        {
-            template:'{{   a   }}',
-            data:{'a':'test'}
-        },
-        {
-            template:'{{%}}',
-            data:{'%':'test'}
-        },
-        {
-            template:'{{var}}',
-            data:{'var':'test'}
-        },
-        {
-            template:'{{{var}}}',
-            data:{'var':'test'}
-        },
-        {
-            template:'{{{{var}}}}',
-            data:{'var':'test'}
-        },
-        {
-            template:'{{a{{b}}c}}',
-            data:{'a':'a','b':'b','c':'c'}
-        },
-        {
-            template:'I like {{0}}, {{1}} and {{2}}',
-            data:[ "orange", "apple", "lemon" ]
-        }
-    ];
-    for (var i = 0; i < testCases.length; i++) {
-        var testCase = testCases[i];
-        var template = testCase.template;
-        var data = testCase.data;
-        test.deepEqual(micromustache.render(template,data), Mustache.render(template,data),'Template: ' + template + ', data: ' + JSON.stringify(data) );
-    }
-    test.done();
-};
+    it('is exactly as render()', function() {
+      assert.deepEqual(micromustache.to_html, micromustache.render);
+    });
+  });
+});

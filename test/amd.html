@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AMD loading test</title>
+</head>
+<body>
+  <div id="output">Loading...</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.js"></script>
+<script>
+var output = document.getElementById('output');
+output.innerText = 'RequireJS loaded. Going to use micromustache...';
+require(['../browser/micromustache.js'], function (micromustache) {
+  output.innerText = micromustache.render('It is {{state}}!', {state: 'working'});
+});
+</script>
+</body>
+</html>

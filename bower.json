@@ -1,38 +1,21 @@
 {
   "name": "micromustache",
-  "version": "2.1.24",
-  "homepage": "https://github.com/hanifbbz/micromustache",
-  "authors": [
-    "Alex Ewerlof <hanifbbz@gmail.com>"
-  ],
-  "description": "A stripped down version of the {{mustache}} template engine",
-  "main": [
-      "dist/micromustache.js",
-      "dist/micromustache.min.js"
-  ],
+  "version": "2.2.1",
+  "homepage": "https://github.com/userpixel/micromustache",
+  "description": "A faster and smaller subimplementation of the {{mustache}} template engine for JavaScript",
+  "main": "browser/micromustache.js",
   "moduleType": [
     "amd",
     "globals",
     "node"
   ],
   "keywords": [
-    "mustache",
-    "angular",
-    "handlebars",
-    "replace",
     "template",
+    "mustache",
+    "string processing",
+    "string interpolation",
     "template engine",
-    "commonjs",
-    "amd",
-    "umd"
+    "microlibrary"
   ],
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "*.js",
-    "*.md",
-    "node_modules",
-    "bower_components",
-    "test"
-  ]
+  "license": "MIT"
 }

@@ -1,42 +1,37 @@
 {
   "name": "micromustache",
-  "version": "2.1.26",
-  "description": "A stripped down version of the {{mustache}} template engine with JavaScript",
+  "version": "2.2.1",
+  "description": "A faster and smaller subimplementation of the {{mustache}} template engine for JavaScript",
   "keywords": [
     "template",
     "mustache",
     "string processing",
-    "string replacement",
-    "regular expression",
+    "string interpolation",
     "template engine",
-    "small",
-    "quick",
-    "light weight"
+    "microlibrary"
   ],
-  "main": "dist/micromustache.js",
+  "main": "src/micromustache.js",
+  "browser": "browser/micromustache.min.js",
   "directories": {
     "lib": "dist",
     "test": "test"
   },
   "devDependencies": {
-    "del": "^0.1.1",
-    "gulp": "^3.8.6",
-    "gulp-git": "^0.4.3",
-    "gulp-install": "^0.1.8",
-    "gulp-nodeunit": "0.0.5",
-    "gulp-nodeunit-runner": "^0.2.2",
-    "gulp-size": "^0.4.0",
-    "gulp-uglify": "^0.3.1",
-    "mustache": "^0.8.2",
-    "nodeunit": "^0.9.0"
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3",
+    "mustache": "^2.2.1",
+    "umd": "^3.0.1"
   },
   "scripts": {
-    "test": "nodeunit test"
+    "build:umd": "umd micromustache src/micromustache.js browser/micromustache.js --commonJS",
+    "build:min": "uglifyjs browser/micromustache.js -o browser/micromustache.min.js",
+    "build": "npm run build:umd && npm run build:min",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/hanifbbz/micromustache.git"
+    "url": "http://github.com/userpixel/micromustache.git"
   },
   "author": "Alex Ewerlöf",
-  "license": "CC-BY-3.0"
+  "license": "MIT"
 }
