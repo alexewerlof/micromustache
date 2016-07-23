@@ -97,16 +97,29 @@ describe('micromustache', function() {
     });
 
     it('Calls the function if the value is a function', function() {
+      function stringProcessor(key) {
+        return key.toLocaleUpperCase();
+      }
       assert.deepEqual(micromustache.render('{{a}}', {
-        a: function() {
-          return 'world';
-        }
-      }), 'world');
-      assert.deepEqual(micromustache.render('{{var1}}', {
-        var1: function(key) {
-          return key.toLocaleUpperCase();
-        }
-      }), 'VAR1');
+        a: stringProcessor
+      }), 'A');
+      assert.deepEqual(micromustache.render('{{a}} {{b}}', {
+        a: stringProcessor,
+        b: stringProcessor
+      }), 'A B');
+    });
+
+    it('calls the function in the view context', function() {
+      var view = {
+        a: stringProcessor,
+        b: stringProcessor
+      };
+
+      function stringProcessor(key) {
+        return this === view;
+      }
+      assert.deepEqual(micromustache.render('{{a}} {{b}}', view),
+        'true true');
     });
 
     it('deals with boolean values properly', function() {
@@ -147,15 +160,24 @@ describe('micromustache', function() {
       }), 'ac');
     });
 
-    it('can handle more than one occurance of the variable in template',
+    it('ignores a variable name with space in it', function() {
+      assert.deepEqual(micromustache.render('{{a b}}', {
+        a: 1,
+        b: 2
+      }), '');
+    });
+
+    it(
+      'can handle more than one occurance of the variable in template',
       function() {
         assert.deepEqual(micromustache.render('{{a}}{{a}}{{a}}', {
           'a': 'hello'
         }), 'hellohellohello');
-        assert.deepEqual(micromustache.render('{{a}}{{b}}{{a}}{{b}}', {
-          'a': '1',
-          'b': '2'
-        }), '1212');
+        assert.deepEqual(micromustache.render(
+          '{{a}}{{b}}{{a}}{{b}}', {
+            'a': '1',
+            'b': '2'
+          }), '1212');
       });
 
     it('can accesses array elements', function() {
@@ -164,7 +186,8 @@ describe('micromustache', function() {
           "orange", "apple", "lemon"
         ]), 'I like orange, apple and lemon');
 
-      assert.deepEqual(micromustache.render('{{length}}', []), '0');
+      assert.deepEqual(micromustache.render('{{length}}', []),
+        '0');
     });
   });
 

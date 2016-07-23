@@ -86,6 +86,8 @@ micromustache.render('{{var1}}', {
 //output = 'VAR1'
 ````
 
+The function runs synchronously in the context of the view object (ie. `this` refers to the view object).
+
 ## .compile()
 
 ```

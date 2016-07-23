@@ -23,7 +23,7 @@ function render(template, view) {
         return value;
       case 'function':
         //if the value is a function, call it passing the variable name
-        return value(varName);
+        return value.call(view, varName);
       default:
         //anything else will be replaced with an empty string. This includes object, array, date, regexp and null.
         return '';
