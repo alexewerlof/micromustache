@@ -18,7 +18,7 @@ You can just download it from the `browser` directory or install it with [npm] (
 npm install micromustache
 ```
 
-Or {Bower] (http://bower.io/)
+Or [Bower] (http://bower.io/)
 
 ````bash
 bower install micromustache
