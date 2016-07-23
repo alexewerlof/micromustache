@@ -1,10 +1,3 @@
-Benefits:
-
-* No devDependencies
-* Works in node and Browser
-* Well tested
-* Behave exactly like mustache.js for the supported functionalities
-
 # micromustache
 
 ![Logo](https://raw.github.com/hanifbbz/micromustache/master/logo/micromustache-logo-300.png)
@@ -12,13 +5,18 @@ Benefits:
 A stripped down version of the {{mustache}} template engine with JavaScript.
 It covers the most important use case: **replacing variable names with their values from an object**. If that's all you need, micromustache is a drop-in replacement for MustacheJS.
 
+* No devDependencies
+* Works in node and Browser
+* Well tested
+* Behave exactly like mustache.js for the supported functionalities
+
 You can just download it from the `browser` directory or install it with [npm] (https://npmjs.org/package/micromustache):
 
 ```bash
 npm install micromustache
 ```
 
-Or [Bower] (http://bower.io/)
+Or [Bower] (http://bower.io/):
 
 ````bash
 bower install micromustache
