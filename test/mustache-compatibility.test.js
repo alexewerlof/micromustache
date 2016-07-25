@@ -15,7 +15,7 @@ describe('mustache.js compatibility', function() {
 
 });
 
-describe('produces the same result as mustache', function() {
+describe('just as MustacheJS', function() {
   var testCases = [{
     description: 'empty template',
     template: '',
@@ -231,18 +231,6 @@ describe('produces the same result as mustache', function() {
       'var': 'test'
     }
   }, {
-    description: 'tripple mustache',
-    template: '{{{var<html>}}}',
-    view: {
-      'var': 'test'
-    }
-  }, {
-    description: 'quadriple mustache',
-    template: '{{{{var<html>}}}}',
-    view: {
-      'var': 'test'
-    }
-  }, {
     description: 'a variable inside another variable',
     template: '{{a{{b}}c}}',
     view: {
@@ -256,7 +244,7 @@ describe('produces the same result as mustache', function() {
     view: ["orange", "apple", "lemon"]
   }];
   testCases.forEach(testCase => {
-    it(`Can handle ${testCase.description}`, () => {
+    it(`can handle ${testCase.description}`, () => {
       assert.deepEqual(
         micromustache.render(testCase.template, testCase.view),
         Mustache.render(testCase.template, testCase.view)
