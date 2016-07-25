@@ -20,7 +20,9 @@ If that's all you need, micromustache is a drop-in replacement for MustacheJS.
 
 # Installation
 
-You can just download it from the [browser directory](https://github.com/userpixel/micromustache/tree/master/browser) or install it via [npm] (https://npmjs.org/package/micromustache):
+You can just download it from the [browser directory](https://github.com/userpixel/micromustache/tree/master/browser)
+
+Or install it via [npm] (https://npmjs.org/package/micromustache):
 
 ```bash
 npm install micromustache
