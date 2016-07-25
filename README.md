@@ -127,7 +127,7 @@ function valueFn (key, currentScope, path, pathIndex) {
     // pathIndex = 1
     return 'http://github.com/userpixel/micromustache.git';
 }
-micromustache.render('micromustache is at {{repository.url}}', pathIndex);
+micromustache.render('micromustache is at {{repository.url}}', viewObject);
 //output = 'micromustache is at http://github.com/userpixel/micromustache.git'
 ````
 
