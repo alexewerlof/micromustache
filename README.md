@@ -7,7 +7,7 @@
 
 A stripped down version of the {{mustache}} template engine with JavaScript. You don't even need to know {{mustache}} to use it. This tool covers the most important use case: **interpolation: replacing variable names with their values from an object**.
 
-![Figure 1](https://raw.github.com/userpixel/micromustache/master/figure-1.png)
+![Figure 1](https://raw.github.com/userpixel/micromustache/master/fig-1.png)
 
 If that's all you need, micromustache is a drop-in replacement for MustacheJS.
 
@@ -59,7 +59,8 @@ Function signature:
  *        that is used in the template
  * @return {string} template where its variable names replaced with corresponding values.
  *        If a value is not found or is invalid, it will be assumed empty string ''.
- *        If the value is an object itself, it'll be stringified by JSON. In case of a JSON error the result will look like "{...}".
+ *        If the value is an object itself, it'll be stringified by JSON.
+ *        In case of a JSON error the result will look like "{...}".
  */
 micromustache.render(template, view);
 ```
