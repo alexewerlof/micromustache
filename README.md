@@ -48,7 +48,7 @@ If you can live with this, read on...
 
 # API
 
-## #render()
+## micromustache.render()
 
 Function signature:
 
@@ -115,10 +115,10 @@ The function runs synchronously in the context of the view object (i.e. `this` r
 ````js
 var viewObject = {
   repository: {
-    url: callback()
+    url: valueFn
   }  
 };
-function callback (key, currentScope, path, pathIndex) {
+function valueFn (key, currentScope, path, pathIndex) {
     // this = viewObject
     // key = 'url'
     // currentScope = viewObject.repository
@@ -131,13 +131,13 @@ micromustache.render('micromustache is at {{repository.url}}', pathIndex);
 ````
 
 
-## #compile()
+## micromustache.compile()
 
 Function signature:
 
 ```
 /**
- * @param template {string} same as the template parameter to render()
+ * @param template {string} same as the template parameter to .render()
  * @return compiler(view) {function} a function that accepts a view and returns a rendered template
  */
 micromustache.compile(template);
@@ -153,9 +153,9 @@ output = templateEngine({first:'Albert',last:'Einstein'});
 //output = "Search Albert Einstein popcorn!"
 ```
 
-## #to_html()
+## micromustache.to_html()
 
-Just another name for `render()` for compatibility with MustacheJS.
+Just another name for `micromustache.render()` for compatibility with MustacheJS.
 
 # Tests
 
