@@ -11,7 +11,7 @@ A stripped down version of the {{mustache}} template engine with JavaScript. You
 
 If that's all you need, micromustache is a drop-in replacement for MustacheJS.
 
-* No devDependencies
+* No dependencies
 * Works in node and Browser
 * Well tested
 * Dead simple to learn yet a pleasure to use
