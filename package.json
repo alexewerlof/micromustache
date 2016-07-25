@@ -1,6 +1,6 @@
 {
   "name": "micromustache",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A faster and smaller subimplementation of the {{mustache}} template engine for JavaScript",
   "keywords": [
     "template",
@@ -25,10 +25,7 @@
     "build:umd": "umd micromustache src/micromustache.js browser/micromustache.js --commonJS",
     "build:min": "uglifyjs browser/micromustache.js -o browser/micromustache.min.js",
     "build": "npm run build:umd && npm run build:min",
-    "test": "mocha",
-    "preversion": "npm test",
-    "version": "npm run build && git add -A",
-    "postversion": "git push && git push --tags"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
