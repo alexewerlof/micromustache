@@ -90,10 +90,31 @@ You can easily reference deep object hierarchies.
 For example given the [package.json](https://github.com/userpixel/micromustache/blob/master/package.json) file of this project:
 
 ```js
-var viewObject = require('.package.json'); //or load via ajax
-micromustache.render("micromustache is tested with mocha version {{devDependencies.mocha}}", viewObject);
-//output = "^2.5.3"
+var singer = {
+  first: 'Michael',
+  last: 'Jackson',
+  children: [
+    {
+      first: 'Paris-Michael',
+      middle: 'Katherine',
+    },
+    {
+      first: 'Prince',
+      middle: 'Michael',
+      prefix: 'II'
+    },
+    {
+      first: 'Michael',
+      middle: 'Joseph',
+      prefix: 'Jr.'
+    }
+  ]
+}
+micromustache.render("{{first}} {{last}} had {{children.length}} children: {{children.0.first}}, {{children.1.first}} and {{children.2.first}}", singer);
+//output = "Michael Jackson had 3 children: Paris-Michael, Prince and Michael"
 ```
+
+As you can see micromustache doesn't have loops or any other fancy feature that MustacheJS offers.
 
 ### Differences with MustacheJS render() method
 

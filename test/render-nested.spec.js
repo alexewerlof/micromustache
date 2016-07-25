@@ -86,4 +86,30 @@ describe('#render() nested objects and arrays', function () {
     assert.deepEqual(render('-{{a}}-', viewObject), '-{...}-');
   });
 
+  it('works for Michael Jackson, so it should work for everyone', function () {
+    // I don't have a thing with MJ. Just improvised and it stuck there!
+    var singer = {
+      first: 'Michael',
+      last: 'Jackson',
+      children: [
+        {
+          first: 'Paris-Michael',
+          middle: 'Katherine',
+        },
+        {
+          first: 'Prince',
+          middle: 'Michael',
+          prefix: 'II'
+        },
+        {
+          first: 'Michael',
+          middle: 'Joseph',
+          prefix: 'Jr.'
+        }
+      ]
+    }
+    assert.deepEqual(render("{{first}} {{last}} had {{children.length}} children: {{children.0.first}}, {{children.1.first}} and {{children.2.first}}",
+    singer), 'Michael Jackson had 3 children: Paris-Michael, Prince and Michael');
+  });
+
 });
