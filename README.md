@@ -52,7 +52,7 @@ If you can live with this, read on...
 
 Function signature:
 
-```
+```js
 /**
  * @param template {string} the template containing one or more {{variableNames}}
  * @param [view={}] {object} an optional object containing values for every variable names
@@ -136,7 +136,7 @@ micromustache.render('micromustache is at {{repository.url}}', pathIndex);
 
 Function signature:
 
-```
+```js
 /**
  * @param template {string} same as the template parameter to .render()
  * @return compiler(view) {function} a function that accepts a view and returns a rendered template
