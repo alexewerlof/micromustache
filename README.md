@@ -59,7 +59,7 @@ Function signature:
  *        that is used in the template
  * @return {string} template where its variable names replaced with corresponding values.
  *        If a value is not found or is invalid, it will be assumed empty string ''.
- *        If the value is an object itself, it'll be stringified by JSON. In case of a JSON error the result will look like "{JSON_ERROR: ... }".
+ *        If the value is an object itself, it'll be stringified by JSON. In case of a JSON error the result will look like "{...}".
  */
 micromustache.render(template, view);
 ```
@@ -73,16 +73,25 @@ var person = {
   first: 'Michael',
   last: 'Jackson'
 };
-var output = micromustache.render('Search {{first}} {{ last }} popcorn!', person);
+micromustache.render('Search {{first}} {{ last }} popcorn!', person);
 //output = "Search Michael Jackson popcorn!"
 ````
 
-You can even access array elements and `length`:
+You can even access array elements and `length` because they are all valid keys in the array object in javascript:
 
 ```js
 var fruits = [ "orange", "apple", "lemon" ];
-var output = micromustache.render("I like {{0}}, {{1}} and {{2}} ({{length}} fruits!)", fruits);
+micromustache.render("I like {{0}}, {{1}} and {{2}} ({{length}} fruits!)", fruits);
 //output = "I like orange, apple and lemon (3 fruits!)"
+```
+
+You can easily reference deep object hierarchies.
+For example given the [package.json](https://github.com/userpixel/micromustache/blob/master/package.json) file of this project:
+
+```js
+var viewObject = require('.package.json'); //or load via ajax
+micromustache.render("micromustache is tested with mocha version {{devDependencies.mocha}}", viewObject);
+//output = "^2.5.3"
 ```
 
 ### Differences with MustacheJS render() method

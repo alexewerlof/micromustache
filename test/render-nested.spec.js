@@ -76,4 +76,14 @@ describe('#render() nested objects and arrays', function () {
     }), '13')
   });
 
+  it('does not crash when JSON conversion has a problem', function () {
+    // An object with loop will cause a JSON exception
+    var viewObject = {}
+    viewObject.a = viewObject;
+    assert.throws(function () {
+      JSON.stringify(viewObject);
+    });
+    assert.deepEqual(render('-{{a}}-', viewObject), '-{...}-');
+  });
+
 });

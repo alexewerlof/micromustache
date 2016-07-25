@@ -47,7 +47,7 @@ function render(template, view) {
             try {
               return JSON.stringify(value);
             } catch (jsonError) {
-              return '{JSON_ERROR: ' + jsonError + '}';
+              return '{...}';
             }
           }
         default:
