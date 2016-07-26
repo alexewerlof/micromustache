@@ -5,14 +5,14 @@
 
 ![Logo](https://raw.github.com/userpixel/micromustache/master/logo/micromustache-logo-300.png)
 
-A stripped down version of the {{mustache}} template engine with JavaScript. You don't even need to know {{mustache}} to use it. This tool covers the most important use case: **interpolation: replacing variable names with their values from an object**.
+This tool covers the most important use case: **interpolation: replacing variable names with their values from an object**.
 
 ![Figure 1](https://raw.github.com/userpixel/micromustache/master/fig-1.png)
 
 If that's all you need, micromustache is a drop-in replacement for MustacheJS.
 
 * No dependencies
-* Works in node and Browser
+* Works in node (CommonJS) and Browser (AMD, global, Browserify/WebPack)
 * Well tested
 * Dead simple to learn yet a pleasure to use
 * Well documented with many examples
@@ -176,6 +176,9 @@ output = templateEngine(person);
 output = templateEngine({first:'Albert',last:'Einstein'});
 //output = "Search Albert Einstein popcorn!"
 ```
+
+This function makes your code cleaner but for simplicity doesn't use any memoization
+technique behind the scenes.
 
 ## micromustache.to_html()
 
