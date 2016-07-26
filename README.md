@@ -20,15 +20,15 @@ If that's all you need, micromustache is a drop-in replacement for MustacheJS.
 
 # Installation
 
-You can just download it from the [browser directory](https://github.com/userpixel/micromustache/tree/master/browser)
+Download from [browser directory](https://github.com/userpixel/micromustache/tree/master/browser)
 
-Or install it via [npm] (https://npmjs.org/package/micromustache):
+[npm](https://npmjs.org/package/micromustache):
 
 ```bash
 npm install micromustache
 ```
 
-Or [Bower] (http://bower.io/):
+[Bower](http://bower.io/):
 
 ````bash
 bower install micromustache
@@ -67,7 +67,7 @@ Function signature:
 micromustache.render(template, view);
 ```
 
-*Alias: `#to_html()`*
+*Alias: `.to_html()`*
 
 Renders a template with the provided key/values from the view object. Example:
 
