@@ -5,14 +5,8 @@
   <title>AMD loading test</title>
 </head>
 <body>
+  <p>This test loads Require.js from internet, therefore you can't run it in an airplane or North Koera.</p>
   <div id="output">Loading...</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.js"></script>
-<script>
-var output = document.getElementById('output');
-output.innerText = 'RequireJS loaded. Going to use micromustache...';
-require(['../browser/micromustache.js'], function (micromustache) {
-  output.innerText = micromustache.render('It is {{state}}!', {state: 'working'});
-});
-</script>
+  <script data-main="amd.js" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.js"></script>
 </body>
 </html>

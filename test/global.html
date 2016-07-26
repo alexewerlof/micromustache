@@ -7,10 +7,6 @@
 <body>
   <div id="output">Loading...</div>
 <script src="../browser/micromustache.js"></script>
-<script>
-var output = document.getElementById('output');
-output.innerText = 'Loaded. Going to call micromustache...';
-output.innerText = micromustache.render('It is {{state}}!', {state: 'working'});
-</script>
+<script src="global.js"></script>
 </body>
 </html>

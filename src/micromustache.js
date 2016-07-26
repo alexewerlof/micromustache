@@ -28,33 +28,19 @@ function render(template, view) {
       }
       var key = path[pathIndex];
       var value = currentScope[key];
-      switch (typeof value) {
-        case 'string':
-        case 'number':
-        case 'boolean':
-          return value;
-        case 'function':
-          //if the value is a function, call it passing the variable name
-          return value.call(view, key, currentScope, path, pathIndex);
-        case 'object':
-          if (value === null) {
-            return '';
-          }
-          pathIndex++;
-          if ( pathIndex < path.length ) {
-            return resolve(value, pathIndex);
-          } else {
-            try {
-              return JSON.stringify(value);
-            } catch (jsonError) {
-              return '{...}';
-            }
-          }
-        default:
-          //anything else will be replaced with an empty string (date, regexp, etc).
-          return '';
+      var typeofValue = typeof value;
+      if (typeofValue === 'function') {
+        //if the value is a function, call it passing the variable name
+        return valueFnResultToString(value.call(view, key, currentScope, path, pathIndex));
+      } else if (typeofValue === 'object') {
+        pathIndex++;
+        // If it's a leaf and still an object, just stringify it
+        return pathIndex < path.length ? resolve(value, pathIndex) : valueFnResultToString(value);
+      } else {
+        return valueFnResultToString(value);
       }
     }
+
     return resolve(view, 0);
   });
 }
@@ -72,6 +58,31 @@ function compile (template) {
   return function compiler (view) {
     return render (template, view);
   };
+}
+
+function valueFnResultToString (value) {
+  switch (typeof value) {
+    case 'string':
+    case 'number':
+    case 'boolean':
+      return value;
+    case 'object':
+      // null is an object but is falsy. Swallow null
+      return value ? toJsonPolitely(value) : '';
+    default:
+      // Anything else will be replaced with an empty string
+      // For example: undefined, date, regexp, etc).
+      return '';
+  }
+}
+
+// Converts an object to json without throwing
+function toJsonPolitely (obj) {
+  try {
+    return JSON.stringify(obj);
+  } catch (jsonError) {
+    return '{...}';
+  }
 }
 
 exports.to_html = exports.render = render;

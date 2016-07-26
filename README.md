@@ -18,23 +18,7 @@ If that's all you need, micromustache is a drop-in replacement for MustacheJS.
 * Well documented with many examples
 * Behave exactly like mustache.js for the supported functionalities
 
-# Installation
-
-Download from [browser directory](https://github.com/userpixel/micromustache/tree/master/browser)
-
-[npm](https://npmjs.org/package/micromustache):
-
-```bash
-npm install micromustache
-```
-
-[Bower](http://bower.io/):
-
-````bash
-bower install micromustache
-````
-
-# Limitations
+**Tradeoff**
 
 Micromustache achieves faster speed and smaller size by dropping:
 
@@ -45,6 +29,7 @@ Micromustache achieves faster speed and smaller size by dropping:
 * Comments: *{{! ...}}*
 * HTML sanitization: *{{{ propertyName }}}*
 * Custom delimiters: *No support for <% ... %>. We just have {{ ... }}*
+* It does no support IE 6-8
 
 If you can live with this, read on...
 
@@ -52,7 +37,7 @@ If you can live with this, read on...
 
 ## micromustache.render()
 
-Function signature:
+Signature:
 
 ```js
 /**
@@ -88,8 +73,7 @@ micromustache.render("I like {{0}}, {{1}} and {{2}} ({{length}} fruits!)", fruit
 //output = "I like orange, apple and lemon (3 fruits!)"
 ```
 
-You can easily reference deep object hierarchies.
-For example given the [package.json](https://github.com/userpixel/micromustache/blob/master/package.json) file of this project:
+You can easily reference deep object hierarchies:
 
 ```js
 var singer = {
@@ -125,16 +109,32 @@ micromustache is a bit more forgiving than MustacheJS. For example, if the `view
 Another difference (which can handle complicated edge cases) is that you can use functions as values for more flexibility. micromustache will simply call the function with the variable name and use its return value for interpolation:
 
 ````js
-micromustache.render('{{var1}}', {
-    var1: function (key, currentScope, path, currentPointer) {
-        // "this" inside the function refers to the current object
-        return key.toUpperCase();
-    }
+/**
+ * @param key {String} variable name for the current scope.
+ *        For hierarchical names like {{a.b.c}} the key can be 'a' or 'b' or 'c'
+ * @param currentScope {Object} the current object that the variable is
+ *        supposed to resolved from
+ * @param path {String[]} useful for hierarchical objects.
+ *        for example a variable name like {{a.b.c}} sets the
+ *        path to ['a', 'b', 'c']
+ * @param currentPointer {Number} the array index to where in the path we are at the
+ *        moment. This is usually path.length - 1
+ * @return {String|Number|Boolean|Object} the value to be interpolated
+ */
+function toUpper (key, currentScope, path, currentPointer) {
+  // key is the variable name
+  // By the way: "this" inside the function refers to the current object
+  return key.toUpperCase();
+}
+
+micromustache.render('I bought a {{screaming}} {{dog}}!!!', {
+  screaming: toUpper,
+  dog: toUpper
 });
-//output = 'VAR1'
+//output = 'I bought a SCREAMING DOG!!!'
 ````
 
-The function runs synchronously in the context of the view object (i.e. `this` refers to the view object). A more complex example:
+The function runs **synchronously** in the context of the view object (i.e. `this` refers to the view object). A more complex example:
 
 ````js
 var viewObject = {
@@ -184,6 +184,22 @@ technique behind the scenes.
 
 Just another name for `micromustache.render()` for compatibility with MustacheJS.
 
+# Installation
+
+Download from [browser directory](https://github.com/userpixel/micromustache/tree/master/browser)
+
+[npm](https://npmjs.org/package/micromustache):
+
+```bash
+npm install micromustache
+```
+
+[Bower](http://bower.io/):
+
+````bash
+bower install micromustache
+````
+
 # Tests
 
 We use Mocha/Chai for tests:
@@ -191,6 +207,12 @@ We use Mocha/Chai for tests:
 ```
 npm test
 ```
+
+The browser module loading tests (
+[AMD](https://github.com/userpixel/micromustache/blob/master/test/amd.html)
+and
+[global](https://github.com/userpixel/micromustache/blob/master/test/global.html)
+) need to be loaded in the browser.
 
 # TODO
 

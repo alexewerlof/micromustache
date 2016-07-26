@@ -112,4 +112,17 @@ describe('#render() nested objects and arrays', function () {
     singer), 'Michael Jackson had 3 children: Paris-Michael, Prince and Michael');
   });
 
+  it('runs the relevant example from README.md with toUpper function', function () {
+    function toUpper (key, currentScope, path, currentPointer) {
+      // key is the variable name
+      // By the way: "this" inside the function refers to the current object
+      return key.toUpperCase();
+    }
+
+    assert.deepEqual(micromustache.render('I bought a {{screaming}} {{dog}}!!!', {
+      screaming: toUpper,
+      dog: toUpper
+    }), 'I bought a SCREAMING DOG!!!');
+  });
+
 });
