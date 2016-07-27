@@ -42,7 +42,7 @@ Signature:
 ```js
 /**
  * @param {string} template the template containing one or more {{variableNames}}
- * @param {object} [view={}] an optional object containing values for every variable names
+ * @param [object={}] view an optional object containing values for every variable names
  *        that is used in the template. If it's omitted, it'll be assumed an empty object.
  * @return {string} template where its variable names replaced with corresponding values.
  *        If a value is not found or is invalid, it will be assumed empty string ''.
