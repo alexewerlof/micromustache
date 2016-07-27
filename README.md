@@ -41,9 +41,9 @@ Signature:
 
 ```js
 /**
- * @param template {string} the template containing one or more {{variableNames}}
- * @param [view={}] {object} an optional object containing values for every variable names
- *        that is used in the template
+ * @param {string} template the template containing one or more {{variableNames}}
+ * @param {object} [view={}] an optional object containing values for every variable names
+ *        that is used in the template. If it's omitted, it'll be assumed an empty object.
  * @return {string} template where its variable names replaced with corresponding values.
  *        If a value is not found or is invalid, it will be assumed empty string ''.
  *        If the value is an object itself, it'll be stringified by JSON.
@@ -110,14 +110,14 @@ Another difference (which can handle complicated edge cases) is that you can use
 
 ````js
 /**
- * @param key {String} variable name for the current scope.
+ * @param {String} key variable name for the current scope.
  *        For hierarchical names like {{a.b.c}} the key can be 'a' or 'b' or 'c'
- * @param currentScope {Object} the current object that the variable is
+ * @param {Object} currentScope the current object that the variable is
  *        supposed to resolved from
- * @param path {String[]} useful for hierarchical objects.
+ * @param {String[]} path useful for hierarchical objects.
  *        for example a variable name like {{a.b.c}} sets the
  *        path to ['a', 'b', 'c']
- * @param currentPointer {Number} the array index to where in the path we are at the
+ * @param {Number} currentPointer the array index to where in the path we are at the
  *        moment. This is usually path.length - 1
  * @return {String|Number|Boolean|Object} the value to be interpolated
  */
@@ -161,8 +161,8 @@ Function signature:
 
 ```js
 /**
- * @param template {string} same as the template parameter to .render()
- * @return compiler(view) {function} a function that accepts a view and returns a rendered template
+ * @param {string} template same as the template parameter to .render()
+ * @return {function} a function that accepts a view object and returns a rendered template string
  */
 micromustache.compile(template);
 ```
