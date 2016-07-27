@@ -73,6 +73,9 @@ micromustache.render("I like {{0}}, {{1}} and {{2}} ({{length}} fruits!)", fruit
 //output = "I like orange, apple and lemon (3 fruits!)"
 ```
 
+*Note: if a key is missing or null, it'll be treated as it contained a value
+of empty string (i.e. the {{variableName}} will be removed from the template).*
+
 You can easily reference deep object hierarchies:
 
 ```js
