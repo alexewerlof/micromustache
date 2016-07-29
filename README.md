@@ -18,9 +18,12 @@ If that's all you need, micromustache is a drop-in replacement for MustacheJS.
 * Well documented with many examples
 * Behave exactly like mustache.js for the supported functionalities
 
+But wait, don't ES6 Template literals solve the same problem? Read FAQ at the end of this page.
+
 **Tradeoff**
 
-Micromustache achieves faster speed and smaller size by dropping:
+Micromustache achieves faster speed and smaller size by dropping the following
+features from MustacheJS:
 
 * Array iterations: *{{# ...}}*
 * Partials: *{{> ...}}*
@@ -190,7 +193,7 @@ Just another name for `micromustache.render()` for compatibility with MustacheJS
 
 # Installation
 
-Download from [browser directory](https://github.com/userpixel/micromustache/tree/master/browser)
+There are 4 ways to get the library:
 
 [npm](https://npmjs.org/package/micromustache):
 
@@ -202,6 +205,20 @@ npm install micromustache
 
 ````bash
 bower install micromustache
+````
+
+[CDN](https://cdnjs.com/libraries/micromustache):
+
+````HTML
+<script src="https://cdnjs.cloudflare.com/ajax/libs/micromustache/3.0.4/micromustache.js"></script>
+````
+
+Download directly from [browser directory](https://github.com/userpixel/micromustache/tree/master/browser)
+
+Clone this Git repo:
+
+````bash
+git clone https://github.com/userpixel/micromustache
 ````
 
 # Tests
@@ -217,6 +234,25 @@ The browser module loading tests (
 and
 [global](https://github.com/userpixel/micromustache/blob/master/test/global.html)
 ) need to be loaded in the browser.
+
+# FAQ
+
+**Q. What about [ES6 template literals](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals)
+(AKA "template strings")?
+Aren't they gonna deprecate this library?**
+
+A. The expressions in a string literal can't reference values from outside its scope.
+Therefore it is not possible to simply pass an object and resolve variables from its keys.
+The [tagged template literals](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals)
+cover part of the functionality but they:
+
+* are not Mustache-compatible
+* require compilation for Android and IE
+
+However, since when they are natively supported by the runtime, they have a
+great performance and if you learn to use the native way of doing things,
+you don't have to learn an ever-changing library, though their functionality is
+more limited than MustacheJS.
 
 # TODO
 
