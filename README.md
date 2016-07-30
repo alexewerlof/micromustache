@@ -11,6 +11,19 @@ This tool covers the most important use case: **interpolation: replacing variabl
 
 If that's all you need, micromustache is a drop-in replacement for MustacheJS.
 
+- [Features](#features)
+- [Tradeoffs](#tradeoffs)
+- [API](#api)
+  - [render()](#micromustacherender)
+    - [Differences with MustacheJS](#differences-with-mustachejs-render-method)
+  - [compile()](#micromustachecompile)
+  - [to_html()](#micromustacheto_html)
+- [Tests](#tests)
+- [FAQ](#faq)
+- [License](#license)
+
+## Features
+
 * No dependencies
 * Works in node (CommonJS) and Browser (AMD, global, Browserify/WebPack)
 * Well tested
@@ -20,7 +33,7 @@ If that's all you need, micromustache is a drop-in replacement for MustacheJS.
 
 But wait, don't ES6 Template literals solve the same problem? Read FAQ at the end of this page.
 
-**Tradeoff**
+## Tradeoffs
 
 Micromustache achieves faster speed and smaller size by dropping the following
 features from MustacheJS:
@@ -44,15 +57,22 @@ Signature:
 
 ```js
 /**
- * @param {string} template - the template containing one or more {{variableNames}}
- * @param {Object} [view={}] - an optional object containing values for every variable names
- *        that is used in the template. If it's omitted, it'll be assumed an empty object.
- * @returns {string} template where its variable names replaced with corresponding values.
- *        If a value is not found or is invalid, it will be assumed empty string ''.
- *        If the value is an object itself, it'll be stringified by JSON.
+ * @param {string} template - the template containing one or
+ *        more {{variableNames}}
+ * @param {Object} [view={}] - an optional object containing values for
+ *        every variable names that is used in the template. If it's omitted,
+ *        it'll be assumed an empty object.
+ * @param {GeneralValueFn} [generalValueFn] an optional function that will be
+ *        called for every key to generate a value. If the result is undefined
+ *        we'll proceed with the default value resolution algorithm.
+ *        This function runs in the context of view.
+ * @returns {string} template where its variable names replaced with
+ *        corresponding values. If a value is not found or is invalid, it will
+ *        be assumed empty string ''. If the value is an object itself, it'll
+ *        be stringified by JSON.
  *        In case of a JSON error the result will look like "{...}".
  */
-micromustache.render(template, view);
+micromustache.render(template, view, generalValueFn);
 ```
 
 *Alias: `.to_html()`*
@@ -116,7 +136,7 @@ Another difference (which can handle complicated edge cases) is that you can use
 
 ````js
 /**
- * @callback valueFn
+ * @callback ValueFn
  * @param {string} key - variable name for the current scope.
  *        For hierarchical names like {{a.b.c}} the key can be 'a' or 'b' or 'c'
  * @param {Object} currentScope - the current object that the variable is
@@ -124,8 +144,8 @@ Another difference (which can handle complicated edge cases) is that you can use
  * @param {string[]} path - useful for hierarchical objects.
  *        for example a variable name like {{a.b.c}} sets the
  *        path to ['a', 'b', 'c']
- * @param {number} currentPointer - the array index to where in the path we are at the
- *        moment. This is usually path.length - 1
+ * @param {number} currentPointer - the array index to where in the path we are
+ *        at the moment. This is usually path.length - 1
  * @returns {string|number|boolean|Object} the value to be interpolated
  */
 function toUpper (key, currentScope, path, currentPointer) {
@@ -169,7 +189,8 @@ Function signature:
 ```js
 /**
  * @param {string} template - same as the template parameter to .render()
- * @returns {function} a function that accepts a view object and returns a rendered template string
+ * @returns {function} a function that accepts a view object and returns a
+ *        rendered template string
  */
 micromustache.compile(template);
 ```
@@ -253,6 +274,10 @@ However, since when they are natively supported by the runtime, they have a
 great performance and if you learn to use the native way of doing things,
 you don't have to learn an ever-changing library, though their functionality is
 more limited than MustacheJS.
+
+# License
+
+MIT
 
 # TODO
 
