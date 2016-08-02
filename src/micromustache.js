@@ -34,43 +34,53 @@
  * @param {Object} [view={}] - an optional object containing values for
  *        every variable names that is used in the template. If it's omitted,
  *        it'll be assumed an empty object.
- * @param {GeneralValueFn} [generalValueFn] an optional function that will be
+ * @param {GeneralValueFn} [generalValueFn] - an optional function that will be
  *        called for every key to generate a value. If the result is undefined
  *        we'll proceed with the default value resolution algorithm.
  *        This function runs in the context of view.
- * @returns {string} template where its variable names replaced with
+ * @returns {string} - template where its variable names replaced with
  *        corresponding values. If a value is not found or is invalid, it will
  *        be assumed empty string ''. If the value is an object itself, it'll
  *        be stringified by JSON.
  *        In case of a JSON error the result will look like "{...}".
  */
-function render(template, view, generalValueFn) {
+function render (template, view, generalValueFn) {
   //don't touch the template if it is not a string
   if (typeof template !== 'string') {
     return template;
   }
+
+  // if view is omitted but generalValueFn is set
+  if (typeof view === 'function' && typeof generalValueFn === 'undefined') {
+    generalValueFn = view;
+    view = {};
+  }
+
   //if view is not a valid object, assume it is an empty object
   //which effectively removes all variable interpolations
   if (typeof view !== 'object' || view === null) {
     view = {};
   }
+
   return template.replace(/\{\{\s*(.*?)\s*\}\}/g, function (match, varName) {
     if (generalValueFn) {
       var generalValueFnResult = generalValueFn(view, varName);
-      if (typeof generalValueFnResult !== undefined) {
+      if (typeof generalValueFnResult !== 'undefined') {
         return valueFnResultToString(generalValueFnResult);
       }
     }
 
     var path = varName.split('.');
 
-    function resolve(currentScope, pathIndex) {
+    function resolve (currentScope, pathIndex) {
       if (currentScope === null) {
         return '';
       }
+
       var key = path[pathIndex];
       var value = currentScope[key];
       var typeofValue = typeof value;
+
       if (typeofValue === 'function') {
         //if the value is a function, call it passing the variable name
         return valueFnResultToString(
@@ -99,7 +109,7 @@ function render(template, view, generalValueFn) {
  *
  * @param {string} template - same as the template parameter to .render()
  * @param {GeneralValueFn} [generalValueFn] - same as the parameter to .render()
- * @returns {function} a function that accepts a view object and returns a
+ * @returns {function} - a function that accepts a view object and returns a
  *        rendered template string template
  */
 function compile (template, generalValueFn) {
