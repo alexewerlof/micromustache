@@ -103,7 +103,8 @@ function render(template, view, generalValueFn) {
  *        rendered template string template
  */
 function compile (template, generalValueFn) {
-  //create and return a function that will always apply this template under the hood
+  // Create and return a function that will always apply this template
+  // and generalValueFn under the hood
   return function compiler (view) {
     return render (template, view, generalValueFn);
   };
@@ -117,20 +118,21 @@ function valueFnResultToString (value) {
       return value;
     case 'object':
       // null is an object but is falsy. Swallow null
+      if (value === null) {
+        return '';
+      } else {
+        // Convert the object to json without throwing
+        try {
+          return JSON.stringify(value);
+        } catch (jsonError) {
+          return '{...}';
+        }
+      }
       return value ? toJsonPolitely(value) : '';
     default:
       // Anything else will be replaced with an empty string
       // For example: undefined, Symbol, etc.
       return '';
-  }
-}
-
-// Converts an object to json without throwing
-function toJsonPolitely (obj) {
-  try {
-    return JSON.stringify(obj);
-  } catch (jsonError) {
-    return '{...}';
   }
 }
 
