@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^2.5.3",
+    "mocha": "^3.0.0",
     "mustache": "^2.2.1",
     "uglify-js": "^2.7.0",
     "umd": "^3.0.1"
