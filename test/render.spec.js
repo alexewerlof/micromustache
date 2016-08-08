@@ -192,4 +192,26 @@ describe('#render()', function() {
     assert.deepEqual(render('{{length}}', []), '0');
   });
 
+  it('ignores the view if it is a function', function () {
+    function view() {}
+    view.A = 'Cat';
+    assert.deepEqual(render('X={{A}}', view), 'X=');
+  });
+
+  it('accepts class as view', function () {
+    class Parent {
+      constructor () {
+        this.B = 'Mobile';
+      }
+    }
+    class View extends Parent {
+      constructor () {
+        super();
+        this.A = 'Crocodile';
+      }
+    }
+    var view = new View();
+    view.C = 'Alice';
+    assert.deepEqual(render('{{A}} or {{B}} and {{C}}', view), 'Crocodile or Mobile and Alice');
+  });
 });

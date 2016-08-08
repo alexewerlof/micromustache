@@ -53,7 +53,6 @@ function render (template, view, generalValueFn) {
   // if view is omitted but generalValueFn is set
   if (typeof view === 'function' && typeof generalValueFn === 'undefined') {
     generalValueFn = view;
-    view = {};
   }
 
   //if view is not a valid object, assume it is an empty object
