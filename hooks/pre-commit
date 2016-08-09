@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "Updating browser distributables"
+npm run build
+git add browser
