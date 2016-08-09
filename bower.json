@@ -1,6 +1,6 @@
 {
   "name": "micromustache",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "homepage": "https://github.com/userpixel/micromustache",
   "description": "A faster and smaller subimplementation of the {{mustache}} template engine for JavaScript",
   "main": "browser/micromustache.js",
