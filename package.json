@@ -1,6 +1,6 @@
 {
   "name": "micromustache",
-  "version": "4.1.1",
+  "version": "5.0.0",
   "description": "A faster and smaller subimplementation of the {{mustache}} template engine for JavaScript",
   "keywords": [
     "template",
@@ -10,23 +10,28 @@
     "template engine",
     "microlibrary"
   ],
-  "main": "src/micromustache.js",
-  "browser": "browser/micromustache.min.js",
+  "main": "index.js",
+  "bin": {
+    "micromustache": "./bin/micromustache"
+  },
   "directories": {
-    "test": "test"
+    "lib": ".lib"
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "eslint": "^3.13.0",
+    "eslint-config-schibsted": "^3.1.0",
+    "eslint-plugin-chai-expect": "^1.1.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsdoc": "^2.4.0",
     "mocha": "^3.0.0",
-    "mustache": "^2.2.1",
-    "uglify-js": "^2.7.0",
-    "umd": "^3.0.1"
+    "mustache": "^2.3.0"
   },
   "scripts": {
-    "build:umd": "umd micromustache src/micromustache.js browser/micromustache.js --commonJS",
-    "build:min": "uglifyjs browser/micromustache.js -o browser/micromustache.min.js --compress --mangle",
-    "build": "npm run build:umd && npm run build:min",
-    "test": "mocha test/**/*.spec.js"
+    "test": "mocha ./test --recursive",
+    "lint": "eslint .",
+    "preversion": "npm run lint && npm test",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
