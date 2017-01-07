@@ -1,22 +1,9 @@
-const assert = require('chai').assert;
+const { expect } = require('chai');
 const Mustache = require('mustache');
-const micromustache = require('../src/micromustache.js');
+const { render } = require('../index');
 
-describe('mustache.js compatibility', function() {
-  it('checks the existence of the supported functions', function() {
-    assert.deepEqual(typeof micromustache, typeof Mustache);
-
-    assert.deepEqual(typeof micromustache.render, typeof Mustache
-      .render);
-
-    assert.deepEqual(typeof micromustache.render('', {}), typeof Mustache
-      .render('', {}));
-  });
-
-});
-
-describe('just as MustacheJS', function() {
-  var testCases = [{
+describe('MustacheJS compatibility', function() {
+  const testCases = [{
     description: 'empty template',
     template: '',
     view: {}
@@ -63,7 +50,7 @@ describe('just as MustacheJS', function() {
       a: ' '
     }
   }, {
-    description: 'two variables but one does not have a key/value',
+    description: 'two variables but one is missing from the view',
     template: ' {{a}} {{b}} ',
     view: {
       a: ' '
@@ -131,7 +118,7 @@ describe('just as MustacheJS', function() {
       b: null
     }
   }, {
-    description: 'data object is empty (all keys missing)',
+    description: 'an empty data object (all keys missing)',
     template: '{{a}}',
     view: {}
   }, {
@@ -183,19 +170,19 @@ describe('just as MustacheJS', function() {
       a: Number.EPSILON
     }
   }, {
-    description: '$ for variable name',
+    description: '$ as variable name',
     template: '{{$}}',
     view: {
       '$': 'test'
     }
   }, {
-    description: 'underline for variable name',
+    description: 'underline variable name',
     template: '{{_}}',
     view: {
       '_': 'test'
     }
   }, {
-    description: 'empty spaces for variable name',
+    description: 'empty spaces variable name',
     template: '{{    }}',
     view: {
       '_': 'test'
@@ -225,10 +212,18 @@ describe('just as MustacheJS', function() {
       '%': 'test'
     }
   }, {
-    description: '"var" as a variable name',
+    description: '"var" as variable name',
     template: '{{var}}',
     view: {
       'var': 'test'
+    }
+  }, {
+    description: 'nested values',
+    template: '{{foo.bar}}',
+    view: {
+      foo: {
+        bar: 'baz'
+      }
     }
   }, {
     description: 'a variable inside another variable',
@@ -239,16 +234,14 @@ describe('just as MustacheJS', function() {
       'c': 'c'
     }
   }, {
-    description: 'keys are indexes to an array data object',
+    description: 'keys as indexes to an array',
     template: 'I like {{0}}, {{1}} and {{2}}',
-    view: ["orange", "apple", "lemon"]
+    view: ['orange', 'apple', 'lemon']
   }];
   testCases.forEach(testCase => {
-    it(`can handle ${testCase.description}`, () => {
-      assert.deepEqual(
-        micromustache.render(testCase.template, testCase.view),
-        Mustache.render(testCase.template, testCase.view)
-      );
+    it(`shows the same behaviour as mustache for ${testCase.description}`, () => {
+      expect(render(testCase.template, testCase.view))
+        .to.equal(Mustache.render(testCase.template, testCase.view));
     });
   });
 });

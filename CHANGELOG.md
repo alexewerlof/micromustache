@@ -1,4 +1,23 @@
-# Changelog
+# Change Log
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/)
+and this project adheres to [Semantic Versioning](http://semver.org/).
+
+
+## 5.0.0 2017-01-07
+- remove building browser packages (use webpack, browserify or any other modern method to build)
+- Command line interface
+- Add travis build
+- Use linting rules from Schibsted
+- Converted to CommonJS (dropped AMD and UMD in favor of modern build tools)
+- Use yarn
+- Rewrote test with chai.expect instead of chai.assert
+- list of params for resolver is reversed to (varName, view)
+- dropped to_html alias
+- dropped bower support
+- dropped CDN support
+- dropped this feature: If the value is a function, call it passing the name of the variable as the only argument.
 
 ## 2.2.1 - 2016-07-23
 
