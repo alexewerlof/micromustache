@@ -1,42 +1,39 @@
-[![GitHub issues](https://img.shields.io/github/issues/userpixel/micromustache.svg?style=flat-square)](https://github.com/userpixel/micromustache/issues)
-
+[![Build Status](https://travis-ci.org/userpixel/micromustache.svg?branch=master)](https://travis-ci.org/userpixel/micromustache)
+[![GitHub issues](https://img.shields.io/github/issues/userpixel/micromustache.svg)](https://github.com/userpixel/micromustache/issues)
+[![Version](https://img.shields.io/npm/v/micromustache.svg?style=flat-square)](http://npm.im/micromustache)
+[![Downloads](https://img.shields.io/npm/dm/micromustache.svg?style=flat-square)](http://npm-stat.com/charts.html?package=micromustache&from=2017-01-01)
+[![MIT License](https://img.shields.io/npm/l/callifexists.svg?style=flat-square)](http://opensource.org/licenses/MIT)
 
 # micromustache
 
-![Logo](https://raw.github.com/userpixel/micromustache/master/logo/micromustache-logo-300.png)
+![Logo](https://raw.github.com/userpixel/micromustache/master/logo.png)
 
-This tool covers the most important use case: **interpolation: replacing variable names with their values from an object**.
+This small library covers the most important use case for [Mustache templates](https://mustache.github.io/):
+**interpolation**: replacing variable names with their values from an object.
 
-![Figure 1](https://raw.github.com/userpixel/micromustache/master/fig-1.png)
+If that's all you need, *micromustache* is a drop-in replacement for MustacheJS.
 
-If that's all you need, micromustache is a drop-in replacement for MustacheJS.
+* No dependencies
+* [Fully compatible](test/mustache-compatiblity.spec.js) with MustacheJS for **interpolation**
+* Works in node (CommonJS) and Browser (using CommonJS build tools like
+  [Browserify](http://browserify.org/)/[WebPack](https://webpack.github.io/))
+* Well tested (full test coverage over 80+ tests)
+* Dead simple to learn yet a pleasure to use
+* The code is small and easy to read and has full JSDoc documentation
 
-- [Features](#features)
 - [Tradeoffs](#tradeoffs)
 - [API](#api)
   - [render()](#micromustacherender)
     - [Differences with MustacheJS](#differences-with-mustachejs-render-method)
   - [compile()](#micromustachecompile)
-  - [to_html()](#micromustacheto_html)
 - [Tests](#tests)
 - [FAQ](#faq)
 - [License](#license)
 
-## Features
-
-* No dependencies
-* Works in node (CommonJS) and Browser (AMD, global, Browserify/WebPack)
-* Well tested
-* Dead simple to learn yet a pleasure to use
-* Well documented with many examples
-* Behave exactly like mustache.js for the supported functionalities
-
-But wait, don't ES6 Template literals solve the same problem? Read FAQ at the end of this page.
-
 ## Tradeoffs
 
 Micromustache achieves faster speed and smaller size by dropping the following
-features from MustacheJS:
+features from [MustacheJS](https://github.com/janl/mustache.js):
 
 * Array iterations: *{{# ...}}*
 * Partials: *{{> ...}}*
@@ -51,53 +48,65 @@ If you can live with this, read on...
 
 # API
 
-## micromustache.render()
+## `render(template, view = {}, customResolver)`
 
-Signature:
+
+### Parameters
+* `template: string`: The template containing one or more `{{variableNames}}`.
+* `view: Object`: An optional object containing values for every variable names that is used in the
+ template. If it's omitted, it'll be assumed an empty object.
+* `customResolver: function (varName, view)` An optional function that will be called for every
+ `{{varName}}` to generate a value. If the resolver throws we'll proceed with the default value
+ resolution algorithm (find the value from the view object).
+
+### Return
+
+The return is always the same type as the template itself (if template is not a string, it'll be
+returned untouched and no processing is done). All `{{varName}}` strings inside the template will
+be resolved with their corresponding value from the `view` object.
+If a particular path doesn't exist in the `view` object, it'll be replaced with empty string (`''`).
+Objects will be `JSON.stringified()` but if there was an error doing so (for example when there's
+a loop in the object, they'll be simply replaced with `{...}`.
+
+### Example:
 
 ```js
-/**
- * @param {string} template - the template containing one or
- *        more {{variableNames}}
- * @param {Object} [view={}] - an optional object containing values for
- *        every variable names that is used in the template. If it's omitted,
- *        it'll be assumed an empty object.
- * @param {GeneralValueFn} [generalValueFn] an optional function that will be
- *        called for every key to generate a value. If the result is undefined
- *        we'll proceed with the default value resolution algorithm.
- *        This function runs in the context of view.
- * @returns {string} template where its variable names replaced with
- *        corresponding values. If a value is not found or is invalid, it will
- *        be assumed empty string ''. If the value is an object itself, it'll
- *        be stringified by JSON.
- *        In case of a JSON error the result will look like "{...}".
- */
-micromustache.render(template, view, generalValueFn);
-```
-
-*Alias: `.to_html()`*
-
-Renders a template with the provided key/values from the view object. Example:
-
-````js
 var person = {
   first: 'Michael',
   last: 'Jackson'
 };
-micromustache.render('Search {{first}} {{ last }} popcorn!', person);
-//output = "Search Michael Jackson popcorn!"
-````
+micromustache.render('Search for {{first}} {{ last }} songs!', person);
+// output = "Search Michael Jackson popcorn!"
 
-You can even access array elements and `length` because they are all valid keys in the array object in javascript:
-
-```js
-var fruits = [ "orange", "apple", "lemon" ];
-micromustache.render("I like {{0}}, {{1}} and {{2}} ({{length}} fruits!)", fruits);
-//output = "I like orange, apple and lemon (3 fruits!)"
+// If a custom resolver was provided it would be called two times with these params:
+// ('first', person)
+// ('last', person) <-- notice the varName is trimmed
 ```
 
-*Note: if a key is missing or null, it'll be treated as it contained a value
+You can even access array elements and `length` because they are all valid keys in the array object
+in javascript:
+
+```js
+var fruits = [ 'orange', 'apple', 'lemon' ];
+micromustache.render('I like {{0}}, {{1}} and {{2}} ({{length}} fruits!)', fruits);
+// output = "I like orange, apple and lemon (3 fruits!)"
+// If a custom resolver was provided it would be called three times with these params:
+// ('0', person) <-- notice that the array indices are sent as strings.
+// ('1', person)
+// ('2', person)
+```
+
+*Note: if a key is missing or `null`, it'll be treated as if it contained a value
 of empty string (i.e. the {{variableName}} will be removed from the template).*
+
+```js
+var person = {
+  first: 'Michael',
+  last: 'Jackson'
+};
+micromustache.render('He was {{age}} years old!', person);
+// output = "He was  years old!"
+```
 
 You can easily reference deep object hierarchies:
 
@@ -126,135 +135,49 @@ micromustache.render("{{first}} {{last}} had {{children.length}} children: {{chi
 //output = "Michael Jackson had 3 children: Paris-Michael, Prince and Michael"
 ```
 
-As you can see micromustache doesn't have loops or any other fancy feature that MustacheJS offers.
+*As you can see unline MustacheJS, micromustache doesn't have loops.*
 
 ### Differences with MustacheJS render() method
 
-micromustache is a bit more forgiving than MustacheJS. For example, if the `view` is `null` or `undefined`, MustacheJS throws an exception but micromustache doesn't.
+* micromustache is a bit more forgiving than MustacheJS. For example, if the `view` is `null` or
+ `undefined`, MustacheJS throws an exception but micromustache doesn't. It just assumes an empty
+ object for the view.
+* also the `customResolver` doesn't exist in MustacheJS but is a powerful little utility that halps
+ some use cases.
 
-Another difference (which can handle complicated edge cases) is that you can use functions as values for more flexibility. micromustache will simply call the function with the variable name and use its return value for interpolation:
+## `compile(template, customResolver)`
 
-````js
-/**
- * @callback ValueFn
- * @param {string} key - variable name for the current scope.
- *        For hierarchical names like {{a.b.c}} the key can be 'a' or 'b' or 'c'
- * @param {Object} currentScope - the current object that the variable is
- *        supposed to resolved from
- * @param {string[]} path - useful for hierarchical objects.
- *        for example a variable name like {{a.b.c}} sets the
- *        path to ['a', 'b', 'c']
- * @param {number} currentPointer - the array index to where in the path we are
- *        at the moment. This is usually path.length - 1
- * @returns {string|number|boolean|Object} the value to be interpolated
- */
-function toUpper (key, currentScope, path, currentPointer) {
-  // key is the variable name
-  // By the way: "this" inside the function refers to the current object
-  return key.toUpperCase();
-}
+This is a utility function that accepts a `template` and `customResolver` and returns a renderer
+function that only accepts view and spits out filled template. This is useful when you find yourself
+using the render function over and over again with the same template. Under the hood it's just a thin
+layer on top of `render` so it uses the same parameters 👆.
 
-micromustache.render('I bought a {{screaming}} {{dog}}!!!', {
-  screaming: toUpper,
-  dog: toUpper
-});
-//output = 'I bought a SCREAMING DOG!!!'
-````
+### Return
 
-The function runs **synchronously** in the context of the view object (i.e. `this` refers to the view object). A more complex example:
+A function that accepts a `view` object and returns a rendered template string.
 
-````js
-var viewObject = {
-  repository: {
-    url: valueFn
-  }  
-};
-function valueFn (key, currentScope, path, pathIndex) {
-    // this = viewObject
-    // key = 'url'
-    // currentScope = viewObject.repository
-    // path = ['repository', 'url']
-    // pathIndex = 1
-    return 'http://github.com/userpixel/micromustache.git';
-}
-micromustache.render('micromustache is at {{repository.url}}', viewObject);
-//output = 'micromustache is at http://github.com/userpixel/micromustache.git'
-````
-
-
-## micromustache.compile()
-
-Function signature:
+### Example
 
 ```js
-/**
- * @param {string} template - same as the template parameter to .render()
- * @returns {function} a function that accepts a view object and returns a
- *        rendered template string
- */
-micromustache.compile(template);
-```
+const templateEngine = micromustache.compile('Search {{first}} {{ last }} popcorn!');
+var output = templateEngine(person);
+// output = "Search Michael Jackson popcorn!"
 
-You can compile the template and get a function that can be used multiple times:
-
-```js
-var templateEngine = micromustache.compile('Search {{first}} {{ last }} popcorn!');
-output = templateEngine(person);
-//output = "Search Michael Jackson popcorn!"
 output = templateEngine({first:'Albert',last:'Einstein'});
-//output = "Search Albert Einstein popcorn!"
+// output = "Search Albert Einstein popcorn!"
 ```
 
-This function makes your code cleaner but for simplicity doesn't use any memoization
-technique behind the scenes.
-
-## micromustache.to_html()
-
-Just another name for `micromustache.render()` for compatibility with MustacheJS.
-
-# Installation
-
-There are 4 ways to get the library:
-
-[npm](https://npmjs.org/package/micromustache):
-
-```bash
-npm install micromustache
-```
-
-[Bower](http://bower.io/):
-
-````bash
-bower install micromustache
-````
-
-[CDN](https://cdnjs.com/libraries/micromustache):
-
-````HTML
-<script src="https://cdnjs.cloudflare.com/ajax/libs/micromustache/3.0.4/micromustache.js"></script>
-````
-
-Download directly from [browser directory](https://github.com/userpixel/micromustache/tree/master/browser)
-
-Clone this Git repo:
-
-````bash
-git clone https://github.com/userpixel/micromustache
-````
+`compile()` doesn't do any memoization so it doesn't introduce any performance improvmenet to your
+code.
 
 # Tests
 
-We use Mocha/Chai for tests:
+We use Mocha/Chai for tests. If you want to run the tests, install dependencies and run them using
+npm:
 
 ```
-npm test
+npm it
 ```
-
-The browser module loading tests (
-[AMD](https://github.com/userpixel/micromustache/blob/master/test/amd.html)
-and
-[global](https://github.com/userpixel/micromustache/blob/master/test/global.html)
-) need to be loaded in the browser.
 
 # FAQ
 
@@ -274,12 +197,3 @@ However, since when they are natively supported by the runtime, they have a
 great performance and if you learn to use the native way of doing things,
 you don't have to learn an ever-changing library, though their functionality is
 more limited than MustacheJS.
-
-# License
-
-MIT
-
-# TODO
-
-* Add a command line version similar to
-[mustache.js](https://github.com/janl/mustache.js/blob/master/bin/mustache).
