@@ -5,7 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## 5.0.0 2017-01-07
+## Unreleased
+- Add command line support
+- Add more examples of its selling points
+- Do a comparative benchmark with Mustache.js
+- Add support for [tagged string templates](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals)
+- Support comments: *{{! ...}}* like MustacheJS
+
+## 5.0.0 2017-01-08
+- Update readme
 - remove building browser packages (use webpack, browserify or any other modern method to build)
 - Command line interface
 - Add travis build
