@@ -21,15 +21,6 @@ If that's all you need, *micromustache* is a drop-in replacement for MustacheJS.
 * Dead simple to learn yet a pleasure to use
 * The code is small and easy to read and has full JSDoc documentation
 
-- [Tradeoffs](#tradeoffs)
-- [API](#api)
-  - [render()](#micromustacherender)
-    - [Differences with MustacheJS](#differences-with-mustachejs-render-method)
-  - [compile()](#micromustachecompile)
-- [Tests](#tests)
-- [FAQ](#faq)
-- [License](#license)
-
 ## Tradeoffs
 
 Micromustache achieves faster speed and smaller size by dropping the following
