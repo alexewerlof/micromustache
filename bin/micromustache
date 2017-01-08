@@ -1,3 +1,25 @@
 #!/usr/bin/env node
 
-console.log('not implemented yet');
+const fs = require('fs');
+const render = require('../lib/render');
+const encoding = 'utf8';
+
+// eslint-disable-next-line no-unused-vars
+const [nodeCmd, scriptName, templatePath, viewPath] = process.argv;
+
+const syntax = `${scriptName} templatePath viewPath
+Both parameters are required.
+  templatePath: path to a template text file that contains {{varName}} in it
+  viewPath: path to a valid json file
+By default this script prints to console. You can redirect it to output file using '> outputPath'
+Files are read/write with utf8 encoding.`;
+
+try {
+  const template = fs.readFileSync(templatePath, { encoding });
+  const viewTxt = fs.readFileSync(viewPath, { encoding });
+  const view = JSON.parse(viewTxt);
+  console.log(render(template, view));
+} catch (e) {
+  console.error(syntax);
+  throw e;
+}

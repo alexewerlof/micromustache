@@ -11,7 +11,7 @@
     "microlibrary"
   ],
   "main": "index.js",
-  ".bin": {
+  "bin": {
     "micromustache": "./bin/micromustache"
   },
   "directories": {
