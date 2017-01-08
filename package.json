@@ -15,7 +15,7 @@
     "micromustache": "./bin/micromustache"
   },
   "directories": {
-    "lib": ".lib"
+    "lib": "./lib"
   },
   "devDependencies": {
     "chai": "^3.5.0",
