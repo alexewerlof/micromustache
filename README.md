@@ -170,6 +170,37 @@ output = templateEngine({first:'Albert',last:'Einstein'});
 `compile()` doesn't do any memoization so it doesn't introduce any performance improvmenet to your
 code.
 
+# Command Line Interface
+
+Micromustache comes with a simple CLI that brings the `render()` functionality to shell programming.
+
+```bash
+npm i -g micromustache
+```
+This will make the `micromustache` command available on your shell.
+It works like this:
+
+```bash
+micromustache templatePath viewPath
+```
+
+Both parameters are required.
+* `templatePath`: path to a template text file that contains {{varName}} in it
+* `viewPath`: path to a valid json file
+
+Files are read/write with utf8 encoding.
+By default CLI prints the output to console (and erros to stderr).
+You can redirect it to output file using `> outputPath`.
+
+### Example:
+
+```bash
+micromustache template.txt view.json > output.txt
+```
+
+This command reads the contents of `template.txt` and `render()` it using data from `view.json`
+and puts the result text in `output.txt`.
+
 # Tests
 
 We use Mocha/Chai for tests. If you want to run the tests, install dependencies and run them using
