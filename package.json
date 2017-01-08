@@ -1,6 +1,6 @@
 {
   "name": "micromustache",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "description": "A faster and smaller subimplementation of the {{mustache}} template engine for JavaScript",
   "keywords": [
     "template",
