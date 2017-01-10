@@ -10,6 +10,7 @@
 
 This small library covers the most important use case for [Mustache templates](https://mustache.github.io/):
 **interpolation**: replacing variable names with their values from an object.
+> This of it as a sweet spot between plain text replacement and mustache (certainly not as logicful as [Handlebars](http://handlebarsjs.com/)).
 
 If that's all you need, *micromustache* is a drop-in replacement for MustacheJS.
 
