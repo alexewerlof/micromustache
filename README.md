@@ -34,7 +34,7 @@ features from [MustacheJS](https://github.com/janl/mustache.js):
 * Comments: *{{! ...}}*
 * HTML sanitization: *{{{ propertyName }}}*
 * Custom delimiters: *No support for <% ... %>. We just have {{ ... }}*
-* It does no support IE 6-8
+* It does not support IE 6-8
 
 If you can live with this, read on...
 
