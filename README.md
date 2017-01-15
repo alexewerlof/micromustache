@@ -68,7 +68,7 @@ var person = {
   last: 'Jackson'
 };
 micromustache.render('Search for {{first}} {{ last }} songs!', person);
-// output = "Search Michael Jackson popcorn!"
+// output = "Search for Michael Jackson songs!"
 
 // If a custom resolver was provided it would be called two times with these params:
 // ('first', person)
@@ -80,8 +80,8 @@ in javascript:
 
 ```js
 var fruits = [ 'orange', 'apple', 'lemon' ];
-micromustache.render('I like {{0}}, {{1}} and {{2}} ({{length}} fruits!)', fruits);
-// output = "I like orange, apple and lemon (3 fruits!)"
+micromustache.render('I like {{length}} fruits: {{0}}, {{1}} and {{2}}.', fruits);
+// output = "I like 3 fruits: orange, apple and lemon."
 // If a custom resolver was provided it would be called three times with these params:
 // ('0', person) <-- notice that the array indices are sent as strings.
 // ('1', person)
