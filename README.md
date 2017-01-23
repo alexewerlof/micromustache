@@ -217,8 +217,13 @@ cover part of the functionality but they:
 
 * are not Mustache-compatible
 * require compilation for Android and IE
+* need the variables to be accessible in the scope of the template literal
 
 However, since when they are natively supported by the runtime, they have a
 great performance and if you learn to use the native way of doing things,
-you don't have to learn an ever-changing library, though their functionality is
+you don't have to learn yet another library, though their functionality is
 more limited than MustacheJS.
+
+**Q. I want "INSERT SOME MUSTACHE FEATUE HERE" but it's not available in MicroMustache. Can I add it?**
+
+A. Make an issue first. The goal of MicroMustache is to be super tiny and while adressing the most important use-case of Mustache. If there's something that is terribly missing, we may add it, otherwise, you may fork it and call it something else OR use MustacheJS.
