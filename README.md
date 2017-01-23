@@ -129,7 +129,7 @@ micromustache.render("{{first}} {{last}} had {{children.length}} children: {{chi
 //output = "Michael Jackson had 3 children: Paris-Michael, Prince and Michael"
 ```
 
-*As you can see unline MustacheJS, micromustache doesn't have loops.*
+*As you can see unlike MustacheJS, micromustache doesn't have loops.*
 
 ### Differences with MustacheJS render() method
 
