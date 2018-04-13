@@ -30,6 +30,7 @@
     "test": "npm run lint && mocha ./test --recursive",
     "lint": "eslint .",
     "preversion": "npm test",
+    "prepublish": "npm test",
     "postversion": "git push && git push --tags"
   },
   "repository": {
