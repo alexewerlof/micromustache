@@ -4,12 +4,4 @@ cache: yarn
 node_js:
 - lts/*
 - node
-before_script: npm run lint
-deploy:
-  on:
-    tags: true
-    branch: master
-  provider: npm
-  email: hanifbbz@gmail.com
-  api_key:
-    secure: qP+1mjNFJ1UpKkvA2icfcI+FgapFXlPjtrwLSOkkm3a610M+QtneIyLD1k669+gH2HnDX5jVZcUY0S6VqSc88KO6vswtqx97hx8l7tYAoGBTOrX6PDdVKT2svBsbPYoUZB9jOKBzu47B6zShcHZM7U2qn6SWyPYaWew6n1wmUtTgnHqWb3y6CGlIoyipfna+kc0LGCDnehgY52ZWnJMrB0HERVO3hUvOXPKIlHreVLvWRTkuG5ebV1Nmsxwdb5w4wqnXCTu2uhrDm0W/QpvaMpHiCsdI37UWBvIonlohVwRCFs9L/8aEyld3IZq7UbQ/SY4Rgpb6H6NvXrUJMrI5GMnItdF/hjfbkZ868bMT7bg2DDVu0FkgXhYc/GKjoxf9McAB608bmLRne7SsoyA+MvcQ1R7MRLd9XncrlPZlDY96LbRAaYbgMps665Ohh86ZRevW+vF8GNYzPqzrukz94QOvMnajldwkSaaNYXukQtQY7Mccfd+o6i52GWizsebv2/jPm4ckLdYG45Ck9fpYCLmdjR3qkyoEmLgI6IfMpW9jGOA1clv+5dAcbd9AFkygnjweEm+ZY5bxWF5xakQ5jpIUTUmGk8ETVMURgZmz573Ql3gpjKv/h2bQt6l6k2KuQwe0qz+lXnm0peHBn/3xLrYTVLw8ftUBKB0yT/xll/U=
+script: npm t
