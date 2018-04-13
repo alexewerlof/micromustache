@@ -27,9 +27,9 @@
     "mustache": "^2.3.0"
   },
   "scripts": {
-    "test": "mocha ./test --recursive",
+    "test": "npm run lint && mocha ./test --recursive",
     "lint": "eslint .",
-    "preversion": "npm run lint && npm test",
+    "preversion": "npm test",
     "postversion": "git push && git push --tags"
   },
   "repository": {
