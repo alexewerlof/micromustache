@@ -1,4 +1,4 @@
-const { expect } = require('chai');
+const { expect } = require('chai');
 const compile = require('../../lib/compile');
 
 describe('compile()', () => {

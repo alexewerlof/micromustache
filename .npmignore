@@ -3,4 +3,3 @@ test/
 logo.png
 .eslintrc.json
 .travis.yml
-yarn.lock

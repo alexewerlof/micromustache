@@ -93,6 +93,6 @@ describe('#render() custom resolver', () => {
   it('gets the trimmed variable name', () => {
     const customResolver = varName => varName === 'a.b.c';
     expect(render('{{ a.b.c}} {{ a.b.c }} {{a.b.c }}', undefined, customResolver))
-        .to.equal('true true true');
+      .to.equal('true true true');
   });
 });
