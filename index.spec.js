@@ -1,7 +1,7 @@
 const { expect } = require('chai');
-const micromustache = require('../');
-const compile = require('../lib/compile');
-const render = require('../lib/render');
+const micromustache = require('./index');
+const compile = require('./lib/compile');
+const render = require('./lib/render');
 
 describe('micromustache', () => {
   it('exports render function', () => {
