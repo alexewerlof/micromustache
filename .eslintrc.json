@@ -14,7 +14,9 @@
     "jsdoc"
   ],
   "rules": {
-    "indent": ["error", 2],
+    "indent": ["error", 2, {
+      "SwitchCase": 1
+    }],
     "no-undefined": "off",
     "import/no-unresolved": ["error"],
     "jsdoc/check-param-names": "error",

@@ -24,19 +24,6 @@ describe('#render() custom resolver', () => {
     expect(viewVarNames).to.deep.equal({ a: true, b: true, c: true });
   });
 
-  it('if it throws, the default resolve behaviour is used', () => {
-    const customResolver = () => {
-      throw new Error('do your best buddy');
-    };
-    const view = {
-      a: 1,
-      b: {
-        c: 3
-      }
-    };
-    expect(render('{{a}} {{b}} {{b.c}}', view, customResolver)).to.equal('1 {"c":3} 3');
-  });
-
   it('if it resolves a value, the default resolver is not called', () => {
     function customResolver(varName) {
       expect(varName).to.equal('a.b.c');
