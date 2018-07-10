@@ -7,11 +7,13 @@
   },
   "env": {
     "node": true,
-    "commonjs": true
+    "commonjs": true,
+    "mocha": true
   },
   "plugins": [
     "import",
-    "jsdoc"
+    "jsdoc",
+    "chai-expect"
   ],
   "rules": {
     "indent": ["error", 2, {
@@ -29,6 +31,10 @@
     "jsdoc/require-param-description": "error",
     "jsdoc/require-param-type": "error",
     "jsdoc/require-returns-description": "error",
-    "jsdoc/require-returns-type": "error"
+    "jsdoc/require-returns-type": "error",
+    "chai-expect/no-inner-compare": ["error"],
+    "chai-expect/missing-assertion": ["error"],
+    "chai-expect/terminating-properties": ["error"],
+    "no-unused-expressions": "off"
   }
 }

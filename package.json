@@ -23,12 +23,12 @@
     "eslint-plugin-chai-expect": "^1.1.1",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsdoc": "^3.6.2",
-    "mocha": "^5.1.0",
+    "mocha": "^5.2.0",
     "mustache": "^2.3.0"
   },
   "scripts": {
     "pretest": "npm run lint",
-    "test": "mocha ./test --recursive",
+    "test": "mocha --recursive './{,!(node_modules)/**}/*.spec.js'",
     "lint": "eslint .",
     "preversion": "npm test",
     "prepublish": "npm test",
