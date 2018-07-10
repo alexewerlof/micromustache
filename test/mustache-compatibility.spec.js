@@ -2,8 +2,14 @@ const { expect } = require('chai');
 const Mustache = require('mustache');
 const { render } = require('../index');
 
-describe('MustacheJS compatibility', function() {
-  const testCases = [{
+class ClassWithToString {
+  toString() {
+    return 'A constant string'
+  }
+}
+
+const testCases = [
+  {
     description: 'empty template',
     template: '',
     view: {}
@@ -237,7 +243,16 @@ describe('MustacheJS compatibility', function() {
     description: 'keys as indexes to an array',
     template: 'I like {{0}}, {{1}} and {{2}}',
     view: ['orange', 'apple', 'lemon']
-  }];
+  }, {
+    description: 'An object with toString()',
+    template: '{{obj}}',
+    view: {
+      obj: new ClassWithToString
+    }
+  }
+];
+
+describe('MustacheJS compatibility', function () {
   testCases.forEach(testCase => {
     const { description, template, view } = testCase;
     it(`shows the same behaviour as mustache for ${description}`, () => {
