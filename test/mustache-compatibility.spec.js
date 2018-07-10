@@ -239,9 +239,11 @@ describe('MustacheJS compatibility', function() {
     view: ['orange', 'apple', 'lemon']
   }];
   testCases.forEach(testCase => {
-    it(`shows the same behaviour as mustache for ${testCase.description}`, () => {
-      expect(render(testCase.template, testCase.view))
-        .to.equal(Mustache.render(testCase.template, testCase.view));
+    const { description, template, view } = testCase;
+    it(`shows the same behaviour as mustache for ${description}`, () => {
+      const micromustacheOutput = render(template, view);
+      const mustacheOutput = Mustache.render(template, view);
+      expect(micromustacheOutput).to.equal(mustacheOutput);
     });
   });
 });
