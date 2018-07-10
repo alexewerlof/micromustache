@@ -6,10 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ## Unreleased
+- Typescript
 - Add more examples of its selling points
 - Do a comparative benchmark with Mustache.js
 - Add support for [tagged string templates](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals)
 - Support comments: *{{! ...}}* like MustacheJS
+
 ## 5.4.0
 - Modernize the the dependencies and build system
 
