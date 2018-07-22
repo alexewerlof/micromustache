@@ -23,6 +23,8 @@ If that's all you need, *micromustache* is a drop-in replacement for MustacheJS.
 * Well tested (full test coverage over 80+ tests)
 * Dead simple to learn yet a pleasure to use
 * The code is small and easy to read and has full JSDoc documentation
+* Custom delimiters: instead of `{{ ... }}` use `{ ... }`, `( ... )`, `<% ... %>` or anything you desire*
+* Arrays as values: `{{ arrName[1] }}`
 
 ## Tradeoffs
 
@@ -31,27 +33,22 @@ features from [MustacheJS](https://github.com/janl/mustache.js):
 
 * Array iterations: *{{# ...}}*
 * Partials: *{{> ...}}*
-* Arrays as values: *{{ arrName[1] }}* (you can access arrays like `arrName.1` though)
 * Inverted selection: *{{^ ...}}*
 * Comments: *{{! ...}}*
 * HTML sanitization: *{{{ propertyName }}}*
-* Custom delimiters: *No support for <% ... %>. We just have {{ ... }}*
-* It does not support IE 6-8
 
 If you can live with this, read on...
 
 # API
 
-## `render(template, view = {}, customResolver)`
+## `render(template, view = {}, options)`
 
 
 ### Parameters
 * `template: string`: The template containing one or more `{{variableNames}}`.
 * `view: Object`: An optional object containing values for every variable names that is used in the
  template. If it's omitted, it'll be assumed an empty object.
-* `customResolver: function (varName, view)` An optional function that will be called for every
- `{{varName}}` to generate a value. If the resolver throws we'll proceed with the default value
- resolution algorithm (find the value from the view object).
+* `options` see compiler options
 
 ### Return
 
@@ -136,7 +133,7 @@ micromustache.render("{{first}} {{last}} had {{children.length}} children: {{chi
 * micromustache is a bit more forgiving than MustacheJS. For example, if the `view` is `null` or
  `undefined`, MustacheJS throws an exception but micromustache doesn't. It just assumes an empty
  object for the view.
-* also the `customResolver` doesn't exist in MustacheJS but is a powerful little utility that halps
+* also the `options` don't exist in MustacheJS but is a powerful little utility that halps
  some use cases.
 
 ## `compile(template, customResolver)`
