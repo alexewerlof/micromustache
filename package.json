@@ -18,13 +18,13 @@
     "lib": "./lib"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "eslint": "^4.19.1",
-    "eslint-plugin-chai-expect": "^1.1.1",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsdoc": "^3.6.2",
+    "chai": "^4.2.0",
+    "eslint": "^5.12.1",
+    "eslint-plugin-chai-expect": "^2.0.1",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jsdoc": "^4.1.0",
     "mocha": "^5.2.0",
-    "mustache": "^2.3.0"
+    "mustache": "^3.0.1"
   },
   "scripts": {
     "pretest": "npm run lint",
