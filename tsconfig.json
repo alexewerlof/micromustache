@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "newLine": "LF",
+    "outDir": "lib/",
+    "declaration": true
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}
