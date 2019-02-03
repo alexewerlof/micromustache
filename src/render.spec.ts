@@ -6,13 +6,13 @@ describe('#render()', () => {
     expect(render).to.be.a('function');
   });
 
-  it('throws non-string templates', () => {
+  it('throws for non-string templates', () => {
     // @ts-ignore
-    expect(render(1)).to.equal(1);
+    expect(() => render(1)).to.throw();
     // @ts-ignore
-    expect(render(null, {})).to.equal(null);
+    expect(() => render(null, {})).to.throw();
     // @ts-ignore
-    expect(render(true, {})).to.equal(true);
+    expect(() => render(true, {})).to.throw();
   });
 
   it('returns an empty string if the template is empty', () => {
@@ -64,16 +64,6 @@ describe('#render()', () => {
       var1: 'hello',
       var2: 'world'
     })).to.equal('hello world');
-  });
-
-  it('interpolates all variables with empty string when view is invalid', () => {
-    // @ts-ignore
-    expect(render('{{i}}', undefined)).to.equal('');
-    // @ts-ignore
-    expect(render('{{i}}', null)).to.equal('');
-    expect(render('{{i}}', 'hellow!!!')).to.equal('');
-    expect(render('{{i}}', 13)).to.equal('');
-    expect(render('{{i}}', true)).to.equal('');
   });
 
   it('interpolates all variables with empty string when view is empty', () => {
@@ -341,10 +331,12 @@ describe('#render()', () => {
         b: false,
         c: false
       };
-      function resolver(view: {}, varName: string) {
+      function resolver(scope: {}, varName: string) {
         counter++;
+        // @ts-ignore
         viewVarNames[varName] = true;
-        return view[varName];
+        // @ts-ignore
+        return scope[varName];
       }
       const view = {
         a: 1,
@@ -356,8 +348,9 @@ describe('#render()', () => {
       expect(viewVarNames).to.deep.equal({ a: true, b: true, c: true });
     });
 
-    it('does not call the default resolver if it resolves a value', () => {
-      function resolver(view, varName) {
+    it('does not call the default resolver if the custom resolver returns a value', () => {
+      // tslint:disable-next-line no-shadowed-variable
+      function resolver(view: {}, varName: string) {
         expect(varName).to.equal('a.b.c');
         return 'brick';
       }
@@ -385,12 +378,11 @@ describe('#render()', () => {
       expect(render('Hello {{target}}!', undefined, { resolver })).to.equal('Hello world!');
     });
 
-    it('is called even for an empty variable name', () => {
-      function resolver(view, varName) {
-        expect(varName).to.equal('');
-        return 'world';
-      }
-      expect(render('Hello {{}}!', {}, { resolver })).to.equal('Hello world!');
+    it('is not called for empty variable names', () => {
+      let resolverIsCalled = false;
+      const resolver = () => resolverIsCalled = true
+      render('Hello {{}}!', {}, { resolver })
+      expect(resolverIsCalled).to.equal(false);
     });
 
     it('is called for nested variable names', () => {
@@ -401,7 +393,7 @@ describe('#render()', () => {
           }
         }
       };
-      function resolver(scope, varName) {
+      function resolver(scope: {}, varName:string) {
         expect(scope).to.equal(view);
         expect(varName).to.equal('a.b.c');
         return 'world';
@@ -410,7 +402,7 @@ describe('#render()', () => {
     });
 
     it('gets the trimmed variable name', () => {
-      const resolver = (view, varName) => varName === 'a.b.c';
+      const resolver = (view: {}, varName: string) => varName === 'a.b.c';
       expect(render('{{ a.b.c}} {{ a.b.c }} {{a.b.c }}', undefined, { resolver }))
         .to.equal('true true true');
     });
