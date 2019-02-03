@@ -24,6 +24,7 @@ If that's all you need, *micromustache* is a drop-in replacement for MustacheJS.
   [Browserify](http://browserify.org/)/[WebPack](https://webpack.github.io/))
 * Well tested (full test coverage over 80+ tests)
 * Dead simple to learn yet a pleasure to use
+* Behaves similar to JavaScript and avoids quirks from lodash and Mustache
 * The code is small and easy to read and has full JSDoc documentation
 * Custom delimiters: instead of `{{ ... }}` use `{ ... }`, `( ... )`, `<% ... %>` or anything you desire*
 * Arrays as values: `{{ arrName[1] }}`

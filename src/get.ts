@@ -1,4 +1,4 @@
-import { toPath } from './topath';
+import { toPath } from './to-path';
 import { isObject } from './util';
 
 /**
@@ -11,14 +11,26 @@ import { isObject } from './util';
  * its value or throws a `ReferenceError` if there is no variable called `bar`.
  * @throws TypeError if the object variable is not an object
  * @param scope - the view object
- * @param path - the variable path to lookup
+ * @param key - the variable path to lookup
  * @returns returns the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
  */
-export function get(scope: {}, path: string | string[]): any {
+export function get(scope: {}, key: string): any {
   if (!isObject(scope)) {
     throw new TypeError(`The scope should be an object but is ${typeof scope}: ${scope}`);
   }
-  const keys = Array.isArray(path) ? path : toPath(path);
+  const keys = toPath(key);
+  return getKeys(scope, keys);
+}
+
+/**
+ * Similar to lodash _.get()
+ * Same as get() but expects an array of keys instead of path
+ * @throws TypeError if the scope variable is not an object or the keys don't exist
+ * @param scope - an object to resolve value from
+ * @param keys - an array of keys that specify the path to the lookup
+ * @returns returns the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
+ */
+export function getKeys(scope: {}, keys: string[]): any {
   let currentScope = scope;
   for (const key of keys) {
     if (currentScope === undefined || currentScope === null) {

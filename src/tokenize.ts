@@ -1,5 +1,5 @@
-import { assertTruthy } from './util';
-import { toPath } from './topath';
+import { assertTruthy, isString } from './util';
+import { toPath } from './to-path';
 import { IToken, ITokenizeOptions, TokenType } from './types';
 
 export class Token implements IToken {
@@ -25,7 +25,9 @@ export class Token implements IToken {
  * @returns the resulting string
  */
 export function tokenize(template: string, { openSymbol = '{{', closeSymbol = '}}' }: ITokenizeOptions = {}): TokenType[] {
+  assertTruthy(isString(template), `Template must be a string. Got ${template}`);
   assertTruthy(openSymbol !== closeSymbol, `Open and close symbol can't be the same ${openSymbol}`);
+
   const openSymbolLength = openSymbol.length
   const closeSymbolLength = closeSymbol.length
   let openIndex: number = -1;
@@ -34,13 +36,11 @@ export function tokenize(template: string, { openSymbol = '{{', closeSymbol = '}
   let varName: string;
   const ret: TokenType[] = []
   let currentIndex = -openSymbolLength;
-  let someOpenSymbolFound = false;
   while (currentIndex < template.length) {
     openIndex = template.indexOf(openSymbol, currentIndex)
     if (openIndex === -1) {
       break;
     }
-    someOpenSymbolFound = true
     closeIndex = template.indexOf(closeSymbol, openIndex)
     if (closeIndex === -1) {
       throw new SyntaxError(`An ${openSymbol} found without ${closeSymbol} in ${template}`)

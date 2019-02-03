@@ -1,6 +1,6 @@
 // @ts-ignore
 import { expect } from 'chai';
-import { toPath } from './topath';
+import { toPath } from './to-path';
 
 interface ISuccessCases {
   [input: string]: string[];
