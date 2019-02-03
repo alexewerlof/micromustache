@@ -9,6 +9,7 @@
 
 ![Logo](https://raw.github.com/userpixel/micromustache/master/logo.png)
 
+A logicless template engine with some handy additions.
 This small library covers the most important use case for [Mustache templates](https://mustache.github.io/):
 
 **interpolation: replacing variable names with their values from an object.**

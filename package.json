@@ -10,7 +10,8 @@
     "template engine",
     "microlibrary"
   ],
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "./lib/types.d.ts",
   "bin": {
     "micromustache": "./bin/micromustache"
   },
@@ -18,10 +19,12 @@
     "lib": "./lib"
   },
   "devDependencies": {
+    "@types/node": "^10.12.21",
     "chai": "^4.2.0",
     "mocha": "^5.2.0",
     "mustache": "^2.3.0",
     "prettier": "^1.16.3",
+    "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
     "tslint-config-prettier": "^1.17.0",
     "typescript": "^3.3.1"
@@ -41,5 +44,9 @@
     "url": "http://github.com/userpixel/micromustache.git"
   },
   "author": "Alex Ewerlöf",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5"
+  }
 }

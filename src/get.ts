@@ -14,14 +14,13 @@ import { isObject } from './util';
  * @param path - the variable path to lookup
  * @returns returns the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
  */
-export function get(scope: {}, path: string): any {
+export function get(scope: {}, path: string | string[]): any {
   if (!isObject(scope)) {
     throw new TypeError(`The scope should be an object but is ${typeof scope}: ${scope}`);
   }
-  const keys = toPath(path);
+  const keys = Array.isArray(path) ? path : toPath(path);
   let currentScope = scope;
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
+  for (const key of keys) {
     if (currentScope === undefined || currentScope === null) {
       throw new TypeError(`Cannot read property ${key} of ${currentScope}`);
     }

@@ -1,11 +1,7 @@
-const { expect } = require('chai');
-const compile = require('./compile');
+import { expect } from 'chai';
+import { compile } from './compile';
 
-describe('#compile()', () => {
-  it('is a function', () => {
-    expect(compile).to.be.a('function');
-  });
-
+describe('compile()', () => {
   it('returns a function', () => {
     const compiler = compile('Hello {{name}}!');
     expect(compiler).to.be.a('function');

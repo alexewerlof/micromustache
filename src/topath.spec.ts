@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 import { toPath } from './topath';
 
-interface SuccessCases {
+interface ISuccessCases {
   [input: string]: string[];
 }
 
@@ -13,7 +13,7 @@ function stringArrToString(arr: string[]) {
 describe('toPath()', () => {
   describe('success cases:', () => {
     // input: expected output
-    const testCases: SuccessCases = {
+    const testCases: ISuccessCases = {
       'a': ['a'],
       ' a': ['a'],
       '  a': ['a'],
@@ -30,6 +30,7 @@ describe('toPath()', () => {
       'a.b ': ['a', 'b'],
       'a.b.c': ['a', 'b', 'c'],
       'a["b"]': ['a', 'b'],
+      'a[b]': ['a', 'b'],
       'a[\'b\']': ['a', 'b'],
       'a[ \'b\' ]': ['a', 'b'],
       'a["b"].c': ['a', 'b', 'c'],

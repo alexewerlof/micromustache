@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { get } from './get';
 
 describe('get()', () => {
-  it('can resolve 1-level object', () => {
+  it("can resolve 1-level object", () => {
     const obj = {
       foo: 'bar',
       baz: 2

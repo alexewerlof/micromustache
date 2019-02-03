@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add support for [tagged string templates](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals)
 - Support comments: *{{! ...}}* like MustacheJS
 
+## 6.0.0
+- Rewrote the parser in TypeScript
+- Now the compile() function is optimized and caches the results
+- Custom resolver can be async
+- BREAKING CHANGE: the resolver is now a compiler option and receives an array instead of just the variable name
+- BREAKING CHANGE: if you pass a non-string template it'll throw
+- BREAKING CHANGE: if the template is not string, we throw an error
+- BREAKING CHANGE: if you provide a custom resolver and it throws, we don't swallow that error
+
 ## 5.4.0
 - Modernize the the dependencies and build system
 
