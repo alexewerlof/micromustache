@@ -1,7 +1,7 @@
-import { isFunction } from './util';
-import { IStringifyOptions } from './types';
+import { isFunction } from './util'
+import { IStringifyOptions } from './types'
 
-const OBJECT_TO_STRING = Object.prototype.toString;
+const OBJECT_TO_STRING = Object.prototype.toString
 
 /**
  * Converts a value to a string
@@ -11,21 +11,22 @@ const OBJECT_TO_STRING = Object.prototype.toString;
  * @param options the options from compile()
  * @returns the value converted to string
  */
-export function stringify(value: any, { invalidType = '', invalidObj = '{...}'}: IStringifyOptions = {}): string | number | boolean {
+export function stringify(
+  value: any,
+  { invalidType = '', invalidObj = '{...}' }: IStringifyOptions = {}
+): string | number | boolean {
   switch (typeof value) {
     case 'string':
     case 'boolean':
-      return value as string;
+      return value as string
     case 'number':
-      if (isNaN(value)) {
-        return ''
-      }
       if (value === Number.POSITIVE_INFINITY) {
         return '∞'
       }
       if (value === Number.NEGATIVE_INFINITY) {
         return '-∞'
       }
+      // including NaN
       return value
     case 'object':
       // null is an object but is falsy. Swallow it.
@@ -33,18 +34,22 @@ export function stringify(value: any, { invalidType = '', invalidObj = '{...}'}:
         return ''
       }
       if (isFunction(value.toString) && value.toString !== OBJECT_TO_STRING) {
-        return value.toString();
+        return value.toString()
       }
       try {
-        return JSON.stringify(value);
+        return JSON.stringify(value)
       } catch (jsonError) {
-        return invalidObj;
+        return invalidObj
       }
     case 'undefined':
-      return '';
+      return ''
     default:
       // Anything else will be replaced with an empty string
       // For example: undefined, Symbol, etc.
-      return invalidType;
+      return invalidType
   }
+}
+
+export function stringifyValues(values: any[], options: IStringifyOptions) {
+  return values.map(value => stringify(value, options)).join('')
 }

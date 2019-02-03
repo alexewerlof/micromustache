@@ -1,11 +1,11 @@
-import { assertTruthy, isString } from './util';
-import { toPath } from './to-path';
-import { IToken, ITokenizeOptions, TokenType } from './types';
+import { assertTruthy, isString, isObject } from './util'
+import { ITokenizeOptions, TokenType } from './types'
+import { toPath } from './to-path'
 
-export class Token implements IToken {
+export class NameToken {
   private pathsCache: string[]
 
-  constructor(public varName: string) {}
+  constructor(public readonly varName: string) {}
 
   get paths() {
     if (!this.pathsCache) {
@@ -24,29 +24,44 @@ export class Token implements IToken {
  * @param options - the options form compile()
  * @returns the resulting string
  */
-export function tokenize(template: string, { openSymbol = '{{', closeSymbol = '}}' }: ITokenizeOptions = {}): TokenType[] {
-  assertTruthy(isString(template), `Template must be a string. Got ${template}`);
-  assertTruthy(openSymbol !== closeSymbol, `Open and close symbol can't be the same ${openSymbol}`);
+export function tokenize(
+  template: string,
+  options: ITokenizeOptions = {}
+): TokenType[] {
+  assertTruthy(isString(template), `Template must be a string. Got ${template}`)
+  assertTruthy(
+    isObject(options),
+    `When a options are provided, it should be an object. Got ${options}`
+  ) // TODO TypeError
+  const { openSymbol = '{{', closeSymbol = '}}' } = options
+  assertTruthy(
+    openSymbol !== closeSymbol,
+    `Open and close symbol can't be the same ${openSymbol}`
+  )
 
   const openSymbolLength = openSymbol.length
   const closeSymbolLength = closeSymbol.length
-  let openIndex: number = -1;
-  let closeIndex: number = -1;
-  let before: string;
-  let varName: string;
+  let openIndex: number = -1
+  let closeIndex: number = -1
+  let before: string
+  let varName: string
   const ret: TokenType[] = []
-  let currentIndex = -openSymbolLength;
+  let currentIndex = -openSymbolLength
   while (currentIndex < template.length) {
     openIndex = template.indexOf(openSymbol, currentIndex)
     if (openIndex === -1) {
-      break;
+      break
     }
     closeIndex = template.indexOf(closeSymbol, openIndex)
     if (closeIndex === -1) {
-      throw new SyntaxError(`An ${openSymbol} found without ${closeSymbol} in ${template}`)
+      throw new SyntaxError(
+        `An ${openSymbol} found without ${closeSymbol} in ${template}`
+      )
     }
-    varName = template.substring(openIndex + openSymbolLength, closeIndex).trim()
-    if (varName.indexOf(openSymbol) !== -1 || varName.indexOf(closeSymbol) !== -1) {
+    varName = template
+      .substring(openIndex + openSymbolLength, closeIndex)
+      .trim()
+    if (varName.includes(openSymbol) || varName.includes(closeSymbol)) {
       throw new SyntaxError(`Invalid variable name ${varName} in ${template}`)
     }
     closeIndex += closeSymbolLength
@@ -54,19 +69,23 @@ export function tokenize(template: string, { openSymbol = '{{', closeSymbol = '}
     currentIndex = closeIndex
 
     if (before !== '') {
-      if (before.indexOf(openSymbol) !== -1 || before.indexOf(closeSymbol) !== -1) {
-        throw new SyntaxError(`Invalid open and close match at ${before} in ${template}`)
+      if (before.includes(openSymbol) || before.includes(closeSymbol)) {
+        throw new SyntaxError(
+          `Invalid open and close match at ${before} in ${template}`
+        )
       }
       ret.push(before)
     }
     if (varName !== '') {
-      ret.push(new Token(varName))
+      ret.push(new NameToken(varName))
     }
   }
   if (closeIndex !== template.length) {
     const rest = template.substring(closeIndex)
     if (rest.indexOf(closeSymbol) !== -1) {
-      throw new SyntaxError(`A closing symbol found without an opening at ${rest} in ${template}`)
+      throw new SyntaxError(
+        `A closing symbol found without an opening at ${rest} in ${template}`
+      )
     }
     ret.push(rest)
   }

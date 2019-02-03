@@ -1,12 +1,12 @@
-import { describe } from 'mocha';
-import { expect } from 'chai';
-import { stringify } from './stringify';
+import { describe } from 'mocha'
+import { expect } from 'chai'
+import { stringify } from './stringify'
 
 describe('stringify()', () => {
   it('returns string as they are', () => {
-    expect(stringify('')).to.equal('');
-    expect(stringify('hello')).to.equal('hello');
-    expect(stringify('{{not interpolating}}')).to.equal('{{not interpolating}}');
+    expect(stringify('')).to.equal('')
+    expect(stringify('hello')).to.equal('hello')
+    expect(stringify('{{not interpolating}}')).to.equal('{{not interpolating}}')
   })
 
   it('returns booleans', () => {
@@ -23,8 +23,8 @@ describe('stringify()', () => {
     expect(stringify(Number.NEGATIVE_INFINITY), '-∞').to.equal('-∞')
   })
 
-  it('returns empty string for NaN', () => {
-    expect(stringify(NaN)).to.equal('')
+  it('returns NaN', () => {
+    expect(stringify(Number.NaN), 'NaN').to.deep.equal(Number.NaN)
   })
 
   it('returns empty string for null', () => {
@@ -69,4 +69,4 @@ describe('stringify()', () => {
     const invalidType = 'XXX'
     expect(stringify(f, { invalidType })).to.equal(invalidType)
   })
-});
+})

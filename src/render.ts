@@ -1,5 +1,5 @@
-import { compile } from './compile';
-import { ICompilerOptions } from './types';
+import { compile } from './compile'
+import { ICompilerOptions, Scope } from './types'
 
 /**
  * Replaces every {{variable}} inside the template with values provided by view.
@@ -14,7 +14,11 @@ import { ICompilerOptions } from './types';
  * If the value is an object itself, it'll be stringified by JSON.
  * In case of a JSON stringify error the result will look like "{...}".
  */
-export function render(template: string, view: {} = {}, options?: ICompilerOptions): string {
-  const compiler = compile(template, options)
-  return compiler(view);
+export function render(
+  template: string,
+  view: Scope = {},
+  options?: ICompilerOptions
+): string | Promise<string> {
+  const renderer = compile(template, options)
+  return renderer(view)
 }
