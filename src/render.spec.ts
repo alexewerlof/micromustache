@@ -1,15 +1,17 @@
 import { expect } from 'chai';
 import { render } from './render';
 
-/*
 describe('#render()', () => {
   it('is a function', () => {
     expect(render).to.be.a('function');
   });
 
-  it('should not touch non-string templates', () => {
+  it('throws non-string templates', () => {
+    // @ts-ignore
     expect(render(1)).to.equal(1);
+    // @ts-ignore
     expect(render(null, {})).to.equal(null);
+    // @ts-ignore
     expect(render(true, {})).to.equal(true);
   });
 
@@ -65,7 +67,9 @@ describe('#render()', () => {
   });
 
   it('interpolates all variables with empty string when view is invalid', () => {
+    // @ts-ignore
     expect(render('{{i}}', undefined)).to.equal('');
+    // @ts-ignore
     expect(render('{{i}}', null)).to.equal('');
     expect(render('{{i}}', 'hellow!!!')).to.equal('');
     expect(render('{{i}}', 13)).to.equal('');
@@ -190,30 +194,31 @@ describe('#render()', () => {
     expect(render('{{length}}', [])).to.equal('0');
   });
 
-  it('ignores the view if it is a function', function () {
+  it('uses the view if it is a function instead of an object', () => {
+    // tslint:disable-next-line no-empty
     function view() {}
     view.A = 'Cat';
     expect(render('X={{A}}', view)).to.equal('X=');
   });
 
-  it('accepts class as view', function () {
+  it('accepts class as view', () => {
     class Parent {
-      constructor () {
-        this.B = 'Mobile';
+      constructor (public B = 'Mobile') {
       }
     }
+    // tslint:disable-next-line max-classes-per-file
     class View extends Parent {
-      constructor () {
+      constructor (public A = 'Crocodile') {
         super();
-        this.A = 'Crocodile';
       }
     }
     const view = new View();
+    // @ts-ignore
     view.C = 'Alice';
     expect(render('{{A}} or {{B}} and {{C}}', view)).to.equal('Crocodile or Mobile and Alice');
   });
 
-  it('can access nested objects', function() {
+  it('can access nested objects', () => {
     expect(render('{{a}} {{b.c}}', {
       a: 'hello',
       b: {
@@ -228,7 +233,7 @@ describe('#render()', () => {
     })).to.equal('12');
   });
 
-  it('can access nested objects with three level nesting', function() {
+  it('can access nested objects with three level nesting', () => {
     expect(render('{{a}}{{b.c.d}}', {
       a: 1,
       b: {
@@ -239,7 +244,7 @@ describe('#render()', () => {
     })).to.equal('13');
   });
 
-  it('can access nested objects with six level nesting', function() {
+  it('can access nested objects with six level nesting', () => {
     expect(render('{{a.b.c.d.e.f}}', {
       a: {
         b: {
@@ -255,7 +260,7 @@ describe('#render()', () => {
     })).to.equal('finally!');
   });
 
-  it('if one of the nested keys do not exist, it is assumed empty string', function() {
+  it('if one of the nested keys do not exist, it is assumed empty string', () => {
     expect(render('{{a.b.c.d.e.f}}', {
       a: {
         b: {
@@ -271,14 +276,14 @@ describe('#render()', () => {
     })).to.equal('');
   });
 
-  it('can access nested objects with array index', function() {
+  it('can access nested objects with array index', () => {
     expect(render('{{a}}-{{b.1}}', {
       a: 'a',
       b: [10, 11]
     })).to.equal('a-11');
   });
 
-  it('can access objects in an array', function () {
+  it('can access objects in an array', () => {
     expect(render('{{a.1.b.c}}', {
       a: [
         {
@@ -290,17 +295,18 @@ describe('#render()', () => {
     })).to.equal('13');
   });
 
-  it('does not crash when JSON conversion has a problem', function () {
+  it('does not crash when JSON conversion has a problem', () => {
     // An object with loop will cause a JSON.stringify() exception
     const viewObject = {};
+    // @ts-ignore
     viewObject.a = viewObject;
-    expect(function () {
+    expect(() => {
       JSON.stringify(viewObject);
     }).to.throw();
     expect(render('-{{a}}-', viewObject)).to.equal('-{...}-');
   });
 
-  it('works for Michael Jackson, so it should work for everyone', function () {
+  it('works for Michael Jackson, so it should work for everyone', () => {
     // I don't have a thing with MJ. Just improvised and it stuck there!
     const singer = {
       first: 'Michael',
@@ -335,7 +341,7 @@ describe('#render()', () => {
         b: false,
         c: false
       };
-      function resolver(view, varName) {
+      function resolver(view: {}, varName: string) {
         counter++;
         viewVarNames[varName] = true;
         return view[varName];
@@ -411,4 +417,3 @@ describe('#render()', () => {
   });
 
 });
-*/

@@ -14,7 +14,7 @@ import { ICompilerOptions } from './types';
  * If the value is an object itself, it'll be stringified by JSON.
  * In case of a JSON stringify error the result will look like "{...}".
  */
-export function render(template: string, view: {}, options: ICompilerOptions): string {
+export function render(template: string, view: {} = {}, options?: ICompilerOptions): string {
   const compiler = compile(template, options)
   return compiler(view);
 }
