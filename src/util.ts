@@ -1,5 +1,3 @@
-import { Scope } from './types'
-
 export function isObject(val: any) {
   return val && typeof val === 'object'
 }
@@ -27,7 +25,10 @@ export function isDefined(val: any) {
 export function assertTruthy(
   expression: any,
   message: string,
-  errorConstructor: ErrorConstructor = Error
+  errorConstructor:
+    | ErrorConstructor
+    | TypeErrorConstructor
+    | SyntaxErrorConstructor = Error
 ) {
   if (!expression) {
     if (errorConstructor) {

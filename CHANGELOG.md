@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add support for [tagged string templates](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals)
 - Support comments: *{{! ...}}* like MustacheJS
 - Test the async behaviour
-- Fix the error type for assertTruthy
+- Reenable tests/ for mustache compatibility and add relevant options
+- Add a string literal tag function
 
 ## 6.0.0
 - Rewrote the parser in TypeScript

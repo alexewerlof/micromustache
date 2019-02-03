@@ -31,8 +31,9 @@ export function tokenize(
   assertTruthy(isString(template), `Template must be a string. Got ${template}`)
   assertTruthy(
     isObject(options),
-    `When a options are provided, it should be an object. Got ${options}`
-  ) // TODO TypeError
+    `When a options are provided, it should be an object. Got ${options}`,
+    TypeError
+  )
   const { openSymbol = '{{', closeSymbol = '}}' } = options
   assertTruthy(
     openSymbol !== closeSymbol,

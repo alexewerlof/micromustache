@@ -1,4 +1,5 @@
 import { NameToken } from './tokenize'
+
 export type Scope = {} | Function
 
 /**

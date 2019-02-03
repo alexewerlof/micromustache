@@ -18,8 +18,9 @@ import { Scope } from './types'
 export function get(scope: Scope, path: string): any {
   assertTruthy(
     isValidScope(scope),
-    `The scope should be an object but is ${typeof scope}: ${scope}`
-  ) // TODO TypeError);
+    `The scope should be an object but is ${typeof scope}: ${scope}`,
+    TypeError
+  )
   const pathArr = toPath(path)
   return getKeys(scope, pathArr)
 }
@@ -37,8 +38,8 @@ export function getKeys(scope: Scope, pathArr: string[]): any {
   for (const key of pathArr) {
     assertTruthy(
       isValidScope(currentScope),
-      `Cannot read property ${key} of ${currentScope}`
-      // TODO TypeError
+      `Cannot read property ${key} of ${currentScope}`,
+      TypeError
     )
     // @ts-ignore
     currentScope = currentScope[key]

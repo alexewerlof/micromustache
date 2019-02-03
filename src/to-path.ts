@@ -1,11 +1,11 @@
-import { isString } from './util'
+import { isString, assertTruthy } from './util'
 
 export function toPath(path: string): string[] {
-  if (!isString(path)) {
-    throw new TypeError(
-      `Path must be a string but it is ${typeof path}: ${path}`
-    )
-  }
+  assertTruthy(
+    isString(path),
+    `Path must be a string but it is ${typeof path}: ${path}`,
+    TypeError
+  )
   if (path.trim() === '') {
     return []
   }
