@@ -12,7 +12,17 @@ export type Scope = {} | Function
  * If the function returns undefined, the value resolution algorithm will go ahead with the default
  * behaviour (resolving the variable name from the provided object).
  */
-export type Resolver = (scope: Scope, token: NameToken) => any | Promise<any>
+export type Resolver = (
+  varName: string,
+  scope?: Scope,
+  nameToken?: NameToken
+) => any
+
+export type AsyncResolver = (
+  varName: string,
+  scope?: Scope,
+  nameToken?: NameToken
+) => Promise<any>
 
 export type TokenType = NameToken | string
 
@@ -31,13 +41,8 @@ export interface IStringifyOptions {
 }
 
 export interface ICompilerOptions extends ITokenizeOptions, IStringifyOptions {
-  /**
-   * An optional function that will be called for every {{varName}} to generate a value.
-   * If the resolver throws an error we'll proceed with the default value resolution algorithm
-   * (find the value from the view object).
-   */
-  resolver?: Resolver
-  asyncResolver?: boolean
+  resolver?: Resolver | AsyncResolver
+  resolverContext?: any
 }
 
 /**
@@ -50,4 +55,5 @@ export interface ICompilerOptions extends ITokenizeOptions, IStringifyOptions {
  *        be stringified by JSON.
  *        In case of a JSON stringify error the result will look like "{...}".
  */
-export type Renderer = (scope: Scope) => string | Promise<string>
+export type Renderer = (scope: Scope) => string
+export type AsyncRenderer = (scope: Scope) => Promise<string>

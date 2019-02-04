@@ -1,12 +1,12 @@
-import { compile } from './compile'
+import { compile, compileAsync } from './compile'
 import { ICompilerOptions, Scope } from './types'
 
 /**
- * Replaces every {{variable}} inside the template with values provided by view.
+ * Replaces every {{variable}} inside the template with values provided by scope.
  *
  * @param template The template containing one or more {{variableNames}} every variable
  * names that is used in the template. If it's omitted, it'll be assumed an empty object.
- * @param view An object containing values for every variable names that is used in the template.
+ * @param scope An object containing values for every variable names that is used in the template.
  * If it's omitted, it'll be set to an empty object essentially removing all {{varName}}s from the template.
  * @param options compiler options
  * @returns Template where its variable names replaced with corresponding values.
@@ -16,9 +16,16 @@ import { ICompilerOptions, Scope } from './types'
  */
 export function render(
   template: string,
-  view: Scope = {},
+  scope: Scope = {},
   options?: ICompilerOptions
-): string | Promise<string> {
-  const renderer = compile(template, options)
-  return renderer(view)
+) {
+  return compile(template, options)(scope)
+}
+
+export async function renderAsync(
+  template: string,
+  scope: Scope = {},
+  options?: ICompilerOptions
+) {
+  return compileAsync(template, options)(scope)
 }

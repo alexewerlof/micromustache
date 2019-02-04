@@ -1,17 +1,32 @@
 import { isObject, isFunction, assertTruthy, asyncMap, isDefined } from './util'
 import { getKeys } from './get'
-import { ICompilerOptions, Renderer, Resolver, Scope, TokenType } from './types'
+import {
+  ICompilerOptions,
+  Renderer,
+  Resolver,
+  Scope,
+  TokenType,
+  AsyncRenderer,
+  AsyncResolver
+} from './types'
 import { tokenize, NameToken } from './tokenize'
 import { stringifyValues } from './stringify'
 
-function defaultResolver(scope: Scope, token: NameToken) {
-  return getKeys(scope, token.paths)
-}
+const defaultResolver: Resolver = (
+  varName: string,
+  scope: Scope,
+  nameToken: NameToken
+) => getKeys(scope, nameToken.paths)
 
-function resolveToken(resolve: Resolver, scope: {}, token: TokenType) {
+function callResolver(
+  resolver: Resolver | AsyncResolver,
+  scope: {},
+  token: TokenType,
+  resolverContext: any = null
+) {
   // token is a string but paths is a flag saying that it is actually a variable name and needs interpolation
   if (token instanceof NameToken) {
-    return resolve(scope, token)
+    return resolver.call(resolverContext, token.varName, scope, token)
   }
   return token as string
 }
@@ -24,6 +39,7 @@ function resolveToken(resolve: Resolver, scope: {}, token: TokenType) {
  * internally.
  *
  * @param template same as the template parameter to .render()
+ * @param resolver an optional function that receives a token and synchronously returns a value
  * @param options compiler options
  * @returns a function that accepts a scope object and returns a
  *        rendered template string template
@@ -32,38 +48,49 @@ export function compile(
   template: string,
   options: ICompilerOptions = {}
 ): Renderer {
-  // don't touch the template if it is not a string
+  // Note: tokenize() asserts the type of its params
+  const tokens = tokenize(template, options)
+
+  const { resolver = defaultResolver } = options
+
   assertTruthy(
-    isObject(options),
-    `When a options are provided, it should be an object. Got ${options}`
+    isFunction(resolver),
+    `Expected a resolver function but got ${resolver}`,
+    TypeError
   )
 
-  // Note: tokenize() also asserts that options is an object
-  const tokens = tokenize(template, options)
-  let { resolver } = options
-
-  if (isDefined(resolver)) {
-    assertTruthy(
-      isFunction(resolver),
-      `The resolver is not a function. Got ${resolver}`
-    )
-  } else {
-    resolver = defaultResolver
-  }
-
-  if (options.asyncResolver) {
-    return async function asyncRenderer(scope: Scope = {}) {
-      const resolvedToken = await asyncMap(tokens, token =>
-        resolveToken(resolver as Resolver, scope, token)
-      )
-      return stringifyValues(resolvedToken, options)
-    }
-  }
-
   return function renderer(scope: Scope = {}) {
-    const resolvedToken = tokens.map(token =>
-      resolveToken(resolver as Resolver, scope, token)
+    const resolvedTokens = tokens.map(token =>
+      callResolver(resolver, scope, token, options.resolverContext)
     )
-    return stringifyValues(resolvedToken, options)
+    return stringifyValues(resolvedTokens, options)
+  }
+}
+
+export function compileAsync(
+  template: string,
+  options: ICompilerOptions = {}
+): AsyncRenderer {
+  // Note: tokenize() asserts the type of its params
+  const tokens = tokenize(template, options)
+
+  const { resolver } = options
+
+  assertTruthy(
+    isFunction(resolver),
+    `Expected a resolver async function but got ${resolver}`,
+    TypeError
+  )
+
+  return async function asyncRenderer(scope: Scope = {}) {
+    const resolvedTokens = await asyncMap(tokens, token =>
+      callResolver(
+        resolver as AsyncResolver,
+        scope,
+        token,
+        options.resolverContext
+      )
+    )
+    return stringifyValues(resolvedTokens, options)
   }
 }

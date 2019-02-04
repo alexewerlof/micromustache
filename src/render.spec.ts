@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { render } from './render'
 import { NameToken } from './tokenize'
+import { Resolver } from './types'
 
 describe('#render()', () => {
   it('is a function', () => {
@@ -418,8 +419,7 @@ describe('#render()', () => {
         b: false,
         c: false
       }
-      function resolver(scope: {}, token: NameToken) {
-        const { varName } = token
+      const resolver: Resolver = (varName, scope: {}, token: NameToken) => {
         counter++
         // @ts-ignore
         viewVarNames[varName] = true
@@ -438,8 +438,7 @@ describe('#render()', () => {
 
     it('does not call the default resolver if the custom resolver returns a value', () => {
       // tslint:disable-next-line no-shadowed-variable
-      function resolver(view: {}, token: NameToken) {
-        const { varName } = token
+      const resolver: Resolver = varName => {
         expect(varName).to.equal('a.b.c')
         return 'brick'
       }
@@ -454,7 +453,7 @@ describe('#render()', () => {
     })
 
     it('can return an object', () => {
-      function resolver() {
+      const resolver: Resolver = () => {
         return { a: 2 }
       }
       expect(render('Hi {{whatever}}!', {}, { resolver })).to.equal(
@@ -463,7 +462,7 @@ describe('#render()', () => {
     })
 
     it('can be present without any view', () => {
-      function resolver() {
+      const resolver: Resolver = () => {
         return 'world'
       }
       expect(render('Hello {{target}}!', undefined, { resolver })).to.equal(
@@ -486,8 +485,7 @@ describe('#render()', () => {
           }
         }
       }
-      function resolver(scope: {}, token: NameToken) {
-        const { varName } = token
+      const resolver: Resolver = (varName, scope: {}) => {
         expect(scope).to.equal(view)
         expect(varName).to.equal('a.b.c')
         return 'world'
@@ -498,8 +496,7 @@ describe('#render()', () => {
     })
 
     it('gets the trimmed variable name', () => {
-      function resolver(view: {}, token: NameToken) {
-        const { varName } = token
+      const resolver: Resolver = varName => {
         return varName === 'a.b.c'
       }
       expect(
