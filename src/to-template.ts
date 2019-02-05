@@ -6,14 +6,7 @@ export function toTemplate(strings: string[], ...values: any) {
 }
 
 // TODO add types
-export function toTemplateOpt(options: ITokenizeOptions = {}) {
-  assertTruthy(
-    isObject(options),
-    `When a options are provided, it should be an object. Got ${options}`,
-    TypeError
-  )
-  const { openSymbol = '{{', closeSymbol = '}}' } = options
-
+export function toTemplateOpt(openSymbol = '{{', closeSymbol = '}}') {
   return function convertToTemplate(strings: string[], ...values: any) {
     let ret = ''
     const lastStringIndex = strings.length - 1

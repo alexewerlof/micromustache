@@ -1,83 +1,93 @@
 import { describe } from 'mocha'
-import { tokenize, NameToken } from './tokenize'
+import { tokenize, NameToken, convertValuesToNameTokens } from './tokenize'
 import { expect } from 'chai'
 
 describe('tokenize()', () => {
-  it('can tokenize a simple template', () => {
-    expect(tokenize('hello')).to.deep.equal(['hello'])
-  })
-
-  it('can tokenize a template with interpolation signs', () => {
-    expect(tokenize('hello {{name}}!')).to.deep.equal([
-      'hello ',
-      new NameToken('name'),
-      '!'
-    ])
-  })
-
-  it('trims the variable name', () => {
-    expect(tokenize('hello {{  name  }}!')).to.deep.equal([
-      'hello ',
-      new NameToken('name'),
-      '!'
-    ])
-  })
-
-  it('does not make unnecessary tokens if the variable name is empty', () => {
-    expect(tokenize('hello {{    }}!')).to.deep.equal(['hello ', '!'])
-
-    expect(tokenize('hello {{}}!')).to.deep.equal(['hello ', '!'])
-  })
-
-  it('does not return unnecessary strings when they are empty', () => {
-    expect(tokenize('{{variable name}}')).to.deep.equal([
-      new NameToken('variable name')
-    ])
-  })
-
-  it('can tokenize a template with interpolation at the start', () => {
-    expect(tokenize('{{name}} said hello!')).to.deep.equal([
-      new NameToken('name'),
-      ' said hello!'
-    ])
-  })
-
-  it('can tokenize a template with interpolation at the end', () => {
-    expect(tokenize('Hello! My name is {{name}}.')).to.deep.equal([
-      'Hello! My name is ',
-      new NameToken('name'),
-      '.'
-    ])
-  })
-
-  it('throws an error for when the interpolation start has no end', () => {
-    expect(() => tokenize('Hello {{and')).to.throw()
-  })
-
-  it('throws an error for when the interpolation ends with no start', () => {
-    expect(() => tokenize('Hello {{name}} and}}')).to.throw()
-    expect(() => tokenize('Hello and}}')).to.throw()
-  })
-
-  it('throws an error for misplaced open and close symbol', () => {
-    expect(() => tokenize('Hello }}name{{!')).to.throw()
-  })
-
-  it('throws for nested open and close symbol', () => {
-    expect(() => tokenize('Hello {{ {{name}} }}!')).to.throw()
-  })
-
   it('supports custom close and open symbols', () => {
     const options = {
       openSymbol: '${',
       closeSymbol: '}'
     }
     // tslint:disable-next-line no-invalid-template-strings
-    expect(tokenize('hello ${name}!', options)).to.deep.equal([
-      'hello ',
-      new NameToken('name'),
-      '!'
-    ])
+    expect(tokenize('hello ${name}!', options)).to.deep.equal({
+      strings: ['hello ', '!'],
+      values: ['name']
+    })
+  })
+
+  it('returns the string if no interpolation is found', () => {
+    expect(tokenize('Hello world')).to.deep.equal({
+      strings: ['Hello world'],
+      values: []
+    })
+  })
+
+  it('returns an empty string and no values when the template is an empty string', () => {
+    expect(tokenize('')).to.deep.equal({
+      strings: [''],
+      values: []
+    })
+  })
+
+  it('handles interpolation correctly at the start of the template', () => {
+    expect(tokenize('{{name}}! How are you?')).to.deep.equal({
+      strings: ['', '! How are you?'],
+      values: ['name']
+    })
+  })
+
+  it('handles interpolation correctly at the end of the template', () => {
+    expect(tokenize('My name is {{name}}')).to.deep.equal({
+      strings: ['My name is ', ''],
+      values: ['name']
+    })
+  })
+
+  it('trims value name', () => {
+    const { values } = tokenize('My name is {{  name  }}')
+    if (values.length) {
+      expect(values[0]).to.equal('name')
+    }
+  })
+
+  it('can handle a close symbol without an open symbol', () => {
+    expect(tokenize('Hi}} {{name}}')).to.deep.equal({
+      strings: ['Hi}} ', ''],
+      values: ['name']
+    })
+    expect(tokenize('Hi {{name}} }}')).to.deep.equal({
+      strings: ['Hi ', ' }}'],
+      values: ['name']
+    })
+  })
+
+  it('throws a syntax error if the open symbol is not closed', () => {
+    expect(() => tokenize('Hi {{')).to.throw(
+      SyntaxError,
+      'Missing }} in template expression'
+    )
+  })
+
+  it('does not throw an error if there is a close symbol without an open symbol', () => {
+    expect(() => tokenize('Hi}} ')).not.to.throw()
+  })
+
+  it('throws a syntax error if the variable name is an empty string', () => {
+    expect(() => tokenize('Hi {{}}')).to.throw(
+      SyntaxError,
+      'Unexpected token }}'
+    )
+  })
+
+  it('throws a syntax error if the value name is just spaces', () => {
+    expect(() => tokenize('Hi {{ }}')).to.throw(
+      SyntaxError,
+      'Unexpected token }}'
+    )
+  })
+
+  it('throws for nested open and close symbol', () => {
+    expect(() => tokenize('Hello {{ {{name}} }}!')).to.throw()
   })
 
   it('throws if open and close symbol are the same', () => {
@@ -86,6 +96,27 @@ describe('tokenize()', () => {
       closeSymbol: '{{'
     }
     // tslint:disable-next-line no-invalid-template-strings
-    expect(() => tokenize('hello!', options)).to.throw()
+    expect(() => tokenize('hello!', options)).to.throw(Error)
+  })
+})
+
+describe('convertValuesToNameTokens()', () => {
+  it('converts values to NameToken objects', () => {
+    const input = {
+      strings: ['Hi! My name is ', '.'],
+      values: ['Alex']
+    }
+    expect(convertValuesToNameTokens(input)).to.deep.equal({
+      strings: ['Hi! My name is ', '.'],
+      values: [new NameToken('Alex')]
+    })
+  })
+
+  it('does not touch the string array', () => {
+    const input = {
+      strings: ['Hi! My name is ', '.'],
+      values: []
+    }
+    expect(convertValuesToNameTokens(input).strings).to.equal(input.strings)
   })
 })

@@ -50,6 +50,16 @@ export function stringify(
   }
 }
 
-export function stringifyValues(values: any[], options: IStringifyOptions) {
-  return values.map(value => stringify(value, options)).join('')
+export function stringifyTagParams(
+  strings: string[],
+  values: any[],
+  options?: IStringifyOptions
+): string {
+  const ret = new Array(strings.length * 2 - 1)
+  for (let i = 0; i < strings.length; i++) {
+    ret[i * 2] = strings[i]
+    ret[i * 2 + 1] = stringify(values[i], options)
+    ret[i * 2 + 2] = strings[i + 1]
+  }
+  return ret.join('')
 }

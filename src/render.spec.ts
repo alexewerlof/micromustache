@@ -470,13 +470,6 @@ describe('#render()', () => {
       )
     })
 
-    it('is not called for empty variable names', () => {
-      let resolverIsCalled = false
-      const resolver = () => (resolverIsCalled = true)
-      render('Hello {{}}!', {}, { resolver })
-      expect(resolverIsCalled).to.equal(false)
-    })
-
     it('is called for nested variable names', () => {
       const view = {
         a: {

@@ -1,4 +1,4 @@
-import { isObject, isFunction, assertTruthy, asyncMap, isDefined } from './util'
+import { isFunction, assertTruthy, asyncMap } from './util'
 import { getKeys } from './get'
 import {
   ICompilerOptions,
@@ -9,8 +9,8 @@ import {
   AsyncRenderer,
   AsyncResolver
 } from './types'
-import { tokenize, NameToken } from './tokenize'
-import { stringifyValues } from './stringify'
+import { tokenize, NameToken, convertValuesToNameTokens } from './tokenize'
+import { stringifyTagParams } from './stringify'
 
 const defaultResolver: Resolver = (
   varName: string,
@@ -49,7 +49,7 @@ export function compile(
   options: ICompilerOptions = {}
 ): Renderer {
   // Note: tokenize() asserts the type of its params
-  const tokens = tokenize(template, options)
+  const tokens = convertValuesToNameTokens(tokenize(template, options))
 
   const { resolver = defaultResolver } = options
 
@@ -60,10 +60,15 @@ export function compile(
   )
 
   return function renderer(scope: Scope = {}) {
-    const resolvedTokens = tokens.map(token =>
-      callResolver(resolver, scope, token, options.resolverContext)
+    const values = tokens.values.map(nameToken =>
+      (resolver as Resolver).call(
+        options.resolverContext,
+        nameToken.varName,
+        scope,
+        nameToken
+      )
     )
-    return stringifyValues(resolvedTokens, options)
+    return stringifyTagParams(tokens.strings, values, options)
   }
 }
 
@@ -72,7 +77,7 @@ export function compileAsync(
   options: ICompilerOptions = {}
 ): AsyncRenderer {
   // Note: tokenize() asserts the type of its params
-  const tokens = tokenize(template, options)
+  const tokens = convertValuesToNameTokens(tokenize(template, options))
 
   const { resolver } = options
 
@@ -83,14 +88,14 @@ export function compileAsync(
   )
 
   return async function asyncRenderer(scope: Scope = {}) {
-    const resolvedTokens = await asyncMap(tokens, token =>
-      callResolver(
-        resolver as AsyncResolver,
+    const values = await asyncMap(tokens.values, nameToken =>
+      (resolver as AsyncResolver).call(
+        options.resolverContext,
+        nameToken.varName,
         scope,
-        token,
-        options.resolverContext
+        nameToken
       )
     )
-    return stringifyValues(resolvedTokens, options)
+    return stringifyTagParams(tokens.strings, values, options)
   }
 }

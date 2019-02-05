@@ -1,5 +1,6 @@
 import { isString, assertTruthy } from './util'
 
+// TODO: remove the regex dance
 export function toPath(path: string): string[] {
   assertTruthy(
     isString(path),

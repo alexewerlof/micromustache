@@ -1,5 +1,5 @@
 import { assertTruthy, isString, isObject } from './util'
-import { ITokenizeOptions, TokenType } from './types'
+import { ITokenizeOptions, TokenType, TagInput } from './types'
 import { toPath } from './to-path'
 
 export class NameToken {
@@ -15,6 +15,9 @@ export class NameToken {
   }
 }
 
+// TODO: support open and close symbols that are the same. Coldfusion requires it: https://en.wikipedia.org/wiki/String_interpolation
+// TODO: Support escaping characters
+// TODO: Support word boundry for closeSymbol
 /**
  * Tokenize the template string and return an array of strings and
  * functions ready for the compiler to go through them.
@@ -27,7 +30,7 @@ export class NameToken {
 export function tokenize(
   template: string,
   options: ITokenizeOptions = {}
-): TokenType[] {
+): TagInput<string> {
   assertTruthy(isString(template), `Template must be a string. Got ${template}`)
   assertTruthy(
     isObject(options),
@@ -46,49 +49,53 @@ export function tokenize(
   let closeIndex: number = -1
   let before: string
   let varName: string
-  const ret: TokenType[] = []
+  const strings: string[] = []
+  const values: string[] = []
   let currentIndex = -openSymbolLength
   while (currentIndex < template.length) {
     openIndex = template.indexOf(openSymbol, currentIndex)
     if (openIndex === -1) {
       break
     }
+
     closeIndex = template.indexOf(closeSymbol, openIndex)
-    if (closeIndex === -1) {
-      throw new SyntaxError(
-        `An ${openSymbol} found without ${closeSymbol} in ${template}`
-      )
-    }
+    assertTruthy(
+      closeIndex !== -1,
+      `Missing ${closeSymbol} in template expression`,
+      SyntaxError
+    )
+
     varName = template
       .substring(openIndex + openSymbolLength, closeIndex)
       .trim()
-    if (varName.includes(openSymbol) || varName.includes(closeSymbol)) {
-      throw new SyntaxError(`Invalid variable name ${varName} in ${template}`)
-    }
+
+    assertTruthy(
+      !varName.includes(openSymbol),
+      `Missing ${closeSymbol} in template expression`,
+      SyntaxError
+    )
+
+    assertTruthy(varName.length, `Unexpected token ${closeSymbol}`, SyntaxError)
+    values.push(varName)
+
     closeIndex += closeSymbolLength
     before = template.substring(currentIndex, openIndex)
-    currentIndex = closeIndex
+    strings.push(before)
 
-    if (before !== '') {
-      if (before.includes(openSymbol) || before.includes(closeSymbol)) {
-        throw new SyntaxError(
-          `Invalid open and close match at ${before} in ${template}`
-        )
-      }
-      ret.push(before)
-    }
-    if (varName !== '') {
-      ret.push(new NameToken(varName))
-    }
+    currentIndex = closeIndex
   }
-  if (closeIndex !== template.length) {
-    const rest = template.substring(closeIndex)
-    if (rest.indexOf(closeSymbol) !== -1) {
-      throw new SyntaxError(
-        `A closing symbol found without an opening at ${rest} in ${template}`
-      )
-    }
-    ret.push(rest)
-  }
-  return ret
+
+  // if (closeIndex !== template.length) {
+  const rest = template.substring(currentIndex)
+  strings.push(rest)
+
+  return { strings, values }
+}
+
+export function convertValuesToNameTokens(
+  input: TagInput<string>
+): TagInput<NameToken> {
+  const { strings } = input
+  const values = input.values.map(varName => new NameToken(varName))
+  return { strings, values }
 }
