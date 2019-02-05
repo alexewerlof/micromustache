@@ -85,7 +85,6 @@ export function tokenize(
     currentIndex = closeIndex
   }
 
-  // if (closeIndex !== template.length) {
   const rest = template.substring(currentIndex)
   strings.push(rest)
 

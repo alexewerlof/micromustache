@@ -22,6 +22,7 @@ export function isDefined(val: any) {
   return val !== undefined
 }
 
+// TODO let it build the string lazily instead of expecting a string template for the message
 export function assertTruthy(
   expression: any,
   message: string,
