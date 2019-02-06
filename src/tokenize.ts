@@ -27,7 +27,7 @@ export class NameToken {
  * @param options - the options form compile()
  * @returns the resulting string
  */
-export function tokenize(
+export function parseString(
   template: string,
   options: ITokenizeOptions = {}
 ): TagInput<string> {
@@ -91,10 +91,23 @@ export function tokenize(
   return { strings, values }
 }
 
-export function convertValuesToNameTokens(
-  input: TagInput<string>
+export function convertValuesToNameTokens({
+  strings,
+  values
+}: TagInput<string>): TagInput<NameToken> {
+  const nameTokens = values.map(varName => new NameToken(varName))
+  return { strings, values: nameTokens }
+}
+
+export function tokenizeTemplate(
+  template: string,
+  options: ITokenizeOptions = {}
 ): TagInput<NameToken> {
-  const { strings } = input
-  const values = input.values.map(varName => new NameToken(varName))
-  return { strings, values }
+  return convertValuesToNameTokens(parseString(template, options))
+}
+
+export function tokenizeStringTemplate(
+  template: TagInput<string>
+): TagInput<NameToken> {
+  return convertValuesToNameTokens(template)
 }

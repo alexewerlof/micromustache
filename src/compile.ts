@@ -9,7 +9,7 @@ import {
   AsyncRenderer,
   AsyncResolver
 } from './types'
-import { tokenize, NameToken, convertValuesToNameTokens } from './tokenize'
+import { NameToken, tokenizeTemplate } from './tokenize'
 import { stringifyTagParams } from './stringify'
 
 const defaultResolver: Resolver = (
@@ -48,8 +48,8 @@ export function compile(
   template: string,
   options: ICompilerOptions = {}
 ): Renderer {
-  // Note: tokenize() asserts the type of its params
-  const tokens = convertValuesToNameTokens(tokenize(template, options))
+  // Note: parseString() asserts the type of its params
+  const tokens = tokenizeTemplate(template, options)
 
   const { resolver = defaultResolver } = options
 
@@ -76,8 +76,8 @@ export function compileAsync(
   template: string,
   options: ICompilerOptions = {}
 ): AsyncRenderer {
-  // Note: tokenize() asserts the type of its params
-  const tokens = convertValuesToNameTokens(tokenize(template, options))
+  // Note: parseString() asserts the type of its params
+  const tokens = tokenizeTemplate(template, options)
 
   const { resolver } = options
 

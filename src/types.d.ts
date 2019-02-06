@@ -58,7 +58,9 @@ export interface ICompilerOptions extends ITokenizeOptions, IStringifyOptions {
 export type Renderer = (scope: Scope) => string
 export type AsyncRenderer = (scope: Scope) => Promise<string>
 
-interface TagInput<T> {
+export interface TagInput<T> {
   strings: string[]
   values: T[]
 }
+
+export type TagFunction = (strings: string[], ...values: any[]) => string
