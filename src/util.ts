@@ -46,7 +46,7 @@ export function asyncMap<T>(arr: T[], iteratee: (item: T) => Promise<any>) {
  * Reference: https://en.wikipedia.org/wiki/String_interpolation
  */
 const OPEN_CLOSE_SYMBOLS: {
-  [openSymbol: string]: string | RegExp
+  [openSymbol: string]: string
 } = {
   '{{': '}}', // Mustache, Handlebars
   '#{': '}', // Ruby, Crystal, CoffeeScript

@@ -1,12 +1,10 @@
-import { isFunction, assertTruthy, asyncMap } from './util'
-import { Scope, getKeys } from './get'
-import { ITokenizeOptions, NameToken, tokenizeTemplate } from './tokenize'
-import { IStringifyOptions, stringifyTagParams } from './stringify'
+import { IParseOptions, tokenizeTemplate } from './tokenize'
+import { IStringifyOptions } from './stringify'
 import { IResolveOptions, createRenderer, createAsyncRenderer } from './resolve'
 import { AsyncRenderer, Renderer } from './render'
 
 export interface ICompilerOptions
-  extends ITokenizeOptions,
+  extends IParseOptions,
     IStringifyOptions,
     IResolveOptions {}
 

@@ -1,7 +1,7 @@
 import { isString, assertTruthy } from './util'
-import { ITokenizeOptions, parseString } from './tokenize'
+import { IParseOptions, parseString } from './tokenize'
 
-const parseStringOptions: ITokenizeOptions = {
+const parseStringOptions: IParseOptions = {
   openSymbol: '[',
   closeSymbol: ']'
 }

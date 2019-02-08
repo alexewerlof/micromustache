@@ -1,4 +1,5 @@
 import { isFunction } from './util'
+import { format, NameToken } from './tokenize'
 
 export interface IStringifyOptions {
   /** an optional string to be used when the value is an unsupported type */
@@ -62,13 +63,5 @@ export function stringifyTagParams(
   values: any[],
   options?: IStringifyOptions
 ): string {
-  const lastStringIndex = strings.length - 1
-  const ret: string[] = new Array(lastStringIndex * 2 + 1)
-  for (let i = 0; i < lastStringIndex; i++) {
-    ret.push(strings[i])
-    ret.push(stringify(values[i], options))
-  }
-
-  ret.push(strings[lastStringIndex])
-  return ret.join('')
+  return format(strings, values, value => stringify(value, options))
 }

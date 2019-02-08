@@ -1,12 +1,14 @@
-import { assertTruthy, isObject } from './util'
-import { ITokenizeOptions } from './tokenize'
+import { guessCloseSymbol } from './util'
 
 export function toTemplate(strings: string[], ...values: any) {
   return toTemplateOpt()(strings, ...values)
 }
 
 // TODO add types
-export function toTemplateOpt(openSymbol = '{{', closeSymbol = '}}') {
+export function toTemplateOpt(
+  openSymbol = '{{',
+  closeSymbol = guessCloseSymbol(openSymbol)
+) {
   return function convertToTemplate(strings: string[], ...values: any) {
     const lastStringIndex = strings.length - 1
     const ret: string[] = new Array(lastStringIndex * 4 + 1)

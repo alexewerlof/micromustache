@@ -1,4 +1,4 @@
-import { assertTruthy, isString, isObject } from './util'
+import { assertTruthy, isString, isObject, guessCloseSymbol } from './util'
 import { toPath } from './to-path'
 
 export type TokenType = NameToken | string
@@ -8,7 +8,7 @@ export interface ITagInput<T> {
   values: T[]
 }
 
-export interface ITokenizeOptions {
+export interface IParseOptions {
   /** the string that indicates opening a variable interpolation expression */
   openSymbol?: string
   /** the string that indicates closing a variable interpolation expression */
@@ -43,7 +43,7 @@ export class NameToken {
  */
 export function parseString(
   template: string,
-  options: ITokenizeOptions = {}
+  options: IParseOptions = {}
 ): ITagInput<string> {
   assertTruthy(isString(template), `Template must be a string. Got ${template}`)
   assertTruthy(
@@ -51,7 +51,9 @@ export function parseString(
     `When a options are provided, it should be an object. Got ${options}`,
     TypeError
   )
-  const { openSymbol = '{{', closeSymbol = '}}' } = options
+  const { openSymbol = '{{' } = options
+  const { closeSymbol = guessCloseSymbol(openSymbol) } = options
+
   assertTruthy(
     openSymbol !== closeSymbol,
     `Open and close symbol can't be the same ${openSymbol}`
@@ -105,6 +107,22 @@ export function parseString(
   return { strings, values }
 }
 
+export function format<T>(
+  strings: string[],
+  values: any[],
+  valueToString: (value: T) => string
+): string {
+  const lastStringIndex = strings.length - 1
+  const ret: string[] = new Array(lastStringIndex * 2 + 1)
+  for (let i = 0; i < lastStringIndex; i++) {
+    ret.push(strings[i])
+    ret.push(valueToString(values[i]))
+  }
+
+  ret.push(strings[lastStringIndex])
+  return ret.join('')
+}
+
 export function convertValuesToNameTokens({
   strings,
   values
@@ -115,13 +133,13 @@ export function convertValuesToNameTokens({
 
 export function tokenizeTemplate(
   template: string,
-  options: ITokenizeOptions = {}
+  options: IParseOptions = {}
 ): ITagInput<NameToken> {
   return convertValuesToNameTokens(parseString(template, options))
 }
 
 export function tokenizeStringTemplate(
-  template: ITagInput<string>
+  tagInput: ITagInput<string>
 ): ITagInput<NameToken> {
-  return convertValuesToNameTokens(template)
+  return convertValuesToNameTokens(tagInput)
 }
