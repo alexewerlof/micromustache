@@ -11,20 +11,20 @@ describe('stringify()', () => {
 
   it('returns booleans', () => {
     // Later when whe join(), they'll be converted to string so we don't make extra objects
-    expect(stringify(true), 'true').to.equal(true)
-    expect(stringify(false), 'false').to.equal(false)
+    expect(stringify(true), 'true').to.equal('true')
+    expect(stringify(false), 'false').to.equal('false')
   })
 
   it('returns numbers', () => {
-    expect(stringify(1), 'positive integer').to.equal(1)
-    expect(stringify(-1), 'negative integer').to.equal(-1)
-    expect(stringify(0), 'zero').to.equal(0)
+    expect(stringify(1), 'positive integer').to.equal('1')
+    expect(stringify(-1), 'negative integer').to.equal('-1')
+    expect(stringify(0), 'zero').to.equal('0')
     expect(stringify(Number.POSITIVE_INFINITY), '∞').to.equal('∞')
     expect(stringify(Number.NEGATIVE_INFINITY), '-∞').to.equal('-∞')
   })
 
   it('returns NaN', () => {
-    expect(stringify(Number.NaN), 'NaN').to.deep.equal(Number.NaN)
+    expect(stringify(Number.NaN), 'NaN').to.deep.equal('NaN')
   })
 
   it('returns empty string for null', () => {

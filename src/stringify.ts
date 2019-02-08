@@ -14,11 +14,12 @@ const OBJECT_TO_STRING = Object.prototype.toString
 export function stringify(
   value: any,
   { invalidType = '', invalidObj = '{...}' }: IStringifyOptions = {}
-): string | number | boolean {
+): string {
   switch (typeof value) {
     case 'string':
+      return value
     case 'boolean':
-      return value as string
+      return String(value)
     case 'number':
       if (value === Number.POSITIVE_INFINITY) {
         return '∞'
@@ -27,7 +28,7 @@ export function stringify(
         return '-∞'
       }
       // including NaN
-      return value
+      return String(value)
     case 'object':
       // null is an object but is falsy. Swallow it.
       if (value === null) {
@@ -55,11 +56,13 @@ export function stringifyTagParams(
   values: any[],
   options?: IStringifyOptions
 ): string {
-  const ret = new Array(strings.length * 2 - 1)
-  for (let i = 0; i < strings.length; i++) {
-    ret[i * 2] = strings[i]
-    ret[i * 2 + 1] = stringify(values[i], options)
-    ret[i * 2 + 2] = strings[i + 1]
+  const lastStringIndex = strings.length - 1
+  const ret: string[] = new Array(lastStringIndex * 2 + 1)
+  for (let i = 0; i < lastStringIndex; i++) {
+    ret.push(strings[i])
+    ret.push(stringify(values[i], options))
   }
+
+  ret.push(strings[lastStringIndex])
   return ret.join('')
 }

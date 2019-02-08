@@ -54,13 +54,11 @@ const OPEN_CLOSE_SYMBOLS: {
   '$(': ')', // Boo, Nemerle
   '%(': ')', // Python
   '(': ')', // Swift
-  '{': '}', // C#, Sciter
+  '{': '}', // C#, Sciter, React JSX
   '<?=': '?>', // PHP
   '<': '>', // HTML, XML
-  '<%=': '%>', // Lodash.template()
-  // TODO: use empty string as a marker instead
-  $: /\b/ // Bash, Perl, TCL
-  // No support for Rust, Scala, Java
+  '<%=': '%>' // Lodash.template()
+  // No support for Rust, Scala, Java, Bash, Perl, TCL
 }
 
 export function guessCloseSymbol(openSymbol: string) {

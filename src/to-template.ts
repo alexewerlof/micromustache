@@ -8,12 +8,16 @@ export function toTemplate(strings: string[], ...values: any) {
 // TODO add types
 export function toTemplateOpt(openSymbol = '{{', closeSymbol = '}}') {
   return function convertToTemplate(strings: string[], ...values: any) {
-    let ret = ''
     const lastStringIndex = strings.length - 1
+    const ret: string[] = new Array(lastStringIndex * 4 + 1)
     for (let i = 0; i < lastStringIndex; i++) {
-      ret += strings[i] + openSymbol + values[i] + closeSymbol
+      ret.push(strings[i])
+      ret.push(openSymbol)
+      ret.push(values[i])
+      ret.push(closeSymbol)
     }
 
-    return ret + strings[lastStringIndex]
+    ret.push(strings[lastStringIndex])
+    return ret.join('')
   }
 }

@@ -15,6 +15,7 @@
     "src/**/*.ts"
   ],
   "exclude": [
+    "lib/**/*",
     "src/**/*.spec.ts"
   ]
 }
