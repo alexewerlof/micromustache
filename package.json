@@ -21,16 +21,16 @@
     "lib": "./lib"
   },
   "devDependencies": {
-    "@types/node": "^10.12.21",
+    "@types/node": "^10.12.23",
     "chai": "^4.2.0",
     "mocha": "^5.2.0",
-    "mustache": "^2.3.0",
-    "prettier": "^1.16.3",
+    "mustache": "^3.0.1",
+    "prettier": "^1.16.4",
     "rimraf": "^2.6.3",
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
-    "tslint-config-prettier": "^1.17.0",
-    "typescript": "^3.3.1"
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.3.3"
   },
   "scripts": {
     "build": "tsc",
