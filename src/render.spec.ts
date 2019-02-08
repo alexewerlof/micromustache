@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { render } from './render'
 import { NameToken } from './tokenize'
-import { Resolver } from './types'
+import { Resolver } from './compile'
 
 describe('render()', () => {
   it('is a function', () => {

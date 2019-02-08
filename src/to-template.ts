@@ -1,5 +1,5 @@
 import { assertTruthy, isObject } from './util'
-import { ITokenizeOptions } from './types'
+import { ITokenizeOptions } from './tokenize'
 
 export function toTemplate(strings: string[], ...values: any) {
   return toTemplateOpt()(strings, ...values)

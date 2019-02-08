@@ -1,5 +1,11 @@
 import { isFunction } from './util'
-import { IStringifyOptions } from './types'
+
+export interface IStringifyOptions {
+  /** an optional string to be used when the value is an unsupported type */
+  invalidType?: string
+  /** an optional string to be used when JSON.stringify fails */
+  invalidObj?: string
+}
 
 const OBJECT_TO_STRING = Object.prototype.toString
 

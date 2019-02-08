@@ -1,5 +1,11 @@
-import { compile, compileAsync } from './compile'
-import { ICompilerOptions, Scope, AsyncRenderer, Renderer } from './types'
+import {
+  AsyncRenderer,
+  Renderer,
+  ICompilerOptions,
+  compile,
+  compileAsync
+} from './compile'
+import { Scope } from './get'
 
 /**
  * Replaces every {{variable}} inside the template with values provided by scope.

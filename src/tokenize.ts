@@ -1,6 +1,19 @@
 import { assertTruthy, isString, isObject } from './util'
-import { ITokenizeOptions, TokenType, TagInput } from './types'
 import { toPath } from './to-path'
+
+export type TokenType = NameToken | string
+
+export interface ITagInput<T> {
+  strings: string[]
+  values: T[]
+}
+
+export interface ITokenizeOptions {
+  /** the string that indicates opening a variable interpolation expression */
+  openSymbol?: string
+  /** the string that indicates closing a variable interpolation expression */
+  closeSymbol?: string
+}
 
 export class NameToken {
   private pathsCache: string[]
@@ -31,7 +44,7 @@ export class NameToken {
 export function parseString(
   template: string,
   options: ITokenizeOptions = {}
-): TagInput<string> {
+): ITagInput<string> {
   assertTruthy(isString(template), `Template must be a string. Got ${template}`)
   assertTruthy(
     isObject(options),
@@ -95,7 +108,7 @@ export function parseString(
 export function convertValuesToNameTokens({
   strings,
   values
-}: TagInput<string>): TagInput<NameToken> {
+}: ITagInput<string>): ITagInput<NameToken> {
   const nameTokens = values.map(varName => new NameToken(varName))
   return { strings, values: nameTokens }
 }
@@ -103,12 +116,12 @@ export function convertValuesToNameTokens({
 export function tokenizeTemplate(
   template: string,
   options: ITokenizeOptions = {}
-): TagInput<NameToken> {
+): ITagInput<NameToken> {
   return convertValuesToNameTokens(parseString(template, options))
 }
 
 export function tokenizeStringTemplate(
-  template: TagInput<string>
-): TagInput<NameToken> {
+  template: ITagInput<string>
+): ITagInput<NameToken> {
   return convertValuesToNameTokens(template)
 }

@@ -1,6 +1,5 @@
 import { isString, assertTruthy } from './util'
-import { parseString } from './tokenize'
-import { ITokenizeOptions } from './types'
+import { ITokenizeOptions, parseString } from './tokenize'
 
 const parseStringOptions: ITokenizeOptions = {
   openSymbol: '[',

@@ -1,16 +1,47 @@
 import { isFunction, assertTruthy, asyncMap } from './util'
-import { getKeys } from './get'
-import {
-  ICompilerOptions,
-  Renderer,
-  Resolver,
-  Scope,
-  TokenType,
-  AsyncRenderer,
-  AsyncResolver
-} from './types'
-import { NameToken, tokenizeTemplate } from './tokenize'
-import { stringifyTagParams } from './stringify'
+import { Scope, getKeys } from './get'
+import { ITokenizeOptions, NameToken, tokenizeTemplate } from './tokenize'
+import { IStringifyOptions, stringifyTagParams } from './stringify'
+
+/**
+ * @param scope - An optional object containing values for
+ *        every variable names that is used in the template. If it's omitted,
+ *        it'll be assumed an empty object.
+ * @returns Template where its variable names replaced with
+ *        corresponding values. If a value is not found or is invalid, it will
+ *        be assumed empty string ''. If the value is an object itself, it'll
+ *        be stringified by JSON.
+ *        In case of a JSON stringify error the result will look like "{...}".
+ */
+export type Renderer = (scope: Scope) => string
+export type AsyncRenderer = (scope: Scope) => Promise<string>
+
+/**
+ * The callback for resolving a value
+ * @param view - the view object that was passed to .render() function
+ * @param path - variable name before being parsed.
+ * @example {a.b.c} ->  'a.b.c'
+ * @example {  x  } -> 'x'
+ * @returns the value to be interpolated.
+ * If the function returns undefined, the value resolution algorithm will go ahead with the default
+ * behaviour (resolving the variable name from the provided object).
+ */
+export type Resolver = (
+  varName: string,
+  scope?: Scope,
+  nameToken?: NameToken
+) => any
+
+export type AsyncResolver = (
+  varName: string,
+  scope?: Scope,
+  nameToken?: NameToken
+) => Promise<any>
+
+export interface ICompilerOptions extends ITokenizeOptions, IStringifyOptions {
+  resolver?: Resolver | AsyncResolver
+  resolverContext?: any
+}
 
 const defaultResolver: Resolver = (
   varName: string,

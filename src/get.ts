@@ -1,6 +1,8 @@
 import { toPath } from './to-path'
 import { assertTruthy, isValidScope } from './util'
-import { Scope } from './types'
+
+// tslint:disable-next-line ban-types
+export type Scope = {} | Function
 
 /**
  * Similar to lodash _.get()
