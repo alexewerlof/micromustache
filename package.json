@@ -8,9 +8,11 @@
     "string processing",
     "string interpolation",
     "template engine",
+    "lodash get",
     "microlibrary"
   ],
   "main": "lib/index.js",
+  "browser": "browser/micromustache.js",
   "types": "./lib/types.d.ts",
   "bin": {
     "micromustache": "./bin/micromustache"
@@ -32,6 +34,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "build:browser": "tsc -p tsconfig-browser.json",
     "clean": "rimraf lib",
     "pretest": "npm run lint",
     "lint": "tslint -p .",

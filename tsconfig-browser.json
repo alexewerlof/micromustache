@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["es2015"],
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "newLine": "LF",
+    "outDir": "browser/",
+    "listEmittedFiles": true,
+  },
+  "include": [
+    "src/index.ts"
+  ],
+  "exclude": [
+    "lib/**/*",
+    "src/**/*.spec.ts"
+  ]
+}
