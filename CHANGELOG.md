@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 - Typescript
 - Add more examples of its selling points
+  - C# syntax:       render('I like {{0}}, {{1}} and {{2}}', ['orange', 'apple', 'lemon'])
+  - string templates
 - Do a comparative benchmark with Mustache.js
 - Add support for [tagged string templates](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals)
 - Support comments: *{{! ...}}* like MustacheJS

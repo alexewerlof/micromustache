@@ -21,6 +21,11 @@ describe('toPath()', () => {
       'a  ': ['a'],
       ' a ': ['a'],
       '  a  ': ['a'],
+      '.a': ['a'],
+      ' .a': ['a'],
+      ' . a': ['a'],
+      '. a': ['a'],
+      '.["a"]': ['a'],
       'a.b': ['a', 'b'],
       'person.name': ['person', 'name'],
       'a. b ': ['a', 'b'],
@@ -30,7 +35,7 @@ describe('toPath()', () => {
       'a.b ': ['a', 'b'],
       'a.b.c': ['a', 'b', 'c'],
       'a["b"]': ['a', 'b'],
-      'a[b]': ['a', 'b'],
+      'a[""]': ['a', ''],
       "a['b']": ['a', 'b'],
       "a[ 'b' ]": ['a', 'b'],
       'a["b"].c': ['a', 'b', 'c'],
@@ -41,38 +46,44 @@ describe('toPath()', () => {
       '': [],
       ' ': [],
       '["a"]': ['a'],
-      '.a': ['a'],
+      'a.33': ['a', '33'],
       'a[11]': ['a', '11'],
+      'a[-11]': ['a', '-11'],
+      'a[b]': ['a', 'b'],
+      'a[11x]': ['a', '11x'],
+      'a[1.1]': ['a', '1.1'],
+      'a[+1.1]': ['a', '1.1'],
       '[13]': ['13'],
       '[17].c': ['17', 'c']
     }
 
-    Object.keys(testCases).forEach((input: string) => {
-      const output = testCases[input]
-      it(`'${input}'  \t⇨ ${stringArrToString(output)}`, () => {
+    for (const [input, output] of Object.entries(testCases)) {
+      it(`'${input}'  ⇨  ${stringArrToString(output)}`, () => {
         expect(toPath(input)).to.deep.equal(output)
       })
-    })
+    }
   })
 
   describe('error cases:', () => {
     // all these strings throw a syntax error
-    const syntaxErrorsCases = [
-      'a.',
-      '.["a"]',
-      'a[\'b"]',
-      'a["b\']',
-      'a["b`]',
-      'a[11"]',
-      'a[`11]',
-      'a[ `11 ]'
-    ]
+    const syntaxErrorsCases = {
+      'a.': SyntaxError,
+      'a..': SyntaxError,
+      'a..b': SyntaxError,
+      'a["]': SyntaxError,
+      'a[\'b"]': SyntaxError,
+      'a["b\']': SyntaxError,
+      'a["b`]': SyntaxError,
+      'a[11"]': SyntaxError,
+      'a[`11]': SyntaxError,
+      'a[ `11 ]': SyntaxError
+    }
 
-    syntaxErrorsCases.forEach((input: string) => {
-      it(`throws syntax error for "${input}"`, () => {
-        expect(() => toPath(input)).to.throw(SyntaxError)
+    for (const [input, errorConstructor] of Object.entries(syntaxErrorsCases)) {
+      it(`throws ${errorConstructor.name} for "${input}"`, () => {
+        expect(() => toPath(input)).to.throw(errorConstructor)
       })
-    })
+    }
 
     it(`throws type error`, () => {
       // @ts-ignore

@@ -3,7 +3,7 @@ import { render } from './render'
 import { NameToken } from './tokenize'
 import { Resolver } from './types'
 
-describe('#render()', () => {
+describe('render()', () => {
   it('is a function', () => {
     expect(render).to.be.a('function')
   })
@@ -242,11 +242,13 @@ describe('#render()', () => {
     ).to.equal('1212')
   })
 
-  it('can accesses array elements', () => {
+  it('can access array elements', () => {
     expect(
       render('I like {{0}}, {{1}} and {{2}}', ['orange', 'apple', 'lemon'])
     ).to.equal('I like orange, apple and lemon')
+  })
 
+  it('can access array length', () => {
     expect(render('{{length}}', [])).to.equal('0')
   })
 

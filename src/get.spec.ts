@@ -40,14 +40,14 @@ describe('get()', () => {
 
   it('can access array elements', () => {
     const arr = ['banana', 'apple', 'orange', 'pear']
-    expect(get(arr, '1')).to.equal('apple')
+    expect(get(arr, '[1]')).to.equal('apple')
   })
 
-  it('can accss a nested array object', () => {
+  it('can access a nested array object', () => {
     const obj = {
       arr: ['banana', 'apple', 'orange', 'pear']
     }
-    expect(get(obj, 'arr.1')).to.equal('apple')
+    expect(get(obj, 'arr[1]')).to.equal('apple')
   })
 
   it('supports array syntax', () => {

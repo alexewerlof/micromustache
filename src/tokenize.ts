@@ -17,7 +17,8 @@ export class NameToken {
 
 // TODO: support open and close symbols that are the same. Coldfusion requires it: https://en.wikipedia.org/wiki/String_interpolation
 // TODO: Support escaping characters
-// TODO: Support word boundry for closeSymbol
+// TODO: Support word boundary for closeSymbol
+// TODO: Support nested markup like a[b.foo]
 /**
  * Tokenize the template string and return an array of strings and
  * functions ready for the compiler to go through them.

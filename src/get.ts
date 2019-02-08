@@ -1,5 +1,5 @@
 import { toPath } from './to-path'
-import { isObject, assertTruthy, isValidScope, isDefined } from './util'
+import { assertTruthy, isValidScope } from './util'
 import { Scope } from './types'
 
 /**
@@ -18,7 +18,7 @@ import { Scope } from './types'
 export function get(scope: Scope, path: string): any {
   assertTruthy(
     isValidScope(scope),
-    `The scope should be an object but is ${typeof scope}: ${scope}`,
+    `The scope should be an object or function but is ${typeof scope}: ${scope}`,
     TypeError
   )
   const pathArr = toPath(path)
@@ -26,7 +26,6 @@ export function get(scope: Scope, path: string): any {
 }
 
 /**
- * Similar to lodash _.get()
  * Same as get() but expects an array of keys instead of path
  * @throws TypeError if the scope variable is not an object or the keys don't exist
  * @param scope - an object to resolve value from
@@ -38,8 +37,8 @@ export function getKeys(scope: Scope, pathArr: string[]): any {
   for (const key of pathArr) {
     assertTruthy(
       isValidScope(currentScope),
-      `Cannot read property ${key} of ${currentScope}`,
-      TypeError
+      `${key} is not defined`,
+      ReferenceError
     )
     // @ts-ignore
     currentScope = currentScope[key]

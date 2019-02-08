@@ -18,19 +18,6 @@ const defaultResolver: Resolver = (
   nameToken: NameToken
 ) => getKeys(scope, nameToken.paths)
 
-function callResolver(
-  resolver: Resolver | AsyncResolver,
-  scope: {},
-  token: TokenType,
-  resolverContext: any = null
-) {
-  // token is a string but paths is a flag saying that it is actually a variable name and needs interpolation
-  if (token instanceof NameToken) {
-    return resolver.call(resolverContext, token.varName, scope, token)
-  }
-  return token as string
-}
-
 /**
  * This function makes repeated calls shorter by returning a compiler function
  * for a particular template that accepts scope and returns the rendered string.

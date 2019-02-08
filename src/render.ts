@@ -1,5 +1,5 @@
 import { compile, compileAsync } from './compile'
-import { ICompilerOptions, Scope } from './types'
+import { ICompilerOptions, Scope, AsyncRenderer, Renderer } from './types'
 
 /**
  * Replaces every {{variable}} inside the template with values provided by scope.
@@ -18,14 +18,16 @@ export function render(
   template: string,
   scope: Scope = {},
   options?: ICompilerOptions
-) {
-  return compile(template, options)(scope)
+): string {
+  const renderer: Renderer = compile(template, options)
+  return renderer(scope)
 }
 
 export async function renderAsync(
   template: string,
   scope: Scope = {},
   options?: ICompilerOptions
-) {
-  return compileAsync(template, options)(scope)
+): Promise<string> {
+  const renderer: AsyncRenderer = compileAsync(template, options)
+  return renderer(scope)
 }
