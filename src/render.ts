@@ -25,7 +25,7 @@ export function render(
 }
 
 export async function asyncRender(
-  template: string,
+  template: Template,
   scope: Scope = {},
   options?: ICompilerOptions
 ): Promise<string> {
