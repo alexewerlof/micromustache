@@ -1,8 +1,10 @@
-export function isObject(val: any) {
+import { Scope } from './get'
+
+export function isObject(val: any): val is {} {
   return val && typeof val === 'object'
 }
 
-export function isValidScope(val: any) {
+export function isValidScope(val: any): val is Scope {
   if (!val) {
     return false
   }
@@ -10,11 +12,12 @@ export function isValidScope(val: any) {
   return type === 'object' || type === 'function'
 }
 
-export function isString(val: any) {
+export function isString(val: any): val is string {
   return typeof val === 'string'
 }
 
-export function isFunction(val: any) {
+// tslint:disable-next-line:ban-types
+export function isFunction(val: any): val is Function {
   return typeof val === 'function'
 }
 
