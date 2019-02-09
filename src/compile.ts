@@ -1,4 +1,4 @@
-import { IParseOptions, tokenize, Template } from './tokenize'
+import { IParseOptions, tokenize, Template, TagFn } from './tokenize'
 import { IStringifyOptions } from './stringify'
 import { IResolverOptions, Resolver } from './resolver'
 
@@ -27,4 +27,10 @@ export function compile(
   // Note: parseString() asserts the type of its params
   const tokens = tokenize(template, options)
   return new Resolver(tokens, options)
+}
+
+export function compileTag(options: ICompilerOptions): TagFn<Resolver> {
+  return function tag(strings: string[], ...values: any): Resolver {
+    return compile({ strings, values }, options)
+  }
 }

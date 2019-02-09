@@ -1,7 +1,6 @@
 import { ICompilerOptions, compile } from './compile'
 import { Scope } from './get'
-import { Resolver } from './resolver'
-import { Template } from './tokenize'
+import { Template, TagFn } from './tokenize'
 
 /**
  * Replaces every {{variable}} inside the template with values provided by scope.
@@ -18,7 +17,7 @@ import { Template } from './tokenize'
  */
 export function render(
   template: Template,
-  scope: Scope = {},
+  scope?: Scope,
   options?: ICompilerOptions
 ): string {
   return compile(template, options).render(scope)
@@ -26,8 +25,26 @@ export function render(
 
 export async function asyncRender(
   template: Template,
-  scope: Scope = {},
+  scope?: Scope,
   options?: ICompilerOptions
 ): Promise<string> {
   return compile(template, options).asyncRender(scope)
+}
+
+export function renderTag(
+  scope: Scope,
+  options: ICompilerOptions
+): TagFn<string> {
+  return function tag(strings: string[], ...values: any): string {
+    return render({ strings, values }, scope, options)
+  }
+}
+
+export function asyncRenderTag(
+  scope: Scope,
+  options: ICompilerOptions
+): TagFn<Promise<string>> {
+  return function tag(strings: string[], ...values: any): Promise<string> {
+    return asyncRender({ strings, values }, scope, options)
+  }
 }

@@ -49,7 +49,6 @@ function fetch(url) {
 /*
 https://od-api-demo.oxforddictionaries.com:443/api/v1/domains/{source_domains_language}/{target_domains_language}
 */
-// TODO that empty object is dumb
 renderAsync(
   'The first todo title is {{1}}',
   {},

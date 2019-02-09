@@ -1,5 +1,5 @@
 import { isFunction } from './util'
-import { format, NameToken } from './tokenize'
+import { format } from './tokenize'
 
 export interface IStringifyOptions {
   /** an optional string to be used when the value is an unsupported type */

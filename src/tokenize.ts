@@ -10,6 +10,8 @@ export interface ITagInput<T> {
 
 export type Template = string | ITagInput<string>
 
+export type TagFn<T> = (strings: string[], ...values: any) => T
+
 export interface IParseOptions {
   /** the string that indicates opening a variable interpolation expression */
   openSymbol?: string
