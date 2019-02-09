@@ -8,6 +8,8 @@ export interface ITagInput<T> {
   values: T[]
 }
 
+export type Template = string | ITagInput<string>
+
 export interface IParseOptions {
   /** the string that indicates opening a variable interpolation expression */
   openSymbol?: string
@@ -131,15 +133,12 @@ export function convertValuesToNameTokens({
   return { strings, values: nameTokens }
 }
 
-export function tokenizeTemplate(
-  template: string,
-  options: IParseOptions = {}
+export function tokenize(
+  template: Template,
+  options?: IParseOptions
 ): ITagInput<NameToken> {
-  return convertValuesToNameTokens(parseString(template, options))
-}
-
-export function tokenizeStringTemplate(
-  tagInput: ITagInput<string>
-): ITagInput<NameToken> {
+  const tagInput: ITagInput<any> = isString(template)
+    ? parseString(template, options)
+    : template
   return convertValuesToNameTokens(tagInput)
 }

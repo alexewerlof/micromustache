@@ -1,6 +1,7 @@
 import { ICompilerOptions, compile } from './compile'
 import { Scope } from './get'
 import { Resolver } from './resolver'
+import { Template } from './tokenize'
 
 /**
  * Replaces every {{variable}} inside the template with values provided by scope.
@@ -16,7 +17,7 @@ import { Resolver } from './resolver'
  * In case of a JSON stringify error the result will look like "{...}".
  */
 export function render(
-  template: string,
+  template: Template,
   scope: Scope = {},
   options?: ICompilerOptions
 ): string {

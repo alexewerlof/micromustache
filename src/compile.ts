@@ -1,4 +1,4 @@
-import { IParseOptions, tokenizeTemplate } from './tokenize'
+import { IParseOptions, tokenize, Template } from './tokenize'
 import { IStringifyOptions } from './stringify'
 import { IResolverOptions, Resolver } from './resolver'
 
@@ -21,10 +21,10 @@ export interface ICompilerOptions
  *        rendered template string template
  */
 export function compile(
-  template: string,
+  template: Template,
   options: ICompilerOptions = {}
 ): Resolver {
   // Note: parseString() asserts the type of its params
-  const tokens = tokenizeTemplate(template, options)
+  const tokens = tokenize(template, options)
   return new Resolver(tokens, options)
 }
