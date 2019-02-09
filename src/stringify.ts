@@ -14,9 +14,9 @@ const OBJECT_TO_STRING = Object.prototype.toString
  * Converts a value to a string
  * If value is an object with a toString() function, that is used to convert it to string.
  * Otherwise JSON.stringify() is used
- * @param value
- * @param options the options from compile()
- * @returns the value converted to string
+ * @param value - the value to be converted to string
+ * @param options - the options from compile()
+ * @returns - the value converted to string
  */
 export function stringify(
   value: any,

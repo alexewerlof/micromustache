@@ -12,7 +12,8 @@ function isQuote(str: string): boolean {
 
 /**
  * Trim and remove the starting dot if it exists
- * @param rawPath the raw path like ".a" or " . a"
+ * @param rawPath - the raw path like ".a" or " . a"
+ * @return - the input trimmed and without a leading dot
  */
 function normalizePath(rawPath: string) {
   let path = rawPath.trim()

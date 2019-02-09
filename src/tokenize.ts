@@ -43,7 +43,7 @@ export class NameToken {
  *
  * @param template - the template
  * @param options - the options form compile()
- * @returns the resulting string
+ * @returns - the resulting string
  */
 export function parseString(
   template: string,

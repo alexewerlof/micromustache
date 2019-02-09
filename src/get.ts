@@ -13,9 +13,9 @@ export type Scope = {} | Function
  * `foo[bar]` is allowed while JavaScript treats `bar` as a variable and tries to lookup
  * its value or throws a `ReferenceError` if there is no variable called `bar`.
  * @throws TypeError if the object variable is not an object
- * @param scope the view object
- * @param path the variable path to lookup
- * @returns returns the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
+ * @param scope - the view object
+ * @param path - the variable path to lookup
+ * @returns - the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
  */
 export function get(scope: Scope, path: string): any {
   assertTruthy(
@@ -32,7 +32,7 @@ export function get(scope: Scope, path: string): any {
  * @throws TypeError if the scope variable is not an object or the keys don't exist
  * @param scope - an object to resolve value from
  * @param pathArr - an array of keys that specify the path to the lookup
- * @returns returns the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
+ * @returns - the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
  */
 export function getKeys(scope: Scope, pathArr: string[]): any {
   let currentScope = scope

@@ -8,17 +8,14 @@ export interface ICompilerOptions
     IResolverOptions {}
 
 /**
- * This function makes repeated calls shorter by returning a compiler function
- * for a particular template that accepts scope and returns the rendered string.
+ * This function makes repeated calls more optimized by compiling once and
+ * returning a class that can do the rendering for you.
  *
- * It doesn't make the code faster since the compiler still uses render
- * internally.
- *
- * @param template same as the template parameter to .render()
- * @param resolver an optional function that receives a token and synchronously returns a value
- * @param options compiler options
- * @returns a function that accepts a scope object and returns a
- *        rendered template string template
+ * @param template - same as the template parameter to .render()
+ * @param resolver - an optional function that receives a token and synchronously returns a value
+ * @param options - compiler options
+ * @returns - an object with render() and renderAsync() functions that accepts a scope object and
+ * return the final string
  */
 export function compile(
   template: Template,
@@ -29,6 +26,12 @@ export function compile(
   return new Resolver(tokens, options)
 }
 
+/**
+ * This function is the same as compile() but works as a tag function for string literals.
+ * @param options - same as compiler options
+ * @returns - an object with render() and renderAsync() functions that accepts a scope object and
+ * return the final string
+ */
 export function compileTag(options: ICompilerOptions): TagFn<Resolver> {
   return function tag(strings: string[], ...values: any): Resolver {
     return compile({ strings, values }, options)
