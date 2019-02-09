@@ -43,6 +43,7 @@ export function assertTruthy(
 
 /**
  * Reference: https://en.wikipedia.org/wiki/String_interpolation
+ * No support for Rust, Scala, Java, Bash, Perl, TCL string interpolation syntax
  */
 const OPEN_CLOSE_SYMBOLS: {
   [openSymbol: string]: string
@@ -55,9 +56,8 @@ const OPEN_CLOSE_SYMBOLS: {
   '(': ')', // Swift
   '{': '}', // C#, Sciter, React JSX
   '<?=': '?>', // PHP
-  '<': '>', // HTML, XML
-  '<%=': '%>' // Lodash.template()
-  // No support for Rust, Scala, Java, Bash, Perl, TCL
+  '<%=': '%>', // Lodash.template()
+  '<': '>' // HTML, XML
 }
 
 export function guessCloseSymbol(openSymbol: string) {
