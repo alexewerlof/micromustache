@@ -37,7 +37,7 @@ export class NameToken {
 // TODO: Support word boundary for closeSymbol
 // TODO: Support nested markup like a[b.foo]
 /**
- * Tokenize the template string and return an array of strings and
+ * Parse a string and returns an array of variable names and non-processing strings.
  * functions ready for the compiler to go through them.
  * This function could use regular expressions but using simpler searches is faster.
  *
