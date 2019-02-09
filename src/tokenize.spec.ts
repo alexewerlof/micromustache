@@ -1,5 +1,5 @@
 import { describe } from 'mocha'
-import { parseString, NameToken, convertValuesToNameTokens } from './tokenize'
+import { parseString, NameToken, tokenize } from './tokenize'
 import { expect } from 'chai'
 
 describe('parseString()', () => {
@@ -100,13 +100,21 @@ describe('parseString()', () => {
   })
 })
 
-describe('convertValuesToNameTokens()', () => {
+describe('tokenize()', () => {
+  it('parses and tokenizes a string', () => {
+    const input = 'Hi! My name is {{Alex}}.'
+    expect(tokenize(input)).to.deep.equal({
+      strings: ['Hi! My name is ', '.'],
+      values: [new NameToken('Alex')]
+    })
+  })
+
   it('converts values to NameToken objects', () => {
     const input = {
       strings: ['Hi! My name is ', '.'],
       values: ['Alex']
     }
-    expect(convertValuesToNameTokens(input)).to.deep.equal({
+    expect(tokenize(input)).to.deep.equal({
       strings: ['Hi! My name is ', '.'],
       values: [new NameToken('Alex')]
     })
@@ -117,6 +125,6 @@ describe('convertValuesToNameTokens()', () => {
       strings: ['Hi! My name is ', '.'],
       values: []
     }
-    expect(convertValuesToNameTokens(input).strings).to.equal(input.strings)
+    expect(tokenize(input).strings).to.equal(input.strings)
   })
 })

@@ -125,20 +125,13 @@ export function format<T>(
   return ret.join('')
 }
 
-export function convertValuesToNameTokens({
-  strings,
-  values
-}: ITagInput<string>): ITagInput<NameToken> {
-  const nameTokens = values.map(varName => new NameToken(varName))
-  return { strings, values: nameTokens }
-}
-
 export function tokenize(
   template: Template,
   options?: IParseOptions
 ): ITagInput<NameToken> {
-  const tagInput: ITagInput<any> = isString(template)
+  const tagInput: ITagInput<string> = isString(template)
     ? parseString(template, options)
     : template
-  return convertValuesToNameTokens(tagInput)
+  const values = tagInput.values.map(varName => new NameToken(varName))
+  return { strings: tagInput.strings, values }
 }
