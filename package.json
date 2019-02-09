@@ -33,8 +33,8 @@
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.3.3",
-    "api-extractor": "api-extractor run --local"
+    "typedoc": "^0.14.2",
+    "typescript": "^3.3.3"
   },
   "scripts": {
     "build": "tsc",
@@ -45,7 +45,8 @@
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
     "preversion": "npm test",
     "prepare": "npm run test && npm run build",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "api-extractor": "api-extractor run --local"
   },
   "repository": {
     "type": "git",
