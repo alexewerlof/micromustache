@@ -12,13 +12,15 @@
     "microlibrary"
   ],
   "main": "lib/index.js",
-  "browser": "browser/micromustache.js",
   "types": "./lib/types.d.ts",
   "bin": {
     "micromustache": "./bin/micromustache"
   },
   "directories": {
     "lib": "./lib"
+  },
+  "engines": {
+    "node": ">=8"
   },
   "devDependencies": {
     "@types/node": "^10.12.23",
@@ -34,7 +36,6 @@
   },
   "scripts": {
     "build": "tsc",
-    "build:browser": "tsc -p tsconfig-browser.json",
     "clean": "rimraf lib",
     "pretest": "npm run lint",
     "lint": "tslint -p .",
