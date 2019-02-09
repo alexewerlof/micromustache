@@ -23,6 +23,7 @@
     "node": ">=8"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^6.3.0",
     "@types/node": "^10.12.23",
     "chai": "^4.2.0",
     "mocha": "^5.2.0",
