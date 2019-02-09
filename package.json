@@ -38,6 +38,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "docs": "typedoc --out docs/ --mode modules --module commonjs --readme ./README.md",
     "clean": "rimraf lib",
     "pretest": "npm run lint",
     "lint": "tslint -p .",
