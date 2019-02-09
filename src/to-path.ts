@@ -7,10 +7,11 @@ const parseStringOptions: IParseOptions = {
 }
 
 function isQuote(str: string): boolean {
-  return /['"`]/.test(str)
+  return str === "'" || str === '"' || str === '`'
 }
 
 /**
+ * Trim and remove the starting dot if it exists
  * @param rawPath the raw path like ".a" or " . a"
  */
 function normalizePath(rawPath: string) {
@@ -19,22 +20,6 @@ function normalizePath(rawPath: string) {
     path = path.substr(1)
   }
   return path
-}
-
-function pushToRet(str: string, ret: string[]): void {
-  str = normalizePath(str)
-  if (str === '') {
-    return
-  }
-  str.split('.').forEach(s => {
-    const sTrimmed = s.trim()
-    assertTruthy(
-      sTrimmed !== '',
-      `Unexpected token. Encountered empty path when parsing ${str}`,
-      SyntaxError
-    )
-    ret.push(sTrimmed)
-  })
 }
 
 export function unquote(value: string): string {
@@ -78,7 +63,19 @@ export function toPath(path: string): string[] {
 
   let i = 0
   while (i < strings.length) {
-    pushToRet(strings[i], ret)
+    const str = normalizePath(strings[i])
+    if (str !== '') {
+      str.split('.').forEach(s => {
+        const sTrimmed = s.trim()
+        assertTruthy(
+          sTrimmed !== '',
+          `Unexpected token. Encountered empty path when parsing ${str}`,
+          SyntaxError
+        )
+        ret.push(sTrimmed)
+      })
+    }
+
     if (i < values.length) {
       ret.push(unquote(values[i]))
     }
