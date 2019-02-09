@@ -38,10 +38,6 @@ export function assertTruthy(
   }
 }
 
-export function asyncMap<T>(arr: T[], iteratee: (item: T) => Promise<any>) {
-  return Promise.all(arr.map(iteratee))
-}
-
 /**
  * Reference: https://en.wikipedia.org/wiki/String_interpolation
  */

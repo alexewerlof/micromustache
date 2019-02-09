@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { render } from './render'
 import { NameToken } from './tokenize'
-import { Resolver } from './resolve'
+import { ResolveFn } from './resolver'
 
 describe('render()', () => {
   it('is a function', () => {
@@ -421,7 +421,7 @@ describe('render()', () => {
         b: false,
         c: false
       }
-      const resolver: Resolver = (varName, scope: {}, token: NameToken) => {
+      const resolveFn: ResolveFn = (varName, scope: {}, token: NameToken) => {
         counter++
         // @ts-ignore
         viewVarNames[varName] = true
@@ -433,14 +433,14 @@ describe('render()', () => {
         b: 2,
         c: 3
       }
-      expect(render('{{a}} {{b}} {{c}}', view, { resolver })).to.equal('1 2 3')
+      expect(render('{{a}} {{b}} {{c}}', view, { resolveFn })).to.equal('1 2 3')
       expect(counter).to.equal(3)
       expect(viewVarNames).to.deep.equal({ a: true, b: true, c: true })
     })
 
     it('does not call the default resolver if the custom resolver returns a value', () => {
       // tslint:disable-next-line no-shadowed-variable
-      const resolver: Resolver = varName => {
+      const resolveFn: ResolveFn = varName => {
         expect(varName).to.equal('a.b.c')
         return 'brick'
       }
@@ -451,23 +451,23 @@ describe('render()', () => {
           }
         }
       }
-      expect(render('Hi {{a.b.c}}!', view, { resolver })).to.equal('Hi brick!')
+      expect(render('Hi {{a.b.c}}!', view, { resolveFn })).to.equal('Hi brick!')
     })
 
     it('can return an object', () => {
-      const resolver: Resolver = () => {
+      const resolveFn: ResolveFn = () => {
         return { a: 2 }
       }
-      expect(render('Hi {{whatever}}!', {}, { resolver })).to.equal(
+      expect(render('Hi {{whatever}}!', {}, { resolveFn })).to.equal(
         'Hi {"a":2}!'
       )
     })
 
     it('can be present without any view', () => {
-      const resolver: Resolver = () => {
+      const resolveFn: ResolveFn = () => {
         return 'world'
       }
-      expect(render('Hello {{target}}!', undefined, { resolver })).to.equal(
+      expect(render('Hello {{target}}!', undefined, { resolveFn })).to.equal(
         'Hello world!'
       )
     })
@@ -480,22 +480,22 @@ describe('render()', () => {
           }
         }
       }
-      const resolver: Resolver = (varName, scope: {}) => {
+      const resolveFn: ResolveFn = (varName, scope: {}) => {
         expect(scope).to.equal(view)
         expect(varName).to.equal('a.b.c')
         return 'world'
       }
-      expect(render('Hello {{a.b.c}}!', view, { resolver })).to.equal(
+      expect(render('Hello {{a.b.c}}!', view, { resolveFn })).to.equal(
         'Hello world!'
       )
     })
 
     it('gets the trimmed variable name', () => {
-      const resolver: Resolver = varName => {
+      const resolveFn: ResolveFn = varName => {
         return varName === 'a.b.c'
       }
       expect(
-        render('{{ a.b.c}} {{ a.b.c }} {{a.b.c }}', undefined, { resolver })
+        render('{{ a.b.c}} {{ a.b.c }} {{a.b.c }}', undefined, { resolveFn })
       ).to.equal('true true true')
     })
   })

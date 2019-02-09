@@ -1,12 +1,11 @@
 import { IParseOptions, tokenizeTemplate } from './tokenize'
 import { IStringifyOptions } from './stringify'
-import { IResolveOptions, createRenderer, createAsyncRenderer } from './resolve'
-import { AsyncRenderer, Renderer } from './render'
+import { IResolverOptions, Resolver } from './resolver'
 
 export interface ICompilerOptions
   extends IParseOptions,
     IStringifyOptions,
-    IResolveOptions {}
+    IResolverOptions {}
 
 /**
  * This function makes repeated calls shorter by returning a compiler function
@@ -24,17 +23,8 @@ export interface ICompilerOptions
 export function compile(
   template: string,
   options: ICompilerOptions = {}
-): Renderer {
+): Resolver {
   // Note: parseString() asserts the type of its params
   const tokens = tokenizeTemplate(template, options)
-  return createRenderer(tokens, options)
-}
-
-export function compileAsync(
-  template: string,
-  options: ICompilerOptions = {}
-): AsyncRenderer {
-  // Note: parseString() asserts the type of its params
-  const tokens = tokenizeTemplate(template, options)
-  return createAsyncRenderer(tokens, options)
+  return new Resolver(tokens, options)
 }
