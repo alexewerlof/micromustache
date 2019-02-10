@@ -27,7 +27,7 @@ If that's all you need, *micromustache* is a drop-in replacement for MustacheJS.
 * Behaves similar to JavaScript and avoids quirks from lodash and Mustache
 * The code is small and easy to read and has full JSDoc documentation
 * Custom delimiters: instead of `{{ ... }}` use `{ ... }`, `( ... )`, `<% ... %>` or anything you desire*
-* Arrays as values: `{{ arrName[1] }}`
+* Arrays as values: `{{ arrName[1] }}` (mustachejs does not support this)
 
 ## Tradeoffs
 
