@@ -1,5 +1,5 @@
 const assert = require('assert')
-const { render, renderTag, turboRender } = require('../lib/index')
+const { compile, render, renderTag, turboRender } = require('../lib/index')
 const { render: mustacheRender } = require('mustache')
 
 const iterations = 100000
@@ -22,6 +22,15 @@ function micromustacheRenderTest(obj) {
     'Hi, My name is {{name}}! I am {{age}} years old and live in {{cities[1]}}. foo is {{nested.foo}}.',
     obj
   )
+}
+
+function micromustacheCompiledTest(obj) {
+  micromustacheCompiledTest.resolver =
+    micromustacheCompiledTest.resolver ||
+    compile(
+      'Hi, My name is {{name}}! I am {{age}} years old and live in {{cities[1]}}. foo is {{nested.foo}}.'
+    )
+  return micromustacheCompiledTest.resolver.render(obj)
 }
 
 function micromustacheTurboRenderTest(obj) {
@@ -52,6 +61,7 @@ function stringTemplatesTest(obj) {
 
 for (const f of [
   mustacheRenderTest,
+  micromustacheCompiledTest,
   micromustacheRenderTest,
   micromustacheTurboRenderTest,
   micromustacheRenderTagTest,
