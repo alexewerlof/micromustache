@@ -1,14 +1,11 @@
-import { Scope, getKeys } from './get'
-import { ResolveFn } from './resolver'
-import { assertTruthy } from './util'
-import { isString } from 'util'
+import { Scope } from './get'
 import { Cache } from './cache'
-
-const cache = new Cache(1000)
 
 function toPath(path: string): string[] {
   return path.split('.').map(p => p.trim())
 }
+
+const cachedToPath = new Cache(toPath, 1000)
 
 /**
  * Replaces every {{variable}} inside the template with values provided by scope.
@@ -27,7 +24,7 @@ export function turboRender(template: string, scope: Scope = {}): string {
   // assertTruthy(isString(template), `Template must be a string. Got ${template}`)
 
   return template.replace(/\{\{\s*(\S+)\s*\}\}/g, (match, path: string) => {
-    const pathArr = cache.getItem(toPath, path)
+    const pathArr = cachedToPath.get(path)
     let currentScope = scope
     for (const key of pathArr) {
       // @ts-ignore
