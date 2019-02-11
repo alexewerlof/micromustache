@@ -1,5 +1,6 @@
 import { assertTruthy, isString, isObject, guessCloseSymbol } from './util'
 import { toPath } from './to-path'
+import { Cache } from './cache'
 
 export type TokenType = NameToken | string
 
@@ -19,14 +20,16 @@ export interface IParseOptions {
   closeSymbol?: string
 }
 
+const toPathCached = new Cache(toPath)
+
 export class NameToken {
   private pathsCache: string[]
 
   constructor(public readonly varName: string) {}
 
   get paths() {
-    if (!this.pathsCache) {
-      this.pathsCache = toPath(this.varName as string)
+    if (this.pathsCache === undefined) {
+      this.pathsCache = toPathCached.get(this.varName as string)
     }
     return this.pathsCache
   }
