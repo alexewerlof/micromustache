@@ -18,26 +18,26 @@ const expectedOutput = `Hi, My name is ${testObject.name}! I am ${
 } years old and live in ${testObject.cities[1]}. foo is ${testObject.nested.foo}.`
 
 const micromustache_compile_renderer = compile(
-  'Hi, My name is {{name}}! I am {{age}} years old and live in {{cities[1]}}. foo is {{nested.foo}}.'
+  'Hi, My name is {{name}}! I am {{age}} years old and live in {{cities.1}}. foo is {{nested.foo}}.'
 )
 function micromustache_compile(obj) {
   return micromustache_compile_renderer.render(obj)
 }
 
-const micromustache_compiledTag_renderer = compileTag()`Hi, My name is ${'name'}! I am ${'age'} years old and live in ${'cities[1]'}. foo is ${'nested.foo'}.`
+const micromustache_compiledTag_renderer = compileTag()`Hi, My name is ${'name'}! I am ${'age'} years old and live in ${'cities.1'}. foo is ${'nested.foo'}.`
 function micromustache_compileTag(obj) {
   return micromustache_compiledTag_renderer.render(obj)
 }
 
 function micromustache_render(obj) {
   const renderer = compile(
-    'Hi, My name is {{name}}! I am {{age}} years old and live in {{cities[1]}}. foo is {{nested.foo}}.'
+    'Hi, My name is {{name}}! I am {{age}} years old and live in {{cities.1}}. foo is {{nested.foo}}.'
   )
   return renderer.render(obj)
 }
 
 function micromustache_renderTag(obj) {
-  const renderer = compileTag()`Hi, My name is ${'name'}! I am ${'age'} years old and live in ${'cities[1]'}. foo is ${'nested.foo'}.`
+  const renderer = compileTag()`Hi, My name is ${'name'}! I am ${'age'} years old and live in ${'cities.1'}. foo is ${'nested.foo'}.`
   return renderer.render(obj)
 }
 
