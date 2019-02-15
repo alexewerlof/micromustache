@@ -1,6 +1,5 @@
 import { expect } from 'chai'
 import { render } from './render'
-import { NameToken } from './tokenize'
 import { ResolveFn } from './resolver'
 
 describe('render()', () => {
@@ -421,7 +420,7 @@ describe('render()', () => {
         b: false,
         c: false
       }
-      const resolveFn: ResolveFn = (varName, scope: {}, token: NameToken) => {
+      const resolveFn: ResolveFn = (varName, scope: {}) => {
         counter++
         // @ts-ignore
         viewVarNames[varName] = true
@@ -433,7 +432,9 @@ describe('render()', () => {
         b: 2,
         c: 3
       }
-      expect(render('{{a}} {{b}} {{c}}', view, { resolveFn })).to.equal('1 2 3')
+      expect(render('{{a}} {{b}} {{c}}', view, undefined, resolveFn)).to.equal(
+        '1 2 3'
+      )
       expect(counter).to.equal(3)
       expect(viewVarNames).to.deep.equal({ a: true, b: true, c: true })
     })
@@ -451,14 +452,16 @@ describe('render()', () => {
           }
         }
       }
-      expect(render('Hi {{a.b.c}}!', view, { resolveFn })).to.equal('Hi brick!')
+      expect(render('Hi {{a.b.c}}!', view, undefined, resolveFn)).to.equal(
+        'Hi brick!'
+      )
     })
 
     it('can return an object', () => {
       const resolveFn: ResolveFn = () => {
         return { a: 2 }
       }
-      expect(render('Hi {{whatever}}!', {}, { resolveFn })).to.equal(
+      expect(render('Hi {{whatever}}!', {}, undefined, resolveFn)).to.equal(
         'Hi {"a":2}!'
       )
     })
@@ -467,9 +470,9 @@ describe('render()', () => {
       const resolveFn: ResolveFn = () => {
         return 'world'
       }
-      expect(render('Hello {{target}}!', undefined, { resolveFn })).to.equal(
-        'Hello world!'
-      )
+      expect(
+        render('Hello {{target}}!', undefined, undefined, resolveFn)
+      ).to.equal('Hello world!')
     })
 
     it('is called for nested variable names', () => {
@@ -485,7 +488,7 @@ describe('render()', () => {
         expect(varName).to.equal('a.b.c')
         return 'world'
       }
-      expect(render('Hello {{a.b.c}}!', view, { resolveFn })).to.equal(
+      expect(render('Hello {{a.b.c}}!', view, undefined, resolveFn)).to.equal(
         'Hello world!'
       )
     })
@@ -495,7 +498,12 @@ describe('render()', () => {
         return varName === 'a.b.c'
       }
       expect(
-        render('{{ a.b.c}} {{ a.b.c }} {{a.b.c }}', undefined, { resolveFn })
+        render(
+          '{{ a.b.c}} {{ a.b.c }} {{a.b.c }}',
+          undefined,
+          undefined,
+          resolveFn
+        )
       ).to.equal('true true true')
     })
   })

@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 import { compile } from './compile'
+import { Resolver } from './resolver'
 
 describe('compile()', () => {
   it('returns a function', () => {
@@ -10,23 +11,12 @@ describe('compile()', () => {
 
   it('compiles a template', () => {
     const template = 'Hello {{name}}!'
-    const view = { name: 'Alex' }
-    const view2 = { foo: 'Alex' }
     const resolver = compile(template)
-    expect(resolver.render(view)).to.equal('Hello Alex!')
-    expect(resolver.render(view2)).to.equal('Hello !')
+    expect(resolver).to.be.instanceOf(Resolver)
   })
 
   it('compiles an empty template', () => {
     const resolver = compile('')
-    expect(resolver.render({})).to.equal('')
-  })
-
-  it('supports custom open and close symbols', () => {
-    const resolver = compile('Hello (mate)!', {
-      openSymbol: '(',
-      closeSymbol: ')'
-    })
-    expect(resolver.render({ mate: 'Alex' })).to.equal('Hello Alex!')
+    expect(resolver).to.be.instanceOf(Resolver)
   })
 })

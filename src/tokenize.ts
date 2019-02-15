@@ -7,16 +7,13 @@ import {
   assertType
 } from './util'
 import { toPath } from './to-path'
-import { Cache } from './cache'
 
-export type TokenType = NameToken | string
-
-export interface ITagInput<T> {
+export interface ITagInput {
   strings: string[]
-  values: T[]
+  values: string[]
 }
 
-export type Template = string | ITagInput<string>
+export type Template = string | ITagInput
 
 export type TagFn<T> = (strings: string[], ...values: any) => T
 
@@ -25,21 +22,6 @@ export interface IParseOptions {
   openSymbol?: string
   /** the string that indicates closing a variable interpolation expression */
   closeSymbol?: string
-}
-
-const toPathCached = new Cache(toPath)
-
-export class NameToken {
-  private pathsCache: string[]
-
-  constructor(public readonly varName: string) {}
-
-  get paths() {
-    if (this.pathsCache === undefined) {
-      this.pathsCache = toPathCached.get(this.varName as string)
-    }
-    return this.pathsCache
-  }
 }
 
 // TODO: support open and close symbols that are the same. Coldfusion requires it: https://en.wikipedia.org/wiki/String_interpolation
@@ -58,7 +40,7 @@ export class NameToken {
 export function parseString(
   template: string,
   options: IParseOptions = {}
-): ITagInput<string> {
+): ITagInput {
   assertType(isString(template), 'Template must be a string. Got', template)
   assertType(
     isObject(options),
@@ -144,10 +126,9 @@ export function format<T>(
 export function tokenize(
   template: Template,
   options?: IParseOptions
-): ITagInput<NameToken> {
-  const tagInput: ITagInput<string> = isString(template)
+): ITagInput {
+  const tagInput: ITagInput = isString(template)
     ? parseString(template, options)
     : template
-  const values = tagInput.values.map(varName => new NameToken(varName))
-  return { strings: tagInput.strings, values }
+  return { strings: tagInput.strings, values: tagInput.values }
 }

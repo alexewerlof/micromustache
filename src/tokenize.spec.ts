@@ -1,5 +1,5 @@
 import { describe } from 'mocha'
-import { parseString, NameToken, tokenize } from './tokenize'
+import { parseString, tokenize } from './tokenize'
 import { expect } from 'chai'
 
 describe('parseString()', () => {
@@ -105,18 +105,7 @@ describe('tokenize()', () => {
     const input = 'Hi! My name is {{Alex}}.'
     expect(tokenize(input)).to.deep.equal({
       strings: ['Hi! My name is ', '.'],
-      values: [new NameToken('Alex')]
-    })
-  })
-
-  it('converts values to NameToken objects', () => {
-    const input = {
-      strings: ['Hi! My name is ', '.'],
       values: ['Alex']
-    }
-    expect(tokenize(input)).to.deep.equal({
-      strings: ['Hi! My name is ', '.'],
-      values: [new NameToken('Alex')]
     })
   })
 

@@ -1,7 +1,8 @@
-import { ITagInput, NameToken } from './tokenize'
+import { ITagInput } from './tokenize'
 import { Scope, getKeys } from './get'
 import { isFunction, assertType } from './util'
 import { IStringifyOptions, stringifyTagParams } from './stringify'
+import { toPath } from './to-path'
 
 /**
  * The callback for resolving a value
@@ -13,46 +14,45 @@ import { IStringifyOptions, stringifyTagParams } from './stringify'
  * If the function returns undefined, the value resolution algorithm will go ahead with the default
  * behaviour (resolving the variable name from the provided object).
  */
-export type ResolveFn = (
-  varName: string,
-  scope?: Scope,
-  nameToken?: NameToken
-) => any | Promise<any>
+export type ResolveFn = (varName: string, scope?: Scope) => any | Promise<any>
 
 export interface IResolverOptions extends IStringifyOptions {
-  resolveFn?: ResolveFn
   resolveFnContext?: any
 }
 
-const defaultResolver: ResolveFn = (
-  varName: string,
-  scope: Scope,
-  nameToken: NameToken
-) => getKeys(scope, nameToken.paths)
-
 export class Resolver {
-  constructor(
-    private tokens: ITagInput<NameToken>,
-    private options: IResolverOptions
-  ) {}
+  private cache: {
+    [path: string]: string[]
+  } = {}
 
-  private callResolver(
-    scope: Scope,
-    resolveFn: ResolveFn = this.options.resolveFn || defaultResolver
-  ) {
+  constructor(private tokens: ITagInput, private options: IResolverOptions) {}
+
+  private callResolver(scope: Scope, resolveFn?: ResolveFn) {
+    if (resolveFn === undefined) {
+      return this.callDefaultResolver(scope)
+    }
     assertType(
       isFunction(resolveFn),
       'Expected a resolver (async) function but got',
       resolveFn
     )
-    return this.tokens.values.map(nameToken =>
+    return this.tokens.values.map(varName =>
       (resolveFn as ResolveFn).call(
         this.options.resolveFnContext,
-        nameToken.varName,
-        scope,
-        nameToken
+        varName,
+        scope
       )
     )
+  }
+
+  private callDefaultResolver(scope: Scope) {
+    return this.tokens.values.map(varName => {
+      let pathsArr = this.cache[varName]
+      if (pathsArr === undefined) {
+        pathsArr = toPath(varName)
+      }
+      return getKeys(scope, pathsArr)
+    })
   }
 
   public render(scope: Scope = {}, resolveFn?: ResolveFn): string {
@@ -60,7 +60,7 @@ export class Resolver {
     return stringifyTagParams(this.tokens.strings, values, this.options)
   }
 
-  public async asyncRender(
+  public async renderAsync(
     scope: Scope = {},
     resolveFn?: ResolveFn
   ): Promise<string> {

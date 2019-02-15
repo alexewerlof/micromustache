@@ -70,10 +70,10 @@ const OPEN_CLOSE_SYMBOLS: {
   '{{': '}}', // Mustache, Handlebars
   '#{': '}', // Ruby, Crystal, CoffeeScript
   '${': '}', // Bash, ES6, TypeScript, Dart, Groovy, Haxe, Kotlin, PHP
+  '{': '}', // C#, Sciter, React JSX
   '$(': ')', // Boo, Nemerle
   '%(': ')', // Python
   '(': ')', // Swift
-  '{': '}', // C#, Sciter, React JSX
   '<?=': '?>', // PHP
   '<%=': '%>', // Lodash.template()
   '<': '>' // HTML, XML

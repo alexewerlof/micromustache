@@ -1,6 +1,7 @@
 import { ICompilerOptions, compile } from './compile'
 import { Scope } from './get'
 import { Template, TagFn } from './tokenize'
+import { ResolveFn } from './resolver'
 
 /**
  * Replaces every {{variable}} inside the template with values provided by scope.
@@ -18,33 +19,37 @@ import { Template, TagFn } from './tokenize'
 export function render(
   template: Template,
   scope?: Scope,
-  options?: ICompilerOptions
+  options?: ICompilerOptions,
+  resolveFn?: ResolveFn
 ): string {
-  return compile(template, options).render(scope)
+  return compile(template, options).render(scope, resolveFn)
 }
 
 export async function asyncRender(
   template: Template,
   scope?: Scope,
-  options?: ICompilerOptions
+  options?: ICompilerOptions,
+  resolveFn?: ResolveFn
 ): Promise<string> {
-  return compile(template, options).asyncRender(scope)
+  return compile(template, options).renderAsync(scope, resolveFn)
 }
 
 export function renderTag(
   scope: Scope,
-  options: ICompilerOptions
+  options: ICompilerOptions,
+  resolveFn?: ResolveFn
 ): TagFn<string> {
   return function tag(strings: string[], ...values: any): string {
-    return render({ strings, values }, scope, options)
+    return render({ strings, values }, scope, options, resolveFn)
   }
 }
 
 export function asyncRenderTag(
   scope: Scope,
-  options: ICompilerOptions
+  options: ICompilerOptions,
+  resolveFn?: ResolveFn
 ): TagFn<Promise<string>> {
   return function tag(strings: string[], ...values: any): Promise<string> {
-    return asyncRender({ strings, values }, scope, options)
+    return asyncRender({ strings, values }, scope, options, resolveFn)
   }
 }

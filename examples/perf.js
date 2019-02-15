@@ -1,5 +1,5 @@
 const assert = require('assert')
-const { compile, render, renderTag, turboRender } = require('../lib/index')
+const { compile, compileTag, render, renderTag } = require('../lib/index')
 const { render: mustacheRender } = require('mustache')
 
 const iterations = 100000
@@ -17,55 +17,51 @@ const expectedOutput = `Hi, My name is ${testObject.name}! I am ${
   testObject.age
 } years old and live in ${testObject.cities[1]}. foo is ${testObject.nested.foo}.`
 
-function micromustacheRenderTest(obj) {
+function micromustache_render(obj) {
   return render(
     'Hi, My name is {{name}}! I am {{age}} years old and live in {{cities[1]}}. foo is {{nested.foo}}.',
     obj
   )
 }
 
-function micromustacheCompiledTest(obj) {
-  micromustacheCompiledTest.resolver =
-    micromustacheCompiledTest.resolver ||
-    compile(
-      'Hi, My name is {{name}}! I am {{age}} years old and live in {{cities[1]}}. foo is {{nested.foo}}.'
-    )
-  return micromustacheCompiledTest.resolver.render(obj)
-}
-
-function micromustacheTurboRenderTest(obj) {
-  return turboRender(
-    'Hi, My name is {{name}}! I am {{age}} years old and live in {{cities.1}}. foo is {{nested.foo}}.',
-    obj
-  )
-}
-
-function micromustacheRenderTagTest(obj) {
+function micromustache_renderTag(obj) {
   return renderTag(
     obj
   )`Hi, My name is ${'name'}! I am ${'age'} years old and live in ${'cities[1]'}. foo is ${'nested.foo'}.`
 }
 
-function mustacheRenderTest(obj) {
+const micromustache_compileResolver = compile(
+  'Hi, My name is {{name}}! I am {{age}} years old and live in {{cities[1]}}. foo is {{nested.foo}}.'
+)
+function micromustache_compile(obj) {
+  return micromustache_compileResolver.render(obj)
+}
+
+const micromustacheCompiledTagTestResolver = compileTag()`Hi, My name is ${'name'}! I am ${'age'} years old and live in ${'cities[1]'}. foo is ${'nested.foo'}.`
+function micromustache_compileTag(obj) {
+  return micromustacheCompiledTagTestResolver.render(obj)
+}
+
+function mustache_render(obj) {
   return mustacheRender(
     'Hi, My name is {{name}}! I am {{age}} years old and live in {{cities.1}}. foo is {{nested.foo}}.',
     obj
   )
 }
 
-function stringTemplatesTest(obj) {
+function es_string_templates(obj) {
   return `Hi, My name is ${obj.name}! I am ${obj.age} years old and live in ${
     obj.cities[1]
   }. foo is ${obj.nested.foo}.`
 }
 
 for (const f of [
-  mustacheRenderTest,
-  micromustacheCompiledTest,
-  micromustacheRenderTest,
-  micromustacheTurboRenderTest,
-  micromustacheRenderTagTest,
-  stringTemplatesTest
+  micromustache_compile,
+  micromustache_compileTag,
+  micromustache_render,
+  micromustache_renderTag,
+  mustache_render,
+  es_string_templates
 ]) {
   console.log('---', f.name)
   assert.equal(f(testObject), expectedOutput)

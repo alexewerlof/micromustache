@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Rewrote the parser in TypeScript
 - Now the compile() function is optimized and caches the results
 - Custom resolver can be async
-- BREAKING CHANGE: the resolver is now a compiler option and receives an NameToken object instead of just the variable name (the variable name is exposed as `varName`)
+- Can handle es string templates
 - BREAKING CHANGE: if you pass a non-string template it'll throw
 - BREAKING CHANGE: if the template is not string, we throw an error
 - BREAKING CHANGE: if you provide a custom resolver and it throws, we don't swallow that error
