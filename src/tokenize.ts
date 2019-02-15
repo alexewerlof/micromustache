@@ -107,22 +107,6 @@ export function parseString(
   return { strings, values }
 }
 
-export function format<T>(
-  strings: string[],
-  values: any[],
-  valueToString: (value: T) => string
-): string {
-  const lastStringIndex = strings.length - 1
-  const ret: string[] = new Array(lastStringIndex * 2 + 1)
-  for (let i = 0; i < lastStringIndex; i++) {
-    ret.push(strings[i])
-    ret.push(valueToString(values[i]))
-  }
-
-  ret.push(strings[lastStringIndex])
-  return ret.join('')
-}
-
 export function tokenize(
   template: Template,
   options?: IParseOptions

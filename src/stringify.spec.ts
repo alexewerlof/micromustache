@@ -1,6 +1,6 @@
 import { describe } from 'mocha'
 import { expect } from 'chai'
-import { stringify, stringifyTagParams } from './stringify'
+import { stringify } from './stringify'
 
 describe('stringify()', () => {
   it('returns string as they are', () => {
@@ -68,15 +68,5 @@ describe('stringify()', () => {
     const f = () => 13
     const invalidType = 'XXX'
     expect(stringify(f, { invalidType })).to.equal(invalidType)
-  })
-})
-
-describe('stringifyTagParams', () => {
-  it('can stringify a simple case', () => {
-    const strings = ['Hi! My name is ', '.']
-    const values = ['Alex']
-    expect(stringifyTagParams(strings, values, undefined)).to.equal(
-      'Hi! My name is Alex.'
-    )
   })
 })

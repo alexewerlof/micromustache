@@ -1,5 +1,4 @@
 import { isFunction } from './util'
-import { format } from './tokenize'
 
 export interface IStringifyOptions {
   /** an optional string to be used when the value is an unsupported type */
@@ -56,12 +55,4 @@ export function stringify(
       // For example: undefined, Symbol, etc.
       return invalidType
   }
-}
-
-export function stringifyTagParams(
-  strings: string[],
-  values: any[],
-  options?: IStringifyOptions
-): string {
-  return format(strings, values, value => stringify(value, options))
 }
