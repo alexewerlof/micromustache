@@ -49,7 +49,7 @@ export class Resolver {
     return this.tokens.values.map(varName => {
       let pathsArr = this.cache[varName]
       if (pathsArr === undefined) {
-        pathsArr = toPath(varName)
+        pathsArr = this.cache[varName] = toPath(varName)
       }
       return getKeys(scope, pathsArr)
     })
