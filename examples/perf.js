@@ -17,16 +17,16 @@ const expectedOutput = `Hi, My name is ${testObject.name}! I am ${
   testObject.age
 } years old and live in ${testObject.cities[1]}. foo is ${testObject.nested.foo}.`
 
-const micromustache_compileRenderer = compile(
+const micromustache_compile_renderer = compile(
   'Hi, My name is {{name}}! I am {{age}} years old and live in {{cities[1]}}. foo is {{nested.foo}}.'
 )
 function micromustache_compile(obj) {
-  return micromustache_compileRenderer.render(obj)
+  return micromustache_compile_renderer.render(obj)
 }
 
-const micromustacheCompiledTagTestRenderer = compileTag()`Hi, My name is ${'name'}! I am ${'age'} years old and live in ${'cities[1]'}. foo is ${'nested.foo'}.`
+const micromustache_compiledTag_renderer = compileTag()`Hi, My name is ${'name'}! I am ${'age'} years old and live in ${'cities[1]'}. foo is ${'nested.foo'}.`
 function micromustache_compileTag(obj) {
-  return micromustacheCompiledTagTestRenderer.render(obj)
+  return micromustache_compiledTag_renderer.render(obj)
 }
 
 function micromustache_render(obj) {
