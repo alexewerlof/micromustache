@@ -11,7 +11,8 @@ export class Cache<T> {
   }
 
   public get(key: string): T {
-    if (this.memory[key] === undefined) {
+    const hitResult = this.memory[key]
+    if (hitResult === undefined) {
       const oldKey = this.keys[this.currentKeyIndex]
       // if this spot currentKeyIndex is pointing to is taken by an older cache key
       if (oldKey) {
@@ -28,6 +29,6 @@ export class Cache<T> {
         this.currentKeyIndex = 0
       }
     }
-    return this.memory[key]
+    return hitResult
   }
 }
