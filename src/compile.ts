@@ -1,11 +1,11 @@
 import { IParseOptions, tokenize, Template, TagFn } from './tokenize'
 import { IStringifyOptions } from './stringify'
-import { IResolverOptions, Resolver } from './resolver'
+import { IRendererOptions, Renderer } from './renderer'
 
 export interface ICompilerOptions
   extends IParseOptions,
     IStringifyOptions,
-    IResolverOptions {}
+    IRendererOptions {}
 
 /**
  * This function makes repeated calls more optimized by compiling once and
@@ -20,10 +20,10 @@ export interface ICompilerOptions
 export function compile(
   template: Template,
   options: ICompilerOptions = {}
-): Resolver {
+): Renderer {
   // Note: parseString() asserts the type of its params
   const tokens = tokenize(template, options)
-  return new Resolver(tokens, options)
+  return new Renderer(tokens, options)
 }
 
 /**
@@ -32,8 +32,8 @@ export function compile(
  * @returns - an object with render() and renderAsync() functions that accepts a scope object and
  * return the final string
  */
-export function compileTag(options: ICompilerOptions): TagFn<Resolver> {
-  return function tag(strings: string[], ...values: any): Resolver {
+export function compileTag(options: ICompilerOptions): TagFn<Renderer> {
+  return function tag(strings: string[], ...values: any): Renderer {
     return compile({ strings, values }, options)
   }
 }

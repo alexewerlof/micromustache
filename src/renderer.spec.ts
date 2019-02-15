@@ -1,14 +1,14 @@
-import { Resolver, ResolveFn } from './resolver'
+import { Renderer, ResolveFn } from './renderer'
 import { expect } from 'chai'
 
-describe('Resolver', () => {
+describe('Renderer', () => {
   it('is a constructor', () => {
-    expect(new Resolver({ strings: [], values: [] }, {})).to.be.an('object')
+    expect(new Renderer({ strings: [], values: [] }, {})).to.be.an('object')
   })
 
   describe('.render()', () => {
     it('uses get() by default', () => {
-      const resolver = new Resolver(
+      const resolver = new Renderer(
         { strings: ['Hello! My name is ', '!'], values: ['name'] },
         {}
       )
@@ -18,7 +18,7 @@ describe('Resolver', () => {
     })
 
     it('calls the custom resolve function', () => {
-      const resolver = new Resolver(
+      const resolver = new Renderer(
         { strings: ['Hello! My name is ', '!'], values: ['name'] },
         {}
       )
@@ -36,7 +36,7 @@ describe('Resolver', () => {
     })
 
     it('passes the scope to the custom resolve function', () => {
-      const resolver = new Resolver(
+      const resolver = new Renderer(
         { strings: ['Hello! My name is ', '!'], values: ['name'] },
         {}
       )
@@ -58,7 +58,7 @@ describe('Resolver', () => {
 
   describe('.renderAsync()', () => {
     it('passes the scope to the custom resolve function', async () => {
-      const resolver = new Resolver(
+      const resolver = new Renderer(
         { strings: ['Hello! My name is ', '!'], values: ['name'] },
         {}
       )

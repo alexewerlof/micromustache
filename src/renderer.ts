@@ -16,18 +16,18 @@ import { toPath } from './to-path'
  */
 export type ResolveFn = (varName: string, scope?: Scope) => any | Promise<any>
 
-export interface IResolverOptions extends IStringifyOptions {
+export interface IRendererOptions extends IStringifyOptions {
   resolveFnContext?: any
 }
 
-export class Resolver {
+export class Renderer {
   private cache: {
     [path: string]: string[]
   } = {}
 
   private assembleCache: string[]
 
-  constructor(private tokens: ITagInput, private options: IResolverOptions) {
+  constructor(private tokens: ITagInput, private options: IRendererOptions) {
     const lastStringIndex = tokens.values.length
     this.assembleCache = new Array(lastStringIndex * 2 + 1)
     tokens.strings.forEach((s, i) => (this.assembleCache[i * 2] = s))
@@ -40,21 +40,14 @@ export class Resolver {
     return this.assembleCache.join('')
   }
 
-  private callResolver(scope: Scope, resolveFn?: ResolveFn) {
-    if (resolveFn === undefined) {
-      return this.callDefaultResolver(scope)
-    }
+  private callResolver(scope: Scope, resolveFn: ResolveFn) {
     assertType(
       isFunction(resolveFn),
       'Expected a resolver (async) function but got',
       resolveFn
     )
     return this.tokens.values.map(varName =>
-      (resolveFn as ResolveFn).call(
-        this.options.resolveFnContext,
-        varName,
-        scope
-      )
+      resolveFn.call(this.options.resolveFnContext, varName, scope)
     )
   }
 
@@ -69,13 +62,15 @@ export class Resolver {
   }
 
   public render(scope: Scope = {}, resolveFn?: ResolveFn): string {
-    const values = this.callResolver(scope, resolveFn)
+    const values = resolveFn
+      ? this.callResolver(scope, resolveFn)
+      : this.callDefaultResolver(scope)
     return this.assembleResults(values)
   }
 
   public async renderAsync(
     scope: Scope = {},
-    resolveFn?: ResolveFn
+    resolveFn: ResolveFn
   ): Promise<string> {
     const values = await Promise.all(this.callResolver(scope, resolveFn))
     return this.assembleResults(values)
