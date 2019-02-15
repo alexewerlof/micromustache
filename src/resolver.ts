@@ -1,6 +1,6 @@
 import { ITagInput, NameToken } from './tokenize'
 import { Scope, getKeys } from './get'
-import { assertTruthy, isFunction } from './util'
+import { isFunction, assertType } from './util'
 import { IStringifyOptions, stringifyTagParams } from './stringify'
 
 /**
@@ -40,10 +40,10 @@ export class Resolver {
     scope: Scope,
     resolveFn: ResolveFn = this.options.resolveFn || defaultResolver
   ) {
-    assertTruthy(
+    assertType(
       isFunction(resolveFn),
-      `Expected a resolver (async) function but got ${resolveFn}`,
-      TypeError
+      'Expected a resolver (async) function but got',
+      resolveFn
     )
     return this.tokens.values.map(nameToken =>
       (resolveFn as ResolveFn).call(

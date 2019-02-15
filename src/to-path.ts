@@ -1,4 +1,4 @@
-import { isString, assertTruthy } from './util'
+import { isString, assertSyntax, assertType } from './util'
 import { IParseOptions, parseString } from './tokenize'
 
 const parseStringOptions: IParseOptions = {
@@ -29,10 +29,10 @@ export function unquote(value: string): string {
   const firstChar = key.charAt(0)
   const lastChar = key.substr(-1)
   if (isQuote(firstChar) || isQuote(lastChar)) {
-    assertTruthy(
+    assertSyntax(
       key.length >= 2 && firstChar === lastChar,
-      `Invalid or unexpected token ${key}`,
-      SyntaxError
+      'Invalid or unexpected token',
+      key
     )
     return key.substring(1, key.length - 1)
   }
@@ -46,10 +46,11 @@ export function unquote(value: string): string {
 }
 
 export function toPath(path: string): string[] {
-  assertTruthy(
+  assertType(
     isString(path),
-    `Path must be a string but it is ${typeof path}: ${path}`,
-    TypeError
+    'Path must be a string but it is',
+    typeof path,
+    path
   )
 
   path = normalizePath(path)
@@ -68,10 +69,10 @@ export function toPath(path: string): string[] {
     if (str !== '') {
       str.split('.').forEach(s => {
         const sTrimmed = s.trim()
-        assertTruthy(
+        assertSyntax(
           sTrimmed !== '',
-          `Unexpected token. Encountered empty path when parsing ${str}`,
-          SyntaxError
+          'Unexpected token. Encountered empty path when parsing',
+          str
         )
         ret.push(sTrimmed)
       })

@@ -25,18 +25,38 @@ export function isDefined(val: any) {
   return val !== undefined
 }
 
-export function assertTruthy(
-  expression: any,
-  message: string,
+function createError(
   errorConstructor:
     | ErrorConstructor
+    | SyntaxErrorConstructor
     | TypeErrorConstructor
-    | SyntaxErrorConstructor = Error
+    | ReferenceErrorConstructor,
+  messageParts: any[]
 ) {
+  return new errorConstructor(messageParts.join(' '))
+}
+
+export function assertTruthy(expression: any, ...messageParts: any[]) {
   if (!expression) {
-    if (errorConstructor) {
-      throw new errorConstructor(message)
-    }
+    throw createError(Error, messageParts)
+  }
+}
+
+export function assertSyntax(expression: any, ...messageParts: any[]) {
+  if (!expression) {
+    throw createError(SyntaxError, messageParts)
+  }
+}
+
+export function assertType(expression: any, ...messageParts: any[]) {
+  if (!expression) {
+    throw createError(TypeError, messageParts)
+  }
+}
+
+export function assertReference(expression: any, ...messageParts: any[]) {
+  if (!expression) {
+    throw createError(ReferenceError, messageParts)
   }
 }
 
@@ -62,7 +82,8 @@ const OPEN_CLOSE_SYMBOLS: {
 export function guessCloseSymbol(openSymbol: string) {
   assertTruthy(
     openSymbol in OPEN_CLOSE_SYMBOLS,
-    `Cannot guess a close symbol for ${openSymbol}`
+    'Cannot guess a close symbol for',
+    openSymbol
   )
   return OPEN_CLOSE_SYMBOLS[openSymbol]
 }

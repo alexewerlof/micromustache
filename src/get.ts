@@ -1,5 +1,5 @@
 import { toPath } from './to-path'
-import { assertTruthy, isValidScope } from './util'
+import { isValidScope, assertType, assertReference } from './util'
 
 // tslint:disable-next-line ban-types
 export type Scope = {} | Function
@@ -18,10 +18,11 @@ export type Scope = {} | Function
  * @returns - the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
  */
 export function get(scope: Scope, path: string): any {
-  assertTruthy(
+  assertType(
     isValidScope(scope),
-    `The scope should be an object or function but is ${typeof scope}: ${scope}`,
-    TypeError
+    'The scope should be an object or function but is',
+    typeof scope,
+    scope
   )
   const pathArr = toPath(path)
   return getKeys(scope, pathArr)
@@ -37,11 +38,7 @@ export function get(scope: Scope, path: string): any {
 export function getKeys(scope: Scope, pathArr: string[]): any {
   let currentScope = scope
   for (const key of pathArr) {
-    assertTruthy(
-      isValidScope(currentScope),
-      `${key} is not defined`,
-      ReferenceError
-    )
+    assertReference(isValidScope(currentScope), key, 'is not defined')
     // @ts-ignore
     currentScope = currentScope[key]
   }

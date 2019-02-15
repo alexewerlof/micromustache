@@ -21,7 +21,7 @@ const cachedToPath = new Cache(toPath, 1000)
  * In case of a JSON stringify error the result will look like "{...}".
  */
 export function turboRender(template: string, scope: Scope = {}): string {
-  // assertTruthy(isString(template), `Template must be a string. Got ${template}`)
+  // assertType(isString(template), 'Template must be a string. Got', template)
 
   return template.replace(/\{\{\s*(\S+)\s*\}\}/g, (match, path: string) => {
     const pathArr = cachedToPath.get(path)

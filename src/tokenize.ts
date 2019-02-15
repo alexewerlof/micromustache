@@ -1,4 +1,11 @@
-import { assertTruthy, isString, isObject, guessCloseSymbol } from './util'
+import {
+  assertTruthy,
+  isString,
+  isObject,
+  guessCloseSymbol,
+  assertSyntax,
+  assertType
+} from './util'
 import { toPath } from './to-path'
 import { Cache } from './cache'
 
@@ -52,11 +59,11 @@ export function parseString(
   template: string,
   options: IParseOptions = {}
 ): ITagInput<string> {
-  assertTruthy(isString(template), `Template must be a string. Got ${template}`)
-  assertTruthy(
+  assertType(isString(template), 'Template must be a string. Got', template)
+  assertType(
     isObject(options),
-    `When a options are provided, it should be an object. Got ${options}`,
-    TypeError
+    'When a options are provided, it should be an object. Got',
+    options
   )
   const { openSymbol = '{{' } = options
   const { closeSymbol = guessCloseSymbol(openSymbol) } = options
@@ -68,47 +75,51 @@ export function parseString(
 
   const openSymbolLength = openSymbol.length
   const closeSymbolLength = closeSymbol.length
-  let openIndex: number = -1
-  let closeIndex: number = -1
+  let openIndex: number
+  let closeIndex: number = 0
   let before: string
   let varName: string
   const strings: string[] = []
   const values: string[] = []
-  let currentIndex = -openSymbolLength
-  while (currentIndex < template.length) {
+
+  for (
+    let currentIndex = 0;
+    currentIndex < template.length;
+    currentIndex = closeIndex
+  ) {
     openIndex = template.indexOf(openSymbol, currentIndex)
     if (openIndex === -1) {
       break
     }
 
     closeIndex = template.indexOf(closeSymbol, openIndex)
-    assertTruthy(
+    assertSyntax(
       closeIndex !== -1,
-      `Missing ${closeSymbol} in template expression`,
-      SyntaxError
+      'Missing',
+      closeSymbol,
+      'in template expression'
     )
 
     varName = template
       .substring(openIndex + openSymbolLength, closeIndex)
       .trim()
 
-    assertTruthy(
+    assertSyntax(
       !varName.includes(openSymbol),
-      `Missing ${closeSymbol} in template expression`,
-      SyntaxError
+      'Missing',
+      closeSymbol,
+      'in template expression'
     )
 
-    assertTruthy(varName.length, `Unexpected token ${closeSymbol}`, SyntaxError)
+    assertSyntax(varName.length, 'Unexpected token', closeSymbol)
     values.push(varName)
 
     closeIndex += closeSymbolLength
     before = template.substring(currentIndex, openIndex)
     strings.push(before)
-
-    currentIndex = closeIndex
   }
 
-  const rest = template.substring(currentIndex)
+  const rest = template.substring(closeIndex)
   strings.push(rest)
 
   return { strings, values }
