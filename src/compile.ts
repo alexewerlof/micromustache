@@ -1,4 +1,4 @@
-import { IParseOptions, tokenize, Template, TagFn } from './tokenize'
+import { IParseOptions, tokenize, TagFn } from './tokenize'
 import { IStringifyOptions } from './stringify'
 import { IRendererOptions, Renderer } from './renderer'
 
@@ -18,10 +18,10 @@ export interface ICompilerOptions
  * return the final string
  */
 export function compile(
-  template: Template,
+  template: string,
   options: ICompilerOptions = {}
 ): Renderer {
-  // Note: parseString() asserts the type of its params
+  // Note: tokenize() asserts the type of its params
   const tokens = tokenize(template, options)
   return new Renderer(tokens, options)
 }
@@ -34,6 +34,6 @@ export function compile(
  */
 export function compileTag(options: ICompilerOptions): TagFn<Renderer> {
   return function tag(strings: string[], ...values: any): Renderer {
-    return compile({ strings, values }, options)
+    return new Renderer({ strings, values }, options)
   }
 }

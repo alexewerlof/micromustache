@@ -6,14 +6,11 @@ import {
   assertSyntax,
   assertType
 } from './util'
-import { toPath } from './to-path'
 
 export interface ITagInput {
   strings: string[]
   values: string[]
 }
-
-export type Template = string | ITagInput
 
 export type TagFn<T> = (strings: string[], ...values: any) => T
 
@@ -37,7 +34,7 @@ export interface IParseOptions {
  * @param options - the options form compile()
  * @returns - the resulting string
  */
-export function parseString(
+export function tokenize(
   template: string,
   options: IParseOptions = {}
 ): ITagInput {
@@ -105,14 +102,4 @@ export function parseString(
   strings.push(rest)
 
   return { strings, values }
-}
-
-export function tokenize(
-  template: Template,
-  options?: IParseOptions
-): ITagInput {
-  const tagInput: ITagInput = isString(template)
-    ? parseString(template, options)
-    : template
-  return { strings: tagInput.strings, values: tagInput.values }
 }

@@ -1,7 +1,7 @@
 import { isString, assertSyntax, assertType } from './util'
-import { IParseOptions, parseString } from './tokenize'
+import { IParseOptions, tokenize } from './tokenize'
 
-const parseStringOptions: IParseOptions = {
+const tokenizeOptions: IParseOptions = {
   openSymbol: '[',
   closeSymbol: ']'
 }
@@ -59,7 +59,7 @@ export function toPath(path: string): string[] {
   }
 
   // a["b"] . c => { strings: ['a', ' . c'], values: ['"b"'] }
-  const { strings, values } = parseString(path, parseStringOptions)
+  const { strings, values } = tokenize(path, tokenizeOptions)
 
   const ret: string[] = []
 
