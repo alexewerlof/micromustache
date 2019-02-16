@@ -3,6 +3,7 @@ import { Scope, getKeys } from './get'
 import { isFunction, assertType } from './util'
 import { IStringifyOptions, stringify } from './stringify'
 import { toPath } from './to-path'
+import { compileTag } from './compile'
 
 /**
  * The callback for resolving a value

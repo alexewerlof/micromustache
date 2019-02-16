@@ -32,7 +32,7 @@ export function compile(
  * @returns - an object with render() and renderAsync() functions that accepts a scope object and
  * return the final string
  */
-export function compileTag(options: ICompilerOptions): TagFn<Renderer> {
+export function compileTag(options: IRendererOptions): TagFn<Renderer> {
   return function tag(strings: string[], ...values: any): Renderer {
     return new Renderer({ strings, values }, options)
   }

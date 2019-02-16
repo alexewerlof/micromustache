@@ -1,3 +1,5 @@
+const { compileTag } = require('../lib/index')
+
 const person = {
   firstName: 'Alex',
   lastName: 'Ewerlöf',
@@ -5,5 +7,5 @@ const person = {
 }
 
 console.log(
-  tagInterpolation(person)`Hi! My name is ${'firstName'} ${'lastName'} and I am ${'nationality'}`
+  compileTag()`Hi! My name is ${'firstName'} ${'lastName'} and I am ${'nationality'}`.render(person)
 )
