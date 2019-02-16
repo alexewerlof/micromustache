@@ -5,21 +5,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## Unreleased
-- Typescript
+## Unrelease
+
 - Add more examples of its selling points
   - C# syntax:       render('I like {{0}}, {{1}} and {{2}}', ['orange', 'apple', 'lemon'])
   - string templates
+  - how to use it to emulate string templates for variables out of scope
+  - performance vs mustache.js and lodash template engines
 - Do a comparative benchmark with Mustache.js
 - Add support for [tagged string templates](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals)
 - Support comments: *{{! ...}}* like MustacheJS
 - Test the async behaviour
 - Reenable tests/ for mustache compatibility and add relevant options
-- Add a string literal tag function
+- Add a string literal tag function (generic render)
+- Add the possibility to process variable names before and after they are resolved using `get()`. This can allow HTML escaping for example.
+- Add the possibility to return '' instead of throwing for non-existing elements
+- Support multiscopes ?
 
 ## 6.0.0
-- Rewrote the parser in TypeScript
-- Now the compile() function is optimized and caches the results
+
+- Rewrote the project in TypeScript
+- Now the compiler returns a renderer with optimized caching
 - Custom resolver can be async
 - Can handle es string templates
 - BREAKING CHANGE: if you pass a non-string template it'll throw

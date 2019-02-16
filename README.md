@@ -19,6 +19,9 @@ This small library covers the most important use case for [Mustache templates](h
 If that's all you need, *micromustache* is a drop-in replacement for MustacheJS.
 
 * No dependencies
+* Secure. Works in CSP environments.
+* No regular expression.
+* Minimalist! No fancy features and enough rope to hang the developer
 * 2x-3x faster than Mustache and consumes less memory
 * Does not aggressively cache internal parsing results and does not introduce memory leaks
 * The object accessor syntax is closer to JavaScript than Mustache
