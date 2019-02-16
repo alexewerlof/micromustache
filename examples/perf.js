@@ -123,10 +123,6 @@ function es_string_templates(obj) {
   }. foo is ${obj.nested.foo}.`
 }
 
-if (!global.gc) {
-  throw new Error(`Run node with the --expose-gc switch`)
-}
-
 for (const f of [
   micromustache_compile,
   micromustache_compileTag,
@@ -143,18 +139,11 @@ for (const f of [
   dot_template,
   es_string_templates
 ]) {
-  console.log('---', f.name)
+  console.log('---')
   assert.equal(f(testObject), expectedOutput)
-  // global.gc()
-  const memoryUsageBefore = process.memoryUsage()
   console.time(f.name)
   for (let iteration = 0; iteration < iterations; iteration++) {
     f(testObject)
   }
   console.timeEnd(f.name)
-  // global.gc()
-  const memoryUsageAfter = process.memoryUsage()
-  const rssDelta = memoryUsageAfter.rss - memoryUsageBefore.rss
-  const heapUsedDelta = memoryUsageAfter.heapUsed - memoryUsageBefore.heapUsed
-  console.log(`RSS ${rssDelta}, Heap ${heapUsedDelta}`)
 }
