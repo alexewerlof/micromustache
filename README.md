@@ -19,6 +19,11 @@ This small library covers the most important use case for [Mustache templates](h
 If that's all you need, *micromustache* is a drop-in replacement for MustacheJS.
 
 * No dependencies
+* 2x-3x faster than Mustache and consumes less memory
+* Does not aggressively cache internal parsing results and does not introduce memory leaks
+* The object accessor syntax is closer to JavaScript than Mustache
+* The errors are more aligned with JavaScript than Mustache
+* Works on string templates (and it actually improves its speed)
 * [Fully compatible](test/mustache-compatiblity.spec.js) with MustacheJS for **interpolation**
 * Works in node (CommonJS) and Browser (using CommonJS build tools like
   [Browserify](http://browserify.org/)/[WebPack](https://webpack.github.io/))
