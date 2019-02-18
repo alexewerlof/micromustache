@@ -1,3 +1,4 @@
+const os = require('os')
 const assert = require('assert')
 const { compile, compileTag, render, renderTag } = require('../lib/index')
 const mustache = require('mustache')
@@ -9,7 +10,7 @@ const dot = require('dot')
 const ejs = require('ejs')
 const nunjucks = require('nunjucks')
 
-const iterations = 100000
+const iterations = 1e5
 
 const testObject = {
   name: 'Alex Ewerlöf',
@@ -129,6 +130,11 @@ function es_string_templates(obj) {
     obj.cities[1]
   }. foo is ${obj.nested.foo}.`
 }
+
+console.info(`CPU: ${os.cpus()[0].model}`)
+console.info(`RAM: ${(os.totalmem() / 2 ** 30).toFixed(1)} GiB`)
+console.info(`OS: ${os.platform()}`)
+console.info(`Iterations: ${iterations} times`)
 
 for (const f of [
   micromustache_compile,

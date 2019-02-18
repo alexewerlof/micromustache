@@ -19,24 +19,26 @@ This small library covers the most important use case for [Mustache templates](h
 If that's all you need, *micromustache* is a drop-in replacement for MustacheJS.
 
 * No dependencies
-* Lightweight
+* Lightweight (under 400 source lines of code. `npm run sloc`)
 * Secure. Works in CSP environments.
 * No regular expression. No risk for [regexp DDoS](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
 * Minimalist! No fancy features and enough rope to hang the developer
-* 2x-3x faster than Mustache and consumes less memory (mustache.js caches tokens for all templates)
+* 2x-3x faster than Mustache
 * Does not aggressively cache internal parsing results and does not introduce memory leaks
+  (mustache.js caches tokens for all templates)
 * The object accessor syntax is closer to JavaScript than Mustache
 * The errors are more aligned with JavaScript than Mustache
 * Works on string templates (and it actually improves its speed)
 * [Fully compatible](test/mustache-compatiblity.spec.js) with MustacheJS for **interpolation**
 * Works in node (CommonJS) and Browser (using CommonJS build tools like
-  [Browserify](http://browserify.org/)/[WebPack](https://webpack.github.io/))
-* Well tested (full test coverage over 80+ tests)
+  [Browserify](http://browserify.org/) or [WebPack](https://webpack.github.io/))
+* Well tested (full test coverage over 120+ tests)
 * Dead simple to learn yet a pleasure to use
 * Behaves similar to JavaScript and avoids quirks from lodash and Mustache
 * The code is small and easy to read and has full JSDoc documentation
 * Custom delimiters: instead of `{{ ... }}` use `{ ... }`, `( ... )`, `<% ... %>` or anything you desire*
 * Arrays as values: `{{ arrName[1] }}` (mustachejs does not support this)
+* TypeScript types included and updated with every version of the library
 
 ## Tradeoffs
 
