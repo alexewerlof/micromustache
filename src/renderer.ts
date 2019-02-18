@@ -1,9 +1,7 @@
 import { ITagInput, TagFn } from './tokenize'
-import { Scope, getKeys } from './get'
+import { Scope, getKeys, toPath } from './get'
 import { isFunction, assertType } from './util'
 import { IStringifyOptions, stringify } from './stringify'
-import { toPath } from './to-path'
-import { compileTag } from './compile'
 import { isObject } from 'util'
 
 /**
