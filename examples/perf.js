@@ -82,6 +82,7 @@ function template7_compile(obj) {
   return template7_compile_renderer(obj)
 }
 
+// Lodash is based on doT as well and won't work in CSP environments. You have to use the CLI to precompile
 const lodash_compile_renderer = template(
   'Hi, My name is <%= name %>! I am <%= age %> years old and live in <%= cities[1] %>. foo is <%= nested.foo %>.'
 )
@@ -89,6 +90,7 @@ function lodash_compile(obj) {
   return lodash_compile_renderer(obj)
 }
 
+// underscore doesn't work in CSP environments
 const underscore_compile_renderer = underscore.template(
   'Hi, My name is <%= name %>! I am <%= age %> years old and live in <%= cities[1] %>. foo is <%= nested.foo %>.'
 )
@@ -96,6 +98,8 @@ function underscore_compile(obj) {
   return underscore_compile_renderer(obj)
 }
 
+// Compiles to js functions, so it is not CSP compatible.
+// How about templates having access to your file system? https://github.com/mde/ejs/issues/111
 const ejs_compile_renderer = ejs.compile(
   'Hi, My name is <%= name %>! I am <%= age %> years old and live in <%= cities[1] %>. foo is <%= nested.foo %>.'
 )
@@ -103,6 +107,8 @@ function ejs_compile(obj) {
   return ejs_compile_renderer(obj)
 }
 
+// Mozilla's Nunjucks: nunjucks does not sandbox execution so it is not safe to run user-defined templates or inject user-defined content into template definitions. On the server, you can expose attack vectors for accessing sensitive data and remote code execution. On the client, you can expose cross-site scripting vulnerabilities even for precompiled templates (which can be mitigated with a strong CSP). See this issue for more information.
+// link: https://mozilla.github.io/nunjucks/templating.html
 const nunjucks_compile_renderer = nunjucks.compile(
   'Hi, My name is {{ name }}! I am {{ age }} years old and live in {{ cities[1] }}. foo is {{ nested.foo }}.'
 )
