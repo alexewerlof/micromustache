@@ -1,11 +1,5 @@
 import { IParseOptions, tokenize, TagFn } from './tokenize'
-import { IStringifyOptions } from './stringify'
 import { IRendererOptions, Renderer } from './renderer'
-
-export interface ICompilerOptions
-  extends IParseOptions,
-    IStringifyOptions,
-    IRendererOptions {}
 
 /**
  * This function makes repeated calls more optimized by compiling once and
@@ -19,7 +13,7 @@ export interface ICompilerOptions
  */
 export function compile(
   template: string,
-  options: ICompilerOptions = {}
+  options?: IParseOptions & IRendererOptions
 ): Renderer {
   // Note: tokenize() asserts the type of its params
   const tokens = tokenize(template, options)
