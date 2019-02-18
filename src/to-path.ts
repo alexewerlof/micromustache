@@ -16,9 +16,9 @@ function isQuote(str: string): boolean {
  * @return - the input trimmed and without a leading dot
  */
 function normalizePath(rawPath: string) {
-  let path = rawPath.trim()
+  const path = rawPath.trim()
   if (path.startsWith('.')) {
-    path = path.substr(1)
+    return path.substr(1)
   }
   return path
 }
