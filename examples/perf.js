@@ -101,14 +101,6 @@ function nunjucks_compile(obj) {
   return nunjucks_compiled_renderer.render(obj)
 }
 
-// Very very long!
-function nunjucks_render(obj) {
-  return nunjucks.renderString(
-    'Hi, My name is {{ name }}! I am {{ age }} years old and live in {{ cities[1] }}. foo is {{ nested.foo }}.',
-    obj
-  )
-}
-
 // Compiles the template to a super optimized javascript code but does it work with CSP security?
 const dot_template_renderer = dot.template(
   'Hi, My name is {{=it.name}}! I am {{=it.age}} years old and live in {{=it.cities[1]}}. foo is {{=it.nested.foo}}.'
@@ -135,7 +127,6 @@ for (const f of [
   underscore_template,
   ejs_template,
   nunjucks_compile,
-  nunjucks_render,
   dot_template,
   es_string_templates
 ]) {
