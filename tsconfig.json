@@ -9,7 +9,9 @@
     "noImplicitThis": true,
     "newLine": "LF",
     "outDir": "lib/",
-    "declaration": true
+    "declaration": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "include": [
     "src/**/*.ts"
