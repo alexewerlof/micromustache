@@ -1,6 +1,8 @@
 import { IParseOptions, tokenize, TagFn } from './tokenize'
 import { IRendererOptions, Renderer } from './renderer'
 
+export type ICompileOptions = IParseOptions & IRendererOptions
+
 /**
  * This function makes repeated calls more optimized by compiling once and
  * returning a class that can do the rendering for you.
@@ -11,10 +13,7 @@ import { IRendererOptions, Renderer } from './renderer'
  * @returns - an object with render() and renderAsync() functions that accepts a scope object and
  * return the final string
  */
-export function compile(
-  template: string,
-  options?: IParseOptions & IRendererOptions
-): Renderer {
+export function compile(template: string, options?: ICompileOptions): Renderer {
   // Note: tokenize() asserts the type of its params
   const tokens = tokenize(template, options)
   return new Renderer(tokens, options)

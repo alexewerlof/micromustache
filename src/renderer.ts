@@ -1,6 +1,7 @@
 import { ITagInput, TagFn } from './tokenize'
 import { Scope, getKeys, toPath } from './get'
 import { isFunction, isObject, assertType } from './util'
+import { ICompileOptions, compile } from './compile'
 
 export interface IStringifyOptions {
   /** an optional string to be used when the value is an unsupported type */
@@ -141,6 +142,17 @@ export class Renderer {
     const values = await Promise.all(this.callResolver(scope, resolveFn))
     return this.assembleResults(values)
   }
+}
+
+// TODO document this
+// TODO refactor the tests to use this function
+export function render(
+  template: string,
+  scope: Scope,
+  options?: ICompileOptions
+) {
+  const renderer: Renderer = compile(template, options)
+  return renderer.render(scope)
 }
 
 export function renderTag(
