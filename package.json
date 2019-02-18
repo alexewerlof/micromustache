@@ -39,6 +39,7 @@
     "nunjucks": "^3.1.7",
     "prettier": "^1.16.4",
     "rimraf": "^2.6.3",
+    "sloc": "^0.2.1",
     "template7": "^1.4.1",
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
@@ -60,7 +61,8 @@
     "postversion": "git push && git push --tags",
     "api-extractor": "api-extractor run --local",
     "perf": "npm run build && node examples/perf.js",
-    "perf:inspect": "npm run build && node --inspect-brk examples/perf.js"
+    "perf:inspect": "npm run build && node --inspect-brk examples/perf.js",
+    "sloc": "sloc src -e .*spec.* -k source --format cli-table"
   },
   "repository": {
     "type": "git",
