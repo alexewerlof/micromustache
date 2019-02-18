@@ -26,13 +26,15 @@
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^6.3.0",
-    "@types/node": "^10.12.23",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^11.9.4",
     "chai": "^4.2.0",
     "dot": "^1.1.2",
     "ejs": "^2.6.1",
     "handlebars": "^4.1.0",
     "lodash.template": "^4.4.0",
-    "mocha": "^5.2.0",
+    "mocha": "^6.0.0",
     "mustache": "^3.0.1",
     "nunjucks": "^3.1.7",
     "prettier": "^1.16.4",
@@ -66,8 +68,5 @@
   },
   "author": "Alex Ewerlöf",
   "license": "MIT",
-  "dependencies": {
-    "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.5"
-  }
+  "dependencies": {}
 }
