@@ -1,9 +1,10 @@
-import { ITagInput } from './tokenize'
+import { ITagInput, TagFn } from './tokenize'
 import { Scope, getKeys } from './get'
 import { isFunction, assertType } from './util'
 import { IStringifyOptions, stringify } from './stringify'
 import { toPath } from './to-path'
 import { compileTag } from './compile'
+import { isObject } from 'util'
 
 /**
  * The callback for resolving a value
@@ -28,20 +29,28 @@ export class Renderer {
 
   private assembleCache: string[]
 
-  constructor(private tokens: ITagInput, private options: IRendererOptions) {
+  constructor(
+    private tokens: ITagInput,
+    private options: IRendererOptions = {}
+  ) {
+    assertType(
+      isObject(options),
+      'If options is passed, it should be an object. Got',
+      options
+    )
     const lastStringIndex = tokens.values.length
     this.assembleCache = new Array(lastStringIndex * 2 + 1)
     tokens.strings.forEach((s, i) => (this.assembleCache[i * 2] = s))
   }
 
-  private assembleResults(values: any[]) {
+  private assembleResults(values: any[]): string {
     values.forEach((v, i) => {
       this.assembleCache[i * 2 + 1] = stringify(v, this.options)
     })
     return this.assembleCache.join('')
   }
 
-  private callResolver(scope: Scope, resolveFn: ResolveFn) {
+  private callResolver(scope: Scope, resolveFn: ResolveFn): any[] {
     assertType(
       isFunction(resolveFn),
       'Expected a resolver (async) function but got',
@@ -62,7 +71,10 @@ export class Renderer {
     })
   }
 
-  public render(scope: Scope = {}, resolveFn?: ResolveFn): string {
+  public render(
+    scope: Scope = {},
+    resolveFn: ResolveFn = this.options.resolveFnContext
+  ): string {
     const values = resolveFn
       ? this.callResolver(scope, resolveFn)
       : this.callDefaultResolver(scope)
@@ -75,5 +87,15 @@ export class Renderer {
   ): Promise<string> {
     const values = await Promise.all(this.callResolver(scope, resolveFn))
     return this.assembleResults(values)
+  }
+}
+
+export function renderTag(
+  scope: Scope,
+  options?: IRendererOptions
+): TagFn<string> {
+  return function tag(strings: string[], ...values: any): string {
+    const renderer = new Renderer({ strings, values }, options)
+    return renderer.render(scope)
   }
 }
