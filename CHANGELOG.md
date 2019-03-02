@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unrelease
 
+- Support [optional chaining syntax](https://github.com/tc39/proposal-optional-chaining)
 - Add more examples of its selling points
   - C# syntax:       render('I like {{0}}, {{1}} and {{2}}', ['orange', 'apple', 'lemon'])
   - string templates
@@ -25,13 +26,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## 6.0.0
 
 - Rewrote the project in TypeScript
-- Now the compiler returns a renderer with optimized caching
 - Custom resolver can be async
-- Can handle es string templates
-- BREAKING CHANGE: if you pass a non-string template it'll throw
-- BREAKING CHANGE: if the template is not string, we throw an error
-- BREAKING CHANGE: if you provide a custom resolver and it throws, we don't swallow that error
-- BREAKING CHANGE: if one of the nested keys do not exist, we don't swallow that error
+- Compile and rendering can be significantly faster using ES Template literals
+
+BREAKING CHANGES:
+- We don't use default exports anymore so `const render = require('micromustache/render')`
+  should be refactored to `const { render } = require('micromustache')`
+- Now the compiler returns a renderer object with a render() function
+- If you pass a non-string template it'll throw an error
+- If you provide a custom resolver and it throws, we throw and will not swallow that error
+- If one of the nested keys do not exist, we throw and will not swallow that error
 
 ## 5.4.0
 - Modernize the the dependencies and build system

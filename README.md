@@ -236,6 +236,9 @@ A. ES6 native Template literals work great when you have the values in the same 
 If you need to separate the rendering of a value from the template, there's no way to do it natively.
 For example if you want to generate a template programmatically, you cannot use the Template literals.
 
-**Q. I want "INSERT SOME MUSTACHE FEATUE HERE" but it's not available in MicroMustache. Can I add it?**
+Also this library allows you to refer to variables that are not in the scope and compile a template
+and will resolve those values lazily and/or at a different context.
 
-A. Make an issue first. The goal of MicroMustache is to be super tiny and while adressing the most important use-case of Mustache. If there's something that is terribly missing, we may add it, otherwise, you may fork it and call it something else OR use MustacheJS.
+**Q. I want "INSERT SOME MUSTACHE FEATURE HERE" but it's not available in MicroMustache. Can I add it?**
+
+A. Make an issue first. The goal of MicroMustache is to be super tiny and while addressing the most important use-case of Mustache. If there's something that is terribly missing, we may add it, otherwise, you may fork it and call it something else OR use MustacheJS.
