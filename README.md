@@ -4,6 +4,7 @@
 [![Downloads](https://img.shields.io/npm/dm/micromustache.svg?style=flat-square)](http://npm-stat.com/charts.html?package=micromustache&from=2017-01-01)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![MIT License](https://img.shields.io/npm/l/callifexists.svg?style=flat-square)](http://opensource.org/licenses/MIT)
+[![Known Vulnerabilities](https://snyk.io/test/github/userpixel/micromustache/badge.svg)](https://snyk.io/test/github/userpixel/micromustache)
 
 # micromustache
 
@@ -215,25 +216,25 @@ npm:
 npm it
 ```
 
+# Security
+
+Micromustache has been built from the ground up with security in mind:
+
+* It does not have any `dependency` which means there's zero change for malicious
+packages to your runtime security at risk.
+* It's only published with 2 factor authentication by the main author and no third party
+or automated deployment system is used.
+* It does not use any regular expression which reduces the risk for [Regex DDos](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02)
+
 # FAQ
 
 **Q. What about [ES6 template literals](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals)
 (AKA "template strings")?
 Aren't they gonna deprecate this library?**
 
-A. The expressions in a string literal can't reference values from outside its scope.
-Therefore it is not possible to simply pass an object and resolve variables from its keys.
-The [tagged template literals](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals#Tagged_template_literals)
-cover part of the functionality but they:
-
-* are not Mustache-compatible
-* require compilation for Android and IE
-* need the variables to be accessible in the scope of the template literal
-
-However, since when they are natively supported by the runtime, they have a
-great performance and if you learn to use the native way of doing things,
-you don't have to learn yet another library, though their functionality is
-more limited than MustacheJS.
+A. ES6 native Template literals work great when you have the values in the same scope as the Template literal.
+If you need to separate the rendering of a value from the template, there's no way to do it natively.
+For example if you want to generate a template programmatically, you cannot use the Template literals.
 
 **Q. I want "INSERT SOME MUSTACHE FEATUE HERE" but it's not available in MicroMustache. Can I add it?**
 
