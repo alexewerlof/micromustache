@@ -125,10 +125,7 @@ export class Renderer {
     })
   }
 
-  public render(
-    scope: Scope = {},
-    resolveFn: ResolveFn = this.options.resolveFnContext
-  ): string {
+  public render(scope: Scope = {}, resolveFn?: ResolveFn): string {
     const values = resolveFn
       ? this.callResolver(scope, resolveFn)
       : this.callDefaultResolver(scope)
