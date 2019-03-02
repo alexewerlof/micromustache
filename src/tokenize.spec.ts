@@ -1,6 +1,25 @@
 import { describe } from 'mocha'
-import { tokenize } from './tokenize'
+import { tokenize, guessCloseSymbol } from './tokenize'
 import { expect } from 'chai'
+
+describe('guessCloseSymbol()', () => {
+  it('works correctly for the open symbols that are supported', () => {
+    expect(guessCloseSymbol('{{')).to.equal('}}')
+    expect(guessCloseSymbol('#{')).to.equal('}')
+    expect(guessCloseSymbol('${')).to.equal('}')
+    expect(guessCloseSymbol('{')).to.equal('}')
+    expect(guessCloseSymbol('$(')).to.equal(')')
+    expect(guessCloseSymbol('%(')).to.equal(')')
+    expect(guessCloseSymbol('(')).to.equal(')')
+    expect(guessCloseSymbol('<?=')).to.equal('?>')
+    expect(guessCloseSymbol('<%=')).to.equal('%>')
+    expect(guessCloseSymbol('<')).to.equal('>')
+  })
+
+  it('throws for unsupported open symbols', () => {
+    expect(() => guessCloseSymbol('A')).to.throw()
+  })
+})
 
 describe('tokenize()', () => {
   it('supports custom close and open symbols', () => {

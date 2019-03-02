@@ -59,31 +59,3 @@ export function assertReference(expression: any, ...messageParts: any[]) {
     throw createError(ReferenceError, messageParts)
   }
 }
-
-/**
- * Reference: https://en.wikipedia.org/wiki/String_interpolation
- * No support for Rust, Scala, Java, Bash, Perl, TCL string interpolation syntax
- */
-const OPEN_CLOSE_SYMBOLS: {
-  [openSymbol: string]: string
-} = {
-  '{{': '}}', // Mustache, Handlebars
-  '#{': '}', // Ruby, Crystal, CoffeeScript
-  '${': '}', // Bash, ES6, TypeScript, Dart, Groovy, Haxe, Kotlin, PHP
-  '{': '}', // C#, Sciter, React JSX
-  '$(': ')', // Boo, Nemerle
-  '%(': ')', // Python
-  '(': ')', // Swift
-  '<?=': '?>', // PHP
-  '<%=': '%>', // Lodash.template()
-  '<': '>' // HTML, XML
-}
-
-export function guessCloseSymbol(openSymbol: string) {
-  assertTruthy(
-    openSymbol in OPEN_CLOSE_SYMBOLS,
-    'Cannot guess a close symbol for',
-    openSymbol
-  )
-  return OPEN_CLOSE_SYMBOLS[openSymbol]
-}
