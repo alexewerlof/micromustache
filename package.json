@@ -1,7 +1,7 @@
 {
   "name": "micromustache",
   "version": "5.4.0",
-  "description": "A faster and smaller subimplementation of the {{mustache}} template engine for JavaScript",
+  "description": "A fast, minimal and secure template engine for JavaScript",
   "keywords": [
     "template",
     "mustache",
@@ -28,13 +28,13 @@
     "@microsoft/api-extractor": "^6.3.0",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
-    "@types/node": "^11.9.4",
+    "@types/node": "^11.10.4",
     "chai": "^4.2.0",
     "dot": "^1.1.2",
     "ejs": "^2.6.1",
     "handlebars": "^4.1.0",
     "lodash.template": "^4.4.0",
-    "mocha": "^6.0.0",
+    "mocha": "^6.0.2",
     "mustache": "^3.0.1",
     "nunjucks": "^3.1.7",
     "prettier": "^1.16.4",
@@ -42,10 +42,10 @@
     "sloc": "^0.2.1",
     "template7": "^1.4.1",
     "ts-node": "^8.0.2",
-    "tslint": "^5.12.1",
+    "tslint": "^5.13.1",
     "tslint-config-prettier": "^1.18.0",
     "typedoc": "^0.14.2",
-    "typescript": "^3.3.3",
+    "typescript": "^3.3.3333",
     "underscore": "^1.9.1"
   },
   "scripts": {
