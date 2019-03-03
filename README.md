@@ -225,6 +225,11 @@ packages to your runtime security at risk.
 * It's only published with 2 factor authentication by the main author and no third party
 or automated deployment system is used.
 * It does not use any regular expression which reduces the risk for [Regex DDos](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02)
+* It does not use `new Function()` or `eval()` hence it can run in high security environments that enforce
+Content Security Policy (CSP)
+* It does not aggressively cache all template parsing results and therefore will not leak memory silently
+and crash your application or server. Once a `Renderer` is not referenced, all cache is freed.
+Besides the `render()` function will never cache.
 
 # FAQ
 
