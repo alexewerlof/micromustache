@@ -150,7 +150,20 @@ export class Renderer {
   }
 }
 
-// TODO document this
+/**
+ * Replaces every {{variable}} inside the template with values provided by view.
+ *
+ * @param template - The template containing one or more {{variableNames}} every variable
+ *        names that is used in the template. If it's omitted, it'll be assumed an empty object.
+ * @param scope - An object containing values for every variable names that is used in
+ *        the template. If it's omitted and empty object will be assumed.
+ * @param options - same as compiler options
+ * @returns - Template where its variable names replaced with
+ *        corresponding values. If a value is not found or is invalid, it will
+ *        be assumed empty string ''. If the value is an object itself, it'll
+ *        be stringified by JSON.
+ *        In case of a JSON stringify error the result will look like "{...}".
+ */
 export function render(
   template: string,
   scope?: Scope,
@@ -160,6 +173,24 @@ export function render(
   return renderer.render(scope)
 }
 
+/**
+ * Same as render() but calls the resolver asynchronously
+ */
+export async function renderAsync(
+  template: string,
+  scope?: Scope,
+  options?: ICompileOptions
+) {
+  const renderer: Renderer = compile(template, options)
+  return renderer.renderAsync(scope)
+}
+
+/**
+ * Same as render but works on template literals (which are faster since JavaScript tokenizes them).
+ * @param scope - Same as the scope for render()
+ * @param options - Renderer options
+ * @returns - A tag function that renders the string with the provided scope
+ */
 export function renderTag(
   scope?: Scope,
   options?: IRendererOptions
@@ -167,5 +198,21 @@ export function renderTag(
   return function tag(strings: string[], ...values: any): string {
     const renderer = new Renderer({ strings, values }, options)
     return renderer.render(scope)
+  }
+}
+
+/**
+ * Same as renderTag() but calls the resolver asynchronously
+ */
+export function renderTagAsync(
+  scope?: Scope,
+  options?: IRendererOptions
+): TagFn<Promise<string>> {
+  return async function tag(
+    strings: string[],
+    ...values: any
+  ): Promise<string> {
+    const renderer = new Renderer({ strings, values }, options)
+    return renderer.renderAsync(scope)
   }
 }
