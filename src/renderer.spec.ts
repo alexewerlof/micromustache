@@ -93,7 +93,7 @@ describe('Renderer', () => {
 
       expect(resolveFn('Alex')).to.equal('xelA')
       expect(
-        render('Hello! My name is {{name}}!', { name: 'Alex' }, resolveFn)
+        render('Hello! My name is {{name}}!', { name: 'Alex' }, { resolveFn })
       ).to.equal('Hello! My name is eman!')
     })
 
@@ -108,9 +108,9 @@ describe('Renderer', () => {
 
       const scope = { name: 'Alex' }
       expect(resolveFn('name', scope)).to.equal(scope.name)
-      expect(render('Hello! My name is {{name}}!', scope, resolveFn)).to.equal(
-        'Hello! My name is Alex!'
-      )
+      expect(
+        render('Hello! My name is {{name}}!', scope, { resolveFn })
+      ).to.equal('Hello! My name is Alex!')
     })
   })
 

@@ -73,6 +73,7 @@ export function stringify(
 export type ResolveFn = (varName: string, scope?: Scope) => any | Promise<any>
 
 export interface IRendererOptions extends IStringifyOptions {
+  resolveFn?: ResolveFn
   resolveFnContext?: any
 }
 
@@ -104,39 +105,47 @@ export class Renderer {
     return this.assembleCache.join('')
   }
 
-  private callResolver(scope: Scope, resolveFn: ResolveFn): any[] {
+  private callResolver(
+    scope: Scope,
+    resolveFn: ResolveFn | undefined = this.options.resolveFn,
+    resolveFnContext: any = this.options.resolveFnContext || scope
+  ): any[] {
+    if (resolveFn === undefined) {
+      return this.tokens.values.map(varName => {
+        let pathsArr = this.cache[varName]
+        if (pathsArr === undefined) {
+          pathsArr = this.cache[varName] = toPath(varName)
+        }
+        return getKeys(scope, pathsArr)
+      })
+    }
     assertType(
       isFunction(resolveFn),
-      'Expected a resolver (async) function but got',
+      'Expected a resolver function but got',
       resolveFn
     )
     return this.tokens.values.map(varName =>
-      resolveFn.call(this.options.resolveFnContext, varName, scope)
+      resolveFn.call(resolveFnContext, varName, scope)
     )
   }
 
-  private callDefaultResolver(scope: Scope) {
-    return this.tokens.values.map(varName => {
-      let pathsArr = this.cache[varName]
-      if (pathsArr === undefined) {
-        pathsArr = this.cache[varName] = toPath(varName)
-      }
-      return getKeys(scope, pathsArr)
-    })
-  }
-
-  public render(scope: Scope = {}, resolveFn?: ResolveFn): string {
-    const values = resolveFn
-      ? this.callResolver(scope, resolveFn)
-      : this.callDefaultResolver(scope)
+  public render(
+    scope: Scope = {},
+    resolveFn?: ResolveFn,
+    resolveFnContext?: any
+  ): string {
+    const values = this.callResolver(scope, resolveFn, resolveFnContext)
     return this.assembleResults(values)
   }
 
   public async renderAsync(
     scope: Scope = {},
-    resolveFn: ResolveFn
+    resolveFn: ResolveFn,
+    resolveFnContext?: any
   ): Promise<string> {
-    const values = await Promise.all(this.callResolver(scope, resolveFn))
+    const values = await Promise.all(
+      this.callResolver(scope, resolveFn, resolveFnContext)
+    )
     return this.assembleResults(values)
   }
 }
