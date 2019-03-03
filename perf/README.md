@@ -14,3 +14,5 @@ In case of Mustache.js (which was the original inspiration for this library), a 
 * Mustache aggressively caches all tokenization results and may use more memory with every distinct template
 * Currently there is no easy way to compile the templates in Mustache (see the code in `./mistache.js`)
 * Mustache does not have the concept or resolver, and of course it cannot resolve asynchronously
+
+Mozilla Nunjucks also provides a render function but it was too slow to be included in the performance benchmarks.
