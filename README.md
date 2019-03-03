@@ -20,7 +20,7 @@ This small library covers the most important use case for [Mustache templates](h
 If that's all you need, *micromustache* is a drop-in replacement for MustacheJS.
 
 * No dependencies
-* Lightweight (under 400 source lines of code. `npm run sloc`)
+* Lightweight (~400 source lines of code. `npm run sloc`)
 * Secure. Works in CSP environments.
 * No regular expression. No risk for [regexp DDoS](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
 * Minimalist! No fancy features and enough rope to hang the developer
