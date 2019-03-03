@@ -106,7 +106,7 @@ export class Renderer {
   }
 
   private callResolver(
-    scope: Scope,
+    scope: Scope = {},
     resolveFn: ResolveFn | undefined = this.options.resolveFn,
     resolveFnContext: any = this.options.resolveFnContext || scope
   ): any[] {
@@ -130,7 +130,7 @@ export class Renderer {
   }
 
   public render(
-    scope: Scope = {},
+    scope?: Scope,
     resolveFn?: ResolveFn,
     resolveFnContext?: any
   ): string {
@@ -139,8 +139,8 @@ export class Renderer {
   }
 
   public async renderAsync(
-    scope: Scope = {},
-    resolveFn: ResolveFn,
+    scope?: Scope,
+    resolveFn?: ResolveFn,
     resolveFnContext?: any
   ): Promise<string> {
     const values = await Promise.all(
@@ -153,7 +153,7 @@ export class Renderer {
 // TODO document this
 export function render(
   template: string,
-  scope: Scope,
+  scope?: Scope,
   options?: ICompileOptions
 ) {
   const renderer: Renderer = compile(template, options)
@@ -161,7 +161,7 @@ export function render(
 }
 
 export function renderTag(
-  scope: Scope,
+  scope?: Scope,
   options?: IRendererOptions
 ): TagFn<string> {
   return function tag(strings: string[], ...values: any): string {
