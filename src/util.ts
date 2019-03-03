@@ -1,6 +1,6 @@
 import { Scope } from './get'
 
-export function isObject(val: any): val is {} {
+export function isObject(val: any): val is object {
   return val && typeof val === 'object'
 }
 
