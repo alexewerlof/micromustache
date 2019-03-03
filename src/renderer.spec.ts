@@ -1,4 +1,4 @@
-import { Renderer, ResolveFn, stringify } from './renderer'
+import { Renderer, ResolveFn, stringify, render } from './renderer'
 import { expect } from 'chai'
 import { describe } from 'mocha'
 
@@ -78,20 +78,12 @@ describe('Renderer', () => {
 
   describe('.render()', () => {
     it('uses get() by default', () => {
-      const resolver = new Renderer(
-        { strings: ['Hello! My name is ', '!'], values: ['name'] },
-        {}
-      )
-      expect(resolver.render({ name: 'Alex' })).to.equal(
+      expect(render('Hello! My name is {{name}}!', { name: 'Alex' })).to.equal(
         'Hello! My name is Alex!'
       )
     })
 
     it('calls the custom resolve function', () => {
-      const resolver = new Renderer(
-        { strings: ['Hello! My name is ', '!'], values: ['name'] },
-        {}
-      )
       // Just returns the reversed variable name regardless of value
       const resolveFn: ResolveFn = varName =>
         varName
@@ -100,16 +92,12 @@ describe('Renderer', () => {
           .join('')
 
       expect(resolveFn('Alex')).to.equal('xelA')
-      expect(resolver.render({ name: 'Alex' }, resolveFn)).to.equal(
-        'Hello! My name is eman!'
-      )
+      expect(
+        render('Hello! My name is {{name}}!', { name: 'Alex' }, resolveFn)
+      ).to.equal('Hello! My name is eman!')
     })
 
     it('passes the scope to the custom resolve function', () => {
-      const resolver = new Renderer(
-        { strings: ['Hello! My name is ', '!'], values: ['name'] },
-        {}
-      )
       // Just returns the reversed variable name regardless of value
       const resolveFn: ResolveFn = (
         varName,
@@ -120,7 +108,7 @@ describe('Renderer', () => {
 
       const scope = { name: 'Alex' }
       expect(resolveFn('name', scope)).to.equal(scope.name)
-      expect(resolver.render(scope, resolveFn)).to.equal(
+      expect(render('Hello! My name is {{name}}!', scope, resolveFn)).to.equal(
         'Hello! My name is Alex!'
       )
     })

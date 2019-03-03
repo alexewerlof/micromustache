@@ -142,7 +142,6 @@ export class Renderer {
 }
 
 // TODO document this
-// TODO refactor the tests to use this function
 export function render(
   template: string,
   scope: Scope,
