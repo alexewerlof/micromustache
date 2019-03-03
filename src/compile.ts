@@ -1,5 +1,5 @@
 import { IParseOptions, tokenize, TagFn } from './tokenize'
-import { IRendererOptions, Renderer } from './renderer'
+import { IRendererOptions, Renderer } from './render'
 
 export type ICompileOptions = IParseOptions & IRendererOptions
 

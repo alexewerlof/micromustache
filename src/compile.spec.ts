@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { compile } from './compile'
-import { Renderer, ResolveFn } from './renderer'
+import { Renderer, ResolveFn } from './render'
 
 describe('compile()', () => {
   it('returns a function', () => {

@@ -1,4 +1,4 @@
-import { Renderer, ResolveFn, stringify, render } from './renderer'
+import { Renderer, ResolveFn, stringify, render } from './render'
 import { expect } from 'chai'
 import { describe } from 'mocha'
 
