@@ -129,20 +129,20 @@ export class Renderer {
     )
   }
 
-  public render(
+  public render = (
     scope?: Scope,
     resolveFn?: ResolveFn,
     resolveFnContext?: any
-  ): string {
+  ): string => {
     const values = this.callResolver(scope, resolveFn, resolveFnContext)
     return this.assembleResults(values)
   }
 
-  public async renderAsync(
+  public renderAsync = async (
     scope?: Scope,
     resolveFn?: ResolveFn,
     resolveFnContext?: any
-  ): Promise<string> {
+  ): Promise<string> => {
     const values = await Promise.all(
       this.callResolver(scope, resolveFn, resolveFnContext)
     )
