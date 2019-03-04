@@ -78,7 +78,7 @@ export interface IRendererOptions extends IStringifyOptions {
 }
 
 export class Renderer {
-  private cache: {
+  private pathCache: {
     [path: string]: string[]
   } = {}
 
@@ -95,7 +95,13 @@ export class Renderer {
     )
     const lastStringIndex = tokens.values.length
     this.assembleCache = new Array(lastStringIndex * 2 + 1)
-    tokens.strings.forEach((s, i) => (this.assembleCache[i * 2] = s))
+    const { strings, values } = this.tokens
+    for (let i = 0; i < strings.length; i++) {
+      this.assembleCache[i * 2] = strings[i]
+    }
+    for (let i = 0; i < values.length; i++) {
+      this.pathCache[i] = toPath(values[i])
+    }
   }
 
   private assembleResults(values: any[]): string {
@@ -117,12 +123,7 @@ export class Renderer {
     let i = 0
     if (resolveFn === undefined) {
       while (i < length) {
-        const varName = values[i]
-        let pathsArr = this.cache[varName]
-        if (pathsArr === undefined) {
-          pathsArr = this.cache[varName] = toPath(varName)
-        }
-        ret[i] = getKeys(scope, pathsArr)
+        ret[i] = getKeys(scope, this.pathCache[i])
         i++
       }
     } else {
@@ -132,8 +133,7 @@ export class Renderer {
         resolveFn
       )
       while (i < length) {
-        const varName = values[i]
-        ret[i] = resolveFn.call(resolveFnContext, varName, scope)
+        ret[i] = resolveFn.call(resolveFnContext, values[i], scope)
         i++
       }
     }
