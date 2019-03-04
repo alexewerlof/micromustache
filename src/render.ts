@@ -99,9 +99,10 @@ export class Renderer {
   }
 
   private assembleResults(values: any[]): string {
-    values.forEach((v, i) => {
-      this.assembleCache[i * 2 + 1] = stringify(v, this.options)
-    })
+    const { length } = values
+    for (let i = 0; i < length; i++) {
+      this.assembleCache[i * 2 + 1] = stringify(values[i], this.options)
+    }
     return this.assembleCache.join('')
   }
 
@@ -110,23 +111,33 @@ export class Renderer {
     resolveFn: ResolveFn | undefined = this.options.resolveFn,
     resolveFnContext: any = this.options.resolveFnContext || scope
   ): any[] {
+    const { values } = this.tokens
+    const { length } = values
+    const ret = new Array(length)
+    let i = 0
     if (resolveFn === undefined) {
-      return this.tokens.values.map(varName => {
+      while (i < length) {
+        const varName = values[i]
         let pathsArr = this.cache[varName]
         if (pathsArr === undefined) {
           pathsArr = this.cache[varName] = toPath(varName)
         }
-        return getKeys(scope, pathsArr)
-      })
+        ret[i] = getKeys(scope, pathsArr)
+        i++
+      }
+    } else {
+      assertType(
+        isFunction(resolveFn),
+        'Expected a resolver function but got',
+        resolveFn
+      )
+      while (i < length) {
+        const varName = values[i]
+        ret[i] = resolveFn.call(resolveFnContext, varName, scope)
+        i++
+      }
     }
-    assertType(
-      isFunction(resolveFn),
-      'Expected a resolver function but got',
-      resolveFn
-    )
-    return this.tokens.values.map(varName =>
-      resolveFn.call(resolveFnContext, varName, scope)
-    )
+    return ret
   }
 
   public render = (
