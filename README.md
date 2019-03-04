@@ -10,14 +10,11 @@
 
 ![Logo](https://raw.github.com/userpixel/micromustache/master/logo.png)
 
-A logicless template engine with some handy additions.
-This small library covers the most important use case for [Mustache templates](https://mustache.github.io/):
+A minimalist, fast and secure template engine with some handy additions.
 
-**interpolation: replacing variable names with their values from an object.**
+**Think of it as a sweet spot between plain text replacement and [Mustache](https://mustache.github.io/); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)!**
 
-> Think of it as a sweet spot between plain text replacement and mustache (certainly not as logicful as [Handlebars](http://handlebarsjs.com/)).
-
-If that's all you need, *micromustache* is a drop-in replacement for MustacheJS.
+If variable interpolation is all you need, *micromustache* is a drop-in replacement for MustacheJS.
 
 * No dependencies
 * Lightweight (~400 source lines of code. `npm run sloc`)
@@ -53,6 +50,20 @@ features from [MustacheJS](https://github.com/janl/mustache.js):
 * HTML sanitization: *{{{ propertyName }}}*
 
 If you can live with this, read on...
+
+# Getting started
+
+> render
+> a use case that cannot be done with template literals
+> Not just mustache syntax, in fact not the weird mustache and handlebars syntax
+> How about the errors?
+> render with a resolver
+> We have 'get'
+> How about arrays? JSX?
+> What if you use the same template again and again? First note that render doesn't cache anything
+> compile spits out Renderer
+> When the renderer is out of scope, the cache is freed
+> Link to how it compares with other libs
 
 # API
 
@@ -230,12 +241,18 @@ Content Security Policy (CSP)
 * It does not aggressively cache all template parsing results and therefore will not leak memory silently
 and crash your application or server. Once a `Renderer` is not referenced, all cache is freed.
 Besides the `render()` function will never cache.
+* I have no intention of selling it (koa-router sold: https://news.ycombinator.com/item?id=19156707)
+
+# Advanced usage
+
+> use it to search all tags
+> the Renderer render methods are bound and can be used with deconstructor syntax
 
 # FAQ
 
-**Q. What about [ES6 template literals](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals)
-(AKA "template strings")?
-Aren't they gonna deprecate this library?**
+**Q. Multiscope then? (use js prototype or object.assign to merge)**
+
+**Q. What about [ES6 template literals](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals) (AKA "template strings")? Aren't they gonna deprecate this library?**
 
 A. ES6 native Template literals work great when you have the values in the same scope as the Template literal.
 If you need to separate the rendering of a value from the template, there's no way to do it natively.
