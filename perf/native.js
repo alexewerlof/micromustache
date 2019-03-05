@@ -89,12 +89,12 @@ function strConcatPreInterpolated(obj) {
   strConcatPreInterpolatedValues[3] = obj.nested.foo
 
   let ret = ''
-  const lastIndex = strConcatPreInterpolatedStrings.length - 1
-  for (let i = 0; i < lastIndex; i++) {
+  const valuesLength = strConcatPreInterpolatedValues.length
+  for (let i = 0; i < valuesLength; i++) {
     ret += strConcatPreInterpolatedStrings[i]
     ret += strConcatPreInterpolatedValues[i]
   }
-  ret += strConcatPreInterpolatedStrings[lastIndex]
+  ret += strConcatPreInterpolatedStrings[valuesLength]
   return ret
 }
 
