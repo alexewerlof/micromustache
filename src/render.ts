@@ -12,8 +12,6 @@ export interface IStringifyOptions {
 
 const OBJECT_TO_STRING = Object.prototype.toString
 
-type ConvertibleToString = string | number | boolean
-
 /**
  * The callback for resolving a value
  * @param view - the view object that was passed to .render() function
@@ -31,12 +29,52 @@ export interface IRendererOptions extends IStringifyOptions {
   resolveFnContext?: any
 }
 
+function stringify(
+  strings: string[],
+  values: any[],
+  { invalidType = '', invalidObj = '{...}' }: IStringifyOptions
+): string {
+  let ret = ''
+  const { length } = values
+  for (let i = 0; i < length; i++) {
+    ret += strings[i]
+    const value = values[i]
+    if (value === null || value === undefined || value === '') {
+      continue
+    }
+    const typeOfValue = typeof value
+    if (
+      typeOfValue === 'string' ||
+      typeOfValue === 'number' ||
+      typeOfValue === 'boolean'
+    ) {
+      ret += value
+    } else if (typeOfValue === 'object') {
+      // At this point in the function we've already dealt with null values
+      if (isFunction(value.toString) && value.toString !== OBJECT_TO_STRING) {
+        ret += value.toString()
+      } else {
+        try {
+          ret += JSON.stringify(value)
+        } catch (jsonError) {
+          ret += invalidObj
+        }
+      }
+    } else {
+      // Anything else will be replaced with an empty string
+      // For example: undefined, Symbol, etc.
+      ret += invalidType
+    }
+  }
+
+  ret += strings[length]
+  return ret
+}
+
 export class Renderer {
   private pathCache: {
     [path: string]: string[]
   } = {}
-
-  private assembleCache: ConvertibleToString[]
 
   constructor(
     private tokens: ITagInput,
@@ -47,52 +85,10 @@ export class Renderer {
       'If options is passed, it should be an object. Got',
       options
     )
-    const lastStringIndex = tokens.values.length
-    this.assembleCache = new Array(lastStringIndex * 2 + 1)
-    const { strings, values } = this.tokens
-    for (let i = 0; i < strings.length; i++) {
-      this.assembleCache[i * 2] = strings[i]
-    }
+    const { values } = this.tokens
     for (let i = 0; i < values.length; i++) {
       this.pathCache[i] = toPath(values[i])
     }
-  }
-
-  private assembleResults(
-    values: any[],
-    { invalidType = '', invalidObj = '{...}' }: IStringifyOptions = {}
-  ): string {
-    const { length } = values
-    for (let i = 0; i < length; i++) {
-      const value = values[i]
-      const typeOfValue = typeof value
-      const valueIndex = i * 2 + 1
-      if (
-        value === null ||
-        value === undefined ||
-        typeOfValue === 'string' ||
-        typeOfValue === 'number' ||
-        typeOfValue === 'boolean'
-      ) {
-        this.assembleCache[valueIndex] = value
-      } else if (typeOfValue === 'object') {
-        // At this point in the function we've already dealt with null values
-        if (isFunction(value.toString) && value.toString !== OBJECT_TO_STRING) {
-          this.assembleCache[valueIndex] = value.toString()
-        } else {
-          try {
-            this.assembleCache[valueIndex] = JSON.stringify(value)
-          } catch (jsonError) {
-            this.assembleCache[valueIndex] = invalidObj
-          }
-        }
-      } else {
-        // Anything else will be replaced with an empty string
-        // For example: undefined, Symbol, etc.
-        this.assembleCache[valueIndex] = invalidType
-      }
-    }
-    return this.assembleCache.join('')
   }
 
   private callResolver(
@@ -129,7 +125,7 @@ export class Renderer {
     resolveFnContext?: any
   ): string => {
     const values = this.callResolver(scope, resolveFn, resolveFnContext)
-    return this.assembleResults(values)
+    return stringify(this.tokens.strings, values, this.options)
   }
 
   public renderAsync = async (
@@ -140,7 +136,7 @@ export class Renderer {
     const values = await Promise.all(
       this.callResolver(scope, resolveFn, resolveFnContext)
     )
-    return this.assembleResults(values)
+    return stringify(this.tokens.strings, values, this.options)
   }
 }
 
