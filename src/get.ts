@@ -73,15 +73,16 @@ export function toPath(path: string): string[] {
   while (i < strings.length) {
     const str = normalizePath(strings[i])
     if (str !== '') {
-      str.split('.').forEach(s => {
-        const sTrimmed = s.trim()
+      const splitPath = str.split('.')
+      for (const p of splitPath) {
+        const sTrimmed = p.trim()
         assertSyntax(
           sTrimmed !== '',
           'Unexpected token. Encountered empty path when parsing',
           str
         )
         ret.push(sTrimmed)
-      })
+      }
     }
 
     if (i < values.length) {
