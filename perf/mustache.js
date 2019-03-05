@@ -19,6 +19,6 @@ function render(obj) {
 
 module.exports = {
   name: 'Mustache',
-  csp: false,
+  csp: true,
   cases: [compiled, render]
 }
