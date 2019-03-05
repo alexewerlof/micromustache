@@ -59,8 +59,30 @@ function strJoinPreAllocated(obj) {
   return ret.join('')
 }
 
+const strJoinPreInterpolatedCache = new Array(9)
+strJoinPreInterpolatedCache[0] = 'Hi, My name is '
+strJoinPreInterpolatedCache[2] = '! I am '
+strJoinPreInterpolatedCache[4] = ' years old and live in '
+strJoinPreInterpolatedCache[6] = '. foo is '
+strJoinPreInterpolatedCache[8] = '.'
+
+function strJoinPreInterpolated(obj) {
+  strJoinPreInterpolatedCache[1] = obj.name
+  strJoinPreInterpolatedCache[3] = obj.age
+  strJoinPreInterpolatedCache[5] = obj.cities[1]
+  strJoinPreInterpolatedCache[7] = obj.nested.foo
+  return strJoinPreInterpolatedCache.join('')
+}
+
 module.exports = {
   name: '(Native)',
   csp: true,
-  cases: [templateLiteral, strConcat, strConcatMultiline, strJoin, strJoinPreAllocated]
+  cases: [
+    templateLiteral,
+    strConcat,
+    strConcatMultiline,
+    strJoin,
+    strJoinPreAllocated,
+    strJoinPreInterpolated
+  ]
 }
