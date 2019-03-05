@@ -74,6 +74,30 @@ function strJoinPreInterpolated(obj) {
   return strJoinPreInterpolatedCache.join('')
 }
 
+const strConcatPreInterpolatedStrings = new Array(5)
+strConcatPreInterpolatedStrings[0] = 'Hi, My name is '
+strConcatPreInterpolatedStrings[1] = '! I am '
+strConcatPreInterpolatedStrings[2] = ' years old and live in '
+strConcatPreInterpolatedStrings[3] = '. foo is '
+strConcatPreInterpolatedStrings[4] = '.'
+const strConcatPreInterpolatedValues = new Array(4)
+
+function strConcatPreInterpolated(obj) {
+  strConcatPreInterpolatedValues[0] = obj.name
+  strConcatPreInterpolatedValues[1] = obj.age
+  strConcatPreInterpolatedValues[2] = obj.cities[1]
+  strConcatPreInterpolatedValues[3] = obj.nested.foo
+
+  let ret = ''
+  const lastIndex = strConcatPreInterpolatedStrings.length - 1
+  for (let i = 0; i < lastIndex; i++) {
+    ret += strConcatPreInterpolatedStrings[i]
+    ret += strConcatPreInterpolatedValues[i]
+  }
+  ret += strConcatPreInterpolatedStrings[lastIndex]
+  return ret
+}
+
 module.exports = {
   name: '(Native)',
   csp: true,
@@ -83,6 +107,7 @@ module.exports = {
     strConcatMultiline,
     strJoin,
     strJoinPreAllocated,
-    strJoinPreInterpolated
+    strJoinPreInterpolated,
+    strConcatPreInterpolated
   ]
 }
