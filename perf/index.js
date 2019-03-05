@@ -24,13 +24,13 @@ const scope = {
 
 function timeToStr([sec, nano]) {
   const ms = Math.round(sec / 1e3 + nano / 1e6)
-  const icons = '⏰'.repeat(Math.ceil(ms / 100))
-  return `${icons} (${ms} ms)`
+  const icons = '🔹'.repeat(Math.ceil(ms / 100))
+  return `(${ms} ms) ${icons}`
 }
 
 function cpuUsageToStr({ user, system }) {
   const unit = user + system
-  const icons = '🧠'.repeat(Math.ceil(unit / 50000))
+  const icons = '🔸'.repeat(Math.ceil(unit / 1e5))
   return icons
 }
 
@@ -39,7 +39,6 @@ const expectedOutput = `Hi, My name is ${scope.name}! I am ${scope.age} years ol
 }. foo is ${scope.nested.foo}.`
 
 function runCase(f) {
-  console.log(`${f.name}()`)
   const startCpu = process.cpuUsage()
   const startTime = process.hrtime()
   for (let iteration = 0; iteration < NUM_ITERATIONS; iteration++) {
@@ -51,8 +50,7 @@ function runCase(f) {
   }
   const endTime = process.hrtime(startTime)
   const endCpu = process.cpuUsage(startCpu)
-  console.log('Time', timeToStr(endTime))
-  console.log('CPU', cpuUsageToStr(endCpu))
+  console.log(`${f.name}: ${timeToStr(endTime)}${cpuUsageToStr(endCpu)}`)
 }
 
 console.info(`CPU: ${os.cpus()[0].model}`)
