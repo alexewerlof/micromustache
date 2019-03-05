@@ -11,7 +11,7 @@ const nunjucks = require('./nunjucks')
 const template7 = require('./template7')
 const underscore = require('./underscore')
 
-const NUM_ITERATIONS = 1e6
+const NUM_ITERATIONS = 3e5
 
 const scope = {
   name: 'Alex Ewerlöf',
@@ -22,12 +22,26 @@ const scope = {
   cities: ['Kiruna', 'Stockholm', 'Malmö']
 }
 
+function timeToStr([sec, nano]) {
+  const ms = Math.round(sec / 1e3 + nano / 1e6)
+  const icons = '⏰'.repeat(Math.ceil(ms / 100))
+  return `${icons} (${ms} ms)`
+}
+
+function cpuUsageToStr({ user, system }) {
+  const unit = user + system
+  const icons = '🧠'.repeat(Math.ceil(unit / 50000))
+  return icons
+}
+
 const expectedOutput = `Hi, My name is ${scope.name}! I am ${scope.age} years old and live in ${
   scope.cities[1]
 }. foo is ${scope.nested.foo}.`
 
 function runCase(f) {
-  console.time(f.name)
+  console.log(`${f.name}()`)
+  const startCpu = process.cpuUsage()
+  const startTime = process.hrtime()
   for (let iteration = 0; iteration < NUM_ITERATIONS; iteration++) {
     // Assert that it is indeed returning the expected output
     if (iteration === 0) {
@@ -35,7 +49,10 @@ function runCase(f) {
     }
     f(scope)
   }
-  console.timeEnd(f.name)
+  const endTime = process.hrtime(startTime)
+  const endCpu = process.cpuUsage(startCpu)
+  console.log('Time', timeToStr(endTime))
+  console.log('CPU', cpuUsageToStr(endCpu))
 }
 
 console.info(`CPU: ${os.cpus()[0].model}`)
@@ -45,16 +62,17 @@ console.info(`Iterations: ${NUM_ITERATIONS} times`)
 
 for (const lib of [
   native,
+  micromustache,
+  mustache,
   dot,
   template7,
   handlebars,
-  micromustache,
   underscore,
   lodash,
   nunjucks,
-  mustache,
   ejs
 ]) {
-  console.log('\n---', lib.name, 'CSP safe:', lib.csp)
+  console.log('---')
+  console.log(lib.csp ? '🔒' : '🔓', lib.name)
   lib.cases.forEach(f => runCase(f))
 }
