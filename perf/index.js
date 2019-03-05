@@ -23,7 +23,7 @@ const scope = {
 }
 
 function timeToStr([sec, nano]) {
-  const ms = Math.round(sec / 1e3 + nano / 1e6)
+  const ms = Math.round(sec * 1e3 + nano / 1e6)
   const icons = '🔹'.repeat(Math.ceil(ms / 100))
   return `(${ms} ms) ${icons}`
 }
