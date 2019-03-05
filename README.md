@@ -18,13 +18,20 @@ If variable interpolation is all you need, *micromustache* is a drop-in replacem
 
 * No dependencies
 * Lightweight (~400 source lines of code. `npm run sloc`)
-* Secure. Works in CSP environments.
+* Secure. Works in CSP environments. In CSP, inline JavaScript as well as potentially harmful string-to-JS methods such as eval are not executed.
 * No regular expression. No risk for [regexp DDoS](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
 * Minimalist! No fancy features and enough rope to hang the developer
 * 2x-3x faster than Mustache
 * Does not aggressively cache internal parsing results and does not introduce memory leaks
   (mustache.js caches tokens for all templates)
 * The object accessor syntax is closer to JavaScript than Mustache
+* Uses `toString()` for values that have it
+* Pretty prints JSON values (extra to JS)
+* Prints +/- infinity (extra to JS) <-- edge case, remove it
+
+-----< I want null to be null just as JS. Maybe add an option to specially treat this if the user wants
+-----also the stringify should become faster
+
 * The errors are more aligned with JavaScript than Mustache
 * Works on string templates (and it actually improves its speed)
 * [Fully compatible](test/mustache-compatiblity.spec.js) with MustacheJS for **interpolation**
@@ -249,6 +256,10 @@ Besides the `render()` function will never cache.
 > the Renderer render methods are bound and can be used with deconstructor syntax
 
 # FAQ
+
+**Q. I want loops**
+
+**Q. How do you threat functions?**
 
 **Q. Multiscope then? (use js prototype or object.assign to merge)**
 
