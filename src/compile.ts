@@ -15,6 +15,6 @@ export type ICompileOptions = IParseOptions & IStringifyOptions
  */
 export function compile(template: string, options?: ICompileOptions): Renderer {
   // Note: tokenize() asserts the type of its params
-  const tokens = tokenize(template, options)
-  return new Renderer(tokens, options)
+  const { strings, values } = tokenize(template, options)
+  return new Renderer(strings, values, options)
 }

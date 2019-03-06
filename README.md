@@ -245,6 +245,7 @@ or automated deployment system is used.
 * It does not use any regular expression which reduces the risk for [Regex DDos](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02)
 * It does not use `new Function()` or `eval()` hence it can run in high security environments that enforce
 Content Security Policy (CSP)
+* All functions validate their parameter before execution. This not only prevents abuse but also improves the developer experience (DX) by throwing actionable error messages
 * It does not aggressively cache all template parsing results and therefore will not leak memory silently
 and crash your application or server. Once a `Renderer` is not referenced, all cache is freed.
 Besides the `render()` function will never cache.

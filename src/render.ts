@@ -1,6 +1,5 @@
-import { ITagInput } from './tokenize'
 import { Scope, getKeys, toPath } from './get'
-import { isFunction, isObject, assertType } from './util'
+import { isFunction, isObject, assertType, assertTruthy } from './util'
 import { ICompileOptions, compile } from './compile'
 
 export interface IStringifyOptions {
@@ -86,11 +85,21 @@ function resolveVarNames(
 }
 
 export class Renderer {
-  private pathCache: {
+  private toPathCache: {
     [path: string]: string[]
   } = {}
 
-  constructor(private tokens: ITagInput, private options?: IStringifyOptions) {
+  constructor(
+    private strings: string[],
+    private values: string[],
+    private options?: IStringifyOptions
+  ) {
+    assertType(Array.isArray(strings), 'the strings must be an array')
+    assertType(Array.isArray(values), 'the values must be an array')
+    assertTruthy(
+      values.length === strings.length - 1,
+      'the values array must have exactly one less element than the strings array'
+    )
     if (options !== undefined) {
       assertType(
         isObject(options),
@@ -98,25 +107,23 @@ export class Renderer {
         options
       )
     }
-    const { values } = this.tokens
     for (let i = 0; i < values.length; i++) {
-      this.pathCache[i] = toPath(values[i])
+      this.toPathCache[i] = toPath(values[i])
     }
   }
 
   public render = (scope: Scope = {}): string => {
-    const { values } = this.tokens
-    const { length } = values
+    const { length } = this.values
     const resolvedValues = new Array(length)
     for (let i = 0; i < length; i++) {
-      resolvedValues[i] = getKeys(scope, this.pathCache[i])
+      resolvedValues[i] = getKeys(scope, this.toPathCache[i])
     }
-    return stringify(this.tokens.strings, resolvedValues, this.options)
+    return stringify(this.strings, resolvedValues, this.options)
   }
 
   public renderFn = (scope: Scope = {}, resolveFn: ResolveFn): string => {
-    const values = resolveVarNames(scope, this.tokens.values, resolveFn)
-    return stringify(this.tokens.strings, values, this.options)
+    const values = resolveVarNames(scope, this.values, resolveFn)
+    return stringify(this.strings, values, this.options)
   }
 
   public renderFnAsync = async (
@@ -124,9 +131,9 @@ export class Renderer {
     resolveFn: ResolveFn
   ): Promise<string> => {
     const values = await Promise.all(
-      resolveVarNames(scope, this.tokens.values, resolveFn)
+      resolveVarNames(scope, this.values, resolveFn)
     )
-    return stringify(this.tokens.strings, values, this.options)
+    return stringify(this.strings, values, this.options)
   }
 }
 
