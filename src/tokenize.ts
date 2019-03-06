@@ -40,12 +40,9 @@ const OPEN_CLOSE_SYMBOLS: {
 }
 
 export function guessCloseSymbol(openSymbol: string) {
-  assertTruthy(
-    openSymbol in OPEN_CLOSE_SYMBOLS,
-    'Cannot guess a close symbol for',
-    openSymbol
-  )
-  return OPEN_CLOSE_SYMBOLS[openSymbol]
+  const closeSymbol = OPEN_CLOSE_SYMBOLS[openSymbol]
+  assertTruthy(closeSymbol, 'Cannot guess a close symbol for', openSymbol)
+  return closeSymbol
 }
 
 // TODO: support open and close symbols that are the same. Coldfusion requires it: https://en.wikipedia.org/wiki/String_interpolation
@@ -74,6 +71,7 @@ export function tokenize(
   const { openSymbol = '{{' } = options
   const { closeSymbol = guessCloseSymbol(openSymbol) } = options
 
+  // TODO: our algorithm doesn't really require that. Let's support %varname% too
   assertTruthy(
     openSymbol !== closeSymbol,
     `Open and close symbol can't be the same ${openSymbol}`
@@ -103,7 +101,8 @@ export function tokenize(
       closeIndex !== -1,
       'Missing',
       closeSymbol,
-      'in template expression'
+      'in template expression',
+      template
     )
 
     varName = template
@@ -114,7 +113,8 @@ export function tokenize(
       !varName.includes(openSymbol),
       'Missing',
       closeSymbol,
-      'in template expression'
+      'in template expression',
+      template
     )
 
     assertSyntax(varName.length, 'Unexpected token', closeSymbol)
