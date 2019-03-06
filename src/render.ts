@@ -7,6 +7,10 @@ export interface IStringifyOptions {
   invalidType?: string
   /** an optional string to be used when JSON.stringify fails */
   invalidObj?: string
+  /** how to represent null values in the resulting string */
+  nullValue?: string
+  /** how to represent undefined values in the resulting string */
+  undefinedValue?: string
 }
 
 const OBJECT_TO_STRING = Object.prototype.toString
@@ -26,15 +30,27 @@ export type ResolveFn = (varName: string, scope?: Scope) => any | Promise<any>
 function stringify(
   strings: string[],
   values: any[],
-  { invalidType = '', invalidObj = '{...}' }: IStringifyOptions = {}
+  {
+    invalidType = '',
+    invalidObj = '{...}',
+    nullValue = '',
+    undefinedValue = ''
+  }: IStringifyOptions = {}
 ): string {
   let ret = ''
   const { length } = values
   for (let i = 0; i < length; i++) {
     ret += strings[i]
     const value = values[i]
-    if (value === null || value === undefined || value === '') {
-      continue
+    switch (value) {
+      case null:
+        ret += nullValue
+        continue
+      case undefined:
+        ret += undefinedValue
+        continue
+      case '':
+        continue
     }
     const typeOfValue = typeof value
     if (

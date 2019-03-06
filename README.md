@@ -250,6 +250,7 @@ Content Security Policy (CSP)
 and crash your application or server. Once a `Renderer` is not referenced, all cache is freed.
 Besides the `render()` function will never cache.
 * I have no intention of selling it (koa-router sold: https://news.ycombinator.com/item?id=19156707)
+* The code is open source and very well documented so it is easy to inspect how it works.
 
 # Advanced usage
 
