@@ -6,12 +6,12 @@ const renderer = ejs.compile(
   'Hi, My name is <%= name %>! I am <%= age %> years old and live in <%= cities[1] %>. foo is <%= nested.foo %>.'
 )
 
-function compile(obj) {
+function compiled(obj) {
   return renderer(obj)
 }
 
 module.exports = {
   name: 'EJS',
   csp: false,
-  cases: [compile]
+  cases: [compiled]
 }
