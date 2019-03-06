@@ -3,7 +3,7 @@ const nunjucks = require('nunjucks')
 // Mozilla's Nunjucks: nunjucks does not sandbox execution so it is not safe to run user-defined templates or inject user-defined content into template definitions. On the server, you can expose attack vectors for accessing sensitive data and remote code execution. On the client, you can expose cross-site scripting vulnerabilities even for precompiled templates (which can be mitigated with a strong CSP). See this issue for more information.
 // link: https://mozilla.github.io/nunjucks/templating.html
 const renderer = nunjucks.compile(
-  'Hi, My name is {{ name }}! I am {{ age }} years old and live in {{ cities[1] }}. foo is {{ nested.foo }}.'
+  'Hi, My name is {{name}}! I am {{age}} years old and live in {{cities[1]}}. In {{cities[1]}}, foo is {{nested.foo}}. My favorite book is {{books[0].name}} by {{books[0].author}}. ({{books[0].year}}) is not defined.'
 )
 
 function compiled(obj) {

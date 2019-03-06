@@ -19,7 +19,13 @@ const scope = {
   nested: {
     foo: 'bar'
   },
-  cities: ['Kiruna', 'Stockholm', 'Malmö']
+  cities: ['Kiruna', 'Stockholm', 'Malmö'],
+  books: [
+    {
+      name: 'Brief Answers to Big Questions',
+      author: 'Stephen Hawking'
+    }
+  ]
 }
 
 function timeToStr([sec, nano]) {
@@ -34,9 +40,19 @@ function cpuUsageToStr({ user, system }) {
   return icons
 }
 
+/**
+ * The performance template should have these features:
+ * * simple 1-level keys
+ * * undefined values
+ * * array accessors
+ * * nested object accessors
+ * * repeated keys
+ */
 const expectedOutput = `Hi, My name is ${scope.name}! I am ${scope.age} years old and live in ${
   scope.cities[1]
-}. foo is ${scope.nested.foo}.`
+}. In ${scope.cities[1]}, foo is ${scope.nested.foo}. My favorite book is ${
+  scope.books[0].name
+} by ${scope.books[0].author}. () is not defined.`
 
 function runCase(f) {
   const startCpu = process.cpuUsage()
@@ -44,7 +60,9 @@ function runCase(f) {
   for (let iteration = 0; iteration < NUM_ITERATIONS; iteration++) {
     // Assert that it is indeed returning the expected output
     if (iteration === 0) {
-      assert.equal(f(scope), expectedOutput)
+      if (f(scope) !== expectedOutput) {
+        console.error(f.name, 'does not work correctly\n🔴', f(scope), '\n🔵', expectedOutput)
+      }
     }
     f(scope)
   }

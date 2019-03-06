@@ -6,8 +6,9 @@ Many of these templates compile the template to a JavaScript function using `new
 or `eval()` but they will not run in a Content Security Policy (CSP) environment like Chrome Extensions
 or other browser windows with high security measures.
 
-Some of these libraries (notably Handlebars and mustache) does not support the JavaScript accessors like `cities[2]`
-and one has to use a syntax that is faster to parse but is not fluent to JavaScript developers: `cities.2`.
+Some of these libraries (notably Handlebars and mustache) does not support the JavaScript accessors like `cities[1]`
+and one has to use a syntax that is faster to parse but is not fluent to JavaScript developers: `cities.1`.
+In case of Handlebars, the syntax is even more innovative `cities.[1]`
 
 In case of Mustache.js (which was the original inspiration for this library), a few more things need to be said:
 
@@ -16,3 +17,10 @@ In case of Mustache.js (which was the original inspiration for this library), a 
 * Mustache does not have the concept or resolver, and of course it cannot resolve asynchronously
 
 Mozilla Nunjucks also provides a render function but it was too slow to be included in the performance benchmarks.
+
+Dot and Template7 are the fastest template engines. Dot has a slightly verbose syntax if you come from Mustache or Handlebars background. Besides Dot, prints out 'undefined' for fields that are not defined (Mustache-like libs return "").
+
+Underscore, lodash and EJS have a verbose syntax too: `<%= cities[2] %>`
+
+an interesting discovery is that ES Template Literals are not actually the fastest way to build strings.
+String array joins aren't either. Good old string concatenation is the fastest way.
