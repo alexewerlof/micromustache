@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 6.0.0
 
+- **The biggest change is that if you used `compile()` in version 5, it returned a function but since version 6, it returns an object that _has_ a `render()` function**
+- Object bracket accessors are now supported: `obj['foo']` (previously only `obj.foo` worked)
 - Rewrote the project in TypeScript
 - Custom resolver can be async
 - Compile and rendering can be significantly faster using ES Template literals

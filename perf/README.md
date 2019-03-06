@@ -7,6 +7,14 @@ Simply run `npm it` to install and run the performance tests.
 
 # Conclusions
 
+All the competing template engines are good at what they do.
+There's been tremendous effort put into designing and optimizing them.
+But like any other library, there are trade-offs.
+Most other template engines are very flexible and featurefull and that is why they are slower than
+micromustache and when they are faster, they are using unsafe JavaScript syntax with no exception.
+
+The aim for micromustache is to be minimal, secure and fast.
+
 This directory contains a series of performance tests against other libraries.
 For the sake of completeness it also includes some performance tests for native javascript features
 although to be fait, the native javascript does not cover the use case for a template engine.
