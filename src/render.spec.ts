@@ -45,7 +45,7 @@ describe('Renderer', () => {
     })
   })
 
-  describe('.renderAsync()', () => {
+  describe('.renderFnAsync()', () => {
     it('passes the scope to the custom resolve function', async () => {
       const resolver = new Renderer(
         { strings: ['Hello! My name is ', '!'], values: ['name'] },
@@ -61,7 +61,7 @@ describe('Renderer', () => {
 
       const scope = { name: 'Alex' }
       expect(await resolveFn('name', scope)).to.equal(scope.name)
-      expect(await resolver.renderAsync(scope, resolveFn)).to.equal(
+      expect(await resolver.renderFnAsync(scope, resolveFn)).to.equal(
         'Hello! My name is Alex!'
       )
     })

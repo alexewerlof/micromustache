@@ -128,7 +128,7 @@ export class Renderer {
     return stringify(this.tokens.strings, values, this.options)
   }
 
-  public renderAsync = async (
+  public renderFnAsync = async (
     scope?: Scope,
     resolveFn?: ResolveFn,
     resolveFnContext?: any
@@ -166,13 +166,13 @@ export function render(
 /**
  * Same as render() but calls the resolver asynchronously
  */
-export async function renderAsync(
+export async function renderFnAsync(
   template: string,
   scope?: Scope,
   options?: ICompileOptions
 ) {
   const renderer: Renderer = compile(template, options)
-  return renderer.renderAsync(scope)
+  return renderer.renderFnAsync(scope)
 }
 
 /**
@@ -203,6 +203,6 @@ export function renderTagAsync(
     ...values: any
   ): Promise<string> {
     const renderer = new Renderer({ strings, values }, options)
-    return renderer.renderAsync(scope)
+    return renderer.renderFnAsync(scope)
   }
 }

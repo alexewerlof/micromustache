@@ -1,5 +1,5 @@
 const https = require('https')
-const { renderAsync } = require('../lib/render')
+const { renderFnAsync } = require('../lib/render')
 
 // Run it with `node -r ts-node/register examples/async-resolve.js`
 
@@ -49,7 +49,7 @@ function fetch(url) {
 /*
 https://od-api-demo.oxforddictionaries.com:443/api/v1/domains/{source_domains_language}/{target_domains_language}
 */
-renderAsync(
+renderFnAsync(
   'The first todo title is {{1}}',
   {},
   {

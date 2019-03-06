@@ -10,7 +10,7 @@ export type ICompileOptions = IParseOptions & IRendererOptions
  * @param template - same as the template parameter to .render()
  * @param resolver - an optional function that receives a token and synchronously returns a value
  * @param options - compiler options
- * @returns - an object with render() and renderAsync() functions that accepts a scope object and
+ * @returns - an object with render() and renderFnAsync() functions that accepts a scope object and
  * return the final string
  */
 export function compile(template: string, options?: ICompileOptions): Renderer {
