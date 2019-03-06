@@ -1,3 +1,12 @@
+# Install and run
+
+The performance tests require dependencies that doesn't make sense to put in the main package so it
+has its own `package.json`.
+It also needs the micromustache lib to be built, so do an `npm run build` in the root before running performance tests.
+Simply run `npm it` to install and run the performance tests.
+
+# Conclusions
+
 This directory contains a series of performance tests against other libraries.
 For the sake of completeness it also includes some performance tests for native javascript features
 although to be fait, the native javascript does not cover the use case for a template engine.

@@ -25,7 +25,8 @@ const OBJECT_TO_STRING = Object.prototype.toString
  * If the function returns undefined, the value resolution algorithm will go ahead with the default
  * behaviour (resolving the variable name from the provided object).
  */
-export type ResolveFn = (varName: string, scope?: Scope) => any | Promise<any>
+export type ResolveFn = (varName: string, scope?: Scope) => any
+export type ResolveFnAsync = (varName: string, scope?: Scope) => Promise<any>
 
 function stringify(
   strings: string[],
@@ -144,10 +145,10 @@ export class Renderer {
 
   public renderFnAsync = async (
     scope: Scope = {},
-    resolveFn: ResolveFn
+    resolveFnAsync: ResolveFnAsync
   ): Promise<string> => {
     const values = await Promise.all(
-      resolveVarNames(scope, this.values, resolveFn)
+      resolveVarNames(scope, this.values, resolveFnAsync)
     )
     return stringify(this.strings, values, this.options)
   }
@@ -194,10 +195,10 @@ export function renderFn(
  */
 export async function renderFnAsync(
   template: string,
-  resolveFn: ResolveFn,
+  resolveFnAsync: ResolveFnAsync,
   scope?: Scope,
   options?: ICompileOptions
 ) {
   const renderer: Renderer = compile(template, options)
-  return renderer.renderFnAsync(scope, resolveFn)
+  return renderer.renderFnAsync(scope, resolveFnAsync)
 }

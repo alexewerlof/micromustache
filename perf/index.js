@@ -5,6 +5,7 @@ const ejs = require('./ejs')
 const handlebars = require('./handlebars')
 const lodash = require('./lodash')
 const micromustache = require('./micromustache')
+const micromustacheNpm = require('./micromustache-npm')
 const mustache = require('./mustache')
 const native = require('./native')
 const nunjucks = require('./nunjucks')
@@ -79,6 +80,7 @@ console.info(`Iterations: ${NUM_ITERATIONS} times`)
 for (const lib of [
   native,
   micromustache,
+  micromustacheNpm,
   mustache,
   dot,
   template7,

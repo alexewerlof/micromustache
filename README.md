@@ -240,6 +240,7 @@ Micromustache has been built from the ground up with security in mind:
 
 * It does not have any `dependency` which means there's zero change for malicious
 packages to your runtime security at risk.
+* The code is small. More code ~ more bugs and more places for bugs to hide and breed. The feature set and API surface is intentionally kept minimalistic to avoid complex logic. There's only enough code that needs to be.
 * It's only published with 2 factor authentication by the main author and no third party
 or automated deployment system is used.
 * It does not use any regular expression which reduces the risk for [Regex DDos](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02)
