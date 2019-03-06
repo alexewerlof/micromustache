@@ -1,7 +1,7 @@
 import { IParseOptions, tokenize } from './tokenize'
-import { IRendererOptions, Renderer } from './render'
+import { Renderer, IStringifyOptions } from './render'
 
-export type ICompileOptions = IParseOptions & IRendererOptions
+export type ICompileOptions = IParseOptions & IStringifyOptions
 
 /**
  * This function makes repeated calls more optimized by compiling once and

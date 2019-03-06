@@ -15,14 +15,8 @@ function render(obj) {
   )
 }
 
-function renderTag(obj) {
-  return micromustache.renderTag(
-    obj
-  )`Hi, My name is ${'name'}! I am ${'age'} years old and live in ${'cities.1'}. foo is ${'nested.foo'}.`
-}
-
 module.exports = {
   name: 'Micromustache',
   csp: true,
-  cases: [compiled, render, renderTag]
+  cases: [compiled, render]
 }

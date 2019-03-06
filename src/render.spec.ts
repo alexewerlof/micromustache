@@ -1,4 +1,4 @@
-import { Renderer, ResolveFn, render } from './render'
+import { Renderer, ResolveFn, render, renderFn } from './render'
 import { expect } from 'chai'
 import { describe } from 'mocha'
 
@@ -13,7 +13,9 @@ describe('Renderer', () => {
         'Hello! My name is Alex!'
       )
     })
+  })
 
+  describe('.renderFn()', () => {
     it('calls the custom resolve function', () => {
       // Just returns the reversed variable name regardless of value
       const resolveFn: ResolveFn = varName =>
@@ -24,7 +26,7 @@ describe('Renderer', () => {
 
       expect(resolveFn('Alex')).to.equal('xelA')
       expect(
-        render('Hello! My name is {{name}}!', { name: 'Alex' }, { resolveFn })
+        renderFn('Hello! My name is {{name}}!', resolveFn, { name: 'Alex' })
       ).to.equal('Hello! My name is eman!')
     })
 
@@ -40,7 +42,7 @@ describe('Renderer', () => {
       const scope = { name: 'Alex' }
       expect(resolveFn('name', scope)).to.equal(scope.name)
       expect(
-        render('Hello! My name is {{name}}!', scope, { resolveFn })
+        renderFn('Hello! My name is {{name}}!', resolveFn, scope)
       ).to.equal('Hello! My name is Alex!')
     })
   })

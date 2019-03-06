@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { compile } from './compile'
-import { Renderer, ResolveFn } from './render'
+import { Renderer } from './render'
 
 describe('compile()', () => {
   it('returns a function', () => {
@@ -419,100 +419,6 @@ describe('compile()', () => {
       ).to.equal(
         'Michael Jackson had 3 children: Paris-Michael, Prince and Michael'
       )
-    })
-
-    describe('custom resolver', () => {
-      it('is called for every variable name interpolation', () => {
-        let counter = 0
-        const viewVarNames = {
-          a: false,
-          b: false,
-          c: false
-        }
-        const resolveFn: ResolveFn = (varName, scope: {}) => {
-          counter++
-          // @ts-ignore
-          viewVarNames[varName] = true
-          // @ts-ignore
-          return scope[varName]
-        }
-        const view = {
-          a: 1,
-          b: 2,
-          c: 3
-        }
-        expect(compile('{{a}} {{b}} {{c}}').render(view, resolveFn)).to.equal(
-          '1 2 3'
-        )
-        expect(counter).to.equal(3)
-        expect(viewVarNames).to.deep.equal({ a: true, b: true, c: true })
-      })
-
-      it('does not call the default resolver if the custom resolver returns a value', () => {
-        // tslint:disable-next-line no-shadowed-variable
-        const resolveFn: ResolveFn = varName => {
-          expect(varName).to.equal('a.b.c')
-          return 'brick'
-        }
-        const view = {
-          a: {
-            b: {
-              c: 3
-            }
-          }
-        }
-        expect(compile('Hi {{a.b.c}}!').render(view, resolveFn)).to.equal(
-          'Hi brick!'
-        )
-      })
-
-      it('can return an object', () => {
-        const resolveFn: ResolveFn = () => {
-          return { a: 2 }
-        }
-        expect(compile('Hi {{whatever}}!').render({}, resolveFn)).to.equal(
-          'Hi {"a":2}!'
-        )
-      })
-
-      it('can be present without any view', () => {
-        const resolveFn: ResolveFn = () => {
-          return 'world'
-        }
-        expect(
-          compile('Hello {{target}}!').render(undefined, resolveFn)
-        ).to.equal('Hello world!')
-      })
-
-      it('is called for nested variable names', () => {
-        const view = {
-          a: {
-            b: {
-              c: 'goodbye'
-            }
-          }
-        }
-        const resolveFn: ResolveFn = (varName, scope: {}) => {
-          expect(scope).to.equal(view)
-          expect(varName).to.equal('a.b.c')
-          return 'world'
-        }
-        expect(compile('Hello {{a.b.c}}!').render(view, resolveFn)).to.equal(
-          'Hello world!'
-        )
-      })
-
-      it('gets the trimmed variable name', () => {
-        const resolveFn: ResolveFn = varName => {
-          return varName === 'a.b.c'
-        }
-        expect(
-          compile('{{ a.b.c}} {{ a.b.c }} {{a.b.c }}').render(
-            undefined,
-            resolveFn
-          )
-        ).to.equal('true true true')
-      })
     })
   })
 })

@@ -68,7 +68,7 @@ export function tokenize(
   assertType(isString(template), 'Template must be a string. Got', template)
   assertType(
     isObject(options),
-    'When a options are provided, it should be an object. Got',
+    'When options is provided, it should be an object. Got',
     options
   )
   const { openSymbol = '{{' } = options

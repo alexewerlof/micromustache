@@ -1,4 +1,4 @@
-import { ITagInput, TagFn } from './tokenize'
+import { ITagInput } from './tokenize'
 import { Scope, getKeys, toPath } from './get'
 import { isFunction, isObject, assertType } from './util'
 import { ICompileOptions, compile } from './compile'
@@ -24,15 +24,10 @@ const OBJECT_TO_STRING = Object.prototype.toString
  */
 export type ResolveFn = (varName: string, scope?: Scope) => any | Promise<any>
 
-export interface IRendererOptions extends IStringifyOptions {
-  resolveFn?: ResolveFn
-  resolveFnContext?: any
-}
-
 function stringify(
   strings: string[],
   values: any[],
-  { invalidType = '', invalidObj = '{...}' }: IStringifyOptions
+  { invalidType = '', invalidObj = '{...}' }: IStringifyOptions = {}
 ): string {
   let ret = ''
   const { length } = values
@@ -71,70 +66,65 @@ function stringify(
   return ret
 }
 
+function resolveVarNames(
+  scope: Scope = {},
+  varNames: string[],
+  resolveFn: ResolveFn
+): any[] {
+  assertType(
+    isFunction(resolveFn),
+    'Expected a resolver function but got',
+    resolveFn
+  )
+
+  const { length } = varNames
+  const values = new Array(length)
+  for (let i = 0; i < length; i++) {
+    values[i] = resolveFn(varNames[i], scope)
+  }
+  return values
+}
+
 export class Renderer {
   private pathCache: {
     [path: string]: string[]
   } = {}
 
-  constructor(
-    private tokens: ITagInput,
-    private options: IRendererOptions = {}
-  ) {
-    assertType(
-      isObject(options),
-      'If options is passed, it should be an object. Got',
-      options
-    )
+  constructor(private tokens: ITagInput, private options?: IStringifyOptions) {
+    if (options !== undefined) {
+      assertType(
+        isObject(options),
+        'If options is passed, it should be an object. Got',
+        options
+      )
+    }
     const { values } = this.tokens
     for (let i = 0; i < values.length; i++) {
       this.pathCache[i] = toPath(values[i])
     }
   }
 
-  private callResolver(
-    scope: Scope = {},
-    resolveFn: ResolveFn | undefined = this.options.resolveFn,
-    resolveFnContext: any = this.options.resolveFnContext || scope
-  ): any[] {
+  public render = (scope: Scope = {}): string => {
     const { values } = this.tokens
     const { length } = values
-    const ret = new Array(length)
-    let i = 0
-    if (resolveFn === undefined) {
-      while (i < length) {
-        ret[i] = getKeys(scope, this.pathCache[i])
-        i++
-      }
-    } else {
-      assertType(
-        isFunction(resolveFn),
-        'Expected a resolver function but got',
-        resolveFn
-      )
-      while (i < length) {
-        ret[i] = resolveFn.call(resolveFnContext, values[i], scope)
-        i++
-      }
+    const resolvedValues = new Array(length)
+    for (let i = 0; i < length; i++) {
+      resolvedValues[i] = getKeys(scope, this.pathCache[i])
     }
-    return ret
+    return stringify(this.tokens.strings, resolvedValues, this.options)
   }
 
-  public render = (
-    scope?: Scope,
-    resolveFn?: ResolveFn,
-    resolveFnContext?: any
-  ): string => {
-    const values = this.callResolver(scope, resolveFn, resolveFnContext)
+  public renderFn = (scope: Scope = {}, resolveFn: ResolveFn): string => {
+    const values = resolveVarNames(scope, this.tokens.values, resolveFn)
     return stringify(this.tokens.strings, values, this.options)
   }
 
   public renderFnAsync = async (
-    scope?: Scope,
-    resolveFn?: ResolveFn,
-    resolveFnContext?: any
+    scope: Scope = {},
+    resolveFn: ResolveFn
   ): Promise<string> => {
     const values = await Promise.all(
-      this.callResolver(scope, resolveFn, resolveFnContext)
+      resolveVarNames(scope, this.tokens.values, resolveFn)
     )
     return stringify(this.tokens.strings, values, this.options)
   }
@@ -166,43 +156,25 @@ export function render(
 /**
  * Same as render() but calls the resolver asynchronously
  */
-export async function renderFnAsync(
+export function renderFn(
   template: string,
+  resolveFn: ResolveFn,
   scope?: Scope,
   options?: ICompileOptions
 ) {
   const renderer: Renderer = compile(template, options)
-  return renderer.renderFnAsync(scope)
+  return renderer.renderFn(scope, resolveFn)
 }
 
 /**
- * Same as render but works on template literals (which are faster since JavaScript tokenizes them).
- * @param scope - Same as the scope for render()
- * @param options - Renderer options
- * @returns - A tag function that renders the string with the provided scope
+ * Same as render() but calls the resolver asynchronously
  */
-export function renderTag(
+export async function renderFnAsync(
+  template: string,
+  resolveFn: ResolveFn,
   scope?: Scope,
-  options?: IRendererOptions
-): TagFn<string> {
-  return function tag(strings: string[], ...values: any): string {
-    const renderer = new Renderer({ strings, values }, options)
-    return renderer.render(scope)
-  }
-}
-
-/**
- * Same as renderTag() but calls the resolver asynchronously
- */
-export function renderTagAsync(
-  scope?: Scope,
-  options?: IRendererOptions
-): TagFn<Promise<string>> {
-  return async function tag(
-    strings: string[],
-    ...values: any
-  ): Promise<string> {
-    const renderer = new Renderer({ strings, values }, options)
-    return renderer.renderFnAsync(scope)
-  }
+  options?: ICompileOptions
+) {
+  const renderer: Renderer = compile(template, options)
+  return renderer.renderFnAsync(scope, resolveFn)
 }
