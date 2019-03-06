@@ -6,15 +6,17 @@ import {
   assertType
 } from './util'
 
-export interface ITagInput {
+export interface ITokens {
   strings: string[]
-  values: string[]
+  varNames: string[]
 }
 
-export type TagFn<T> = (strings: string[], ...values: any) => T
-
 export interface IParseOptions {
-  /** the string that indicates opening a variable interpolation expression */
+  /**
+   * The string that indicates opening a variable interpolation expression.
+   * You just have to specify this one if your template symbols are one of the common ones.
+   * For example if you specify {{ for openSymbol, the closeSymbol will be assumed }}
+   */
   openSymbol?: string
   /** the string that indicates closing a variable interpolation expression */
   closeSymbol?: string
@@ -61,7 +63,7 @@ export function guessCloseSymbol(openSymbol: string) {
 export function tokenize(
   template: string,
   options: IParseOptions = {}
-): ITagInput {
+): ITokens {
   assertType(isString(template), 'Template must be a string. Got', template)
   assertType(
     isObject(options),
@@ -84,7 +86,7 @@ export function tokenize(
   let before: string
   let varName: string
   const strings: string[] = []
-  const values: string[] = []
+  const varNames: string[] = []
 
   for (
     let currentIndex = 0;
@@ -118,7 +120,7 @@ export function tokenize(
     )
 
     assertSyntax(varName.length, 'Unexpected token', closeSymbol)
-    values.push(varName)
+    varNames.push(varName)
 
     closeIndex += closeSymbolLength
     before = template.substring(currentIndex, openIndex)
@@ -128,5 +130,5 @@ export function tokenize(
   const rest = template.substring(closeIndex)
   strings.push(rest)
 
-  return { strings, values }
+  return { strings, varNames }
 }

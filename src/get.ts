@@ -64,8 +64,8 @@ export function toPath(path: string): string[] {
     return []
   }
 
-  // a["b"] . c => { strings: ['a', ' . c'], values: ['"b"'] }
-  const { strings, values } = tokenize(path, tokenizeOptions)
+  // a["b"] . c => { strings: ['a', ' . c'], varNames: ['"b"'] }
+  const { strings, varNames } = tokenize(path, tokenizeOptions)
 
   const ret: string[] = []
 
@@ -85,8 +85,8 @@ export function toPath(path: string): string[] {
       }
     }
 
-    if (i < values.length) {
-      ret.push(unquote(values[i]))
+    if (i < varNames.length) {
+      ret.push(unquote(varNames[i]))
     }
     i++
   }

@@ -30,53 +30,53 @@ describe('tokenize()', () => {
     // tslint:disable-next-line no-invalid-template-strings
     expect(tokenize('hello ${name}!', options)).to.deep.equal({
       strings: ['hello ', '!'],
-      values: ['name']
+      varNames: ['name']
     })
   })
 
   it('returns the string if no interpolation is found', () => {
     expect(tokenize('Hello world')).to.deep.equal({
       strings: ['Hello world'],
-      values: []
+      varNames: []
     })
   })
 
-  it('returns an empty string and no values when the template is an empty string', () => {
+  it('returns an empty string and no varNames when the template is an empty string', () => {
     expect(tokenize('')).to.deep.equal({
       strings: [''],
-      values: []
+      varNames: []
     })
   })
 
   it('handles interpolation correctly at the start of the template', () => {
     expect(tokenize('{{name}}! How are you?')).to.deep.equal({
       strings: ['', '! How are you?'],
-      values: ['name']
+      varNames: ['name']
     })
   })
 
   it('handles interpolation correctly at the end of the template', () => {
     expect(tokenize('My name is {{name}}')).to.deep.equal({
       strings: ['My name is ', ''],
-      values: ['name']
+      varNames: ['name']
     })
   })
 
   it('trims value name', () => {
-    const { values } = tokenize('My name is {{  name  }}')
-    if (values.length) {
-      expect(values[0]).to.equal('name')
+    const { varNames } = tokenize('My name is {{  name  }}')
+    if (varNames.length) {
+      expect(varNames[0]).to.equal('name')
     }
   })
 
   it('can handle a close symbol without an open symbol', () => {
     expect(tokenize('Hi}} {{name}}')).to.deep.equal({
       strings: ['Hi}} ', ''],
-      values: ['name']
+      varNames: ['name']
     })
     expect(tokenize('Hi {{name}} }}')).to.deep.equal({
       strings: ['Hi ', ' }}'],
-      values: ['name']
+      varNames: ['name']
     })
   })
 
