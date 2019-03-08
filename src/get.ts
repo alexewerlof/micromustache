@@ -51,6 +51,32 @@ export function unquote(value: string): string {
   return key
 }
 
+const toPathCache: {
+  [path: string]: string[]
+} = {}
+
+const cachedPaths = new Array(100)
+let cachedPathsPointer = 0
+
+export function toPathMemoized(path: string): string[] {
+  let result = toPathCache[path]
+  if (!result) {
+    result = toPathCache[path] = toPath(path)
+    // console.log('caching', path, result)
+    // console.log('cachedPathsPointer', cachedPathsPointer)
+    const pathToDelete = cachedPaths[cachedPathsPointer]
+    if (pathToDelete !== undefined) {
+      // console.log('deleting', pathToDelete)
+      delete toPathCache[pathToDelete]
+    }
+    cachedPaths[cachedPathsPointer] = path
+    // console.log('cachedPaths', cachedPaths)
+    cachedPathsPointer++
+    cachedPathsPointer %= cachedPaths.length
+  }
+  return result
+}
+
 export function toPath(path: string): string[] {
   assertType(
     isString(path),

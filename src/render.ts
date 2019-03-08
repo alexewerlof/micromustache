@@ -1,4 +1,4 @@
-import { Scope, getKeys, toPath } from './get'
+import { Scope, getKeys, toPathMemoized } from './get'
 import { isFunction, assertType, assertTruthy } from './util'
 import { ICompileOptions, compile } from './compile'
 
@@ -75,7 +75,7 @@ export class Renderer {
       'the values array must have exactly one less element than the strings array'
     )
     for (let i = 0; i < values.length; i++) {
-      this.toPathCache[i] = toPath(values[i])
+      this.toPathCache[i] = toPathMemoized(values[i])
     }
   }
 

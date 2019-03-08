@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add the possibility to process variable names before and after they are resolved using `get()`. This can allow HTML escaping for example.
 - Add the possibility to return '' instead of throwing for non-existing elements
 - Support multiscopes ?
+- Benchmark rival libs for huge templates (like 1MB)
 
 ## 6.0.0
 
