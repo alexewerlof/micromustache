@@ -130,7 +130,12 @@ export function get(scope: Scope, path: string): any {
 export function getKeys(scope: Scope, pathArr: string[]): any {
   let currentScope = scope
   for (const key of pathArr) {
-    assertReference(isValidScope(currentScope), key, 'is not defined')
+    assertReference(
+      isValidScope(currentScope),
+      key,
+      'is not defined. Parsed path:',
+      pathArr
+    )
     // @ts-ignore
     currentScope = currentScope[key]
   }
