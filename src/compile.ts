@@ -1,5 +1,8 @@
 import { tokenize } from './tokenize'
 import { Renderer } from './render'
+import { Memoizer } from './util'
+
+const memoizedTokenize = new Memoizer(tokenize, 10)
 
 /**
  * This function makes repeated calls more optimized by compiling once and
@@ -16,6 +19,6 @@ export function compile(
   renderNullAndUndefined?: boolean
 ): Renderer {
   // Note: tokenize() asserts the type of its params
-  const { strings, varNames } = tokenize(template)
+  const { strings, varNames } = memoizedTokenize.obtain(template)
   return new Renderer(strings, varNames, renderNullAndUndefined)
 }
