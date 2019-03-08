@@ -106,7 +106,7 @@ export class Renderer {
  *        names that is used in the template. If it's omitted, it'll be assumed an empty object.
  * @param scope - An object containing values for every variable names that is used in
  *        the template. If it's omitted and empty object will be assumed.
- * @param options - same as compiler options
+ * @param renderNullAndUndefined - should we render null as 'null' and undefined as 'undefined'
  * @returns - Template where its variable names replaced with
  *        corresponding values. If a value is not found or is invalid, it will
  *        be assumed empty string ''. If the value is an object itself, it'll

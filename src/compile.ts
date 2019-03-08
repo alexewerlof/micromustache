@@ -10,7 +10,7 @@ const memoizedTokenize = new Memoizer(tokenize, 10)
  *
  * @param template - same as the template parameter to .render()
  * @param resolver - an optional function that receives a token and synchronously returns a value
- * @param options - compiler options
+ * @param renderNullAndUndefined - should we render null as 'null' and undefined as 'undefined'
  * @returns - an object with render() and renderFnAsync() functions that accepts a scope object and
  * return the final string
  */
