@@ -1,39 +1,8 @@
 import { describe } from 'mocha'
-import { tokenize, guessCloseSymbol } from './tokenize'
+import { tokenize } from './tokenize'
 import { expect } from 'chai'
 
-describe('guessCloseSymbol()', () => {
-  it('works correctly for the open symbols that are supported', () => {
-    expect(guessCloseSymbol('{{')).to.equal('}}')
-    expect(guessCloseSymbol('#{')).to.equal('}')
-    expect(guessCloseSymbol('${')).to.equal('}')
-    expect(guessCloseSymbol('{')).to.equal('}')
-    expect(guessCloseSymbol('$(')).to.equal(')')
-    expect(guessCloseSymbol('%(')).to.equal(')')
-    expect(guessCloseSymbol('(')).to.equal(')')
-    expect(guessCloseSymbol('<?=')).to.equal('?>')
-    expect(guessCloseSymbol('<%=')).to.equal('%>')
-    expect(guessCloseSymbol('<')).to.equal('>')
-  })
-
-  it('throws for unsupported open symbols', () => {
-    expect(() => guessCloseSymbol('A')).to.throw()
-  })
-})
-
 describe('tokenize()', () => {
-  it('supports custom close and open symbols', () => {
-    const options = {
-      openSymbol: '${',
-      closeSymbol: '}'
-    }
-    // tslint:disable-next-line no-invalid-template-strings
-    expect(tokenize('hello ${name}!', options)).to.deep.equal({
-      strings: ['hello ', '!'],
-      varNames: ['name']
-    })
-  })
-
   it('returns the string if no interpolation is found', () => {
     expect(tokenize('Hello world')).to.deep.equal({
       strings: ['Hello world'],
@@ -107,14 +76,5 @@ describe('tokenize()', () => {
 
   it('throws for nested open and close symbol', () => {
     expect(() => tokenize('Hello {{ {{name}} }}!')).to.throw()
-  })
-
-  it('throws if open and close symbol are the same', () => {
-    const options = {
-      openSymbol: '{{',
-      closeSymbol: '{{'
-    }
-    // tslint:disable-next-line no-invalid-template-strings
-    expect(() => tokenize('hello!', options)).to.throw(Error)
   })
 })
