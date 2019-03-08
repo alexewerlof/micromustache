@@ -8,6 +8,7 @@ const scope = {
     st: 'name',
     n: 13
   },
+  nil: null,
   bool: true,
   arr: [1, 2, 3, 4],
   arrNested: [
@@ -23,7 +24,7 @@ const scope = {
   ]
 }
 
-const template = `hi {{ob}} {{ob}} {{ob}} {{arr}} {{arr}} {{arr}} {{arrNested}} {{st}} {{st}} {{ob.st}} {{ob[st]}} {{ob.n}} {{bool}} {{arr[1]}} {{arr.length}} {{arrNested.1}} {{arrNested.1.st}} {{arrNested[2].st}} {{arrNested[2].st}} {{arrNested[2].st}} {{arrNested[2].st}} bye`
+const template = `hi {{ob}} {{ob}} {{ob}} {{arr}} {{arr}} {{arr}} {{arrNested}} {{nil}} {{nil}} {{nil}} {{nothing}} {{arrNested.nothing}} {{st}} {{st}} {{ob.st}} {{ob[st]}} {{ob.n}} {{bool}} {{arr[1]}} {{arr.length}} {{arrNested.1}} {{arrNested.1.st}} {{arrNested[2].st}} {{arrNested[2].st}} {{arrNested[2].st}} {{arrNested[2].st}} bye`
 
 const renderer = micromustache.compile(template)
 
