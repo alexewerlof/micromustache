@@ -8,8 +8,9 @@
     "micromustache"
   ],
   "scripts": {
-    "test": "node index.js",
-    "test:inspect": "node --inspect-brk index.js"
+    "test": "(cd .. && npm run build) && node index.js",
+    "start": "(cd .. && npm run build) && node perf-inspect.js",
+    "start:inspect": "(cd .. && npm run build) && node --inspect-brk perf-inspect.js"
   },
   "main": "index.js",
   "dependencies": {
