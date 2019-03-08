@@ -7,6 +7,8 @@ import {
 } from './util'
 import { IParseOptions, tokenize } from './tokenize'
 
+export type Paths = string[]
+
 const tokenizeOptions: IParseOptions = {
   openSymbol: '[',
   closeSymbol: ']'
@@ -51,7 +53,7 @@ export function unquote(value: string): string {
   return key
 }
 
-export function toPath(path: string): string[] {
+export function toPath(path: string): Paths {
   assertType(
     isString(path),
     'Path must be a string but it is',
@@ -67,10 +69,9 @@ export function toPath(path: string): string[] {
   // a["b"] . c => { strings: ['a', ' . c'], varNames: ['"b"'] }
   const { strings, varNames } = tokenize(path, tokenizeOptions)
 
-  const ret: string[] = []
+  const ret: Paths = []
 
-  let i = 0
-  while (i < strings.length) {
+  for (let i = 0; i < strings.length; i++) {
     const str = normalizePath(strings[i])
     if (str !== '') {
       const splitPath = str.split('.')
@@ -88,7 +89,6 @@ export function toPath(path: string): string[] {
     if (i < varNames.length) {
       ret.push(unquote(varNames[i]))
     }
-    i++
   }
   return ret
 }
@@ -127,7 +127,7 @@ export function get(scope: Scope, path: string): any {
  * @param pathArr - an array of keys that specify the path to the lookup
  * @returns - the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
  */
-export function getKeys(scope: Scope, pathArr: string[]): any {
+export function getKeys(scope: Scope, pathArr: Paths): any {
   let currentScope = scope
   for (const key of pathArr) {
     assertReference(
