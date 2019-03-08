@@ -1,7 +1,10 @@
 import { IParseOptions, tokenize } from './tokenize'
-import { Renderer, IStringifyOptions } from './render'
+import { Renderer } from './render'
+import { isObject } from './util'
 
-export type ICompileOptions = IParseOptions & IStringifyOptions
+export interface ICompileOptions extends IParseOptions {
+  renderNullAndUndefined: boolean
+}
 
 /**
  * This function makes repeated calls more optimized by compiling once and
@@ -16,5 +19,7 @@ export type ICompileOptions = IParseOptions & IStringifyOptions
 export function compile(template: string, options?: ICompileOptions): Renderer {
   // Note: tokenize() asserts the type of its params
   const { strings, varNames } = tokenize(template, options)
-  return new Renderer(strings, varNames, options)
+  return isObject(options)
+    ? new Renderer(strings, varNames, options.renderNullAndUndefined)
+    : new Renderer(strings, varNames)
 }

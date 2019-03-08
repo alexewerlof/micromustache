@@ -1,19 +1,11 @@
 import { Scope, getKeys, toPath } from './get'
-import { isFunction, isObject, assertType, assertTruthy } from './util'
+import { isFunction, assertType, assertTruthy } from './util'
 import { ICompileOptions, compile } from './compile'
 
-export interface IStringifyOptions {
-  /** an optional string to be used when the value is an unsupported type */
-  invalidType?: string
-  /** an optional string to be used when JSON.stringify fails */
-  invalidObj?: string
-  /** how to represent null values in the resulting string */
-  nullValue?: string
-  /** how to represent undefined values in the resulting string */
-  undefinedValue?: string
+export interface IRendererOptions {
+  /** should we render null and undefined values */
+  renderNullAndUndefined?: boolean
 }
-
-const OBJECT_TO_STRING = Object.prototype.toString
 
 /**
  * The callback for resolving a value
@@ -31,50 +23,15 @@ export type ResolveFnAsync = (varName: string, scope?: Scope) => Promise<any>
 function stringify(
   strings: string[],
   values: any[],
-  {
-    invalidType = '',
-    invalidObj = '{...}',
-    nullValue = '',
-    undefinedValue = ''
-  }: IStringifyOptions = {}
+  renderNullAndUndefined: boolean
 ): string {
   let ret = ''
   const { length } = values
   for (let i = 0; i < length; i++) {
     ret += strings[i]
     const value = values[i]
-    switch (value) {
-      case null:
-        ret += nullValue
-        continue
-      case undefined:
-        ret += undefinedValue
-        continue
-      case '':
-        continue
-    }
-    const typeOfValue = typeof value
-    if (
-      typeOfValue === 'string' ||
-      typeOfValue === 'number' ||
-      typeOfValue === 'boolean'
-    ) {
+    if (renderNullAndUndefined || (value !== null && value !== undefined)) {
       ret += value
-    } else if (typeOfValue === 'object') {
-      // At this point in the function we've already dealt with null values
-      if (isFunction(value.toString) && value.toString !== OBJECT_TO_STRING) {
-        ret += value.toString()
-      } else {
-        try {
-          ret += JSON.stringify(value)
-        } catch (jsonError) {
-          ret += invalidObj
-        }
-      }
-    } else {
-      // Anything else will be replaced with an empty string
-      // For example: undefined, Symbol, etc.
-      ret += invalidType
     }
   }
 
@@ -109,7 +66,7 @@ export class Renderer {
   constructor(
     private strings: string[],
     private values: string[],
-    private options?: IStringifyOptions
+    private renderNullAndUndefined = false
   ) {
     assertType(Array.isArray(strings), 'the strings must be an array')
     assertType(Array.isArray(values), 'the values must be an array')
@@ -117,13 +74,6 @@ export class Renderer {
       values.length === strings.length - 1,
       'the values array must have exactly one less element than the strings array'
     )
-    if (options !== undefined) {
-      assertType(
-        isObject(options),
-        'If options is passed, it should be an object. Got',
-        options
-      )
-    }
     for (let i = 0; i < values.length; i++) {
       this.toPathCache[i] = toPath(values[i])
     }
@@ -135,12 +85,12 @@ export class Renderer {
     for (let i = 0; i < length; i++) {
       resolvedValues[i] = getKeys(scope, this.toPathCache[i])
     }
-    return stringify(this.strings, resolvedValues, this.options)
+    return stringify(this.strings, resolvedValues, this.renderNullAndUndefined)
   }
 
   public renderFn = (scope: Scope = {}, resolveFn: ResolveFn): string => {
     const values = resolveVarNames(scope, this.values, resolveFn)
-    return stringify(this.strings, values, this.options)
+    return stringify(this.strings, values, this.renderNullAndUndefined)
   }
 
   public renderFnAsync = async (
@@ -150,7 +100,7 @@ export class Renderer {
     const values = await Promise.all(
       resolveVarNames(scope, this.values, resolveFnAsync)
     )
-    return stringify(this.strings, values, this.options)
+    return stringify(this.strings, values, this.renderNullAndUndefined)
   }
 }
 

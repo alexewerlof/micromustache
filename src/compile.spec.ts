@@ -195,24 +195,6 @@ describe('compile()', () => {
       ).to.equal('ac')
     })
 
-    it('returns JSON.strinfigy(value) if it is an object', () => {
-      expect(
-        compile('a{{b}}c').render({
-          b: {}
-        })
-      ).to.equal('a{}c')
-      expect(
-        compile('a{{b}}c').render({
-          b: { x: 2 }
-        })
-      ).to.equal('a{"x":2}c')
-      expect(
-        compile('-{{a.b}}-').render({
-          a: { b: { x: 2 } }
-        })
-      ).to.equal('-{"x":2}-')
-    })
-
     it('ignores a variable name with space in it', () => {
       expect(
         compile('{{a b}}').render({
@@ -376,17 +358,6 @@ describe('compile()', () => {
           ]
         })
       ).to.equal('13')
-    })
-
-    it('does not crash when JSON conversion has a problem', () => {
-      // An object with loop will cause a JSON.stringify() exception
-      const viewObject = {}
-      // @ts-ignore
-      viewObject.a = viewObject
-      expect(() => {
-        JSON.stringify(viewObject)
-      }).to.throw()
-      expect(compile('-{{a}}-').render(viewObject)).to.equal('-{...}-')
     })
 
     it('works for Michael Jackson, so it should work for everyone', () => {

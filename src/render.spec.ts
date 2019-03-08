@@ -4,7 +4,7 @@ import { describe } from 'mocha'
 
 describe('Renderer', () => {
   it('is a constructor', () => {
-    expect(new Renderer(['the string theory'], [], {})).to.be.an('object')
+    expect(new Renderer(['the string theory'], [])).to.be.an('object')
   })
 
   describe('.render()', () => {
@@ -49,7 +49,7 @@ describe('Renderer', () => {
 
   describe('.renderFnAsync()', () => {
     it('passes the scope to the custom resolve function', async () => {
-      const resolver = new Renderer(['Hello! My name is ', '!'], ['name'], {})
+      const resolver = new Renderer(['Hello! My name is ', '!'], ['name'])
       // Just returns the reversed variable name regardless of value
       const resolveFn: ResolveFn = async (
         varName,
