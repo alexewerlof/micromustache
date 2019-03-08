@@ -5,14 +5,8 @@ import {
   assertSyntax,
   assertType
 } from './util'
-import { IParseOptions, tokenize } from './tokenize'
 
 export type Paths = string[]
-
-const tokenizeOptions: IParseOptions = {
-  openSymbol: '[',
-  closeSymbol: ']'
-}
 
 function isQuote(str: string): boolean {
   return str === "'" || str === '"' || str === '`'
@@ -53,13 +47,13 @@ export function unquote(value: string): string {
   return key
 }
 
+const OPEN_SYM = '['
+const CLOSE_SYM = ']'
+const OPEN_SYM_LEN = OPEN_SYM.length
+const CLOSE_SYM_LEN = CLOSE_SYM.length
+
 export function toPath(path: string): Paths {
-  assertType(
-    isString(path),
-    'Path must be a string but it is',
-    typeof path,
-    path
-  )
+  assertType(isString(path), 'Path must be a string but. Got', path)
 
   path = normalizePath(path)
   if (path === '') {
@@ -67,12 +61,15 @@ export function toPath(path: string): Paths {
   }
 
   // a["b"] . c => { strings: ['a', ' . c'], varNames: ['"b"'] }
-  const { strings, varNames } = tokenize(path, tokenizeOptions)
+  let openIndex: number
+  let closeIndex: number = 0
+  let before: string
+  let varName: string
 
   const ret: Paths = []
 
-  for (let i = 0; i < strings.length; i++) {
-    const str = normalizePath(strings[i])
+  function pushString(str: string) {
+    str = normalizePath(str)
     if (str !== '') {
       const splitPath = str.split('.')
       for (const p of splitPath) {
@@ -85,11 +82,42 @@ export function toPath(path: string): Paths {
         ret.push(sTrimmed)
       }
     }
-
-    if (i < varNames.length) {
-      ret.push(unquote(varNames[i]))
-    }
   }
+
+  for (
+    let currentIndex = 0;
+    currentIndex < path.length;
+    currentIndex = closeIndex
+  ) {
+    openIndex = path.indexOf(OPEN_SYM, currentIndex)
+    if (openIndex === -1) {
+      break
+    }
+
+    closeIndex = path.indexOf(CLOSE_SYM, openIndex)
+    assertSyntax(closeIndex !== -1, 'Missing', CLOSE_SYM, 'in path', path)
+
+    varName = path.substring(openIndex + OPEN_SYM_LEN, closeIndex).trim()
+
+    assertSyntax(
+      !varName.includes(OPEN_SYM),
+      'Missing',
+      CLOSE_SYM,
+      'in path',
+      path
+    )
+
+    closeIndex += CLOSE_SYM_LEN
+    before = path.substring(currentIndex, openIndex)
+    pushString(before)
+
+    assertSyntax(varName.length, 'Unexpected token', CLOSE_SYM)
+    ret.push(unquote(varName))
+  }
+
+  const rest = path.substring(closeIndex)
+  pushString(rest)
+
   return ret
 }
 
