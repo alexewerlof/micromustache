@@ -1,11 +1,6 @@
 import { Scope, getKeys, toPath, Paths } from './get'
 import { isFunction, assertType, assertTruthy, Memoizer } from './util'
-import { ICompileOptions, compile } from './compile'
-
-export interface IRendererOptions {
-  /** should we render null and undefined values */
-  renderNullAndUndefined?: boolean
-}
+import { compile } from './compile'
 
 /**
  * The callback for resolving a value
@@ -121,9 +116,9 @@ export class Renderer {
 export function render(
   template: string,
   scope?: Scope,
-  options?: ICompileOptions
+  renderNullAndUndefined?: boolean
 ) {
-  const renderer: Renderer = compile(template, options)
+  const renderer: Renderer = compile(template, renderNullAndUndefined)
   return renderer.render(scope)
 }
 
@@ -134,9 +129,9 @@ export function renderFn(
   template: string,
   resolveFn: ResolveFn,
   scope?: Scope,
-  options?: ICompileOptions
+  renderNullAndUndefined?: boolean
 ) {
-  const renderer: Renderer = compile(template, options)
+  const renderer: Renderer = compile(template, renderNullAndUndefined)
   return renderer.renderFn(scope, resolveFn)
 }
 
@@ -147,8 +142,8 @@ export async function renderFnAsync(
   template: string,
   resolveFnAsync: ResolveFnAsync,
   scope?: Scope,
-  options?: ICompileOptions
+  renderNullAndUndefined?: boolean
 ) {
-  const renderer: Renderer = compile(template, options)
+  const renderer: Renderer = compile(template, renderNullAndUndefined)
   return renderer.renderFnAsync(scope, resolveFnAsync)
 }
