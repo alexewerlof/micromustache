@@ -1,4 +1,4 @@
-import { Scope, getKeys, toPath } from './get'
+import { Scope, getKeys, toPath, Paths } from './get'
 import { isFunction, assertType, assertTruthy, Memoizer } from './util'
 import { ICompileOptions, compile } from './compile'
 
@@ -58,12 +58,9 @@ function resolveVarNames(
   return values
 }
 
-const toPathMemoized = new Memoizer(toPath)
-
 export class Renderer {
-  private toPathCache: {
-    [path: string]: string[]
-  } = {}
+  private static toPathMemoized = new Memoizer(toPath)
+  private toPathCache: Paths[]
 
   constructor(
     private strings: string[],
@@ -76,8 +73,9 @@ export class Renderer {
       values.length === strings.length - 1,
       'the values array must have exactly one less element than the strings array'
     )
+    this.toPathCache = new Array(values.length)
     for (let i = 0; i < values.length; i++) {
-      this.toPathCache[i] = toPathMemoized.get(values[i])
+      this.toPathCache[i] = Renderer.toPathMemoized.obtain(values[i])
     }
   }
 

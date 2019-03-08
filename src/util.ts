@@ -76,7 +76,7 @@ export class Memoizer<T> {
     this.cache = {}
   }
 
-  public get(key: string): T {
+  public obtain(key: string): T {
     let result = this.cache[key]
     if (!result) {
       result = this.cache[key] = this.fn(key)
