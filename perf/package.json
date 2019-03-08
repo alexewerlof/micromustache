@@ -8,7 +8,8 @@
     "micromustache"
   ],
   "scripts": {
-    "test": "node index.js"
+    "test": "node index.js",
+    "test:inspect": "node --inspect-brk index.js"
   },
   "main": "index.js",
   "dependencies": {

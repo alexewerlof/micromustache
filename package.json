@@ -53,8 +53,6 @@
     "prepare": "npm run test && npm run build",
     "postversion": "git push && git push --tags",
     "api-extractor": "api-extractor run --local",
-    "perf": "npm run build && node perf/index.js",
-    "perf:inspect": "npm run build && node --inspect-brk perf/index.js",
     "sloc": "sloc src -e .*spec.* -k source --format cli-table"
   },
   "repository": {
