@@ -47,11 +47,6 @@ export function unquote(value: string): string {
   return key
 }
 
-const OPEN_SYM = '['
-const CLOSE_SYM = ']'
-const OPEN_SYM_LEN = OPEN_SYM.length
-const CLOSE_SYM_LEN = CLOSE_SYM.length
-
 export function toPath(path: string): Paths {
   assertType(isString(path), 'Path must be a string but. Got', path)
 
@@ -60,10 +55,9 @@ export function toPath(path: string): Paths {
     return []
   }
 
-  // a["b"] . c => { strings: ['a', ' . c'], varNames: ['"b"'] }
-  let openIndex: number
-  let closeIndex: number = 0
-  let before: string
+  let openBracketIndex: number
+  let closeBracketIndex: number = 0
+  let beforeBracket: string
   let varName: string
 
   const ret: Paths = []
@@ -87,35 +81,29 @@ export function toPath(path: string): Paths {
   for (
     let currentIndex = 0;
     currentIndex < path.length;
-    currentIndex = closeIndex
+    currentIndex = closeBracketIndex
   ) {
-    openIndex = path.indexOf(OPEN_SYM, currentIndex)
-    if (openIndex === -1) {
+    openBracketIndex = path.indexOf('[', currentIndex)
+    if (openBracketIndex === -1) {
       break
     }
 
-    closeIndex = path.indexOf(CLOSE_SYM, openIndex)
-    assertSyntax(closeIndex !== -1, 'Missing', CLOSE_SYM, 'in path', path)
+    closeBracketIndex = path.indexOf(']', openBracketIndex)
+    assertSyntax(closeBracketIndex !== -1, 'Missing', ']', 'in path', path)
 
-    varName = path.substring(openIndex + OPEN_SYM_LEN, closeIndex).trim()
+    varName = path.substring(openBracketIndex + 1, closeBracketIndex).trim()
 
-    assertSyntax(
-      !varName.includes(OPEN_SYM),
-      'Missing',
-      CLOSE_SYM,
-      'in path',
-      path
-    )
+    assertSyntax(!varName.includes('['), 'Missing', ']', 'in path', path)
 
-    closeIndex += CLOSE_SYM_LEN
-    before = path.substring(currentIndex, openIndex)
-    pushString(before)
+    closeBracketIndex++
+    beforeBracket = path.substring(currentIndex, openBracketIndex)
+    pushString(beforeBracket)
 
-    assertSyntax(varName.length, 'Unexpected token', CLOSE_SYM)
+    assertSyntax(varName.length, 'Unexpected token', ']')
     ret.push(unquote(varName))
   }
 
-  const rest = path.substring(closeIndex)
+  const rest = path.substring(closeBracketIndex)
   pushString(rest)
 
   return ret
