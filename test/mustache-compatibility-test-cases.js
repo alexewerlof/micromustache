@@ -8,242 +8,281 @@ module.exports = [
   {
     description: 'empty template',
     template: '',
-    view: {}
-  }, {
+    scope: {}
+  },
+  {
     description: 'empty value interpolation',
     template: '{{a}}',
-    view: {
+    scope: {
       a: ''
     }
-  }, {
+  },
+  {
     description: 'numerical string value interpolation',
     template: '{{a}}',
-    view: {
+    scope: {
       a: '1'
     }
-  }, {
+  },
+  {
     description: 'string value interpolation',
     template: '{{a}}',
-    view: {
+    scope: {
       a: 'a'
     }
-  }, {
+  },
+  {
     description: 'numerical value interpolation',
     template: '{{a}}',
-    view: {
+    scope: {
       a: 11
     }
-  }, {
+  },
+  {
     description: 'empty string interpolation',
     template: '{{a}}',
-    view: {
+    scope: {
       a: ' '
     }
-  }, {
+  },
+  {
     description: 'space around variable in the template',
     template: ' {{a}} ',
-    view: {
+    scope: {
       a: ''
     }
-  }, {
+  },
+  {
     description: 'space around variable and in the value',
     template: ' {{a}} ',
-    view: {
+    scope: {
       a: ' '
     }
-  }, {
-    description: 'two variables but one is missing from the view',
+  },
+  {
+    description: 'two variables but one is missing from the scope',
     template: ' {{a}} {{b}} ',
-    view: {
+    scope: {
       a: ' '
     }
-  }, {
+  },
+  {
     description: 'two values',
     template: ' {{a}} {{b}} ',
-    view: {
+    scope: {
       a: 'a',
       b: 'b'
     }
-  }, {
+  },
+  {
     description: 'more than one interpolation',
     template: ' {{a}} {{a}} {{a}}',
-    view: {
+    scope: {
       a: 'a'
     }
-  }, {
+  },
+  {
     description: 'more than one interpolation with a value of dash',
     template: ' {{a}} {{a}} {{a}}',
-    view: {
+    scope: {
       a: '-'
     }
-  }, {
+  },
+  {
     description: 'numerical variable name',
     template: '{{1}}',
-    view: {
+    scope: {
       '1': '-'
     }
-  }, {
+  },
+  {
     description: 'empty string as value name',
     template: '{{}}',
-    view: {
+    scope: {
       '': 'hello'
     }
-  }, {
+  },
+  {
     description: 'a space as variable name',
     template: '{{ }}',
-    view: {
+    scope: {
       ' ': '-'
     }
-  }, {
+  },
+  {
     description: 'a dash as variable name',
     template: '{{-}}',
-    view: {
+    scope: {
       '-': '-'
     }
-  }, {
+  },
+  {
     description: 'an invalid javascript id as variable name',
     template: '{{1a}}',
-    view: {
+    scope: {
       '1a': '-'
     }
-  }, {
+  },
+  {
     description: 'a null value',
     template: '{{a}}',
-    view: {
+    scope: {
       a: null
     }
-  }, {
+  },
+  {
     description: 'a numerical and null value',
     template: '{{a}},{{b}}',
-    view: {
+    scope: {
       a: 123,
       b: null
     }
-  }, {
+  },
+  {
     description: 'an empty data object (all keys missing)',
     template: '{{a}}',
-    view: {}
-  }, {
+    scope: {}
+  },
+  {
     description: 'boolean value',
     template: '{{a}}',
-    view: {
+    scope: {
       a: true
     }
-  }, {
+  },
+  {
     description: 'boolean false value',
     template: '{{a}}',
-    view: {
+    scope: {
       a: false
     }
-  }, {
+  },
+  {
     description: 'NaN value',
     template: '{{a}}',
-    view: {
+    scope: {
       a: Math.NaN
     }
-  }, {
+  },
+  {
     description: 'POSITIVE_INFINITY value',
     template: '{{a}}',
-    view: {
+    scope: {
       a: Number.POSITIVE_INFINITY
     }
-  }, {
+  },
+  {
     description: 'NEGATIVE_INFINITY value',
     template: '{{a}}',
-    view: {
+    scope: {
       a: Number.NEGATIVE_INFINITY
     }
-  }, {
+  },
+  {
     description: 'a value of 0',
     template: '{{a}}',
-    view: {
+    scope: {
       a: 0
     }
-  }, {
+  },
+  {
     description: 'a real numerical value',
     template: '{{a}}',
-    view: {
+    scope: {
       a: 0.1
     }
-  }, {
+  },
+  {
     description: 'EPSILON value',
     template: '{{a}}',
-    view: {
+    scope: {
       a: Number.EPSILON
     }
-  }, {
+  },
+  {
     description: '$ as variable name',
     template: '{{$}}',
-    view: {
-      '$': 'test'
+    scope: {
+      $: 'test'
     }
-  }, {
+  },
+  {
     description: 'underline variable name',
     template: '{{_}}',
-    view: {
-      '_': 'test'
+    scope: {
+      _: 'test'
     }
-  }, {
+  },
+  {
     description: 'empty spaces variable name',
     template: '{{    }}',
-    view: {
-      '_': 'test'
+    scope: {
+      _: 'test'
     }
-  }, {
+  },
+  {
     description: 'empty spaces before variable name',
     template: '{{   a}}',
-    view: {
-      'a': 'test'
+    scope: {
+      a: 'test'
     }
-  }, {
+  },
+  {
     description: 'empty spaces after variable name',
     template: '{{a   }}',
-    view: {
-      'a': 'test'
+    scope: {
+      a: 'test'
     }
-  }, {
+  },
+  {
     description: 'empty spaces around the variable name',
     template: '{{   a   }}',
-    view: {
-      'a': 'test'
+    scope: {
+      a: 'test'
     }
-  }, {
+  },
+  {
     description: '% as a variable name',
     template: '{{%}}',
-    view: {
+    scope: {
       '%': 'test'
     }
-  }, {
+  },
+  {
     description: '"var" as variable name',
     template: '{{var}}',
-    view: {
-      'var': 'test'
+    scope: {
+      var: 'test'
     }
-  }, {
+  },
+  {
     description: 'nested values',
     template: '{{foo.bar}}',
-    view: {
+    scope: {
       foo: {
         bar: 'baz'
       }
     }
-  }, {
+  },
+  {
     description: 'a variable inside another variable',
     template: '{{a{{b}}c}}',
-    view: {
-      'a': 'a',
-      'b': 'b',
-      'c': 'c'
+    scope: {
+      a: 'a',
+      b: 'b',
+      c: 'c'
     }
-  }, {
+  },
+  {
     description: 'keys as indexes to an array',
     template: 'I like {{0}}, {{1}} and {{2}}',
-    view: ['orange', 'apple', 'lemon']
-  }, {
+    scope: ['orange', 'apple', 'lemon']
+  },
+  {
     description: 'An object with toString()',
     template: '{{obj}}',
-    view: {
-      obj: new ClassWithToString
+    scope: {
+      obj: new ClassWithToString()
     }
   }
-];
+]

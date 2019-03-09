@@ -121,7 +121,7 @@ export type Scope = {} | Function
  * `foo[bar]` is allowed while JavaScript treats `bar` as a variable and tries to lookup
  * its value or throws a `ReferenceError` if there is no variable called `bar`.
  * @throws TypeError if the object variable is not an object
- * @param scope - the view object
+ * @param scope - the scope object
  * @param path - the variable path to lookup
  * @returns - the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
  */

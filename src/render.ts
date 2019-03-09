@@ -4,7 +4,7 @@ import { compile } from './compile'
 
 /**
  * The callback for resolving a value
- * @param view - the view object that was passed to .render() function
+ * @param scope - the scope object that was passed to .render() function
  * @param path - variable name before being parsed.
  * @example {a.b.c} ->  'a.b.c'
  * @example {  x  } -> 'x'
@@ -100,7 +100,7 @@ export class Renderer {
 }
 
 /**
- * Replaces every {{variable}} inside the template with values provided by view.
+ * Replaces every {{variable}} inside the template with values provided by scope.
  *
  * @param template - The template containing one or more {{variableNames}} every variable
  *        names that is used in the template. If it's omitted, it'll be assumed an empty object.

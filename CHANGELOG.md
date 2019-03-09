@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Rewrote the project in TypeScript
 - Custom resolver can also be async (see `.renderFnAsync()`)
 - Compile and rendering is significantly faster than Mustache
+- A change in terminology to better reflect JavaScript terms: What Mustache and the previous version of the lib called `view` is not called `scope`.
 
 BREAKING CHANGES:
 - We don't use default exports anymore so `const render = require('micromustache/render')`

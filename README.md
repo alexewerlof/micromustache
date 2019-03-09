@@ -74,12 +74,12 @@ If you can live with this, read on...
 
 # API
 
-## `render(template, view = {}, options)`
+## `render(template, scope = {}, options)`
 
 
 ### Parameters
 * `template: string`: The template containing one or more `{{variableNames}}`.
-* `view: Object`: An optional object containing values for every variable names that is used in the
+* `scope: Object`: An optional object containing values for every variable names that is used in the
  template. If it's omitted, it'll be assumed an empty object.
 * `options` see compiler options
 
@@ -87,8 +87,8 @@ If you can live with this, read on...
 
 The return is always the same type as the template itself (if template is not a string, it'll be
 returned untouched and no processing is done). All `{{varName}}` strings inside the template will
-be resolved with their corresponding value from the `view` object.
-If a particular path doesn't exist in the `view` object, it'll be replaced with empty string (`''`).
+be resolved with their corresponding value from the `scope` object.
+If a particular path doesn't exist in the `scope` object, it'll be replaced with empty string (`''`).
 Objects will be `JSON.stringified()` but if there was an error doing so (for example when there's
 a loop in the object, they'll be simply replaced with `{...}`.
 
@@ -163,22 +163,22 @@ micromustache.render("{{first}} {{last}} had {{children.length}} children: {{chi
 
 ### Differences with MustacheJS render() method
 
-* micromustache is a bit more forgiving than MustacheJS. For example, if the `view` is `null` or
+* micromustache is a bit more forgiving than MustacheJS. For example, if the `scope` is `null` or
  `undefined`, MustacheJS throws an exception but micromustache doesn't. It just assumes an empty
- object for the view.
+ object for the scope.
 * also the `options` don't exist in MustacheJS but is a powerful little utility that halps
  some use cases.
 
 ## `compile(template, customResolver)`
 
 This is a utility function that accepts a `template` and `customResolver` and returns a renderer
-function that only accepts view and spits out filled template. This is useful when you find yourself
+function that only accepts scope and spits out filled template. This is useful when you find yourself
 using the render function over and over again with the same template. Under the hood it's just a thin
 layer on top of `render` so it uses the same parameters 👆.
 
 ### Return
 
-A function that accepts a `view` object and returns a rendered template string.
+A function that accepts a `scope` object and returns a rendered template string.
 
 ### Example
 
@@ -205,12 +205,12 @@ This will make the `micromustache` command available on your shell.
 It works like this:
 
 ```bash
-micromustache templatePath viewPath
+micromustache templatePath scopePath
 ```
 
 Both parameters are required.
 * `templatePath`: path to a template text file that contains {{varName}} in it
-* `viewPath`: path to a valid json file
+* `scopePath`: path to a valid json file
 
 Files are read/write with utf8 encoding.
 By default CLI prints the output to console (and erros to stderr).
@@ -219,10 +219,10 @@ You can redirect it to output file using `> outputPath`.
 ### Example:
 
 ```bash
-micromustache template.txt view.json > output.txt
+micromustache template.txt scope.json > output.txt
 ```
 
-This command reads the contents of `template.txt` and `render()` it using data from `view.json`
+This command reads the contents of `template.txt` and `render()` it using data from `scope.json`
 and puts the result text in `output.txt`.
 
 # Tests

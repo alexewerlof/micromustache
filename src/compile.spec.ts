@@ -93,11 +93,11 @@ describe('compile()', () => {
       ).to.equal('hello world')
     })
 
-    it('interpolates all variables with empty string when view is empty', () => {
+    it('interpolates all variables with empty string when scope is empty', () => {
       expect(compile('{{i}}').render({})).to.equal('')
     })
 
-    it('interpolates all variables with empty string when view is missing', () => {
+    it('interpolates all variables with empty string when scope is missing', () => {
       expect(compile('{{i}}{{j}}').render()).to.equal('')
       expect(compile('{{i}} {{j}}').render()).to.equal(' ')
       expect(compile(' {{abc}} {{def}} ').render()).to.equal('   ')
@@ -243,27 +243,27 @@ describe('compile()', () => {
       expect(compile('{{length}}').render([])).to.equal('0')
     })
 
-    it('accepts a function as view', () => {
+    it('accepts a function as scope', () => {
       // tslint:disable-next-line no-empty
-      function view() {}
-      view.A = 'Cat'
-      expect(compile('X={{A}}').render(view)).to.equal('X=Cat')
+      function scope() {}
+      scope.A = 'Cat'
+      expect(compile('X={{A}}').render(scope)).to.equal('X=Cat')
     })
 
-    it('accepts class as view', () => {
+    it('accepts class as scope', () => {
       class Parent {
         constructor(public B = 'Mobile') {}
       }
       // tslint:disable-next-line max-classes-per-file
-      class View extends Parent {
+      class Scope extends Parent {
         constructor(public A = 'Crocodile') {
           super()
         }
       }
-      const view = new View()
+      const scope = new Scope()
       // @ts-ignore
-      view.C = 'Alice'
-      expect(compile('{{A}} or {{B}} and {{C}}').render(view)).to.equal(
+      scope.C = 'Alice'
+      expect(compile('{{A}} or {{B}} and {{C}}').render(scope)).to.equal(
         'Crocodile or Mobile and Alice'
       )
     })
