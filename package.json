@@ -52,7 +52,7 @@
     "lint:fix": "npm run lint -- --fix",
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
     "preversion": "npm test",
-    "prepare": "npm run test && npm run build",
+    "prepublishOnly": "npm run test && npm run build && pkg-ok",
     "postversion": "git push && git push --tags",
     "api-extractor": "api-extractor run --local",
     "sloc": "sloc src -e .*spec.* -k source --format cli-table"

@@ -25,5 +25,8 @@
     "underscore": "^1.9.1"
   },
   "author": "Alex Ewerlöf",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "pkg-ok": "^2.3.1"
+  }
 }
