@@ -13,13 +13,13 @@
     "lodash template",
     "microlibrary"
   ],
-  "main": "lib/index.js",
-  "types": "./lib/types.d.ts",
+  "main": "dist/node/index.js",
+  "types": "./dist/node/types.d.ts",
   "bin": {
     "micromustache": "./bin/micromustache"
   },
   "directories": {
-    "lib": "./lib"
+    "lib": "./dist/node"
   },
   "engines": {
     "node": ">=8"
@@ -43,6 +43,8 @@
   },
   "scripts": {
     "build": "rimraf lib && tsc",
+    "build:amd": "rimraf lib && tsc -p tsconfig-amd.json",
+    "build:node": "rimraf lib && tsc -p tsconfig-node.json",
     "docs": "typedoc --out docs/ --mode modules --module commonjs --readme ./README.md",
     "clean": "rimraf lib",
     "pretest": "npm run lint",

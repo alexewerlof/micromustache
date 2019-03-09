@@ -1,23 +1,19 @@
 {
   "compilerOptions": {
-    "target": "es2017",
-    "module": "commonjs",
     "noImplicitAny": true,
     "sourceMap": true,
     "strictNullChecks": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "newLine": "LF",
-    "outDir": "lib/",
-    "declaration": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "newLine": "LF",
+    "listEmittedFiles": true,
   },
   "include": [
     "src/**/*.ts"
   ],
   "exclude": [
-    "lib/**/*",
     "src/**/*.spec.ts"
   ]
 }

@@ -2,3 +2,5 @@ node_modules/
 lib/
 docs/
 npm-debug.log
+dist/
+
