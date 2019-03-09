@@ -59,23 +59,23 @@ export class Renderer {
 
   constructor(
     private strings: string[],
-    private values: string[],
+    private varNames: string[],
     private renderNullAndUndefined = false
   ) {
     assertType(Array.isArray(strings), 'the strings must be an array')
-    assertType(Array.isArray(values), 'the values must be an array')
+    assertType(Array.isArray(varNames), 'the values must be an array')
     assertTruthy(
-      values.length === strings.length - 1,
+      varNames.length === strings.length - 1,
       'the values array must have exactly one less element than the strings array'
     )
-    this.toPathCache = new Array(values.length)
-    for (let i = 0; i < values.length; i++) {
-      this.toPathCache[i] = Renderer.toPathMemoized.obtain(values[i])
+    this.toPathCache = new Array(varNames.length)
+    for (let i = 0; i < varNames.length; i++) {
+      this.toPathCache[i] = Renderer.toPathMemoized.obtain(varNames[i])
     }
   }
 
   public render = (scope: Scope = {}): string => {
-    const { length } = this.values
+    const { length } = this.varNames
     const resolvedValues = new Array(length)
     for (let i = 0; i < length; i++) {
       resolvedValues[i] = getKeys(scope, this.toPathCache[i])
@@ -84,7 +84,7 @@ export class Renderer {
   }
 
   public renderFn = (scope: Scope = {}, resolveFn: ResolveFn): string => {
-    const values = resolveVarNames(scope, this.values, resolveFn)
+    const values = resolveVarNames(scope, this.varNames, resolveFn)
     return stringify(this.strings, values, this.renderNullAndUndefined)
   }
 
@@ -93,7 +93,7 @@ export class Renderer {
     resolveFnAsync: ResolveFnAsync
   ): Promise<string> => {
     const values = await Promise.all(
-      resolveVarNames(scope, this.values, resolveFnAsync)
+      resolveVarNames(scope, this.varNames, resolveFnAsync)
     )
     return stringify(this.strings, values, this.renderNullAndUndefined)
   }
