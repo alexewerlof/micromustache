@@ -1,5 +1,4 @@
 const os = require('os')
-const assert = require('assert')
 const dot = require('./cases/dot')
 const ejs = require('./cases/ejs')
 const handlebars = require('./cases/handlebars')
@@ -49,11 +48,13 @@ function cpuUsageToStr({ user, system }) {
  * * nested object accessors
  * * repeated keys
  */
-const expectedOutput = `Hi, My name is ${scope.name}! I am ${scope.age} years old and live in ${
-  scope.cities[1]
-}. In ${scope.cities[1]}, foo is ${scope.nested.foo}. My favorite book is ${
-  scope.books[0].name
-} by ${scope.books[0].author}. () is not defined.`
+const expectedOutput = `Hi, My name is ${scope.name}! I am ${
+  scope.age
+} years old and live in ${scope.cities[1]}. In ${scope.cities[1]}, foo is ${
+  scope.nested.foo
+}. My favorite book is ${scope.books[0].name} by ${
+  scope.books[0].author
+}. () is not defined.`
 
 function runCase(f) {
   const startCpu = process.cpuUsage()
@@ -62,7 +63,13 @@ function runCase(f) {
     // Assert that it is indeed returning the expected output
     if (iteration === 0) {
       if (f(scope) !== expectedOutput) {
-        console.error(f.name, 'does not work correctly\n🔴', f(scope), '\n🔵', expectedOutput)
+        console.error(
+          f.name,
+          'does not work correctly\n🔴',
+          f(scope),
+          '\n🔵',
+          expectedOutput
+        )
       }
     }
     f(scope)

@@ -1,4 +1,4 @@
-const micromustache = require('../lib/index')
+const micromustache = require('../dist/node/index')
 
 const ITERATIONS = 100000
 
