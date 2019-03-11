@@ -60,7 +60,7 @@ export function assertReference(expression: any, ...messageParts: any[]) {
   }
 }
 
-export class Memoizer<T> {
+export class CachedFn<T> {
   private cache: {
     [key: string]: T
   } = {}

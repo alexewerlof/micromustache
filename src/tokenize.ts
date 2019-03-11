@@ -5,10 +5,15 @@ export interface ITokens {
   varNames: string[]
 }
 
-const OPEN_SYM = '{{'
-const CLOSE_SYM = '}}'
-const OPEN_SYM_LEN = OPEN_SYM.length
-const CLOSE_SYM_LEN = CLOSE_SYM.length
+export interface ITokenizeOptions {
+  openSym: string
+  closeSym: string
+}
+
+const defaultTokenizeOptions: ITokenizeOptions = {
+  openSym: '{{',
+  closeSym: '}}'
+}
 
 /**
  * Parse a string and returns an array of variable names and non-processing strings.
@@ -16,10 +21,32 @@ const CLOSE_SYM_LEN = CLOSE_SYM.length
  * This function could use regular expressions but using simpler searches is faster.
  *
  * @param template - the template
+ * @param options - you can provide a custom open and close symbol.
+ * Note that for the sake of explicity if you pass an option param, it should be an object containing both open and close symbols.
  * @returns - the resulting tokens as an object that has strings and variable names
  */
-export function tokenize(template: string): ITokens {
-  assertType(isString(template), 'Template must be a string. Got', template)
+export function tokenize(
+  template: string,
+  { openSym, closeSym }: ITokenizeOptions = defaultTokenizeOptions
+): ITokens {
+  assertType(
+    isString(template),
+    'The template parameter must be a string. Got',
+    template
+  )
+  assertType(
+    isString(openSym),
+    'The openSym parameter must be a string. Got',
+    openSym
+  )
+  assertType(
+    isString(closeSym),
+    'The closeSym parameter must be a string. Got',
+    closeSym
+  )
+
+  const openSymLen = openSym.length
+  const closeSymLen = closeSym.length
 
   let openIndex: number
   let closeIndex: number = 0
@@ -33,34 +60,34 @@ export function tokenize(template: string): ITokens {
     currentIndex < template.length;
     currentIndex = closeIndex
   ) {
-    openIndex = template.indexOf(OPEN_SYM, currentIndex)
+    openIndex = template.indexOf(openSym, currentIndex)
     if (openIndex === -1) {
       break
     }
 
-    closeIndex = template.indexOf(CLOSE_SYM, openIndex)
+    closeIndex = template.indexOf(closeSym, openIndex)
     assertSyntax(
       closeIndex !== -1,
       'Missing',
-      CLOSE_SYM,
+      closeSym,
       'in template expression',
       template
     )
 
-    varName = template.substring(openIndex + OPEN_SYM_LEN, closeIndex).trim()
+    varName = template.substring(openIndex + openSymLen, closeIndex).trim()
 
     assertSyntax(
-      !varName.includes(OPEN_SYM),
+      !varName.includes(openSym),
       'Missing',
-      CLOSE_SYM,
+      closeSym,
       'in template expression',
       template
     )
 
-    assertSyntax(varName.length, 'Unexpected token', CLOSE_SYM)
+    assertSyntax(varName.length, 'Unexpected token', closeSym)
     varNames.push(varName)
 
-    closeIndex += CLOSE_SYM_LEN
+    closeIndex += closeSymLen
     before = template.substring(currentIndex, openIndex)
     strings.push(before)
   }

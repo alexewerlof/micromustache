@@ -1,6 +1,16 @@
 import { Scope, getKeys, toPath, Paths } from './get'
-import { isFunction, assertType, assertTruthy, Memoizer } from './util'
-import { compile } from './compile'
+import {
+  isFunction,
+  assertType,
+  assertTruthy,
+  CachedFn,
+  isObject
+} from './util'
+import { compile, ICompileOptions } from './compile'
+
+export interface IRendererOptions {
+  renderNullAndUndefined?: boolean
+}
 
 /**
  * The callback for resolving a value
@@ -14,25 +24,6 @@ import { compile } from './compile'
  */
 export type ResolveFn = (varName: string, scope?: Scope) => any
 export type ResolveFnAsync = (varName: string, scope?: Scope) => Promise<any>
-
-function stringify(
-  strings: string[],
-  values: any[],
-  renderNullAndUndefined: boolean
-): string {
-  let ret = ''
-  const { length } = values
-  for (let i = 0; i < length; i++) {
-    ret += strings[i]
-    const value = values[i]
-    if (renderNullAndUndefined || (value !== null && value !== undefined)) {
-      ret += value
-    }
-  }
-
-  ret += strings[length]
-  return ret
-}
 
 function resolveVarNames(
   scope: Scope = {},
@@ -54,38 +45,69 @@ function resolveVarNames(
 }
 
 export class Renderer {
-  private static toPathMemoized = new Memoizer(toPath)
+  private static cachedToPath = new CachedFn(toPath)
   private toPathCache: Paths[]
 
   constructor(
     private strings: string[],
     private varNames: string[],
-    private renderNullAndUndefined = false
+    private options: IRendererOptions = {}
   ) {
-    assertType(Array.isArray(strings), 'the strings must be an array')
-    assertType(Array.isArray(varNames), 'the values must be an array')
+    assertType(
+      Array.isArray(strings),
+      'The strings must be an array. Got',
+      strings
+    )
+    assertType(
+      Array.isArray(varNames),
+      'The varNames must be an array. Got',
+      varNames
+    )
+    assertType(
+      isObject(options),
+      'The options param must be an object. Got',
+      options
+    )
     assertTruthy(
       varNames.length === strings.length - 1,
       'the values array must have exactly one less element than the strings array'
     )
     this.toPathCache = new Array(varNames.length)
     for (let i = 0; i < varNames.length; i++) {
-      this.toPathCache[i] = Renderer.toPathMemoized.obtain(varNames[i])
+      this.toPathCache[i] = Renderer.cachedToPath.obtain(varNames[i])
     }
+  }
+
+  private stringify(values: any[]): string {
+    let ret = ''
+    const { length } = values
+    for (let i = 0; i < length; i++) {
+      ret += this.strings[i]
+      const value = values[i]
+      if (
+        this.options.renderNullAndUndefined ||
+        (value !== null && value !== undefined)
+      ) {
+        ret += value
+      }
+    }
+
+    ret += this.strings[length]
+    return ret
   }
 
   public render = (scope: Scope = {}): string => {
     const { length } = this.varNames
-    const resolvedValues = new Array(length)
+    const values = new Array(length)
     for (let i = 0; i < length; i++) {
-      resolvedValues[i] = getKeys(scope, this.toPathCache[i])
+      values[i] = getKeys(scope, this.toPathCache[i])
     }
-    return stringify(this.strings, resolvedValues, this.renderNullAndUndefined)
+    return this.stringify(values)
   }
 
   public renderFn = (scope: Scope = {}, resolveFn: ResolveFn): string => {
     const values = resolveVarNames(scope, this.varNames, resolveFn)
-    return stringify(this.strings, values, this.renderNullAndUndefined)
+    return this.stringify(values)
   }
 
   public renderFnAsync = async (
@@ -95,7 +117,7 @@ export class Renderer {
     const values = await Promise.all(
       resolveVarNames(scope, this.varNames, resolveFnAsync)
     )
-    return stringify(this.strings, values, this.renderNullAndUndefined)
+    return this.stringify(values)
   }
 }
 
@@ -116,9 +138,9 @@ export class Renderer {
 export function render(
   template: string,
   scope?: Scope,
-  renderNullAndUndefined?: boolean
+  options?: ICompileOptions
 ) {
-  const renderer: Renderer = compile(template, renderNullAndUndefined)
+  const renderer: Renderer = compile(template, options)
   return renderer.render(scope)
 }
 
@@ -129,9 +151,9 @@ export function renderFn(
   template: string,
   resolveFn: ResolveFn,
   scope?: Scope,
-  renderNullAndUndefined?: boolean
+  options?: ICompileOptions
 ) {
-  const renderer: Renderer = compile(template, renderNullAndUndefined)
+  const renderer: Renderer = compile(template, options)
   return renderer.renderFn(scope, resolveFn)
 }
 
@@ -142,8 +164,8 @@ export async function renderFnAsync(
   template: string,
   resolveFnAsync: ResolveFnAsync,
   scope?: Scope,
-  renderNullAndUndefined?: boolean
+  options?: ICompileOptions
 ) {
-  const renderer: Renderer = compile(template, renderNullAndUndefined)
+  const renderer: Renderer = compile(template, options)
   return renderer.renderFnAsync(scope, resolveFnAsync)
 }
