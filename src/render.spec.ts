@@ -1,4 +1,4 @@
-import { Renderer, ResolveFn, render, renderFn } from './render'
+import { Renderer, ResolveFn, render, renderFn } from './index'
 import { expect } from 'chai'
 import { describe } from 'mocha'
 

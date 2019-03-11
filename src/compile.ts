@@ -1,5 +1,5 @@
 import { tokenize } from './tokenize'
-import { Renderer, IRendererOptions } from './render'
+import { Renderer, IRendererOptions } from './renderer'
 import { CachedFn, isObject, assertType, isString } from './util'
 
 export interface ICompileOptions extends IRendererOptions {
@@ -42,21 +42,4 @@ export class Compiler {
     const { strings, varNames } = this.getTokens()
     return new Renderer(strings, varNames, this.options)
   }
-}
-
-/**
- * This function makes repeated calls more optimized by compiling once and
- * returning a class that can do the rendering for you.
- *
- * @param template - same as the template parameter to .render()
- * @param resolver - an optional function that receives a token and
- * synchronously returns a value
- * @param renderNullAndUndefined - should we render null as 'null' and undefined
- * as 'undefined'
- * @returns - an object with render() and renderFnAsync() functions that accepts
- * a scope object and return the final string
- */
-export function compile(template: string, options?: ICompileOptions): Renderer {
-  const compiler = new Compiler(template, options)
-  return compiler.createRenderer()
 }
