@@ -1,10 +1,48 @@
-import { tokenize, ITokenizeOptions } from './tokenize'
+import { tokenize } from './tokenize'
 import { Renderer, IRendererOptions } from './render'
-import { CachedFn } from './util'
+import { CachedFn, isObject, assertType, isString } from './util'
 
-export interface ICompileOptions extends ITokenizeOptions, IRendererOptions {}
+export interface ICompileOptions extends IRendererOptions {
+  openSym: string
+  closeSym: string
+}
 
-const cachedTokenize = new CachedFn(tokenize, 10)
+export class Compiler {
+  private static cachedTokenize = new CachedFn(tokenize, 10)
+  private customOpenCloseSym = false
+
+  constructor(private template: string, private options?: ICompileOptions) {
+    assertType(
+      isString(template),
+      'The template parameter must be a string. Got',
+      template
+    )
+    if (options !== undefined) {
+      assertType(
+        isObject(options),
+        'The compiler options should be an object. Got',
+        options
+      )
+      this.customOpenCloseSym =
+        options.openSym !== '{{' || options.closeSym !== '}}'
+    }
+  }
+
+  public getTokens() {
+    return this.customOpenCloseSym
+      ? tokenize(
+          this.template,
+          (this.options as ICompileOptions).openSym,
+          (this.options as ICompileOptions).closeSym
+        )
+      : Compiler.cachedTokenize.obtain(this.template)
+  }
+
+  public createRenderer() {
+    const { strings, varNames } = this.getTokens()
+    return new Renderer(strings, varNames, this.options)
+  }
+}
 
 /**
  * This function makes repeated calls more optimized by compiling once and
@@ -19,9 +57,6 @@ const cachedTokenize = new CachedFn(tokenize, 10)
  * a scope object and return the final string
  */
 export function compile(template: string, options?: ICompileOptions): Renderer {
-  // Note: tokenize() asserts the type of its params
-  const { strings, varNames } = options
-    ? tokenize(template, options)
-    : cachedTokenize.obtain(template)
-  return new Renderer(strings, varNames, options)
+  const compiler = new Compiler(template, options)
+  return compiler.createRenderer()
 }

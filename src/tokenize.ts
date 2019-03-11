@@ -5,16 +5,6 @@ export interface ITokens {
   varNames: string[]
 }
 
-export interface ITokenizeOptions {
-  openSym: string
-  closeSym: string
-}
-
-const defaultTokenizeOptions: ITokenizeOptions = {
-  openSym: '{{',
-  closeSym: '}}'
-}
-
 /**
  * Parse a string and returns an array of variable names and non-processing strings.
  * functions ready for the compiler to go through them.
@@ -27,13 +17,9 @@ const defaultTokenizeOptions: ITokenizeOptions = {
  */
 export function tokenize(
   template: string,
-  { openSym, closeSym }: ITokenizeOptions = defaultTokenizeOptions
+  openSym = '{{',
+  closeSym = '}}'
 ): ITokens {
-  assertType(
-    isString(template),
-    'The template parameter must be a string. Got',
-    template
-  )
   assertType(
     isString(openSym),
     'The openSym parameter must be a string. Got',
