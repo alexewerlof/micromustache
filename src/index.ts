@@ -1,8 +1,8 @@
-import { Compiler, ICompileOptions } from './compile'
+import { Compiler, ICompileOptions } from './compiler'
 import { Renderer, ResolveFn, ResolveFnAsync } from './renderer'
 import { Scope } from './get'
 
-export * from './compile'
+export * from './compiler'
 export * from './get'
 export * from './renderer'
 export * from './tokenize'
