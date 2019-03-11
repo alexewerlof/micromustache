@@ -40,7 +40,7 @@ export function unquote(value: string): string {
   }
 
   // Normalize leading plus from numerical indices
-  if (key.charAt(0) === '+') {
+  if (firstChar === '+') {
     return key.substr(1)
   }
 
