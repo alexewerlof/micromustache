@@ -1,11 +1,21 @@
-import { Compiler, ICompileOptions } from './compiler'
-import { Renderer, ResolveFn, ResolveFnAsync } from './renderer'
+import {
+  Renderer,
+  ResolveFn,
+  ResolveFnAsync,
+  IRendererOptions
+} from './renderer'
 import { Scope } from './get'
+import { assertType, isString, isObject } from './util'
+import { tokenize } from './tokenize'
 
-export * from './compiler'
 export * from './get'
 export * from './renderer'
 export * from './tokenize'
+
+export interface ICompileOptions extends IRendererOptions {
+  openSym?: string
+  closeSym?: string
+}
 
 /**
  * This function makes repeated calls more optimized by compiling once and
@@ -19,9 +29,27 @@ export * from './tokenize'
  * @returns - an object with render() and renderFnAsync() functions that accepts
  * a scope object and return the final string
  */
-export function compile(template: string, options?: ICompileOptions): Renderer {
-  const compiler = new Compiler(template, options)
-  return compiler.createRenderer()
+export function compile(
+  template: string,
+  options: ICompileOptions = {}
+): Renderer {
+  assertType(
+    isString(template),
+    'The template parameter must be a string. Got',
+    template
+  )
+  assertType(
+    isObject(options),
+    'The compiler options should be an object. Got',
+    options
+  )
+
+  const { strings, varNames } = tokenize(
+    template,
+    options.openSym,
+    options.closeSym
+  )
+  return new Renderer(strings, varNames, options)
 }
 
 /**

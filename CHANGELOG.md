@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add the possibility to return '' instead of throwing for non-existing elements
 - Support multiscopes ?
 - Benchmark rival libs for huge templates (like 1MB)
+- Allow invalid paths for when resolveFn or resolve FnAsync are being called (they can use get)
+- Allow resolve to fail silently if the item is not defined
+- For Renderer let the function in renderFn and renderFnAsync be the first param
+- Set prettied column limit to 100. The default 80 makes the code harder to read and the lib larger than it is.
 
 ## 6.0.0
 
