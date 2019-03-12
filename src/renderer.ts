@@ -25,9 +25,9 @@ export type ResolveFn = (varName: string, scope?: Scope) => any
 export type ResolveFnAsync = (varName: string, scope?: Scope) => Promise<any>
 
 function resolveVarNames(
-  scope: Scope = {},
+  resolveFn: ResolveFn,
   varNames: string[],
-  resolveFn: ResolveFn
+  scope: Scope = {}
 ): any[] {
   assertType(
     isFunction(resolveFn),
@@ -105,7 +105,7 @@ export class Renderer {
   }
 
   public renderFn = (scope: Scope = {}, resolveFn: ResolveFn): string => {
-    const values = resolveVarNames(scope, this.varNames, resolveFn)
+    const values = resolveVarNames(resolveFn, this.varNames, scope)
     return this.stringify(values)
   }
 
@@ -114,7 +114,7 @@ export class Renderer {
     resolveFnAsync: ResolveFnAsync
   ): Promise<string> => {
     const values = await Promise.all(
-      resolveVarNames(scope, this.varNames, resolveFnAsync)
+      resolveVarNames(resolveFnAsync, this.varNames, scope)
     )
     return this.stringify(values)
   }
