@@ -104,14 +104,14 @@ export class Renderer {
     return this.stringify(values)
   }
 
-  public renderFn = (scope: Scope = {}, resolveFn: ResolveFn): string => {
+  public renderFn = (resolveFn: ResolveFn, scope: Scope = {}): string => {
     const values = resolveVarNames(resolveFn, this.varNames, scope)
     return this.stringify(values)
   }
 
   public renderFnAsync = async (
-    scope: Scope = {},
-    resolveFnAsync: ResolveFnAsync
+    resolveFnAsync: ResolveFnAsync,
+    scope: Scope = {}
   ): Promise<string> => {
     const values = await Promise.all(
       resolveVarNames(resolveFnAsync, this.varNames, scope)

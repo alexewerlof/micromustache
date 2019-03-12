@@ -60,7 +60,7 @@ describe('Renderer', () => {
 
       const scope = { name: 'Alex' }
       expect(await resolveFn('name', scope)).to.equal(scope.name)
-      expect(await resolver.renderFnAsync(scope, resolveFn)).to.equal(
+      expect(await resolver.renderFnAsync(resolveFn, scope)).to.equal(
         'Hello! My name is Alex!'
       )
     })

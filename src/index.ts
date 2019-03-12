@@ -85,7 +85,7 @@ export function renderFn(
   options?: ICompileOptions
 ) {
   const renderer: Renderer = compile(template, options)
-  return renderer.renderFn(scope, resolveFn)
+  return renderer.renderFn(resolveFn, scope)
 }
 
 /**
@@ -98,5 +98,5 @@ export async function renderFnAsync(
   options?: ICompileOptions
 ) {
   const renderer: Renderer = compile(template, options)
-  return renderer.renderFnAsync(scope, resolveFnAsync)
+  return renderer.renderFnAsync(resolveFnAsync, scope)
 }
