@@ -71,9 +71,12 @@ export class Renderer {
       varNames.length === strings.length - 1,
       'the values array must have exactly one less element than the strings array'
     )
-    this.toPathCache = new Array(varNames.length)
-    for (let i = 0; i < varNames.length; i++) {
-      this.toPathCache[i] = Renderer.cachedToPath.obtain(varNames[i])
+  }
+
+  private initToPathCache() {
+    this.toPathCache = new Array(this.varNames.length)
+    for (let i = 0; i < this.varNames.length; i++) {
+      this.toPathCache[i] = Renderer.cachedToPath.obtain(this.varNames[i])
     }
   }
 
@@ -97,6 +100,9 @@ export class Renderer {
 
   public render = (scope: Scope = {}): string => {
     const { length } = this.varNames
+    if (!this.toPathCache) {
+      this.initToPathCache()
+    }
     const values = new Array(length)
     for (let i = 0; i < length; i++) {
       values[i] = getKeys(scope, this.toPathCache[i])
