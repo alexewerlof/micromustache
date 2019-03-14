@@ -91,7 +91,7 @@ export function renderFn(
 /**
  * Same as render() but calls the resolver asynchronously
  */
-export async function renderFnAsync(
+export function renderFnAsync(
   template: string,
   resolveFnAsync: ResolveFnAsync,
   scope?: Scope,

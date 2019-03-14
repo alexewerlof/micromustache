@@ -109,13 +109,12 @@ export class Renderer {
     return this.stringify(values)
   }
 
-  public renderFnAsync = async (
+  public renderFnAsync = (
     resolveFnAsync: ResolveFnAsync,
     scope: Scope = {}
   ): Promise<string> => {
-    const values = await Promise.all(
+    return Promise.all(
       resolveVarNames(resolveFnAsync, this.varNames, scope)
-    )
-    return this.stringify(values)
+    ).then(values => this.stringify(values))
   }
 }
