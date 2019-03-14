@@ -1,13 +1,18 @@
 const fetch = require('node-fetch')
-const { renderFnAsync } = require('../lib/render')
+const { renderFnAsync } = require('../dist/node')
 const main = require('async-main').default
 main(async () => {
   try {
-    const result = await renderFnAsync('The first todo title is {{1}}', async function(taskId) {
-      const response = await fetch('https://jsonplaceholder.typicode.com/todos/' + taskId)
-      const taskData = await response.json()
-      return taskData.title
-    })
+    const result = await renderFnAsync(
+      'The first todo title is {{1}}',
+      async function(taskId) {
+        const response = await fetch(
+          'https://jsonplaceholder.typicode.com/todos/' + taskId
+        )
+        const taskData = await response.json()
+        return taskData.title
+      }
+    )
     console.log(result)
   } catch (e) {
     console.error(e)
