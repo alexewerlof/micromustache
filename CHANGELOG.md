@@ -21,9 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add a string literal tag function (generic render)
 - Add the possibility to process variable names before and after they are resolved using `get()`. This can allow HTML escaping for example.
 - Add the possibility to return '' instead of throwing for non-existing elements
-- Support multiscopes ?
-- Benchmark rival libs for huge templates (like 1MB)
-- Allow resolve to fail silently if the item is not defined
+- Support multiscopes (do an example with lodash merge)
 - For Renderer let the function in renderFn and renderFnAsync be the first param
 - Set prettier column limit to 100. The default 80 makes the code harder to read and the lib larger than it is.
 

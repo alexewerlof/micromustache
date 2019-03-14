@@ -25,7 +25,7 @@ export function isDefined(val: any) {
   return val !== undefined
 }
 
-function createError(
+export function createError(
   errorConstructor:
     | ErrorConstructor
     | SyntaxErrorConstructor

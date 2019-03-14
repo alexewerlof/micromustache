@@ -9,6 +9,7 @@ import {
 
 export interface IRendererOptions {
   renderNullAndUndefined?: boolean
+  allowInvalidPaths?: boolean
 }
 
 /**
@@ -105,7 +106,11 @@ export class Renderer {
     }
     const values = new Array(length)
     for (let i = 0; i < length; i++) {
-      values[i] = getKeys(scope, this.toPathCache[i])
+      values[i] = getKeys(
+        scope,
+        this.toPathCache[i],
+        this.options.allowInvalidPaths
+      )
     }
     return this.stringify(values)
   }

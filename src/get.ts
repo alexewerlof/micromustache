@@ -1,10 +1,4 @@
-import {
-  isValidScope,
-  assertReference,
-  isString,
-  assertSyntax,
-  assertType
-} from './util'
+import { isValidScope, isString, assertSyntax, assertType } from './util'
 
 export type Paths = string[]
 
@@ -143,17 +137,21 @@ export function get(scope: Scope, path: string): any {
  * @param pathArr - an array of keys that specify the path to the lookup
  * @returns - the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
  */
-export function getKeys(scope: Scope, pathArr: Paths): any {
+export function getKeys(
+  scope: Scope,
+  pathArr: Paths,
+  allowInvalidPaths?: boolean
+): any {
   let currentScope = scope
   for (const key of pathArr) {
-    assertReference(
-      isValidScope(currentScope),
-      key,
-      'is not defined. Parsed path:',
-      pathArr
-    )
-    // @ts-ignore
-    currentScope = currentScope[key]
+    if (isValidScope(currentScope)) {
+      // @ts-ignore
+      currentScope = currentScope[key]
+    } else if (allowInvalidPaths) {
+      return
+    } else {
+      throw new ReferenceError(key + ' is not defined. Parsed path: ' + pathArr)
+    }
   }
   return currentScope
 }
