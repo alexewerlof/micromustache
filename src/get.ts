@@ -47,6 +47,22 @@ export function unquote(value: string): string {
   return key
 }
 
+function pushString(str: string, strArr: string[]) {
+  str = normalizePath(str)
+  if (str !== '') {
+    const splitPath = str.split('.')
+    for (const p of splitPath) {
+      const sTrimmed = p.trim()
+      assertSyntax(
+        sTrimmed !== '',
+        'Unexpected token. Encountered empty path when parsing',
+        str
+      )
+      strArr.push(sTrimmed)
+    }
+  }
+}
+
 export function toPath(path: string): Paths {
   assertType(isString(path), 'Path must be a string but. Got', path)
 
@@ -61,22 +77,6 @@ export function toPath(path: string): Paths {
   let varName: string
 
   const ret: Paths = []
-
-  function pushString(str: string) {
-    str = normalizePath(str)
-    if (str !== '') {
-      const splitPath = str.split('.')
-      for (const p of splitPath) {
-        const sTrimmed = p.trim()
-        assertSyntax(
-          sTrimmed !== '',
-          'Unexpected token. Encountered empty path when parsing',
-          str
-        )
-        ret.push(sTrimmed)
-      }
-    }
-  }
 
   for (
     let currentIndex = 0;
@@ -97,14 +97,14 @@ export function toPath(path: string): Paths {
 
     closeBracketIndex++
     beforeBracket = path.substring(currentIndex, openBracketIndex)
-    pushString(beforeBracket)
+    pushString(beforeBracket, ret)
 
     assertSyntax(varName.length, 'Unexpected token', ']')
     ret.push(unquote(varName))
   }
 
   const rest = path.substring(closeBracketIndex)
-  pushString(rest)
+  pushString(rest, ret)
 
   return ret
 }
