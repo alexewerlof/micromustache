@@ -48,7 +48,7 @@
     "build:node": "tsc -p tsconfig-node.json",
     "build": "npm run build:amd && npm run build:node",
     "clean:build": "npm run clean && npm run build",
-    "docs": "typedoc --out docs/ --mode modules --module commonjs --readme ./README.md",
+    "docs": "typedoc --out docs/ --mode modules --tsconfig tsconfig-docs.json --readme ./README.md --theme minimal",
     "pretest": "npm run lint",
     "lint": "tslint -p .",
     "lint:fix": "npm run lint -- --fix",
