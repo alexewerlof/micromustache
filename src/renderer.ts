@@ -10,6 +10,8 @@ import {
 export interface IRendererOptions {
   renderNullAndUndefined?: boolean
   allowInvalidPaths?: boolean
+  /** when set to a truthy value, validates the variable names */
+  validatePaths?: boolean
 }
 
 /**
@@ -72,12 +74,18 @@ export class Renderer {
       varNames.length === strings.length - 1,
       'the values array must have exactly one less element than the strings array'
     )
+    if (options.validatePaths) {
+      // trying to initialize toPathCache parses them which is also validation
+      this.cacheParsedPaths()
+    }
   }
 
-  private initToPathCache() {
-    this.toPathCache = new Array(this.varNames.length)
-    for (let i = 0; i < this.varNames.length; i++) {
-      this.toPathCache[i] = Renderer.cachedToPath.obtain(this.varNames[i])
+  private cacheParsedPaths() {
+    if (this.toPathCache === undefined) {
+      this.toPathCache = new Array(this.varNames.length)
+      for (let i = 0; i < this.varNames.length; i++) {
+        this.toPathCache[i] = Renderer.cachedToPath.obtain(this.varNames[i])
+      }
     }
   }
 
@@ -101,9 +109,7 @@ export class Renderer {
 
   public render = (scope: Scope = {}): string => {
     const { length } = this.varNames
-    if (!this.toPathCache) {
-      this.initToPathCache()
-    }
+    this.cacheParsedPaths()
     const values = new Array(length)
     for (let i = 0; i < length; i++) {
       values[i] = getKeys(
