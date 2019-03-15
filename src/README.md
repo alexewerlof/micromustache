@@ -1,5 +1,7 @@
 # Terminology
 
+* *Scope*: The object that'll be used to resolve values.
+In Mustache it is called View.
 * *Rendering*: filling in the template with the values from an object.
 For every variable name we call the *resolve* function.
 * *Compiling*: parsing a template and creating a renderer
