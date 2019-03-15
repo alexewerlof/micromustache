@@ -58,13 +58,11 @@ export class Renderer {
     const { strings } = this.tokens
     let ret = ''
     const { length } = values
+    const { renderNullAndUndefined } = this.options
     for (let i = 0; i < length; i++) {
       ret += strings[i]
       const value = values[i]
-      if (
-        this.options.renderNullAndUndefined ||
-        (value !== null && value !== undefined)
-      ) {
+      if (renderNullAndUndefined || (value !== null && value !== undefined)) {
         ret += value
       }
     }
