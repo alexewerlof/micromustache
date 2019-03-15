@@ -2,8 +2,10 @@ import { isValidScope, isString, assertSyntax, assertType } from './util'
 
 export type Paths = string[]
 
+const quoteChars = '\'"`'
+
 function isQuote(str: string): boolean {
-  return str === "'" || str === '"' || str === '`'
+  return quoteChars.indexOf(str) !== -1
 }
 
 /**
