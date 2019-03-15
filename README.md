@@ -262,15 +262,84 @@ Besides the `render()` function will never cache.
 
 **Q. I want loops**
 
-**Q. How do you threat functions?**
+Unlike MustacheJS or Handlebars, micromustache does not have a custom syntax for
+loops. Instead it encourages you to use JavaScript for that (pretty much how
+JSX avoids custom template syntax that is common in Vue or Angular).
 
-**Q. Multiscope then? (use js prototype or object.assign to merge)**
+For example if you have an array of objects:
+
+```javascript
+const people = [
+  { name: 'Alex', age: 37 },
+  { name: 'Oskar', age: 35 },
+  { name: 'Anna', age: 43 }
+]
+
+let template = people.reduce(
+  t, ({name, age}) => t += `A person called {{name}} and is {{age}} years old`,
+  'The people are:\n'
+)
+```
+
+And then somewhere else in your code you can use that template like:
+
+```javascript
+```
+
+**Q. How do you threat resolver functions?**
+
+The `renderFn()` and `renderFnAsync()` get a function as their first parameter
+and run them for every variable name in the template.
+The function gets the variable name and the scope as arguments and is supposed
+to return the resolved value ready to be injected into the template string.
+If your function throws, `renderFn()/renderFnAsync()` throw as well.
+
+**Q. Do you support multiple scopes and lookup fall back mechanisms?**
+
+This can easily be done using JavaScript object-spread operator as seen in one
+of the [examples](./examples).
 
 **Q. What about [ES6 template literals](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals) (AKA "template strings")? Aren't they gonna deprecate this library?**
 
-A. ES6 native Template literals work great when you have the values in the same scope as the Template literal.
-If you need to separate the rendering of a value from the template, there's no way to do it natively.
-For example if you want to generate a template programmatically, you cannot use the Template literals.
+A. ES6 native Template literals work great when you have the template in the
+same scope as the values.
+If you want to build the template somewhere else (for example for
+internationalization) it gets complicated.
+
+However, when you want to decouple the interpolation (rendering) from the scope
+there's currently no way to do that natively.
+Example suppose you have a code that converts an `Error` to a string:
+
+```javascript
+const error = new Error('Just an example')
+let message = `Error message: ${e.message}!`
+```
+But what if you don't have the error object in the scope?
+You could use a function.
+
+```javascript
+const renderError = (e) => `Error message: ${e.message}!`
+message = renderError(error)
+```
+
+But what if your want to use a different property of the error?
+
+```javascript
+const renderError = (e, propName) => `Error message: ${e[propName]}!`
+message = renderError(error, 'stack')
+```
+
+You can see that this soon becomes complicated.
+With micromustache you can do this a bit easier:
+
+```javascript
+const { compile } = require('micromustache')
+const renderError = compile('Error message: {{message}}')
+message = renderError(error)
+```
+
+If you want to generate a template programmatically, you cannot use the
+Template literals but with micromustache, you just build a string.
 
 Also this library allows you to refer to variables that are not in the scope and compile a template
 and will resolve those values lazily and/or at a different context.
@@ -278,3 +347,18 @@ and will resolve those values lazily and/or at a different context.
 **Q. I want "INSERT SOME MUSTACHE FEATURE HERE" but it's not available in MicroMustache. Can I add it?**
 
 A. Make an issue first. The goal of MicroMustache is to be super tiny and while addressing the most important use-case of Mustache. If there's something that is terribly missing, we may add it, otherwise, you may fork it and call it something else OR use MustacheJS.
+
+# Known issues
+
+For the sake of speed, some edge cases are not addressed.
+
+**A path cannot include `'['` character**
+
+For example if you have an object like:
+```javascript
+const a = {
+  '[': 'open'
+}
+```
+`a['[']` will not give `'open'` but rather complains that you are missing a `]`!
+
