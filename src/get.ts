@@ -150,7 +150,7 @@ export function getKeys(
     } else if (allowInvalidPaths) {
       return
     } else {
-      throw new ReferenceError(key + ' is not defined. Parsed path: ' + pathArr)
+      throw new ReferenceError(key + ' is not defined in the scope. Parsed path: ' + pathArr)
     }
   }
   return currentScope
