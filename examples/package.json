@@ -8,7 +8,7 @@
     "micromustache"
   ],
   "scripts": {
-    "build": "(cd.. && npm run build:node)"
+    "build": "(cd .. && npm run build:node)"
   },
   "main": "index.js",
   "dependencies": {
