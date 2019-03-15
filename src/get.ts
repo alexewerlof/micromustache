@@ -131,11 +131,15 @@ export function get(scope: Scope, path: string): any {
 }
 
 /**
- * Same as get() but expects an array of keys instead of path
- * @throws TypeError if the scope variable is not an object or the keys don't exist
+ * Same as get() but expects an array of keys instead of the path string.
+ * @throws ReferenceError if the scope does not contain the keys in the pathArr
+ * parameter and the `allowInvalidPaths` is set to false
  * @param scope - an object to resolve value from
  * @param pathArr - an array of keys that specify the path to the lookup
- * @returns - the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
+ * @param allowInvalidPaths - should we throw if we cannot resolve the path in
+ * the provided scope? (defaults to true)
+ * @returns - the value or undefined. If path or scope are undefined or scope is
+ * null the result is always undefined.
  */
 export function getKeys(
   scope: Scope,
@@ -150,7 +154,9 @@ export function getKeys(
     } else if (allowInvalidPaths) {
       return
     } else {
-      throw new ReferenceError(key + ' is not defined in the scope. Parsed path: ' + pathArr)
+      throw new ReferenceError(
+        key + ' is not defined in the scope. Parsed path: ' + pathArr
+      )
     }
   }
   return currentScope
