@@ -126,20 +126,6 @@ const testCases: ITestCase[] = [
     }
   },
   {
-    description: 'empty string as value name',
-    template: '{{}}',
-    scope: {
-      '': 'hello'
-    }
-  },
-  {
-    description: 'a space as variable name',
-    template: '{{ }}',
-    scope: {
-      ' ': '-'
-    }
-  },
-  {
     description: 'a dash as variable name',
     template: '{{-}}',
     scope: {
@@ -244,13 +230,6 @@ const testCases: ITestCase[] = [
     }
   },
   {
-    description: 'empty spaces variable name',
-    template: '{{    }}',
-    scope: {
-      _: 'test'
-    }
-  },
-  {
     description: 'empty spaces before variable name',
     template: '{{   a}}',
     scope: {
@@ -292,15 +271,6 @@ const testCases: ITestCase[] = [
       foo: {
         bar: 'baz'
       }
-    }
-  },
-  {
-    description: 'a variable inside another variable',
-    template: '{{a{{b}}c}}',
-    scope: {
-      a: 'a',
-      b: 'b',
-      c: 'c'
     }
   },
   {

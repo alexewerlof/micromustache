@@ -32,6 +32,7 @@ If variable interpolation is all you need, *micromustache* is a drop-in replacem
 -----< I want null to be null just as JS. Maybe add an option to specially treat this if the user wants
 -----also the stringify should become faster
 
+* The core philosophy is to emit a meaningful error rather than silently proceeding with the wrong assumption
 * The errors are more aligned with JavaScript than Mustache
 * Works on string templates (and it actually improves its speed)
 * [Fully compatible](test/mustache-compatiblity.spec.js) with MustacheJS for **interpolation**
@@ -44,6 +45,28 @@ If variable interpolation is all you need, *micromustache* is a drop-in replacem
 * Custom delimiters: instead of `{{ ... }}` use `{ ... }`, `( ... )`, `<% ... %>` or anything you desire*
 * Arrays as values: `{{ arrName[1] }}` (mustachejs does not support this)
 * TypeScript types included and updated with every version of the library
+
+[Try it in your browser!](https://npm.runkit.com/micromustache)
+
+# Differences with Mustache
+
+Mustache allows variables with empty names. All of these are valid in Mustache:
+
+* `{{}}`
+* `{{ }}`
+* `{{   }}`
+
+Mustache accepts some other invalid parameters.
+For example:
+
+```javascript
+mustache.render('{{a{{b}}', {
+  a: 'a',
+  'a{{b': 'wat?',
+  b: 'b',
+  c: 'c'
+}) // gives "wat?"
+```
 
 ## Tradeoffs
 
