@@ -2,22 +2,25 @@ import { Renderer, IRendererOptions } from './renderer'
 import { assertType, isString, isObject } from './util'
 import { tokenize } from './tokenize'
 
+/** The options that customize the compilation and parsing of the template */
 export interface ICompileOptions extends IRendererOptions {
+  /** The opening symbol. Defaults to '{{' (`tag` in Mustache terminology) */
   openSym?: string
+  /** The closing symbol. Defaults to '}}' (`tag` in Mustache terminology) */
   closeSym?: string
 }
 
 /**
- * This function makes repeated calls more optimized by compiling once and
- * returning a class that can do the rendering for you.
+ * Compiles a template and returns an object with functions that can render it.
+ * Compilation makes repeated render calls more optimized by parsing the
+ * template only once and reusing it.
+ * It also makes the rendering faster (3-5x faster).
+ * All caching is in the resulting object, so if you free up all the references
+ * to that object, the memory will be garbage collected.
  *
  * @param template - same as the template parameter to .render()
- * @param resolver - an optional function that receives a token and
- * synchronously returns a value
- * @param renderNullAndUndefined - should we render null as 'null' and undefined
- * as 'undefined'
- * @returns - an object with render() and renderFnAsync() functions that accepts
- * a scope object and return the final string
+ * @param options - some options for customizing the compilation
+ * @returns - an object with some methods that can do the actual rendering
  */
 export function compile(
   template: string,

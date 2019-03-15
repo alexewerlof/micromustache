@@ -14,6 +14,9 @@ want)
 an object. Each part of the path array is called a `key`.
 * *Stringification*: the process of putting everything together and creating the
 final string result
+* *open/close symbols* the strings that are used for marking variable names
+By default they are '{{' and '}}' respectively.
+(In Mustache, they are called *tags* and are set in an array).
 
 The flow is like this:
 

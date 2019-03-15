@@ -3,29 +3,58 @@ import { isFunction, assertType, CachedFn, isObject } from './util'
 import { ITokens } from './tokenize'
 
 export interface IRendererOptions {
+  /**
+   * When set to a truthy value, rendering literally put a 'null' or
+   * 'undefined' for values that are `null` or `undefined`.
+   * By default we swallow them and use an empty string to be compatible with
+   * Mustache/Handlebars.
+   */
   renderNullAndUndefined?: boolean
+  /**
+   * When set to a truthy value, we allow invalid paths instead of throwing an
+   * error
+   */
   allowInvalidPaths?: boolean
   /** when set to a truthy value, validates the variable names */
   validatePaths?: boolean
 }
 
 /**
- * The callback for resolving a value
+ * The callback for resolving a value (synchronous)
  * @param scope - the scope object that was passed to .render() function
  * @param path - variable name before being parsed.
- * @example {a.b.c} ->  'a.b.c'
- * @example {  x  } -> 'x'
- * @returns the value to be interpolated.
- * If the function returns undefined, the value resolution algorithm will go ahead with the default
- * behaviour (resolving the variable name from the provided object).
+ * @example - a var name that is {{a.b.c}} gives  'a.b.c'
+ * @returns - the value to be interpolated.
  */
 export type ResolveFn = (varName: string, scope?: Scope) => any
+
+/**
+ * Same as `ResolveFn` but for asynchronous functions
+ */
 export type ResolveFnAsync = (varName: string, scope?: Scope) => Promise<any>
 
+/**
+ * This class does the heavy lifting of interpolation (putting the actual values
+ * in the template).
+ * This is created by the `.compile()` method and is used under the hood by
+ * `.render()`, `renderFn()` and `renderFnAsync()` functions.
+ */
 export class Renderer {
+  /**
+   * A static cache with a limited size that holds the last calls to the
+   * `toPath()` function
+   */
   private static cachedToPath = new CachedFn(toPath)
+  /**
+   * Another cache that holds the parsed values for `toPath()` one per varName
+   */
   private toPathCache: Paths[]
 
+  /**
+   * Creates a new Renderer instance. This is called internally by the compiler.
+   * @param tokens - the result of the `.tokenize()` function
+   * @param options - some options for customizing the rendering process
+   */
   constructor(
     private tokens: ITokens,
     private readonly options: IRendererOptions = {}
@@ -44,6 +73,12 @@ export class Renderer {
     }
   }
 
+  /**
+   * This function is called internally for filling in the `toPathCache` cache.
+   * If the `validatePaths` option for the constructor is set to a truthy value,
+   * this function is called immediately which leads to a validation as well
+   * because it throws an error if it cannot parse variable names.
+   */
   private cacheParsedPaths() {
     const { varNames } = this.tokens
     if (this.toPathCache === undefined) {
@@ -54,6 +89,11 @@ export class Renderer {
     }
   }
 
+  /**
+   * Puts the resolved `values` into the rest of the template (`strings`) and
+   * returns the final result that'll be returned from `render()`, `renderFn()`
+   * and `renderFnAsync()` functions.
+   */
   private stringify(values: any[]): string {
     const { strings } = this.tokens
     let ret = ''
