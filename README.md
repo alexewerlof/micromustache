@@ -68,6 +68,9 @@ mustache.render('{{a{{b}}', {
 }) // gives "wat?"
 ```
 
+Currently we don't support commenting out a variable name but Mustache allows
+this syntax: `{{!noOneCares}}`.
+
 ## Tradeoffs
 
 Micromustache achieves faster speed and smaller size by dropping the following
@@ -378,10 +381,35 @@ For the sake of speed, some edge cases are not addressed.
 **A path cannot include `'['` character**
 
 For example if you have an object like:
+
 ```javascript
 const a = {
   '[': 'open'
 }
 ```
+
 `a['[']` will not give `'open'` but rather complains that you are missing a `]`!
 
+**No comments**
+
+Unlike mustache you cannot comment a variable name.
+
+**No escape sequence**
+
+The templates cannot currently contain `{{` and there's no way to escape it.
+One workaround is to literally pass `'{{'` as a value for a variable.
+
+**No nested variables**
+
+Currently there is no way to use a nested variable name:
+
+```javascript
+const scope = {
+  a: ['Java', 'Python', 'Ruby'],
+  b: 1
+}
+
+micromustache.render(`My favorite language is not {{a[b]}}`)
+```
+
+Will try to access `scope.a.b` (which is undefined) instead of `scope.a[scope.b]`.
