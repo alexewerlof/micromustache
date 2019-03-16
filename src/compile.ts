@@ -2,12 +2,16 @@ import { Renderer, IRendererOptions } from './renderer'
 import { assertType, isString, isObject } from './util'
 import { tokenize } from './tokenize'
 
+export type Tags = [string, string]
+
 /** The options that customize the compilation and parsing of the template */
 export interface ICompileOptions extends IRendererOptions {
-  /** The opening symbol. Defaults to '{{' (`tag` in Mustache terminology) */
-  openSym?: string
-  /** The closing symbol. Defaults to '}}' (`tag` in Mustache terminology) */
-  closeSym?: string
+  /**
+   * The string symbols that mark the opening and closing of a variable name in
+   * the template.
+   * It defaults to `['{{', '}}']`
+   */
+  tags?: Tags
 }
 
 /**
@@ -37,6 +41,8 @@ export function compile(
     options
   )
 
-  const tokens = tokenize(template, options.openSym, options.closeSym)
+  const { tags = ['{{', '}}'] } = options
+
+  const tokens = tokenize(template, ...tags)
   return new Renderer(tokens, options)
 }

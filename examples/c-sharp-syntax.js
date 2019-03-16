@@ -4,8 +4,7 @@
 const { render } = require('../dist/node')
 
 const csDelimiters = {
-  openSym: '{',
-  closeSym: '}'
+  tags: ['{', '}']
 }
 const name = 'Mark'
 const date = new Date()

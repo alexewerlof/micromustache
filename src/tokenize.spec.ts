@@ -3,10 +3,17 @@ import { tokenize } from './tokenize'
 import { expect } from 'chai'
 
 describe('tokenize()', () => {
-  it('returns the string if no interpolation is found', () => {
+  it('returns the string intact if no interpolation is found', () => {
     expect(tokenize('Hello world')).to.deep.equal({
       strings: ['Hello world'],
       varNames: []
+    })
+  })
+
+  it('supports customized tags', () => {
+    expect(tokenize('Hello {name}!', '{', '}')).to.deep.equal({
+      strings: ['Hello ', '!'],
+      varNames: ['name']
     })
   })
 

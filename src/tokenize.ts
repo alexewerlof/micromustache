@@ -6,13 +6,14 @@ export interface ITokens {
 }
 
 /**
- * Parse a string and returns an array of variable names and non-processing strings.
- * functions ready for the compiler to go through them.
- * This function could use regular expressions but using simpler searches is faster.
+ * Parse a template and returns the tokens in an object.
+ *
+ * @throws TypeError if there's an issue with its inputs
+ * @throws SyntaxError if there's an issue with the template
  *
  * @param template - the template
- * @param options - you can provide a custom open and close symbol.
- * Note that for the sake of explicity if you pass an option param, it should be an object containing both open and close symbols.
+ * @param openSym - the string that marks the start of a variable name
+ * @param closeSym - the string that marks the start of a variable name
  * @returns - the resulting tokens as an object that has strings and variable names
  */
 export function tokenize(
