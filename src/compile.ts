@@ -4,7 +4,10 @@ import { tokenize } from './tokenize'
 
 export type Tags = [string, string]
 
-/** The options that customize the compilation and parsing of the template */
+/**
+ * The options that customize the tokenization of the template and the renderer
+ * object that is returned
+ */
 export interface ICompileOptions extends IRendererOptions {
   /**
    * The string symbols that mark the opening and closing of a variable name in
