@@ -1,4 +1,4 @@
-import { isValidScope, isString, assert } from './util'
+import { isValidScope, isString } from './util'
 
 export type Paths = string[]
 
@@ -27,12 +27,9 @@ export function unquote(value: string): string {
   const firstChar = key.charAt(0)
   const lastChar = key.substr(-1)
   if (isQuote(firstChar) || isQuote(lastChar)) {
-    assert(
-      key.length >= 2 && firstChar === lastChar,
-      SyntaxError,
-      'Invalid or unexpected token',
-      key
-    )
+    if (key.length < 2 || firstChar !== lastChar) {
+      throw new SyntaxError('Invalid or unexpected token ' + key)
+    }
     return key.substring(1, key.length - 1)
   }
 
@@ -50,19 +47,20 @@ function pushString(str: string, strArr: string[]) {
     const splitPath = str.split('.')
     for (const p of splitPath) {
       const sTrimmed = p.trim()
-      assert(
-        sTrimmed !== '',
-        SyntaxError,
-        'Unexpected token. Encountered empty path when parsing',
-        str
-      )
+      if (sTrimmed === '') {
+        throw new SyntaxError(
+          'Unexpected token. Encountered empty path when parsing ' + str
+        )
+      }
       strArr.push(sTrimmed)
     }
   }
 }
 
 export function toPath(path: string): Paths {
-  assert(isString(path), TypeError, 'Path must be a string but. Got', path)
+  if (!isString(path)) {
+    throw new TypeError('Path must be a string but. Got ' + path)
+  }
 
   path = normalizePath(path)
   if (path === '') {
@@ -87,24 +85,23 @@ export function toPath(path: string): Paths {
     }
 
     closeBracketIndex = path.indexOf(']', openBracketIndex)
-    assert(
-      closeBracketIndex !== -1,
-      SyntaxError,
-      'Missing',
-      ']',
-      'in path',
-      path
-    )
+    if (closeBracketIndex === -1) {
+      throw new SyntaxError('Missing ] in path ' + path)
+    }
 
     varName = path.substring(openBracketIndex + 1, closeBracketIndex).trim()
 
-    assert(!varName.includes('['), SyntaxError, 'Missing', ']', 'in path', path)
+    if (varName.includes('[')) {
+      throw new SyntaxError('Missing ] in path ' + path)
+    }
 
     closeBracketIndex++
     beforeBracket = path.substring(currentIndex, openBracketIndex)
     pushString(beforeBracket, ret)
 
-    assert(varName.length, SyntaxError, 'Unexpected token', ']')
+    if (!varName.length) {
+      throw new SyntaxError('Unexpected token ]')
+    }
     ret.push(unquote(varName))
   }
 
@@ -131,13 +128,11 @@ export type Scope = {} | Function
  * @returns - the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
  */
 export function get(scope: Scope, path: string): any {
-  assert(
-    isValidScope(scope),
-    TypeError,
-    'The scope should be an object or function but is',
-    typeof scope,
-    scope
-  )
+  if (!isValidScope(scope)) {
+    throw new TypeError(
+      'The scope should be an object or function but is ' + typeof scope + scope
+    )
+  }
   const pathArr = toPath(path)
   return getKeys(scope, pathArr)
 }

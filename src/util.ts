@@ -34,26 +34,6 @@ export function isString(val: any, nonEmpty?: boolean): val is string {
   return false
 }
 
-/**
- * Creates an instance of an error object ready to be thrown.
- * It builds the error message by joining the provided messageParts.
- * @param errorConstructor - the function that creates a new error object
- * @param messageParts - an array of messages that build up the error message
- */
-export function assert(
-  expression: any,
-  errorConstructor:
-    | ErrorConstructor
-    | SyntaxErrorConstructor
-    | TypeErrorConstructor
-    | ReferenceErrorConstructor,
-  ...messageParts: any[]
-): void {
-  if (!expression) {
-    throw new errorConstructor(messageParts.join(' '))
-  }
-}
-
 export class CachedFn<T> {
   private cache: {
     [key: string]: T

@@ -1,5 +1,5 @@
 import { Scope, getKeys, toPath, Paths } from './get'
-import { CachedFn, isObject, assert } from './util'
+import { CachedFn, isObject } from './util'
 import { ITokens } from './tokenize'
 
 export interface IRendererOptions {
@@ -59,15 +59,14 @@ export class Renderer {
     private tokens: ITokens,
     private readonly options: IRendererOptions = {}
   ) {
-    assert(
-      isObject(tokens),
-      TypeError,
-      Array.isArray(tokens.strings) &&
-        Array.isArray(tokens.varNames) &&
-        tokens.strings.length === tokens.varNames.length + 1,
-      'Invalid tokens object',
-      tokens
-    )
+    if (
+      !isObject(tokens) ||
+      !Array.isArray(tokens.strings) ||
+      !Array.isArray(tokens.varNames) ||
+      tokens.strings.length !== tokens.varNames.length + 1
+    ) {
+      throw new TypeError('Invalid tokens object ' + tokens)
+    }
     if (options.validatePaths) {
       // trying to initialize toPathCache parses them which is also validation
       this.cacheParsedPaths()
@@ -128,12 +127,9 @@ export class Renderer {
   }
 
   private resolveVarNames(resolveFn: ResolveFn, scope: Scope = {}): any[] {
-    assert(
-      typeof resolveFn === 'function',
-      TypeError,
-      'Expected a resolver function but got',
-      resolveFn
-    )
+    if (typeof resolveFn !== 'function') {
+      throw new TypeError('Expected a resolver function but got ' + resolveFn)
+    }
 
     const { varNames } = this.tokens
     const { length } = varNames

@@ -1,5 +1,5 @@
 import { Renderer, IRendererOptions } from './renderer'
-import { isString, isObject, assert } from './util'
+import { isString, isObject } from './util'
 import { tokenize } from './tokenize'
 
 export type Tags = [string, string]
@@ -33,18 +33,16 @@ export function compile(
   template: string,
   options: ICompileOptions = {}
 ): Renderer {
-  assert(
-    isString(template),
-    TypeError,
-    'The template parameter must be a string. Got',
-    template
-  )
-  assert(
-    isObject(options),
-    TypeError,
-    'The compiler options should be an object. Got',
-    options
-  )
+  if (!isString(template)) {
+    throw new TypeError(
+      'The template parameter must be a string. Got ' + template
+    )
+  }
+  if (!isObject(options)) {
+    throw new TypeError(
+      'The compiler options should be an object. Got ' + options
+    )
+  }
 
   const { tags = ['{{', '}}'] } = options
 

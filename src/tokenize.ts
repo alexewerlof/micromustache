@@ -1,4 +1,4 @@
-import { isString, assert } from './util'
+import { isString } from './util'
 
 export interface ITokens {
   strings: string[]
@@ -21,18 +21,16 @@ export function tokenize(
   openSym = '{{',
   closeSym = '}}'
 ): ITokens {
-  assert(
-    isString(openSym, true),
-    TypeError,
-    'The openSym parameter must be a string. Got',
-    openSym
-  )
-  assert(
-    isString(closeSym, true),
-    TypeError,
-    'The closeSym parameter must be a string. Got',
-    closeSym
-  )
+  if (!isString(openSym, true)) {
+    throw new TypeError(
+      'The openSym parameter must be a string. Got ' + openSym
+    )
+  }
+  if (!isString(closeSym, true)) {
+    throw new TypeError(
+      'The closeSym parameter must be a string. Got ' + closeSym
+    )
+  }
 
   const openSymLen = openSym.length
   const closeSymLen = closeSym.length
@@ -55,27 +53,23 @@ export function tokenize(
     }
 
     closeIndex = template.indexOf(closeSym, openIndex)
-    assert(
-      closeIndex !== -1,
-      SyntaxError,
-      'Missing',
-      closeSym,
-      'in template expression',
-      template
-    )
+    if (closeIndex === -1) {
+      throw new SyntaxError(
+        'Missing ' + closeSym + ' in the template expression ' + template
+      )
+    }
 
     varName = template.substring(openIndex + openSymLen, closeIndex).trim()
 
-    assert(
-      !varName.includes(openSym),
-      SyntaxError,
-      'Missing',
-      closeSym,
-      'in template expression',
-      template
-    )
+    if (varName.includes(openSym)) {
+      throw new SyntaxError(
+        'Missing ' + closeSym + ' in the template expression ' + varName
+      )
+    }
 
-    assert(varName.length, SyntaxError, 'Unexpected token', closeSym)
+    if (!varName.length) {
+      throw new SyntaxError('Unexpected token ' + closeSym)
+    }
     varNames.push(varName)
 
     closeIndex += closeSymLen

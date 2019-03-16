@@ -59,7 +59,7 @@ describe('tokenize()', () => {
   it('throws a syntax error if the open symbol is not closed', () => {
     expect(() => tokenize('Hi {{')).to.throw(
       SyntaxError,
-      'Missing }} in template expression'
+      'Missing }} in the template expression Hi {{'
     )
   })
 
