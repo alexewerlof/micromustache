@@ -1,5 +1,5 @@
 import { Scope, getKeys, toPath, Paths } from './get'
-import { isFunction, assertType, CachedFn, isObject } from './util'
+import { CachedFn, isObject, assert } from './util'
 import { ITokens } from './tokenize'
 
 export interface IRendererOptions {
@@ -59,9 +59,10 @@ export class Renderer {
     private tokens: ITokens,
     private readonly options: IRendererOptions = {}
   ) {
-    assertType(
-      isObject(tokens) &&
-        Array.isArray(tokens.strings) &&
+    assert(
+      isObject(tokens),
+      TypeError,
+      Array.isArray(tokens.strings) &&
         Array.isArray(tokens.varNames) &&
         tokens.strings.length === tokens.varNames.length + 1,
       'Invalid tokens object',
@@ -127,8 +128,9 @@ export class Renderer {
   }
 
   private resolveVarNames(resolveFn: ResolveFn, scope: Scope = {}): any[] {
-    assertType(
-      isFunction(resolveFn),
+    assert(
+      typeof resolveFn === 'function',
+      TypeError,
       'Expected a resolver function but got',
       resolveFn
     )

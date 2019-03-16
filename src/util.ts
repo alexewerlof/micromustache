@@ -1,62 +1,56 @@
 import { Scope } from './get'
 
+/**
+ * Checks if the provided value is an object but is not null
+ * @param val - the value that is supposed to be tested
+ */
 export function isObject(val: any): val is object {
   return val && typeof val === 'object'
 }
 
+/**
+ * Checks if the provided value can be used as a scope, that is a non-null
+ * object or a function.
+ * @param val - the value that is supposed to be tested
+ */
 export function isValidScope(val: any): val is Scope {
-  if (!val) {
-    return false
+  if (val) {
+    // At this point `null` is filtered out
+    const type = typeof val
+    return type === 'object' || type === 'function'
   }
-  const type = typeof val
-  return type === 'object' || type === 'function'
+  return false
 }
 
-export function isString(val: any): val is string {
-  return typeof val === 'string'
+/**
+ * Checks if a value is a string and optionally if it is non empty
+ * @param val - the value that is supposed to be tested
+ * @param nonEmpty - also check if the string is not empty
+ */
+export function isString(val: any, nonEmpty?: boolean): val is string {
+  if (typeof val === 'string') {
+    return nonEmpty ? val.length > 0 : true
+  }
+  return false
 }
 
-// tslint:disable-next-line:ban-types
-export function isFunction(val: any): val is Function {
-  return typeof val === 'function'
-}
-
-export function isDefined(val: any) {
-  return val !== undefined
-}
-
-export function createError(
+/**
+ * Creates an instance of an error object ready to be thrown.
+ * It builds the error message by joining the provided messageParts.
+ * @param errorConstructor - the function that creates a new error object
+ * @param messageParts - an array of messages that build up the error message
+ */
+export function assert(
+  expression: any,
   errorConstructor:
     | ErrorConstructor
     | SyntaxErrorConstructor
     | TypeErrorConstructor
     | ReferenceErrorConstructor,
-  messageParts: any[]
-) {
-  return new errorConstructor(messageParts.join(' '))
-}
-
-export function assertTruthy(expression: any, ...messageParts: any[]) {
+  ...messageParts: any[]
+): void {
   if (!expression) {
-    throw createError(Error, messageParts)
-  }
-}
-
-export function assertSyntax(expression: any, ...messageParts: any[]) {
-  if (!expression) {
-    throw createError(SyntaxError, messageParts)
-  }
-}
-
-export function assertType(expression: any, ...messageParts: any[]) {
-  if (!expression) {
-    throw createError(TypeError, messageParts)
-  }
-}
-
-export function assertReference(expression: any, ...messageParts: any[]) {
-  if (!expression) {
-    throw createError(ReferenceError, messageParts)
+    throw new errorConstructor(messageParts.join(' '))
   }
 }
 

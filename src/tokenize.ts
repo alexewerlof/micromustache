@@ -1,4 +1,4 @@
-import { isString, assertSyntax, assertType } from './util'
+import { isString, assert } from './util'
 
 export interface ITokens {
   strings: string[]
@@ -21,13 +21,15 @@ export function tokenize(
   openSym = '{{',
   closeSym = '}}'
 ): ITokens {
-  assertType(
-    isString(openSym),
+  assert(
+    isString(openSym, true),
+    TypeError,
     'The openSym parameter must be a string. Got',
     openSym
   )
-  assertType(
-    isString(closeSym),
+  assert(
+    isString(closeSym, true),
+    TypeError,
     'The closeSym parameter must be a string. Got',
     closeSym
   )
@@ -53,8 +55,9 @@ export function tokenize(
     }
 
     closeIndex = template.indexOf(closeSym, openIndex)
-    assertSyntax(
+    assert(
       closeIndex !== -1,
+      SyntaxError,
       'Missing',
       closeSym,
       'in template expression',
@@ -63,15 +66,16 @@ export function tokenize(
 
     varName = template.substring(openIndex + openSymLen, closeIndex).trim()
 
-    assertSyntax(
+    assert(
       !varName.includes(openSym),
+      SyntaxError,
       'Missing',
       closeSym,
       'in template expression',
       template
     )
 
-    assertSyntax(varName.length, 'Unexpected token', closeSym)
+    assert(varName.length, SyntaxError, 'Unexpected token', closeSym)
     varNames.push(varName)
 
     closeIndex += closeSymLen

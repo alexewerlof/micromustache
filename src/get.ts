@@ -1,4 +1,4 @@
-import { isValidScope, isString, assertSyntax, assertType } from './util'
+import { isValidScope, isString, assert } from './util'
 
 export type Paths = string[]
 
@@ -27,8 +27,9 @@ export function unquote(value: string): string {
   const firstChar = key.charAt(0)
   const lastChar = key.substr(-1)
   if (isQuote(firstChar) || isQuote(lastChar)) {
-    assertSyntax(
+    assert(
       key.length >= 2 && firstChar === lastChar,
+      SyntaxError,
       'Invalid or unexpected token',
       key
     )
@@ -49,8 +50,9 @@ function pushString(str: string, strArr: string[]) {
     const splitPath = str.split('.')
     for (const p of splitPath) {
       const sTrimmed = p.trim()
-      assertSyntax(
+      assert(
         sTrimmed !== '',
+        SyntaxError,
         'Unexpected token. Encountered empty path when parsing',
         str
       )
@@ -60,7 +62,7 @@ function pushString(str: string, strArr: string[]) {
 }
 
 export function toPath(path: string): Paths {
-  assertType(isString(path), 'Path must be a string but. Got', path)
+  assert(isString(path), TypeError, 'Path must be a string but. Got', path)
 
   path = normalizePath(path)
   if (path === '') {
@@ -85,17 +87,24 @@ export function toPath(path: string): Paths {
     }
 
     closeBracketIndex = path.indexOf(']', openBracketIndex)
-    assertSyntax(closeBracketIndex !== -1, 'Missing', ']', 'in path', path)
+    assert(
+      closeBracketIndex !== -1,
+      SyntaxError,
+      'Missing',
+      ']',
+      'in path',
+      path
+    )
 
     varName = path.substring(openBracketIndex + 1, closeBracketIndex).trim()
 
-    assertSyntax(!varName.includes('['), 'Missing', ']', 'in path', path)
+    assert(!varName.includes('['), SyntaxError, 'Missing', ']', 'in path', path)
 
     closeBracketIndex++
     beforeBracket = path.substring(currentIndex, openBracketIndex)
     pushString(beforeBracket, ret)
 
-    assertSyntax(varName.length, 'Unexpected token', ']')
+    assert(varName.length, SyntaxError, 'Unexpected token', ']')
     ret.push(unquote(varName))
   }
 
@@ -122,8 +131,9 @@ export type Scope = {} | Function
  * @returns - the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
  */
 export function get(scope: Scope, path: string): any {
-  assertType(
+  assert(
     isValidScope(scope),
+    TypeError,
     'The scope should be an object or function but is',
     typeof scope,
     scope

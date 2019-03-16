@@ -1,5 +1,5 @@
 import { Renderer, IRendererOptions } from './renderer'
-import { assertType, isString, isObject } from './util'
+import { isString, isObject, assert } from './util'
 import { tokenize } from './tokenize'
 
 export type Tags = [string, string]
@@ -33,13 +33,15 @@ export function compile(
   template: string,
   options: ICompileOptions = {}
 ): Renderer {
-  assertType(
+  assert(
     isString(template),
+    TypeError,
     'The template parameter must be a string. Got',
     template
   )
-  assertType(
+  assert(
     isObject(options),
+    TypeError,
     'The compiler options should be an object. Got',
     options
   )
