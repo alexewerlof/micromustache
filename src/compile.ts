@@ -11,12 +11,12 @@ export interface ICompileOptions extends IRendererOptions {
 }
 
 /**
- * Compiles a template and returns an object with functions that can render it.
+ * Compiles a template and returns an object with functions that render it.
  * Compilation makes repeated render calls more optimized by parsing the
- * template only once and reusing it.
- * It also makes the rendering faster (3-5x faster).
- * All caching is in the resulting object, so if you free up all the references
- * to that object, the memory will be garbage collected.
+ * template only once and reusing the results.
+ * As a result, rendering gets 3-5x faster.
+ * Caching is stored in the resulting object, so if you free up all the
+ * references to that object, the caches will be garbage collected.
  *
  * @param template - same as the template parameter to .render()
  * @param options - some options for customizing the compilation
