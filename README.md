@@ -114,7 +114,7 @@ If you can live with this, read on...
 The return is always the same type as the template itself (if template is not a string, it'll be
 returned untouched and no processing is done). All `{{varName}}` strings inside the template will
 be resolved with their corresponding value from the `scope` object.
-If a particular path doesn't exist in the `scope` object, it'll be replaced with empty string (`''`).
+If a particular varName doesn't exist in the `scope` object, it'll be replaced with empty string (`''`).
 Objects will be `JSON.stringified()` but if there was an error doing so (for example when there's
 a loop in the object, they'll be simply replaced with `{...}`.
 
@@ -378,7 +378,7 @@ A. Make an issue first. The goal of MicroMustache is to be super tiny and while 
 
 For the sake of speed, some edge cases are not addressed.
 
-**A path cannot include `'['` character**
+**A varName cannot include `'['` character**
 
 For example if you have an object like:
 

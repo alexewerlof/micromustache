@@ -12,8 +12,8 @@ variable names
 want)
 * *VarName*: is a string that is used in the template as a reference to an
 object like `{{a["b"].c}}`
-* *PropNames*: is an array of keys that can be used to access a nested property from
-an object. Each part of the path array is called a `key`.
+* *PropNames*: is an array of property names that can be used to access a nested
+property from an object.
 * *Stringification*: the process of putting everything together and creating the
 final string result
 * *open/close symbols* the strings that are used for marking variable names

@@ -17,7 +17,7 @@ function isQuote(str: string): boolean {
 
 /**
  * Trim and remove the starting dot if it exists
- * @param propName - the raw path like `".a"` or `" . a"`
+ * @param propName - the raw property name like `".a"` or `" . a"`
  * @return - the input trimmed and without a leading dot
  */
 function normalizePropName(propName: string) {
@@ -31,27 +31,27 @@ function normalizePropName(propName: string) {
 /**
  * Removes the quotes from a string and returns it.
  * @throws if the quotation symbols don't match or one is missing
- * @param str - an string with quotations
+ * @param propName - an string with quotations
  * @returns - the input with its quotes removed
  */
-export function unquote(str: string): string {
-  const key = str.trim()
+function unquote(propName: string): string {
+  propName.trim()
   // in our algorithms key is always a string and never only a string of spaces
-  const firstChar = key.charAt(0)
-  const lastChar = key.substr(-1)
+  const firstChar = propName.charAt(0)
+  const lastChar = propName.substr(-1)
   if (isQuote(firstChar) || isQuote(lastChar)) {
-    if (key.length < 2 || firstChar !== lastChar) {
-      throw new SyntaxError('Invalid or unexpected token ' + key)
+    if (propName.length < 2 || firstChar !== lastChar) {
+      throw new SyntaxError('Invalid or unexpected token ' + propName)
     }
-    return key.substring(1, key.length - 1)
+    return propName.substring(1, propName.length - 1)
   }
 
   // Normalize leading plus from numerical indices
   if (firstChar === '+') {
-    return key.substr(1)
+    return propName.substr(1)
   }
 
-  return key
+  return propName
 }
 
 function pushPropName(propNames: string[], propName: string) {
@@ -82,7 +82,9 @@ function pushPropName(propNames: string[], propName: string) {
  */
 export function toPath(varName: string): PropNames {
   if (typeof varName !== 'string') {
-    throw new TypeError('Path must be a string but. Got ' + varName)
+    throw new TypeError(
+      'The varName parameter must be a string but. Got ' + varName
+    )
   }
 
   varName = normalizePropName(varName)
@@ -106,13 +108,13 @@ export function toPath(varName: string): PropNames {
 
     closeBracketIndex = varName.indexOf(']', openBracketIndex)
     if (closeBracketIndex === -1) {
-      throw new SyntaxError('Missing ] in path ' + varName)
+      throw new SyntaxError('Missing ] in varName ' + varName)
     }
 
     propName = varName.substring(openBracketIndex + 1, closeBracketIndex).trim()
 
     if (propName.includes('[')) {
-      throw new SyntaxError('Missing ] in path ' + varName)
+      throw new SyntaxError('Missing ] in varName ' + varName)
     }
 
     closeBracketIndex++
@@ -134,37 +136,36 @@ export function toPath(varName: string): PropNames {
 // TODO: refactor so we can call toPath.cached(varName) instead
 export class CachedToPath {
   private toPathCache: {
-    [path: string]: PropNames
+    [varName: string]: PropNames
   }
 
-  private cachedPaths: string[]
-  private cachedPathsIndex: number
+  private cachedVarNames: string[]
+  private oldestIndex: number
 
   constructor(private size: number) {
     this.clear()
   }
 
   public clear() {
-    this.cachedPathsIndex = 0
+    this.oldestIndex = 0
     this.toPathCache = {}
-    this.cachedPaths = new Array(this.size)
+    this.cachedVarNames = new Array(this.size)
   }
 
   /**
-   * This is just a faster version of toPath()
-   * @param varName - the path string
+   * This is just a faster version of `toPath()`
    */
   public toPath(varName: string): PropNames {
     let result = this.toPathCache[varName]
     if (!result) {
       result = this.toPathCache[varName] = toPath(varName)
-      const keyToDelete = this.cachedPaths[this.cachedPathsIndex]
+      const keyToDelete = this.cachedVarNames[this.oldestIndex]
       if (keyToDelete !== undefined) {
         delete this.toPathCache[keyToDelete]
       }
-      this.cachedPaths[this.cachedPathsIndex] = varName
-      this.cachedPathsIndex++
-      this.cachedPathsIndex %= this.size
+      this.cachedVarNames[this.oldestIndex] = varName
+      this.oldestIndex++
+      this.oldestIndex %= this.size
     }
     return result
   }
