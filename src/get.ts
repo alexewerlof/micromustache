@@ -1,4 +1,4 @@
-import { cached, Paths } from './topath'
+import { cached, PropNames } from './topath'
 
 // tslint:disable-next-line ban-types
 export type Scope = {} | Function
@@ -42,7 +42,7 @@ function isValidScope(val: any): val is Scope {
  */
 export function get(
   scope: Scope,
-  path: Paths | string,
+  path: PropNames | string,
   allowInvalidPaths?: boolean
 ): any {
   const pathArr = Array.isArray(path) ? path : cached.toPath(path)

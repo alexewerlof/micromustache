@@ -1,4 +1,4 @@
-export type Paths = string[]
+export type PropNames = string[]
 
 /**
  * The number of different varNames that will be cached.
@@ -79,7 +79,7 @@ function pushString(str: string, strArr: string[]) {
  * value.
  * For example `['a', 'b', 'c']`
  */
-export function toPath(varName: string): Paths {
+export function toPath(varName: string): PropNames {
   if (typeof varName !== 'string') {
     throw new TypeError('Path must be a string but. Got ' + varName)
   }
@@ -91,7 +91,7 @@ export function toPath(varName: string): Paths {
   let beforeBracket: string
   let propName: string
 
-  const ret: Paths = []
+  const ret: PropNames = []
 
   for (
     let currentIndex = 0;
@@ -133,7 +133,7 @@ export function toPath(varName: string): Paths {
 // TODO: refactor so we can call toPath.cached(varName) instead
 export class CachedToPath {
   private toPathCache: {
-    [path: string]: Paths
+    [path: string]: PropNames
   }
 
   private cachedPaths: string[]
@@ -151,17 +151,17 @@ export class CachedToPath {
 
   /**
    * This is just a faster version of toPath()
-   * @param path - the path string
+   * @param varName - the path string
    */
-  public toPath(path: string): Paths {
-    let result = this.toPathCache[path]
+  public toPath(varName: string): PropNames {
+    let result = this.toPathCache[varName]
     if (!result) {
-      result = this.toPathCache[path] = toPath(path)
+      result = this.toPathCache[varName] = toPath(varName)
       const keyToDelete = this.cachedPaths[this.cachedPathsIndex]
       if (keyToDelete !== undefined) {
         delete this.toPathCache[keyToDelete]
       }
-      this.cachedPaths[this.cachedPathsIndex] = path
+      this.cachedPaths[this.cachedPathsIndex] = varName
       this.cachedPathsIndex++
       this.cachedPathsIndex %= this.size
     }

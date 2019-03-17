@@ -1,5 +1,5 @@
 import { Scope, get } from './get'
-import { Paths, cached } from './topath'
+import { PropNames, cached } from './topath'
 import { ITokens } from './tokenize'
 
 /**
@@ -49,7 +49,7 @@ export class Renderer {
   /**
    * Another cache that holds the parsed values for `toPath()` one per varName
    */
-  private toPathCache: Paths[]
+  private toPathCache: PropNames[]
 
   /**
    * Creates a new Renderer instance. This is called internally by the compiler.
