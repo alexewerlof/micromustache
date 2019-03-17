@@ -1,5 +1,14 @@
 export type Paths = string[]
 
+/**
+ * The number of different varNames that will be cached.
+ * If a varName is cached, the actual parsing algorithm will not be called
+ * which significantly improves performance.
+ * However, this cache is size-limited to prevent degrading the user's software
+ * over a period of time.
+ * If the cache is full, we start removing older varNames one at a time.
+ */
+const cacheSize = 100
 const quoteChars = '\'"`'
 
 function isQuote(str: string): boolean {
@@ -8,19 +17,25 @@ function isQuote(str: string): boolean {
 
 /**
  * Trim and remove the starting dot if it exists
- * @param rawPath - the raw path like ".a" or " . a"
+ * @param propName - the raw path like `".a"` or `" . a"`
  * @return - the input trimmed and without a leading dot
  */
-function normalizePath(rawPath: string) {
-  const path = rawPath.trim()
-  if (path.startsWith('.')) {
-    return path.substr(1)
+function normalizePropName(propName: string) {
+  const pName = propName.trim()
+  if (pName.startsWith('.')) {
+    return pName.substr(1).trim()
   }
-  return path
+  return pName
 }
 
-export function unquote(value: string): string {
-  const key = value.trim()
+/**
+ * Removes the quotes from a string and returns it.
+ * @throws if the quotation symbols don't match or one is missing
+ * @param str - an string with quotations
+ * @returns - the input with its quotes removed
+ */
+export function unquote(str: string): string {
+  const key = str.trim()
   // in our algorithms key is always a string and never only a string of spaces
   const firstChar = key.charAt(0)
   const lastChar = key.substr(-1)
@@ -40,7 +55,7 @@ export function unquote(value: string): string {
 }
 
 function pushString(str: string, strArr: string[]) {
-  str = normalizePath(str)
+  str = normalizePropName(str)
   if (str !== '') {
     const splitPath = str.split('.')
     for (const p of splitPath) {
@@ -56,63 +71,66 @@ function pushString(str: string, strArr: string[]) {
 }
 
 /**
- *
- * @param path TODO move it to its own file
+ * Breaks a variable name to an array of strings that can be used to get a
+ * particular value from an object
+ * @param varName - the variable name as it occurs in the template.
+ * For example `a.b.c`
+ * @returns - an array of property names that can be used to get a particular
+ * value.
+ * For example `['a', 'b', 'c']`
  */
-export function toPath(path: string): Paths {
-  if (typeof path !== 'string') {
-    throw new TypeError('Path must be a string but. Got ' + path)
+export function toPath(varName: string): Paths {
+  if (typeof varName !== 'string') {
+    throw new TypeError('Path must be a string but. Got ' + varName)
   }
 
-  path = normalizePath(path)
-  if (path === '') {
-    return []
-  }
+  varName = normalizePropName(varName)
 
   let openBracketIndex: number
   let closeBracketIndex: number = 0
   let beforeBracket: string
-  let varName: string
+  let propName: string
 
   const ret: Paths = []
 
   for (
     let currentIndex = 0;
-    currentIndex < path.length;
+    currentIndex < varName.length;
     currentIndex = closeBracketIndex
   ) {
-    openBracketIndex = path.indexOf('[', currentIndex)
+    openBracketIndex = varName.indexOf('[', currentIndex)
     if (openBracketIndex === -1) {
       break
     }
 
-    closeBracketIndex = path.indexOf(']', openBracketIndex)
+    closeBracketIndex = varName.indexOf(']', openBracketIndex)
     if (closeBracketIndex === -1) {
-      throw new SyntaxError('Missing ] in path ' + path)
+      throw new SyntaxError('Missing ] in path ' + varName)
     }
 
-    varName = path.substring(openBracketIndex + 1, closeBracketIndex).trim()
+    propName = varName.substring(openBracketIndex + 1, closeBracketIndex).trim()
 
-    if (varName.includes('[')) {
-      throw new SyntaxError('Missing ] in path ' + path)
+    if (propName.includes('[')) {
+      throw new SyntaxError('Missing ] in path ' + varName)
     }
 
     closeBracketIndex++
-    beforeBracket = path.substring(currentIndex, openBracketIndex)
+    beforeBracket = varName.substring(currentIndex, openBracketIndex)
     pushString(beforeBracket, ret)
 
-    if (!varName.length) {
+    if (!propName.length) {
       throw new SyntaxError('Unexpected token ]')
     }
-    ret.push(unquote(varName))
+    ret.push(unquote(propName))
   }
 
-  const rest = path.substring(closeBracketIndex)
+  const rest = varName.substring(closeBracketIndex)
   pushString(rest, ret)
 
   return ret
 }
 
+// TODO: refactor so we can call toPath.cached(varName) instead
 export class CachedToPath {
   private toPathCache: {
     [path: string]: Paths
@@ -151,4 +169,4 @@ export class CachedToPath {
   }
 }
 
-export const cached = new CachedToPath(100)
+export const cached = new CachedToPath(cacheSize)
