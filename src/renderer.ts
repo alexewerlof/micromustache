@@ -1,4 +1,4 @@
-import { Scope, Paths, toPathCached, get } from './get'
+import { Scope, Paths, cached, get } from './get'
 import { ITokens } from './tokenize'
 
 export interface IRendererOptions {
@@ -78,7 +78,7 @@ export class Renderer {
     if (this.toPathCache === undefined) {
       this.toPathCache = new Array(varNames.length)
       for (let i = 0; i < varNames.length; i++) {
-        this.toPathCache[i] = toPathCached(varNames[i])
+        this.toPathCache[i] = cached.toPath(varNames[i])
       }
     }
   }

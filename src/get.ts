@@ -111,27 +111,45 @@ export function toPath(path: string): Paths {
   return ret
 }
 
-const toPathCache: {
-  [path: string]: Paths
-} = {}
-
-const cachedPaths: string[] = new Array(100)
-let cachedPathsIndex = 0
-
-export function toPathCached(path: string): Paths {
-  let result = toPathCache[path]
-  if (!result) {
-    result = toPathCache[path] = toPath(path)
-    const keyToDelete = cachedPaths[cachedPathsIndex]
-    if (keyToDelete !== undefined) {
-      delete toPathCache[keyToDelete]
-    }
-    cachedPaths[cachedPathsIndex] = path
-    cachedPathsIndex++
-    cachedPathsIndex %= cachedPaths.length
+export class CachedToPath {
+  private toPathCache: {
+    [path: string]: Paths
   }
-  return result
+
+  private cachedPaths: string[]
+  private cachedPathsIndex: number
+
+  constructor(private size: number) {
+    this.clear()
+  }
+
+  public clear() {
+    this.cachedPathsIndex = 0
+    this.toPathCache = {}
+    this.cachedPaths = new Array(this.size)
+  }
+
+  /**
+   * This is just a faster version of toPath()
+   * @param path - the path string
+   */
+  public toPath(path: string): Paths {
+    let result = this.toPathCache[path]
+    if (!result) {
+      result = this.toPathCache[path] = toPath(path)
+      const keyToDelete = this.cachedPaths[this.cachedPathsIndex]
+      if (keyToDelete !== undefined) {
+        delete this.toPathCache[keyToDelete]
+      }
+      this.cachedPaths[this.cachedPathsIndex] = path
+      this.cachedPathsIndex++
+      this.cachedPathsIndex %= this.size
+    }
+    return result
+  }
 }
+
+export const cached = new CachedToPath(100)
 
 /**
  * Checks if the provided value can be used as a scope, that is a non-null
@@ -175,7 +193,7 @@ export function get(
   path: Paths | string,
   allowInvalidPaths?: boolean
 ): any {
-  const pathArr = Array.isArray(path) ? path : toPathCached(path)
+  const pathArr = Array.isArray(path) ? path : cached.toPath(path)
 
   let currentScope = scope
   for (const key of pathArr) {
