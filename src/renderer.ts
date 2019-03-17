@@ -83,28 +83,6 @@ export class Renderer {
     }
   }
 
-  /**
-   * Puts the resolved `values` into the rest of the template (`strings`) and
-   * returns the final result that'll be returned from `render()`, `renderFn()`
-   * and `renderFnAsync()` functions.
-   */
-  private stringify(values: any[]): string {
-    const { strings } = this.tokens
-    let ret = ''
-    const { length } = values
-    const { renderNullAndUndefined } = this.options
-    for (let i = 0; i < length; i++) {
-      ret += strings[i]
-      const value = values[i]
-      if (renderNullAndUndefined || (value !== null && value !== undefined)) {
-        ret += value
-      }
-    }
-
-    ret += strings[length]
-    return ret
-  }
-
   public render = (scope: Scope = {}): string => {
     const { varNames } = this.tokens
     const { length } = varNames
@@ -117,34 +95,75 @@ export class Renderer {
         this.options.allowInvalidPaths
       )
     }
-    return this.stringify(values)
-  }
-
-  private resolveVarNames(resolveFn: ResolveFn, scope: Scope = {}): any[] {
-    if (typeof resolveFn !== 'function') {
-      throw new TypeError('Expected a resolver function but got ' + resolveFn)
-    }
-
-    const { varNames } = this.tokens
-    const { length } = varNames
-    const values = new Array(length)
-    for (let i = 0; i < length; i++) {
-      values[i] = resolveFn(varNames[i], scope)
-    }
-    return values
+    return stringify(
+      this.tokens.strings,
+      values,
+      this.options.renderNullAndUndefined
+    )
   }
 
   public renderFn = (resolveFn: ResolveFn, scope: Scope = {}): string => {
-    const values = this.resolveVarNames(resolveFn, scope)
-    return this.stringify(values)
+    const values = resolveVarNames(resolveFn, this.tokens.varNames, scope)
+    return stringify(
+      this.tokens.strings,
+      values,
+      this.options.renderNullAndUndefined
+    )
   }
 
   public renderFnAsync = (
     resolveFnAsync: ResolveFnAsync,
     scope: Scope = {}
   ): Promise<string> => {
-    return Promise.all(this.resolveVarNames(resolveFnAsync, scope)).then(
-      values => this.stringify(values)
+    return Promise.all(
+      resolveVarNames(resolveFnAsync, this.tokens.varNames, scope)
+    ).then(values =>
+      stringify(
+        this.tokens.strings,
+        values,
+        this.options.renderNullAndUndefined
+      )
     )
   }
+}
+
+function resolveVarNames(
+  resolveFn: ResolveFn,
+  varNames: string[],
+  scope: Scope = {}
+): any[] {
+  if (typeof resolveFn !== 'function') {
+    throw new TypeError('Expected a resolver function but got ' + resolveFn)
+  }
+
+  const { length } = varNames
+  const values = new Array(length)
+  for (let i = 0; i < length; i++) {
+    values[i] = resolveFn(varNames[i], scope)
+  }
+  return values
+}
+
+/**
+ * Puts the resolved `values` into the rest of the template (`strings`) and
+ * returns the final result that'll be returned from `render()`, `renderFn()`
+ * and `renderFnAsync()` functions.
+ */
+function stringify(
+  strings: string[],
+  values: any[],
+  renderNullAndUndefined?: boolean
+): string {
+  let ret = ''
+  const { length } = values
+  for (let i = 0; i < length; i++) {
+    ret += strings[i]
+    const value = values[i]
+    if (renderNullAndUndefined || (value !== null && value !== undefined)) {
+      ret += value
+    }
+  }
+
+  ret += strings[length]
+  return ret
 }
