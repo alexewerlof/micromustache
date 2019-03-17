@@ -1,17 +1,24 @@
-import { Scope, Paths, cached, get } from './get'
+import { Scope, get } from './get'
+import { Paths, cached } from './topath'
 import { ITokens } from './tokenize'
 
+/**
+ * The options passed to Renderer's constructor
+ */
 export interface IRendererOptions {
   /**
-   * When set to a truthy value, rendering literally put a 'null' or
+   * When set to a truthy value, rendering literally puts a 'null' or
    * 'undefined' for values that are `null` or `undefined`.
-   * By default we swallow them and use an empty string to be compatible with
-   * Mustache/Handlebars.
+   * By default it swallows those values to be compatible with Mustache.
    */
   renderNullAndUndefined?: boolean
   /**
    * When set to a truthy value, we allow invalid paths instead of throwing an
-   * error
+   * error.
+   * In that case the value for the varNames will be assumed an empty string.
+   * By default we throw a ReferenceError to be compatible with how JavaScript
+   * threats such invalid reference.
+   * TODO: refactor to default to Mustache behaviour. Note: check that the new toPath can actually throw
    */
   allowInvalidPaths?: boolean
   /** when set to a truthy value, validates the variable names */
