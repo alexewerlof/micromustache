@@ -54,18 +54,19 @@ export function unquote(str: string): string {
   return key
 }
 
-function pushString(str: string, strArr: string[]) {
-  str = normalizePropName(str)
-  if (str !== '') {
-    const splitPath = str.split('.')
-    for (const p of splitPath) {
-      const sTrimmed = p.trim()
-      if (sTrimmed === '') {
+function pushPropName(propNames: string[], propName: string) {
+  propName = normalizePropName(propName)
+  if (propName !== '') {
+    const propNameParts = propName.split('.')
+    for (const propNamePart of propNameParts) {
+      const trimmedPropName = propNamePart.trim()
+      if (trimmedPropName === '') {
         throw new SyntaxError(
-          'Unexpected token. Encountered empty path when parsing ' + str
+          'Unexpected token. Encountered empty prop name when parsing ' +
+            propName
         )
       }
-      strArr.push(sTrimmed)
+      propNames.push(trimmedPropName)
     }
   }
 }
@@ -91,7 +92,7 @@ export function toPath(varName: string): PropNames {
   let beforeBracket: string
   let propName: string
 
-  const ret: PropNames = []
+  const propNames: PropNames = []
 
   for (
     let currentIndex = 0;
@@ -116,18 +117,18 @@ export function toPath(varName: string): PropNames {
 
     closeBracketIndex++
     beforeBracket = varName.substring(currentIndex, openBracketIndex)
-    pushString(beforeBracket, ret)
+    pushPropName(propNames, beforeBracket)
 
     if (!propName.length) {
       throw new SyntaxError('Unexpected token ]')
     }
-    ret.push(unquote(propName))
+    propNames.push(unquote(propName))
   }
 
   const rest = varName.substring(closeBracketIndex)
-  pushString(rest, ret)
+  pushPropName(propNames, rest)
 
-  return ret
+  return propNames
 }
 
 // TODO: refactor so we can call toPath.cached(varName) instead
