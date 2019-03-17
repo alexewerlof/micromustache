@@ -13,14 +13,13 @@ export interface IRendererOptions {
    */
   renderNullAndUndefined?: boolean
   /**
-   * When set to a truthy value, we allow invalid paths instead of throwing an
-   * error.
+   * When set to a truthy value, we throw a ReferenceError for invalid varNames.
+   * Invalid varNames are the ones that do not exist in the scope.
    * In that case the value for the varNames will be assumed an empty string.
    * By default we throw a ReferenceError to be compatible with how JavaScript
    * threats such invalid reference.
-   * TODO: refactor to default to Mustache behaviour. Note: check that the new toPath can actually throw
    */
-  allowInvalidPaths?: boolean
+  validVarName?: boolean
   /** when set to a truthy value, validates the variable names */
   validateVarNames?: boolean
 }
@@ -76,9 +75,9 @@ export class Renderer {
 
   /**
    * This function is called internally for filling in the `toPathCache` cache.
-   * If the `validateVarNames` option for the constructor is set to a truthy value,
-   * this function is called immediately which leads to a validation as well
-   * because it throws an error if it cannot parse variable names.
+   * If the `validateVarNames` option for the constructor is set to a truthy
+   * value, this function is called immediately which leads to a validation as
+   * well because it throws an error if it cannot parse variable names.
    */
   private cacheParsedPaths() {
     const { varNames } = this.tokens
@@ -96,11 +95,7 @@ export class Renderer {
     this.cacheParsedPaths()
     const values = new Array(length)
     for (let i = 0; i < length; i++) {
-      values[i] = get(
-        scope,
-        this.toPathCache[i],
-        this.options.allowInvalidPaths
-      )
+      values[i] = get(scope, this.toPathCache[i], this.options.validVarName)
     }
     return stringify(
       this.tokens.strings,

@@ -28,22 +28,21 @@ function isValidScope(val: any): val is Scope {
  * called `bar`.
  * Same as get() but expects an array of keys instead of the path string.
  * If it cannot find a value in the specified path, it may return undefined or
- * throw an error depending on the value of the `allowInvalidPaths` param.
+ * throw an error depending on the value of the `validVarName` param.
  * @throws ReferenceError if the scope does not contain the keys in the pathArr
- * parameter and the `allowInvalidPaths` is set to false
+ * parameter and the `validVarName` is set to a truthy value
  * @throw SyntaxError if the path itself cannot be parsed
  * @param scope - an object to resolve value from
  * @param path - the variable path to lookup or an array of keys that specify
  * the path to the lookup
- * @param allowInvalidPaths - should we throw if we cannot resolve the path in
- * the provided scope? (defaults to true)
+ * @param validVarName - claiming that the varName is exists in the scope
  * @returns - the value or undefined. If path or scope are undefined or scope is
  * null the result is always undefined.
  */
 export function get(
   scope: Scope,
   path: PropNames | string,
-  allowInvalidPaths?: boolean
+  validVarName?: boolean
 ): any {
   const pathArr = Array.isArray(path) ? path : cached.toPath(path)
 
@@ -52,9 +51,7 @@ export function get(
     if (isValidScope(currentScope)) {
       // @ts-ignore
       currentScope = currentScope[key]
-    } else if (allowInvalidPaths) {
-      return
-    } else {
+    } else if (validVarName) {
       throw new ReferenceError(
         key +
           ' is not defined in the scope (' +
@@ -62,6 +59,8 @@ export function get(
           '). Parsed path: ' +
           pathArr
       )
+    } else {
+      return
     }
   }
   return currentScope

@@ -35,7 +35,7 @@ describe('get()', () => {
     const obj = {
       foo: 'bar'
     }
-    expect(() => get(obj, 'hello.kitty')).to.throw()
+    expect(() => get(obj, 'hello.kitty', true)).to.throw()
   })
 
   it('can access array elements', () => {

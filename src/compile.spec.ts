@@ -321,7 +321,7 @@ describe('compile()', () => {
 
     it('if one of the nested keys do not exist, it throws', () => {
       expect(() =>
-        compile('{{a.b.c.d.e.f}}').render({
+        compile('{{a.b.c.d.e.f}}', { validVarName: true }).render({
           a: {
             b: {
               c: {
