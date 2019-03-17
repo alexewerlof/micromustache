@@ -16,6 +16,8 @@ export interface ICompileOptions extends IRendererOptions {
   tags?: Tags
 }
 
+const defaultTags: Tags = ['{{', '}}']
+
 /**
  * Compiles a template and returns an object with functions that render it.
  * Compilation makes repeated render calls more optimized by parsing the
@@ -43,8 +45,12 @@ export function compile(
     )
   }
 
-  const { tags = ['{{', '}}'] } = options
+  const { tags = defaultTags } = options
 
-  const tokens = tokenize(template, ...tags)
+  if (!Array.isArray(tags) || tags.length !== 2) {
+    throw Error('Tags should be an array of two strings. Got ' + tags)
+  }
+
+  const tokens = tokenize(template, tags[0], tags[1])
   return new Renderer(tokens, options)
 }
