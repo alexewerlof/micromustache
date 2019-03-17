@@ -41,23 +41,25 @@ function isValidScope(val: any): val is Scope {
  */
 export function get(
   scope: Scope,
-  path: PropNames | string,
+  varNameOrPropNames: PropNames | string,
   propExists?: boolean
 ): any {
-  const pathArr = Array.isArray(path) ? path : cached.toPath(path)
+  const propNames = Array.isArray(varNameOrPropNames)
+    ? varNameOrPropNames
+    : cached.toPath(varNameOrPropNames)
 
   let currentScope = scope
-  for (const key of pathArr) {
+  for (const propName of propNames) {
     if (isValidScope(currentScope)) {
       // @ts-ignore
-      currentScope = currentScope[key]
+      currentScope = currentScope[propName]
     } else if (propExists) {
       throw new ReferenceError(
-        key +
+        propName +
           ' is not defined in the scope (' +
           scope +
           '). Parsed path: ' +
-          pathArr
+          propNames
       )
     } else {
       return
