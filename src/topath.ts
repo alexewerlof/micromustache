@@ -11,10 +11,6 @@ export type PropNames = string[]
 const cacheSize = 100
 const quoteChars = '\'"`'
 
-function isQuote(str: string): boolean {
-  return quoteChars.indexOf(str) !== -1
-}
-
 /**
  * Trim and remove the starting dot if it exists
  * @param propName - the raw property name like `".a"` or `" . a"`
@@ -34,12 +30,12 @@ function normalizePropName(propName: string) {
  * @param propName - an string with quotations
  * @returns - the input with its quotes removed
  */
-function unquote(propName: string): string {
+function propBetweenBrackets(propName: string): string {
   propName.trim()
   // in our algorithms key is always a string and never only a string of spaces
   const firstChar = propName.charAt(0)
   const lastChar = propName.substr(-1)
-  if (isQuote(firstChar) || isQuote(lastChar)) {
+  if (quoteChars.includes(firstChar) || quoteChars.includes(lastChar)) {
     if (propName.length < 2 || firstChar !== lastChar) {
       throw new SyntaxError('Invalid or unexpected token ' + propName)
     }
@@ -124,7 +120,7 @@ export function toPath(varName: string): PropNames {
     if (!propName.length) {
       throw new SyntaxError('Unexpected token ]')
     }
-    propNames.push(unquote(propName))
+    propNames.push(propBetweenBrackets(propName))
   }
 
   const rest = varName.substring(closeBracketIndex)

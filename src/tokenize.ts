@@ -59,15 +59,16 @@ export function tokenize(
 
     varName = template.substring(openIndex + openSymLen, closeIndex).trim()
 
+    if (varName.length === 0) {
+      throw new SyntaxError('Unexpected token ' + closeSym)
+    }
+
     if (varName.includes(openSym)) {
       throw new SyntaxError(
         'Missing ' + closeSym + ' in the template expression ' + varName
       )
     }
 
-    if (!varName.length) {
-      throw new SyntaxError('Unexpected token ' + closeSym)
-    }
     varNames.push(varName)
 
     closeIndex += closeSymLen
