@@ -18,7 +18,7 @@ function isValidScope(val: any): val is Scope {
 }
 
 /**
- * Similar to lodash _.get()
+ * Similar to lodash `_.get()`
  *
  * Differences with JavaScript:
  * No support for keys that include `[` or `]`.
@@ -26,15 +26,14 @@ function isValidScope(val: any): val is Scope {
  * `foo[bar]` is allowed while JavaScript treats `bar` as a variable and tries
  * to lookup its value or throws a `ReferenceError` if there is no variable
  * called `bar`.
- * Same as get() but expects an array of keys instead of the path string.
  * If it cannot find a value in the specified path, it may return undefined or
  * throw an error depending on the value of the `propExists` param.
- * @throws ReferenceError if the scope does not contain the keys in the pathArr
- * parameter and the `propExists` is set to a truthy value
- * @throw SyntaxError if the path itself cannot be parsed
+ * @throw SyntaxError if the varName string cannot be parsed
+ * @throws ReferenceError if the scope does not contain the requested key
+ * but the `propExists` is set to a truthy value
  * @param scope - an object to resolve value from
- * @param path - the variable path to lookup or an array of keys that specify
- * the path to the lookup
+ * @param varNameOrPropNames - the variable name string or an array of property
+ * names (as returned by `toPath()`)
  * @param propExists - claiming that the varName is exists in the scope
  * @returns - the value or undefined. If path or scope are undefined or scope is
  * null the result is always undefined.
