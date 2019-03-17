@@ -74,7 +74,7 @@ function pushString(str: string, strArr: string[]) {
  * Breaks a variable name to an array of strings that can be used to get a
  * particular value from an object
  * @param varName - the variable name as it occurs in the template.
- * For example `a.b.c`
+ * For example `a["b"].c`
  * @returns - an array of property names that can be used to get a particular
  * value.
  * For example `['a', 'b', 'c']`
