@@ -7,7 +7,7 @@ try {
       'There is no {{a.b.c}}!',
       {},
       {
-        validVarName: true
+        propsExist: true
       }
     )
   )
@@ -15,6 +15,6 @@ try {
   console.log('That is why it throws:', e.message)
 }
 
-console.log('But without validVarName flag it is more forgiving:')
+console.log('But without propsExist flag it is more forgiving:')
 
 console.log(render('There is no {{a.b.c}}!'))

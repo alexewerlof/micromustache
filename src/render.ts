@@ -10,9 +10,7 @@ import { compile, ICompileOptions } from './compile'
  * placeholders for values from the `scope` parameter.
  * @param scope - An object containing values for variable names from the the
  * template. If it's omitted, we default to an empty object.
- * If a value does not exist in the scope, two things can happen:
- * * if `allowInvalidVarNames` is truthy, the value will be assumed empty string
- * * if `allowInvalidVarNames` is falsy, a ReferenceError will be thrown
+ * @throws TODO
  * @returns - Template where its variable names replaced with
  * corresponding values.
  */

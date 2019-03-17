@@ -18,8 +18,11 @@ export interface IRendererOptions {
    * In that case the value for the varNames will be assumed an empty string.
    * By default we throw a ReferenceError to be compatible with how JavaScript
    * threats such invalid reference.
+   * If a value does not exist in the scope, two things can happen:
+   * - if `propsExist` is truthy, the value will be assumed empty string
+   * - if `propsExist` is falsy, a ReferenceError will be thrown
    */
-  validVarName?: boolean
+  propsExist?: boolean
   /** when set to a truthy value, validates the variable names */
   validateVarNames?: boolean
 }
@@ -95,7 +98,7 @@ export class Renderer {
     this.cacheParsedPaths()
     const values = new Array(length)
     for (let i = 0; i < length; i++) {
-      values[i] = get(scope, this.toPathCache[i], this.options.validVarName)
+      values[i] = get(scope, this.toPathCache[i], this.options.propsExist)
     }
     return stringify(
       this.tokens.strings,
