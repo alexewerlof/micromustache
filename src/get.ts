@@ -1,5 +1,3 @@
-import { isString } from './util'
-
 export type Paths = string[]
 
 const quoteChars = '\'"`'
@@ -58,7 +56,7 @@ function pushString(str: string, strArr: string[]) {
 }
 
 export function toPath(path: string): Paths {
-  if (!isString(path)) {
+  if (typeof path !== 'string') {
     throw new TypeError('Path must be a string but. Got ' + path)
   }
 

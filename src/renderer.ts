@@ -1,5 +1,5 @@
 import { Scope, getKeys, toPath, Paths } from './get'
-import { CachedFn, isObject } from './util'
+import { CachedFn } from './util'
 import { ITokens } from './tokenize'
 
 export interface IRendererOptions {
@@ -60,7 +60,7 @@ export class Renderer {
     private readonly options: IRendererOptions = {}
   ) {
     if (
-      !isObject(tokens) ||
+      typeof tokens !== 'object' ||
       !Array.isArray(tokens.strings) ||
       !Array.isArray(tokens.varNames) ||
       tokens.strings.length !== tokens.varNames.length + 1

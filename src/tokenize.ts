@@ -1,5 +1,3 @@
-import { isString } from './util'
-
 export interface ITokens {
   strings: string[]
   varNames: string[]
@@ -21,12 +19,12 @@ export function tokenize(
   openSym = '{{',
   closeSym = '}}'
 ): ITokens {
-  if (!isString(openSym, true)) {
+  if (typeof openSym !== 'string' || openSym.length === 0) {
     throw new TypeError(
       'The openSym parameter must be a string. Got ' + openSym
     )
   }
-  if (!isString(closeSym, true)) {
+  if (typeof closeSym !== 'string' || closeSym.length === 0) {
     throw new TypeError(
       'The closeSym parameter must be a string. Got ' + closeSym
     )
