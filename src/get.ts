@@ -1,4 +1,4 @@
-import { isValidScope, isString } from './util'
+import { isString } from './util'
 
 export type Paths = string[]
 
@@ -133,7 +133,23 @@ export function get(scope: Scope, path: string): any {
 }
 
 /**
+ * Checks if the provided value can be used as a scope, that is a non-null
+ * object or a function.
+ * @param val - the value that is supposed to be tested
+ */
+function isValidScope(val: any): val is Scope {
+  if (val) {
+    // At this point `null` is filtered out
+    const type = typeof val
+    return type === 'object' || type === 'function'
+  }
+  return false
+}
+
+/**
  * Same as get() but expects an array of keys instead of the path string.
+ * If it cannot find a value in the specified path, it may return undefined or
+ * throw an error depending on the value of the `allowInvalidPaths` param.
  * @throws ReferenceError if the scope does not contain the keys in the pathArr
  * parameter and the `allowInvalidPaths` is set to false
  * @param scope - an object to resolve value from

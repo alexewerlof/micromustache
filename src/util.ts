@@ -1,25 +1,9 @@
-import { Scope } from './get'
-
 /**
  * Checks if the provided value is an object but is not null
  * @param val - the value that is supposed to be tested
  */
 export function isObject(val: any): val is object {
   return val && typeof val === 'object'
-}
-
-/**
- * Checks if the provided value can be used as a scope, that is a non-null
- * object or a function.
- * @param val - the value that is supposed to be tested
- */
-export function isValidScope(val: any): val is Scope {
-  if (val) {
-    // At this point `null` is filtered out
-    const type = typeof val
-    return type === 'object' || type === 'function'
-  }
-  return false
 }
 
 /**
