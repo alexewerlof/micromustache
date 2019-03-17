@@ -15,7 +15,7 @@ export interface IRendererOptions {
    */
   allowInvalidPaths?: boolean
   /** when set to a truthy value, validates the variable names */
-  validatePaths?: boolean
+  validateVarNames?: boolean
 }
 
 /**
@@ -61,7 +61,7 @@ export class Renderer {
     ) {
       throw new TypeError('Invalid tokens object ' + tokens)
     }
-    if (options.validatePaths) {
+    if (options.validateVarNames) {
       // trying to initialize toPathCache parses them which is also validation
       this.cacheParsedPaths()
     }
@@ -69,7 +69,7 @@ export class Renderer {
 
   /**
    * This function is called internally for filling in the `toPathCache` cache.
-   * If the `validatePaths` option for the constructor is set to a truthy value,
+   * If the `validateVarNames` option for the constructor is set to a truthy value,
    * this function is called immediately which leads to a validation as well
    * because it throws an error if it cannot parse variable names.
    */
