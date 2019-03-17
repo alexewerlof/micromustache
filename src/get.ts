@@ -128,11 +128,6 @@ export type Scope = {} | Function
  * @returns - the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
  */
 export function get(scope: Scope, path: string): any {
-  if (!isValidScope(scope)) {
-    throw new TypeError(
-      'The scope should be an object or function but is ' + typeof scope + scope
-    )
-  }
   const pathArr = toPath(path)
   return getKeys(scope, pathArr)
 }
@@ -162,7 +157,11 @@ export function getKeys(
       return
     } else {
       throw new ReferenceError(
-        key + ' is not defined in the scope. Parsed path: ' + pathArr
+        key +
+          ' is not defined in the scope (' +
+          scope +
+          '). Parsed path: ' +
+          pathArr
       )
     }
   }
