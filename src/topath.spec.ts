@@ -74,6 +74,7 @@ describe('toPath()', () => {
       'a..': SyntaxError,
       'a..b': SyntaxError,
       'a["]': SyntaxError,
+      // TODO: address this error case: 'a["b"]c': SyntaxError,
       'a[\'b"]': SyntaxError,
       'a[[': SyntaxError,
       'a[[]]': SyntaxError,
