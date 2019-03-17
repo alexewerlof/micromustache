@@ -1,5 +1,4 @@
-import { Scope, getKeys, toPath, Paths } from './get'
-import { CachedFn } from './util'
+import { Scope, Paths, toPathCached, get } from './get'
 import { ITokens } from './tokenize'
 
 export interface IRendererOptions {
@@ -41,11 +40,6 @@ export type ResolveFnAsync = (varName: string, scope?: Scope) => Promise<any>
  */
 export class Renderer {
   /**
-   * A static cache with a limited size that holds the last calls to the
-   * `toPath()` function
-   */
-  private static cachedToPath = new CachedFn(toPath)
-  /**
    * Another cache that holds the parsed values for `toPath()` one per varName
    */
   private toPathCache: Paths[]
@@ -84,7 +78,7 @@ export class Renderer {
     if (this.toPathCache === undefined) {
       this.toPathCache = new Array(varNames.length)
       for (let i = 0; i < varNames.length; i++) {
-        this.toPathCache[i] = Renderer.cachedToPath.obtain(varNames[i])
+        this.toPathCache[i] = toPathCached(varNames[i])
       }
     }
   }
@@ -117,7 +111,7 @@ export class Renderer {
     this.cacheParsedPaths()
     const values = new Array(length)
     for (let i = 0; i < length; i++) {
-      values[i] = getKeys(
+      values[i] = get(
         scope,
         this.toPathCache[i],
         this.options.allowInvalidPaths

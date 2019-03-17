@@ -1,3 +1,5 @@
+// tslint:disable-next-line ban-types
+export type Scope = {} | Function
 export type Paths = string[]
 
 const quoteChars = '\'"`'
@@ -109,25 +111,26 @@ export function toPath(path: string): Paths {
   return ret
 }
 
-// tslint:disable-next-line ban-types
-export type Scope = {} | Function
+const toPathCache: {
+  [path: string]: Paths
+} = {}
 
-/**
- * Similar to lodash _.get()
- *
- * Differences with JavaScript:
- * No support for keys that include `[` or `]`.
- * No support for keys that include `'` or `"` or `.
- * `foo[bar]` is allowed while JavaScript treats `bar` as a variable and tries to lookup
- * its value or throws a `ReferenceError` if there is no variable called `bar`.
- * @throws TypeError if the object variable is not an object
- * @param scope - the scope object
- * @param path - the variable path to lookup
- * @returns - the value or undefined. If path or scope are undefined or scope is null the result is always undefined.
- */
-export function get(scope: Scope, path: string): any {
-  const pathArr = toPath(path)
-  return getKeys(scope, pathArr)
+const cachedPaths: string[] = new Array(100)
+let cachedPathsIndex = 0
+
+export function toPathCached(path: string): Paths {
+  let result = toPathCache[path]
+  if (!result) {
+    result = toPathCache[path] = toPath(path)
+    const keyToDelete = cachedPaths[cachedPathsIndex]
+    if (keyToDelete !== undefined) {
+      delete toPathCache[keyToDelete]
+    }
+    cachedPaths[cachedPathsIndex] = path
+    cachedPathsIndex++
+    cachedPathsIndex %= cachedPaths.length
+  }
+  return result
 }
 
 /**
@@ -145,23 +148,35 @@ function isValidScope(val: any): val is Scope {
 }
 
 /**
+ * Similar to lodash _.get()
+ *
+ * Differences with JavaScript:
+ * No support for keys that include `[` or `]`.
+ * No support for keys that include `'` or `"` or `.
+ * `foo[bar]` is allowed while JavaScript treats `bar` as a variable and tries
+ * to lookup its value or throws a `ReferenceError` if there is no variable
+ * called `bar`.
  * Same as get() but expects an array of keys instead of the path string.
  * If it cannot find a value in the specified path, it may return undefined or
  * throw an error depending on the value of the `allowInvalidPaths` param.
  * @throws ReferenceError if the scope does not contain the keys in the pathArr
  * parameter and the `allowInvalidPaths` is set to false
+ * @throw SyntaxError if the path itself cannot be parsed
  * @param scope - an object to resolve value from
- * @param pathArr - an array of keys that specify the path to the lookup
+ * @param path - the variable path to lookup or an array of keys that specify
+ * the path to the lookup
  * @param allowInvalidPaths - should we throw if we cannot resolve the path in
  * the provided scope? (defaults to true)
  * @returns - the value or undefined. If path or scope are undefined or scope is
  * null the result is always undefined.
  */
-export function getKeys(
+export function get(
   scope: Scope,
-  pathArr: Paths,
+  path: Paths | string,
   allowInvalidPaths?: boolean
 ): any {
+  const pathArr = Array.isArray(path) ? path : toPathCached(path)
+
   let currentScope = scope
   for (const key of pathArr) {
     if (isValidScope(currentScope)) {
