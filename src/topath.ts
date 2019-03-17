@@ -109,6 +109,10 @@ export function toPath(varName: string): PropNames {
 
     propName = varName.substring(openBracketIndex + 1, closeBracketIndex).trim()
 
+    if (propName.length === 0) {
+      throw new SyntaxError('Unexpected token ]')
+    }
+
     if (propName.includes('[')) {
       throw new SyntaxError('Missing ] in varName ' + varName)
     }
@@ -117,9 +121,6 @@ export function toPath(varName: string): PropNames {
     beforeBracket = varName.substring(currentIndex, openBracketIndex)
     pushPropName(propNames, beforeBracket)
 
-    if (!propName.length) {
-      throw new SyntaxError('Unexpected token ]')
-    }
     propNames.push(propBetweenBrackets(propName))
   }
 
