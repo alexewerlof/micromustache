@@ -10,7 +10,9 @@ For every variable name we call the *resolve* function.
 variable names
 * *Resolving*: looking up the value for a variable name (can be async if you
 want)
-* *Path*: is an array of keys that can be used to access a nested property from
+* *VarName*: is a string that is used in the template as a reference to an
+object like `{{a["b"].c}}`
+* *PropNames*: is an array of keys that can be used to access a nested property from
 an object. Each part of the path array is called a `key`.
 * *Stringification*: the process of putting everything together and creating the
 final string result
