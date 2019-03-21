@@ -390,6 +390,20 @@ const a = {
 
 `a['[']` will not give `'open'` but rather complains that you are missing a `]`!
 
+**It doesn't require string delimiters:
+
+Suppose you have this in Javascript:
+
+```javascript
+const a = {
+  'foo': 'bar'
+}
+```
+
+If you want to get the value of the `foo` property, in Javascript you can say
+`a['foo']`. This works in micromustache too but you can also say `a[foo]` which
+is not valid Javascript strictly speaking.
+
 **No comments**
 
 Unlike mustache you cannot comment a variable name.
