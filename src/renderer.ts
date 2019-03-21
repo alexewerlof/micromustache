@@ -1,5 +1,5 @@
 import { Scope, get } from './get'
-import { PropNames, cached } from './topath'
+import { PropNames, toPath } from './topath'
 import { ITokens } from './tokenize'
 
 /**
@@ -87,7 +87,7 @@ export class Renderer {
     if (this.toPathCache === undefined) {
       this.toPathCache = new Array(varNames.length)
       for (let i = 0; i < varNames.length; i++) {
-        this.toPathCache[i] = cached.toPath(varNames[i])
+        this.toPathCache[i] = toPath.cached(varNames[i])
       }
     }
   }

@@ -11,6 +11,42 @@ export type PropNames = string[]
 const cacheSize = 100
 const quoteChars = '\'"`'
 
+export class Cache<T> {
+  private map: {
+    [varName: string]: T
+  }
+
+  private cachedKeys: string[]
+  private oldestIndex: number
+
+  constructor(private size: number) {
+    this.reset()
+  }
+
+  public reset() {
+    this.oldestIndex = 0
+    this.map = {}
+    this.cachedKeys = new Array(this.size)
+  }
+
+  public get(key: string): T {
+    return this.map[key]
+  }
+
+  public set(key: string, value: T) {
+    this.map[key] = value
+    const oldestKey = this.cachedKeys[this.oldestIndex]
+    if (oldestKey !== undefined) {
+      delete this.map[oldestKey]
+    }
+    this.cachedKeys[this.oldestIndex] = key
+    this.oldestIndex++
+    this.oldestIndex %= this.size
+  }
+}
+
+export const cache = new Cache<PropNames>(cacheSize)
+
 /**
  * Trim and remove the starting dot if it exists
  * @param propName - the raw property name like `".a"` or `" . a"`
@@ -130,42 +166,16 @@ export function toPath(varName: string): PropNames {
   return propNames
 }
 
-// TODO: refactor so we can call toPath.cached(varName) instead
-export class CachedToPath {
-  private toPathCache: {
-    [varName: string]: PropNames
+/**
+ * This is just a faster version of `toPath()`
+ */
+function toPathCached(varName: string): PropNames {
+  let result = cache.get(varName)
+  if (result === undefined) {
+    result = toPath(varName)
+    cache.set(varName, result)
   }
-
-  private cachedVarNames: string[]
-  private oldestIndex: number
-
-  constructor(private size: number) {
-    this.clear()
-  }
-
-  public clear() {
-    this.oldestIndex = 0
-    this.toPathCache = {}
-    this.cachedVarNames = new Array(this.size)
-  }
-
-  /**
-   * This is just a faster version of `toPath()`
-   */
-  public toPath(varName: string): PropNames {
-    let result = this.toPathCache[varName]
-    if (!result) {
-      result = this.toPathCache[varName] = toPath(varName)
-      const keyToDelete = this.cachedVarNames[this.oldestIndex]
-      if (keyToDelete !== undefined) {
-        delete this.toPathCache[keyToDelete]
-      }
-      this.cachedVarNames[this.oldestIndex] = varName
-      this.oldestIndex++
-      this.oldestIndex %= this.size
-    }
-    return result
-  }
+  return result
 }
 
-export const cached = new CachedToPath(cacheSize)
+toPath.cached = toPathCached

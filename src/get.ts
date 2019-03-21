@@ -1,4 +1,4 @@
-import { cached, PropNames } from './topath'
+import { toPath, PropNames } from './topath'
 
 // tslint:disable-next-line ban-types
 export type Scope = {} | Function
@@ -45,7 +45,7 @@ export function get(
 ): any {
   const propNames = Array.isArray(varNameOrPropNames)
     ? varNameOrPropNames
-    : cached.toPath(varNameOrPropNames)
+    : toPath.cached(varNameOrPropNames)
 
   let currentScope = scope
   for (const propName of propNames) {
