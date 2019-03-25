@@ -72,8 +72,13 @@ function propBetweenBrackets(propName: string): string {
   const firstChar = propName.charAt(0)
   const lastChar = propName.substr(-1)
   if (quoteChars.includes(firstChar) || quoteChars.includes(lastChar)) {
-    if (propName.length < 2 || firstChar !== lastChar) {
-      throw new SyntaxError('Invalid or unexpected token ' + propName)
+    if (propName.length < 2) {
+      throw new SyntaxError(
+        'Invalid or unexpected token. Unterminated string quotation.' + propName
+      )
+    }
+    if (firstChar !== lastChar) {
+      throw new SyntaxError('Mismatching string quotation ' + propName)
     }
     return propName.substring(1, propName.length - 1)
   }
@@ -88,13 +93,16 @@ function propBetweenBrackets(propName: string): string {
 
 function pushPropName(propNames: string[], propName: string) {
   propName = normalizePropName(propName)
+  if (propName.endsWith('.')) {
+    throw new SyntaxError('Unexpected token . at the end of' + propName)
+  }
   if (propName !== '') {
     const propNameParts = propName.split('.')
     for (const propNamePart of propNameParts) {
       const trimmedPropName = propNamePart.trim()
       if (trimmedPropName === '') {
         throw new SyntaxError(
-          'Unexpected token. Encountered empty prop name when parsing ' +
+          'Unexpected token . Encountered empty prop name when parsing ' +
             propName
         )
       }
@@ -140,7 +148,9 @@ export function toPath(varName: string): PropNames {
 
     closeBracketIndex = varName.indexOf(']', openBracketIndex)
     if (closeBracketIndex === -1) {
-      throw new SyntaxError('Missing ] in varName ' + varName)
+      throw new SyntaxError(
+        'Unexpected end of input. Missing ] in varName ' + varName
+      )
     }
 
     propName = varName.substring(openBracketIndex + 1, closeBracketIndex).trim()

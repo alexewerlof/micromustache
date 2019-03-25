@@ -76,17 +76,23 @@ describe('toPath()', () => {
       'a.': SyntaxError,
       'a..': SyntaxError,
       'a..b': SyntaxError,
+      'a ..b': SyntaxError,
+      'a . .b': SyntaxError,
+      'a . . b': SyntaxError,
+      'a .. b': SyntaxError,
       'a["]': SyntaxError,
       // TODO: address this error case: 'a["b"]c': SyntaxError,
+      'a.[b]': SyntaxError,
       'a[\'b"]': SyntaxError,
       'a[[': SyntaxError,
-      'a[[]]': SyntaxError,
-      'a["["]': SyntaxError,
       'a["b\']': SyntaxError,
       'a["b`]': SyntaxError,
       'a[11"]': SyntaxError,
       'a[`11]': SyntaxError,
-      'a[ `11 ]': SyntaxError
+      'a[ `11 ]': SyntaxError,
+      // Special cases
+      'a["["]': SyntaxError,
+      'a[[]]': SyntaxError
     }
 
     for (const [input, errorConstructor] of Object.entries(syntaxErrorsCases)) {
