@@ -149,9 +149,6 @@ export function toPath(varName: string): PropNames {
   let shouldStartWithDot = false
   const propNames: PropNames = []
 
-  // TODO this is not really needed
-  varName = normalizePropName(varName, shouldStartWithDot)
-
   for (
     let currentIndex = 0;
     currentIndex < varName.length;
