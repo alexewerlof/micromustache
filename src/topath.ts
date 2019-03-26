@@ -83,10 +83,7 @@ function propBetweenBrackets(propName: string): string {
   const firstChar = propName.charAt(0)
   const lastChar = propName.substr(-1)
   if (quoteChars.includes(firstChar) || quoteChars.includes(lastChar)) {
-    if (propName.length < 2) {
-      throw new SyntaxError('Unterminated string quotation: ' + propName)
-    }
-    if (firstChar !== lastChar) {
+    if (propName.length < 2 || firstChar !== lastChar) {
       throw new SyntaxError('Mismatching string quotation: ' + propName)
     }
     return propName.substring(1, propName.length - 1)
