@@ -50,21 +50,22 @@ export const cache = new Cache<PropNames>(cacheSize)
 /**
  * Trim and remove the starting dot if it exists
  * @param propName - the raw property name like `".a"` or `" . a"`
+ * @param preDot - should the string be prefixed with dot?
  * @return - the input trimmed and without a leading dot
  */
-function normalizePropName(propName: string, shouldStartWithDot: boolean) {
+function normalizePropName(propName: string, preDot: boolean) {
   const pName = propName.trim()
   if (pName === '') {
     return pName
   }
   if (pName.startsWith('.')) {
-    if (shouldStartWithDot) {
+    if (preDot) {
       return pName.substr(1).trim()
     }
-    throw new SyntaxError('Unexpected dot at the start of "' + propName + '"')
+    throw new SyntaxError('Unexpected . at the start of "' + propName + '"')
   }
-  if (shouldStartWithDot) {
-    throw new SyntaxError('Missing a dot at the start of "' + propName + '"')
+  if (preDot) {
+    throw new SyntaxError('Missing . at the start of "' + propName + '"')
   }
 
   return pName
@@ -83,12 +84,10 @@ function propBetweenBrackets(propName: string): string {
   const lastChar = propName.substr(-1)
   if (quoteChars.includes(firstChar) || quoteChars.includes(lastChar)) {
     if (propName.length < 2) {
-      throw new SyntaxError(
-        'Invalid or unexpected token. Unterminated string quotation.' + propName
-      )
+      throw new SyntaxError('Unterminated string quotation: ' + propName)
     }
     if (firstChar !== lastChar) {
-      throw new SyntaxError('Mismatching string quotation ' + propName)
+      throw new SyntaxError('Mismatching string quotation: ' + propName)
     }
     return propName.substring(1, propName.length - 1)
   }
@@ -101,24 +100,17 @@ function propBetweenBrackets(propName: string): string {
   return propName
 }
 
-function pushPropName(
-  propNames: string[],
-  propName: string,
-  shouldStartWithDot: boolean
-) {
-  propName = normalizePropName(propName, shouldStartWithDot)
+function pushPropName(propNames: string[], propName: string, preDot: boolean) {
+  propName = normalizePropName(propName, preDot)
   if (propName.endsWith('.')) {
-    throw new SyntaxError('Unexpected token . at the end of "' + propName + '"')
+    throw new SyntaxError('Unexpected "." at the end of "' + propName + '"')
   }
   if (propName !== '') {
     const propNameParts = propName.split('.')
     for (const propNamePart of propNameParts) {
       const trimmedPropName = propNamePart.trim()
       if (trimmedPropName === '') {
-        throw new SyntaxError(
-          'Unexpected token . Encountered empty prop name when parsing ' +
-            propName
-        )
+        throw new SyntaxError('Empty prop name when parsing "' + propName + '"')
       }
       propNames.push(trimmedPropName)
     }
@@ -137,16 +129,14 @@ function pushPropName(
  */
 export function toPath(varName: string): PropNames {
   if (typeof varName !== 'string') {
-    throw new TypeError(
-      'The varName parameter must be a string but. Got ' + varName
-    )
+    throw new TypeError('Expected string but Got ' + varName)
   }
 
   let openBracketIndex: number
   let closeBracketIndex: number = 0
   let beforeBracket: string
   let propName: string
-  let shouldStartWithDot = false
+  let preDot = false
   const propNames: PropNames = []
 
   for (
@@ -161,9 +151,7 @@ export function toPath(varName: string): PropNames {
 
     closeBracketIndex = varName.indexOf(']', openBracketIndex)
     if (closeBracketIndex === -1) {
-      throw new SyntaxError(
-        'Unexpected end of input. Missing ] in varName ' + varName
-      )
+      throw new SyntaxError('Missing ] in varName ' + varName)
     }
 
     propName = varName.substring(openBracketIndex + 1, closeBracketIndex).trim()
@@ -178,14 +166,14 @@ export function toPath(varName: string): PropNames {
 
     closeBracketIndex++
     beforeBracket = varName.substring(currentIndex, openBracketIndex)
-    pushPropName(propNames, beforeBracket, shouldStartWithDot)
+    pushPropName(propNames, beforeBracket, preDot)
 
     propNames.push(propBetweenBrackets(propName))
-    shouldStartWithDot = true
+    preDot = true
   }
 
   const rest = varName.substring(closeBracketIndex)
-  return pushPropName(propNames, rest, shouldStartWithDot)
+  return pushPropName(propNames, rest, preDot)
 }
 
 /**
