@@ -48,30 +48,6 @@ export class Cache<T> {
 export const cache = new Cache<PropNames>(cacheSize)
 
 /**
- * Trim and remove the starting dot if it exists
- * @param propName - the raw property name like `".a"` or `" . a"`
- * @param preDot - should the string be prefixed with dot?
- * @return - the input trimmed and without a leading dot
- */
-function normalizePropName(propName: string, preDot: boolean) {
-  const pName = propName.trim()
-  if (pName === '') {
-    return pName
-  }
-  if (pName.startsWith('.')) {
-    if (preDot) {
-      return pName.substr(1).trim()
-    }
-    throw new SyntaxError('Unexpected . at the start of "' + propName + '"')
-  }
-  if (preDot) {
-    throw new SyntaxError('Missing . at the start of "' + propName + '"')
-  }
-
-  return pName
-}
-
-/**
  * Removes the quotes from a string and returns it.
  * @throws if the quotation symbols don't match or one is missing
  * @param propName - an string with quotations
@@ -98,20 +74,34 @@ function propBetweenBrackets(propName: string): string {
 }
 
 function pushPropName(propNames: string[], propName: string, preDot: boolean) {
-  propName = normalizePropName(propName, preDot)
+  propName = propName.trim()
+  if (propName === '') {
+    return propNames
+  }
+
+  if (propName.startsWith('.')) {
+    if (preDot) {
+      propName = propName.substr(1).trim()
+    } else {
+      throw new SyntaxError('Unexpected . at the start of "' + propName + '"')
+    }
+  } else if (preDot) {
+    throw new SyntaxError('Missing . at the start of "' + propName + '"')
+  }
+
   if (propName.endsWith('.')) {
     throw new SyntaxError('Unexpected "." at the end of "' + propName + '"')
   }
-  if (propName !== '') {
-    const propNameParts = propName.split('.')
-    for (const propNamePart of propNameParts) {
-      const trimmedPropName = propNamePart.trim()
-      if (trimmedPropName === '') {
-        throw new SyntaxError('Empty prop name when parsing "' + propName + '"')
-      }
-      propNames.push(trimmedPropName)
+
+  const propNameParts = propName.split('.')
+  for (const propNamePart of propNameParts) {
+    const trimmedPropName = propNamePart.trim()
+    if (trimmedPropName === '') {
+      throw new SyntaxError('Empty prop name when parsing "' + propName + '"')
     }
+    propNames.push(trimmedPropName)
   }
+
   return propNames
 }
 
