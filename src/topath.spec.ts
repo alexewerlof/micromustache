@@ -115,7 +115,7 @@ describe('toPath()', () => {
       })
     }
 
-    it(`throws type error`, () => {
+    it(`throws type error for invalid input types`, () => {
       // @ts-ignore
       expect(() => toPath(undefined), 'for undefined').to.throw(TypeError)
       // @ts-ignore
