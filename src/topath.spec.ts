@@ -55,7 +55,8 @@ describe('toPath()', () => {
       'a["b"].c["d"].e': ['a', 'b', 'c', 'd', 'e'],
       'a["+1.1"]': ['a', '+1.1'],
       '[13]': ['13'],
-      '[17].c': ['17', 'c']
+      '[17].c': ['17', 'c'],
+      'a["["]': ['a', '[']
     }
 
     for (const [input, output] of Object.entries(testCases)) {
@@ -105,7 +106,7 @@ describe('toPath()', () => {
       'a[`11]': SyntaxError,
       'a[ `11 ]': SyntaxError,
       // Special cases
-      'a["["]': SyntaxError,
+      'a["]"]': SyntaxError,
       'a[[]]': SyntaxError
     }
 

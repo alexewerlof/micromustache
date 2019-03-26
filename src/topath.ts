@@ -64,6 +64,10 @@ function propBetweenBrackets(propName: string): string {
     return propName.substring(1, propName.length - 1)
   }
 
+  if (propName.includes('[')) {
+    throw new SyntaxError('Missing ] in varName ' + propName)
+  }
+
   // Normalize leading plus from numerical indices
   if (firstChar === '+') {
     return propName.substr(1)
@@ -147,10 +151,6 @@ export function toPath(varName: string): PropNames {
 
     if (propName.length === 0) {
       throw new SyntaxError('Unexpected token ]')
-    }
-
-    if (propName.includes('[')) {
-      throw new SyntaxError('Missing ] in varName ' + varName)
     }
 
     closeBracketIndex++

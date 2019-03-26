@@ -378,19 +378,20 @@ A. Make an issue first. The goal of MicroMustache is to be super tiny and while 
 
 For the sake of speed, some edge cases are not addressed.
 
-**A varName cannot include `'['` character**
+**A varName cannot include `']'` character**
 
 For example if you have an object like:
 
 ```javascript
 const a = {
-  '[': 'open'
+  ']': 'close'
 }
 ```
 
-`a['[']` will not give `'open'` but rather complains that you are missing a `]`!
+`a[']']` will not give `'close'` but rather complains that you have a
+mismatching quotation!
 
-**It doesn't require string delimiters:
+**It doesn't require string delimiters:**
 
 Suppose you have this in Javascript:
 
