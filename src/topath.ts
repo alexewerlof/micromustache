@@ -54,7 +54,6 @@ export const cache = new Cache<PropNames>(cacheSize)
  * @returns - the input with its quotes removed
  */
 function propBetweenBrackets(propName: string): string {
-  propName.trim()
   // in our algorithms key is always a string and never only a string of spaces
   const firstChar = propName.charAt(0)
   const lastChar = propName.substr(-1)
