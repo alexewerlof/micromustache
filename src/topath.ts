@@ -74,14 +74,17 @@ function propBetweenBrackets(propName: string): string {
 }
 
 function pushPropName(propNames: string[], propName: string, preDot: boolean) {
-  propName = propName.trim()
-  if (propName === '') {
+  let pName = propName.trim()
+  if (pName === '') {
     return propNames
   }
 
-  if (propName.startsWith('.')) {
+  if (pName.startsWith('.')) {
     if (preDot) {
-      propName = propName.substr(1).trim()
+      pName = pName.substr(1).trim()
+      if (pName === '') {
+        return propNames
+      }
     } else {
       throw new SyntaxError('Unexpected . at the start of "' + propName + '"')
     }
@@ -89,11 +92,11 @@ function pushPropName(propNames: string[], propName: string, preDot: boolean) {
     throw new SyntaxError('Missing . at the start of "' + propName + '"')
   }
 
-  if (propName.endsWith('.')) {
+  if (pName.endsWith('.')) {
     throw new SyntaxError('Unexpected "." at the end of "' + propName + '"')
   }
 
-  const propNameParts = propName.split('.')
+  const propNameParts = pName.split('.')
   for (const propNamePart of propNameParts) {
     const trimmedPropName = propNamePart.trim()
     if (trimmedPropName === '') {
