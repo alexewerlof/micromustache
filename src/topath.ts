@@ -52,11 +52,21 @@ export const cache = new Cache<PropNames>(cacheSize)
  * @param propName - the raw property name like `".a"` or `" . a"`
  * @return - the input trimmed and without a leading dot
  */
-function normalizePropName(propName: string) {
+function normalizePropName(propName: string, shouldStartWithDot: boolean) {
   const pName = propName.trim()
-  if (pName.startsWith('.')) {
-    return pName.substr(1).trim()
+  if (pName === '') {
+    return pName
   }
+  if (pName.startsWith('.')) {
+    if (shouldStartWithDot) {
+      return pName.substr(1).trim()
+    }
+    throw new SyntaxError('Unexpected dot at the start of "' + propName + '"')
+  }
+  if (shouldStartWithDot) {
+    throw new SyntaxError('Missing a dot at the start of "' + propName + '"')
+  }
+
   return pName
 }
 
@@ -91,10 +101,14 @@ function propBetweenBrackets(propName: string): string {
   return propName
 }
 
-function pushPropName(propNames: string[], propName: string) {
-  propName = normalizePropName(propName)
+function pushPropName(
+  propNames: string[],
+  propName: string,
+  shouldStartWithDot: boolean
+) {
+  propName = normalizePropName(propName, shouldStartWithDot)
   if (propName.endsWith('.')) {
-    throw new SyntaxError('Unexpected token . at the end of' + propName)
+    throw new SyntaxError('Unexpected token . at the end of "' + propName + '"')
   }
   if (propName !== '') {
     const propNameParts = propName.split('.')
@@ -109,6 +123,7 @@ function pushPropName(propNames: string[], propName: string) {
       propNames.push(trimmedPropName)
     }
   }
+  return propNames
 }
 
 /**
@@ -127,14 +142,15 @@ export function toPath(varName: string): PropNames {
     )
   }
 
-  varName = normalizePropName(varName)
-
   let openBracketIndex: number
   let closeBracketIndex: number = 0
   let beforeBracket: string
   let propName: string
-
+  let shouldStartWithDot = false
   const propNames: PropNames = []
+
+  // TODO this is not really needed
+  varName = normalizePropName(varName, shouldStartWithDot)
 
   for (
     let currentIndex = 0;
@@ -165,15 +181,14 @@ export function toPath(varName: string): PropNames {
 
     closeBracketIndex++
     beforeBracket = varName.substring(currentIndex, openBracketIndex)
-    pushPropName(propNames, beforeBracket)
+    pushPropName(propNames, beforeBracket, shouldStartWithDot)
 
     propNames.push(propBetweenBrackets(propName))
+    shouldStartWithDot = true
   }
 
   const rest = varName.substring(closeBracketIndex)
-  pushPropName(propNames, rest)
-
-  return propNames
+  return pushPropName(propNames, rest, shouldStartWithDot)
 }
 
 /**
