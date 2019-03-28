@@ -45,6 +45,20 @@ describe('tokenize()', () => {
     }
   })
 
+  it('supports escaping {{', () => {
+    expect(tokenize('Hello /{{ world')).to.deep.equal({
+      strings: ['Hello {{ world'],
+      varNames: []
+    })
+  })
+
+  it('supports escaping {{ before var names', () => {
+    expect(tokenize('Hello /{{ world {{var}}!')).to.deep.equal({
+      strings: ['Hello {{ world', '!'],
+      varNames: ['var']
+    })
+  })
+
   it('can handle a close symbol without an open symbol', () => {
     expect(tokenize('Hi}} {{name}}')).to.deep.equal({
       strings: ['Hi}} ', ''],

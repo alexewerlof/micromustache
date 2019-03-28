@@ -3,6 +3,8 @@ export interface ITokens {
   varNames: string[]
 }
 
+const escape = '/'
+
 /**
  * Parse a template and returns the tokens in an object.
  *
@@ -32,22 +34,33 @@ export function tokenize(
 
   const openSymLen = openSym.length
   const closeSymLen = closeSym.length
+  const escapedOpen = escape + openSym
 
   let openIndex: number
   let closeIndex: number = 0
-  let before: string
   let varName: string
   const strings: string[] = []
   const varNames: string[] = []
+  let currentIndex = 0
+  let foundEscapedOpen = false
 
-  for (
-    let currentIndex = 0;
-    currentIndex < template.length;
-    currentIndex = closeIndex
-  ) {
+  function pushToStrings(str: string) {
+    const sanitizedStr = foundEscapedOpen
+      ? str.replace(escapedOpen, openSym)
+      : str
+    strings.push(sanitizedStr)
+  }
+
+  while (currentIndex < template.length) {
     openIndex = template.indexOf(openSym, currentIndex)
     if (openIndex === -1) {
       break
+    }
+
+    if (template.charAt(openIndex - 1) === escape) {
+      currentIndex = openIndex + openSymLen
+      foundEscapedOpen = true
+      continue
     }
 
     closeIndex = template.indexOf(closeSym, openIndex)
@@ -72,12 +85,11 @@ export function tokenize(
     varNames.push(varName)
 
     closeIndex += closeSymLen
-    before = template.substring(currentIndex, openIndex)
-    strings.push(before)
+    pushToStrings(template.substring(currentIndex, openIndex))
+    currentIndex = closeIndex
   }
 
-  const rest = template.substring(closeIndex)
-  strings.push(rest)
+  pushToStrings(template.substring(closeIndex))
 
   return { strings, varNames }
 }
