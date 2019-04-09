@@ -2,7 +2,7 @@ const { render } = require('../dist/node')
 
 try {
   console.log(
-    'We claim that all varNames are valid: ',
+    'We claim that all varNames refer to properties that should exist: ',
     render(
       'There is no {{a.b.c}}!',
       {},
@@ -17,4 +17,4 @@ try {
 
 console.log('But without propsExist flag it is more forgiving:')
 
-console.log(render('There is no {{a.b.c}}!'))
+console.log(render('There is no {{a.b.c}}!', { a: 'foo' }))
