@@ -17,6 +17,7 @@ export interface ICompileOptions extends IRendererOptions {
 }
 
 const defaultTags: Tags = ['{{', '}}']
+const defaultCompileOptions: ICompileOptions = {}
 
 /**
  * Compiles a template and returns an object with functions that render it.
@@ -32,7 +33,7 @@ const defaultTags: Tags = ['{{', '}}']
  */
 export function compile(
   template: string,
-  options: ICompileOptions = {}
+  options: ICompileOptions = defaultCompileOptions
 ): Renderer {
   if (typeof template !== 'string') {
     throw new TypeError(
@@ -48,7 +49,7 @@ export function compile(
   const { tags = defaultTags } = options
 
   if (!Array.isArray(tags) || tags.length !== 2) {
-    throw Error('Tags should be an array of two strings. Got ' + tags)
+    throw Error('Tags should be an array with exactly two items. Got ' + tags)
   }
 
   const tokens = tokenize(template, tags[0], tags[1])
