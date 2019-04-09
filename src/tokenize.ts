@@ -3,8 +3,6 @@ export interface ITokens {
   varNames: string[]
 }
 
-const escape = '/'
-
 /**
  * Parse a template and returns the tokens in an object.
  *
@@ -42,7 +40,7 @@ export function tokenize(
   const strings: string[] = []
   const varNames: string[] = []
   let currentIndex = 0
-  let foundEscapedOpen = false
+  const foundEscapedOpen = false
 
   function pushToStrings(str: string) {
     const sanitizedStr = foundEscapedOpen
@@ -55,12 +53,6 @@ export function tokenize(
     openIndex = template.indexOf(openSym, currentIndex)
     if (openIndex === -1) {
       break
-    }
-
-    if (template.charAt(openIndex - 1) === escape) {
-      currentIndex = openIndex + openSymLen
-      foundEscapedOpen = true
-      continue
     }
 
     closeIndex = template.indexOf(closeSym, openIndex)
