@@ -1,25 +1,31 @@
 const { renderFn, get } = require('../dist/node')
 
 const processors = {
-  pow: (x, y) => x ** y
+  pow: (a, b) => a ** b,
+  add: (a, b) => a + b,
+  abs: a => Math.abs(a)
 }
 
 const scope = {
-  numbers: {
-    x: 13,
-    y: 42
-  }
+  x: 13,
+  y: 42,
+  z: -10
 }
 
-const template = 'x²={{pow(numbers.x, 2)}} and y³={{pow(numbers["y"], 3)}}'
+const template = 'x²={{pow(x, 2)}} and y³={{pow(y, 3)}} and |z|={{abs(z)}}'
 
 function resolveFn(varName, scope) {
-  const matches = varName.match(/(.+)\(\s*(.+)\s*,\s*(.+)\s*\)/)
+  const matches = varName.match(/(\w+)\(([^)]*)\)/)
   if (matches) {
-    const [, fnName, varName, secondParam] = matches
-    return processors[fnName](get(scope, varName), secondParam)
+    const [, fnName, params] = matches
+    const paramNames = params.split(',').map(p => p.trim())
+    console.log(`Going to call ${fnName}(${paramNames})`)
+    const paramVals = paramNames.map(
+      paramName => get(scope, paramName) || paramName
+    )
+    return processors[fnName](...paramVals)
   }
-  return 'varName?!'
+  return ''
 }
 
 console.log(renderFn(template, resolveFn, scope))
