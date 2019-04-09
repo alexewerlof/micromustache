@@ -9,12 +9,31 @@ const csDelimiters = {
 const name = 'Mark'
 const date = new Date()
 
+function csRender(template, ...variables) {
+  return render(template, variables, { tags: ['{', '}'] })
+}
+
+function $(scope) {
+  return strings => {
+    return render(strings[0], scope, { tags: ['{', '}'] })
+  }
+}
+
 // Composite formatting:
 console.log(
   render(
     'Hello, {0}! Weekday is {1} and the day in the month is {2} now.',
     [name, date.getDay() + 1, date.getDate()],
     csDelimiters
+  )
+)
+// Dedicated syntax sugar function
+console.log(
+  csRender(
+    'Hello, {0}! Weekday is {1} and the day in the month is {2} now.',
+    name,
+    date.getDay() + 1,
+    date.getDate()
   )
 )
 // String interpolation:
@@ -25,3 +44,5 @@ console.log(
     csDelimiters
   )
 )
+// $ syntax even more familiar for C# devs
+console.log($({ name, d: date.getDate() })`Hello, {name}! It is {d} now.`)
