@@ -11,7 +11,7 @@ export interface IRendererOptions {
    * 'undefined' for values that are `null` or `undefined`.
    * By default it swallows those values to be compatible with Mustache.
    */
-  renderNullAndUndefined?: boolean
+  explicit?: boolean
   /**
    * When set to a truthy value, we throw a ReferenceError for invalid varNames.
    * Invalid varNames are the ones that do not exist in the scope.
@@ -100,75 +100,56 @@ export class Renderer {
     for (let i = 0; i < length; i++) {
       values[i] = get(scope, this.toPathCache[i], this.options.propsExist)
     }
-    return stringify(
-      this.tokens.strings,
-      values,
-      this.options.renderNullAndUndefined
-    )
+    return this.stringify(values)
   }
 
   public renderFn = (resolveFn: ResolveFn, scope: Scope = {}): string => {
-    const values = resolveVarNames(resolveFn, this.tokens.varNames, scope)
-    return stringify(
-      this.tokens.strings,
-      values,
-      this.options.renderNullAndUndefined
-    )
+    const values = this.resolveVarNames(resolveFn, scope)
+    return this.stringify(values)
   }
 
   public renderFnAsync = (
     resolveFnAsync: ResolveFnAsync,
     scope: Scope = {}
   ): Promise<string> => {
-    return Promise.all(
-      resolveVarNames(resolveFnAsync, this.tokens.varNames, scope)
-    ).then(values =>
-      stringify(
-        this.tokens.strings,
-        values,
-        this.options.renderNullAndUndefined
-      )
+    return Promise.all(this.resolveVarNames(resolveFnAsync, scope)).then(
+      values => this.stringify(values)
     )
   }
-}
 
-function resolveVarNames(
-  resolveFn: ResolveFn,
-  varNames: string[],
-  scope: Scope = {}
-): any[] {
-  if (typeof resolveFn !== 'function') {
-    throw new TypeError('Expected a resolver function but got ' + resolveFn)
-  }
-
-  const { length } = varNames
-  const values = new Array(length)
-  for (let i = 0; i < length; i++) {
-    values[i] = resolveFn(varNames[i], scope)
-  }
-  return values
-}
-
-/**
- * Puts the resolved `values` into the rest of the template (`strings`) and
- * returns the final result that'll be returned from `render()`, `renderFn()`
- * and `renderFnAsync()` functions.
- */
-function stringify(
-  strings: string[],
-  values: any[],
-  renderNullAndUndefined?: boolean
-): string {
-  let ret = ''
-  const { length } = values
-  for (let i = 0; i < length; i++) {
-    ret += strings[i]
-    const value = values[i]
-    if (renderNullAndUndefined || (value !== null && value !== undefined)) {
-      ret += value
+  private resolveVarNames(resolveFn: ResolveFn, scope: Scope = {}): any[] {
+    const { varNames } = this.tokens
+    if (typeof resolveFn !== 'function') {
+      throw new TypeError('Expected a resolver function but got ' + resolveFn)
     }
+
+    const { length } = varNames
+    const values = new Array(length)
+    for (let i = 0; i < length; i++) {
+      values[i] = resolveFn(varNames[i], scope)
+    }
+    return values
   }
 
-  ret += strings[length]
-  return ret
+  /**
+   * Puts the resolved `values` into the rest of the template (`strings`) and
+   * returns the final result that'll be returned from `render()`, `renderFn()`
+   * and `renderFnAsync()` functions.
+   */
+  private stringify(values: any[]): string {
+    const { strings } = this.tokens
+    const { explicit } = this.options
+    let ret = ''
+    const { length } = values
+    for (let i = 0; i < length; i++) {
+      ret += strings[i]
+      const value = values[i]
+      if (explicit || (value !== null && value !== undefined)) {
+        ret += value
+      }
+    }
+
+    ret += strings[length]
+    return ret
+  }
 }
