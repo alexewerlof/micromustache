@@ -21,7 +21,8 @@ console.log(
   'This is some semi-advanced processing here.',
   'We process the variable names to map them to numbers.',
   'Then treat those numbers as array indexes to some scope.',
-  'Then we replace those variables with a few stars the number of which correspond to the value of the elements in the array.'
+  'Then we replace those variables with a few stars',
+  'the number of which correspond to the value of the elements in the array.'
 )
 
 const arr = [0, 10, 20, 30]
