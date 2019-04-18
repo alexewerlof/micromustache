@@ -11,14 +11,14 @@ describe('tokenize()', () => {
   })
 
   it('supports customized tags', () => {
-    expect(tokenize('Hello {name}!', '{', '}')).to.deep.equal({
+    expect(tokenize('Hello {name}!', ['{', '}'])).to.deep.equal({
       strings: ['Hello ', '!'],
       varNames: ['name']
     })
   })
 
   it('throws if the open and close tag are the same', () => {
-    expect(() => tokenize('Hello |name|!', '|', '|')).to.throw(TypeError)
+    expect(() => tokenize('Hello |name|!', ['|', '|'])).to.throw(TypeError)
   })
 
   it('returns an empty string and no varNames when the template is an empty string', () => {

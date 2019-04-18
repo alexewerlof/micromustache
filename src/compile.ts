@@ -1,7 +1,5 @@
 import { Renderer, IRendererOptions } from './renderer'
-import { tokenize } from './tokenize'
-
-export type Tags = [string, string]
+import { tokenize, TokenizeOptions } from './tokenize'
 
 /**
  * The options that customize the tokenization of the template and the renderer
@@ -13,10 +11,9 @@ export interface ICompileOptions extends IRendererOptions {
    * the template.
    * It defaults to `['{{', '}}']`
    */
-  readonly tags?: Tags
+  readonly tags?: TokenizeOptions
 }
 
-const defaultTags: Tags = ['{{', '}}']
 const defaultCompileOptions: ICompileOptions = {}
 
 /**
@@ -40,18 +37,13 @@ export function compile(
       'The template parameter must be a string. Got ' + template
     )
   }
+
   if (options === null || typeof options !== 'object') {
     throw new TypeError(
       'The compiler options should be an object. Got ' + options
     )
   }
 
-  const { tags = defaultTags } = options
-
-  if (!Array.isArray(tags) || tags.length !== 2) {
-    throw Error('Tags should be an array with exactly two items. Got ' + tags)
-  }
-
-  const tokens = tokenize(template, tags[0], tags[1])
+  const tokens = tokenize(template, options.tags)
   return new Renderer(tokens, options)
 }

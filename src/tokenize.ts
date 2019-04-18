@@ -3,6 +3,9 @@ export interface ITokens {
   readonly varNames: string[]
 }
 
+export type TokenizeOptions = [string, string]
+const defaultTokenizeOptions: TokenizeOptions = ['{{', '}}']
+
 /**
  * Parse a template and returns the tokens in an object.
  *
@@ -16,19 +19,28 @@ export interface ITokens {
  */
 export function tokenize(
   template: string,
-  openSym = '{{',
-  closeSym = '}}'
+  options: TokenizeOptions = defaultTokenizeOptions
 ): ITokens {
+  if (!Array.isArray(options) || options.length !== 2) {
+    throw Error(
+      'Tags should be an array with exactly two items. Got ' + options
+    )
+  }
+
+  const [openSym, closeSym] = options
+
   if (typeof openSym !== 'string' || openSym.length === 0) {
     throw new TypeError(
       'The openSym parameter must be a string. Got ' + openSym
     )
   }
+
   if (typeof closeSym !== 'string' || closeSym.length === 0) {
     throw new TypeError(
       'The closeSym parameter must be a string. Got ' + closeSym
     )
   }
+
   if (openSym === closeSym) {
     throw new TypeError(
       'The open and close syntax cannot be the same: "' + openSym + '"'
