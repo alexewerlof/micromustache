@@ -11,7 +11,7 @@ export interface IRendererOptions {
    * 'undefined' for values that are `null` or `undefined`.
    * By default it swallows those values to be compatible with Mustache.
    */
-  explicit?: boolean
+  readonly explicit?: boolean
   /**
    * When set to a truthy value, we throw a ReferenceError for invalid varNames.
    * Invalid varNames are the ones that do not exist in the scope.
@@ -22,10 +22,12 @@ export interface IRendererOptions {
    * - if `propsExist` is truthy, the value will be assumed empty string
    * - if `propsExist` is falsy, a ReferenceError will be thrown
    */
-  propsExist?: boolean
+  readonly propsExist?: boolean
   /** when set to a truthy value, validates the variable names */
-  validateVarNames?: boolean
+  readonly validateVarNames?: boolean
 }
+
+const defaultRendererOptions: IRendererOptions = {}
 
 /**
  * The callback for resolving a value (synchronous)
@@ -59,10 +61,11 @@ export class Renderer {
    * @param options - some options for customizing the rendering process
    */
   constructor(
-    private tokens: ITokens,
-    private readonly options: IRendererOptions = {}
+    private readonly tokens: ITokens,
+    private readonly options: IRendererOptions = defaultRendererOptions
   ) {
     if (
+      tokens === null ||
       typeof tokens !== 'object' ||
       !Array.isArray(tokens.strings) ||
       !Array.isArray(tokens.varNames) ||

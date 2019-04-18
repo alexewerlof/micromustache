@@ -29,9 +29,9 @@ class ClassWithToString {
 }
 
 interface ITestCase {
-  description: string
-  template: string
-  scope: Scope
+  readonly description: string
+  readonly template: string
+  readonly scope: Scope
 }
 
 const testCases: ITestCase[] = [

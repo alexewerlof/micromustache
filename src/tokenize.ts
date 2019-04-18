@@ -1,6 +1,6 @@
 export interface ITokens {
-  strings: string[]
-  varNames: string[]
+  readonly strings: string[]
+  readonly varNames: string[]
 }
 
 /**
@@ -29,10 +29,14 @@ export function tokenize(
       'The closeSym parameter must be a string. Got ' + closeSym
     )
   }
+  if (openSym === closeSym) {
+    throw new TypeError(
+      'The open and close syntax cannot be the same: "' + openSym + '"'
+    )
+  }
 
   const openSymLen = openSym.length
   const closeSymLen = closeSym.length
-  const escapedOpen = escape + openSym
 
   let openIndex: number
   let closeIndex: number = 0
@@ -40,14 +44,6 @@ export function tokenize(
   const strings: string[] = []
   const varNames: string[] = []
   let currentIndex = 0
-  const foundEscapedOpen = false
-
-  function pushToStrings(str: string) {
-    const sanitizedStr = foundEscapedOpen
-      ? str.replace(escapedOpen, openSym)
-      : str
-    strings.push(sanitizedStr)
-  }
 
   while (currentIndex < template.length) {
     openIndex = template.indexOf(openSym, currentIndex)
@@ -70,18 +66,18 @@ export function tokenize(
 
     if (varName.includes(openSym)) {
       throw new SyntaxError(
-        'Missing ' + closeSym + ' in the template expression ' + varName
+        'Variable names cannot have ' + openSym + ' ' + varName
       )
     }
 
     varNames.push(varName)
 
     closeIndex += closeSymLen
-    pushToStrings(template.substring(currentIndex, openIndex))
+    strings.push(template.substring(currentIndex, openIndex))
     currentIndex = closeIndex
   }
 
-  pushToStrings(template.substring(closeIndex))
+  strings.push(template.substring(closeIndex))
 
   return { strings, varNames }
 }

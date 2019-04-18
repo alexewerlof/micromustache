@@ -13,7 +13,7 @@ export interface ICompileOptions extends IRendererOptions {
    * the template.
    * It defaults to `['{{', '}}']`
    */
-  tags?: Tags
+  readonly tags?: Tags
 }
 
 const defaultTags: Tags = ['{{', '}}']
