@@ -23,27 +23,22 @@ export function tokenize(
 ): ITokens {
   if (!Array.isArray(options) || options.length !== 2) {
     throw Error(
-      'Tags should be an array with exactly two items. Got ' + options
+      'Tags should be an array with exactly two strings. Got ' + options
     )
   }
 
   const [openSym, closeSym] = options
 
-  if (typeof openSym !== 'string' || openSym.length === 0) {
+  if (
+    typeof openSym !== 'string' ||
+    typeof closeSym !== 'string' ||
+    openSym.length === 0 ||
+    closeSym.length === 0 ||
+    openSym === closeSym
+  ) {
     throw new TypeError(
-      'The openSym parameter must be a string. Got ' + openSym
-    )
-  }
-
-  if (typeof closeSym !== 'string' || closeSym.length === 0) {
-    throw new TypeError(
-      'The closeSym parameter must be a string. Got ' + closeSym
-    )
-  }
-
-  if (openSym === closeSym) {
-    throw new TypeError(
-      'The open and close syntax cannot be the same: "' + openSym + '"'
+      'The tags array should have two distinct non-empty strings. Got ' +
+        options.join(', ')
     )
   }
 
