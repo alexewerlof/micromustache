@@ -12,30 +12,24 @@
 
 A minimalist, fast and secure template engine with some handy additions.
 
-**Think of it as a sweet spot between plain text replacement and [Mustache](https://mustache.github.io/); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)!**
+**Think of it as a sweet spot between plain text interpolation and [Mustache](https://mustache.github.io/); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to limit complexity.**
 
 If variable interpolation is all you need, *micromustache* is a drop-in replacement for MustacheJS.
 
+* 2x-3x faster than MustacheJS
 * No dependencies
-* Lightweight (~400 source lines of code. `npm run sloc`)
-* Secure. Works in CSP environments. In CSP, inline JavaScript as well as potentially harmful string-to-JS methods such as eval are not executed.
-* No regular expression. No risk for [regexp DDoS](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
-* Minimalist! No fancy features and enough rope to hang the developer
-* 2x-3x faster than Mustache
 * Does not aggressively cache internal parsing results and does not introduce memory leaks
-  (mustache.js caches tokens for all templates)
+* Lightweight (<400 source lines of code)
+* The core philosophy is to emit a meaningful error rather than silently proceeding with the wrong assumption
+* Secure. Works in CSP environments (no usage of `eval()` or `new Function()`).
+* No regular expression. No risk for [regexp DDoS](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
+* Minimalist! No fancy features and not enough rope to hang the developer (mustache.js caches tokens for all templates)
 * The object accessor syntax is closer to JavaScript than Mustache
 * Uses `toString()` for values that have it
 * Pretty prints JSON values (extra to JS)
-* Prints +/- infinity (extra to JS) <-- edge case, remove it
-
------< I want null to be null just as JS. Maybe add an option to specially treat this if the user wants
------also the stringify should become faster
-
-* The core philosophy is to emit a meaningful error rather than silently proceeding with the wrong assumption
 * The errors are more aligned with JavaScript than Mustache
 * Works on string templates (and it actually improves its speed)
-* [Fully compatible](test/mustache-compatiblity.spec.js) with MustacheJS for **interpolation**
+* [Fully compatible](src/mustachejs.spec.js) with MustacheJS for **interpolation**
 * Works in node (CommonJS) and Browser (using CommonJS build tools like
   [Browserify](http://browserify.org/) or [WebPack](https://webpack.github.io/))
 * Well tested (full test coverage over 120+ tests)
@@ -68,9 +62,6 @@ mustache.render('{{a{{b}}', {
 }) // gives "wat?"
 ```
 
-Currently we don't support commenting out a variable name but Mustache allows
-this syntax: `{{!noOneCares}}`.
-
 ## Tradeoffs
 
 Micromustache achieves faster speed and smaller size by dropping the following
@@ -87,8 +78,8 @@ If you can live with this, read on...
 # Getting started
 
 > render
-> a use case that cannot be done with template literals
-> Not just mustache syntax, in fact not the weird mustache and handlebars syntax
+> a use case that cannot be done with template literals (template not in scope)
+> Not just mustache syntax, in fact not the weird mustache and handlebars syntax: `a["b"]`
 > How about the errors?
 > render with a resolver
 > We have 'get'
@@ -101,7 +92,6 @@ If you can live with this, read on...
 # API
 
 ## `render(template, scope = {}, options)`
-
 
 ### Parameters
 * `template: string`: The template containing one or more `{{variableNames}}`.
@@ -161,7 +151,7 @@ micromustache.render('He was {{age}} years old!', person);
 You can easily reference deep object hierarchies:
 
 ```js
-var singer = {
+const singer = {
   first: 'Michael',
   last: 'Jackson',
   children: [
@@ -185,15 +175,18 @@ micromustache.render("{{first}} {{last}} had {{children.length}} children: {{chi
 //output = "Michael Jackson had 3 children: Paris-Michael, Prince and Michael"
 ```
 
-*As you can see unlike MustacheJS, micromustache doesn't have loops.*
+As you can see unlike MustacheJS, micromustache doesn't have loops but the work around is the same solution as when using string template literals:
+
+```js
+const scope = {...singer, children: singer.children.map(child => render('{{first}}', child).join(', '))}
+micromustache.render("{{first}} {{last}} had {{children.length}} children: {{children}}", scope);
+//output = "Michael Jackson had 3 children: Paris-Michael, Prince and Michael"
+```
 
 ### Differences with MustacheJS render() method
 
-* micromustache is a bit more forgiving than MustacheJS. For example, if the `scope` is `null` or
- `undefined`, MustacheJS throws an exception but micromustache doesn't. It just assumes an empty
- object for the scope.
-* also the `options` don't exist in MustacheJS but is a powerful little utility that halps
- some use cases.
+* micromustache is a bit more forgiving than MustacheJS. For example, if the `scope` is `undefined`, MustacheJS throws an exception but micromustache doesn't. It just assumes an empty object for the scope.
+* also the `options` don't exist in MustacheJS but is a powerful little utility that helps some use cases.
 
 ## `compile(template, customResolver)`
 
@@ -204,7 +197,7 @@ layer on top of `render` so it uses the same parameters 👆.
 
 ### Return
 
-A function that accepts a `scope` object and returns a rendered template string.
+A Renderer object that accepts a `scope` object and returns a rendered template string.
 
 ### Example
 
@@ -253,10 +246,9 @@ and puts the result text in `output.txt`.
 
 # Tests
 
-We use Mocha/Chai for tests. If you want to run the tests, install dependencies and run them using
-npm:
+We use Mocha/Chai for tests. If you want to run the tests, install dependencies and run them:
 
-```
+```bash
 npm it
 ```
 
@@ -376,9 +368,9 @@ A. Make an issue first. The goal of MicroMustache is to be super tiny and while 
 
 # Known issues
 
-For the sake of speed, some edge cases are not addressed.
+For the sake of speed, code size and less complexity (which tends to attract bugs), some edge cases are not addressed:
 
-**A varName cannot include `']'` character**
+**A varName cannot include the `']'` character**
 
 For example if you have an object like:
 
@@ -388,8 +380,7 @@ const a = {
 }
 ```
 
-`a[']']` will not give `'close'` but rather complains that you have a
-mismatching quotation!
+`a[']']` will not give `'close'` but rather throws a syntax error complaining that you have a mismatching quotation!
 
 **It doesn't require string delimiters:**
 
@@ -403,16 +394,18 @@ const a = {
 
 If you want to get the value of the `foo` property, in Javascript you can say
 `a['foo']`. This works in micromustache too but you can also say `a[foo]` which
-is not valid Javascript strictly speaking.
+is not valid Javascript strictly speaking but works without error.
 
 **No comments**
 
-Unlike mustache you cannot comment a variable name.
+Unlike Mustache.js you cannot comment a variable name.
 
 **No escape sequence**
 
 The templates cannot currently contain `{{` and there's no way to escape it.
 One workaround is to literally pass `'{{'` as a value for a variable.
+Another workaround is to explicitly set the `tags` option to something other
+than `['{{', '}}']`, for example `['<', '>']`. 
 
 **No nested variables**
 
@@ -427,4 +420,5 @@ const scope = {
 micromustache.render(`My favorite language is not {{a[b]}}`)
 ```
 
-Will try to access `scope.a.b` (which is undefined) instead of `scope.a[scope.b]`.
+Will not give `'Python'` because `a[b]` is treated as `a['b']` or `a.b`.
+In other words instead of `scope.a[scope.b]` it gives the value of `scope.a.b`.
