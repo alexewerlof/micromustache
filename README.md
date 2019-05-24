@@ -10,61 +10,29 @@
 
 ![Logo](https://raw.github.com/userpixel/micromustache/master/logo.png)
 
-A minimalist, fast and secure template engine with some handy additions.
+A minimalist, fast and **secure** template engine with some handy additions.
 
 **Think of it as a sweet spot between plain text interpolation and [Mustache](https://mustache.github.io/); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to limit complexity.**
 
 If variable interpolation is all you need, *micromustache* is a drop-in replacement for MustacheJS.
 
-* 2x-3x faster than MustacheJS
+* **2x-3x** faster than MustacheJS
+* **Secure**. Works in CSP environments (no usage of `eval()` or `new Function()`). Published only with 2FA. No risk for [regexp DDoS](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
+* **Lightweight** (<400 source lines of code) small API surface, easy to pick up
+* **Smaller memory footprint.** Does not aggressively cache all internal parsing results and does not introduce memory leaks
 * No dependencies
-* Does not aggressively cache internal parsing results and does not introduce memory leaks
-* Lightweight (<400 source lines of code)
-* The core philosophy is to emit a meaningful error rather than silently proceeding with the wrong assumption
-* Secure. Works in CSP environments (no usage of `eval()` or `new Function()`).
-* No regular expression. No risk for [regexp DDoS](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
-* Minimalist! No fancy features and not enough rope to hang the developer (mustache.js caches tokens for all templates)
-* The object accessor syntax is closer to JavaScript than Mustache
-* Uses `toString()` for values that have it
-* Pretty prints JSON values (extra to JS)
-* The errors are more aligned with JavaScript than Mustache
-* Works on string templates (and it actually improves its speed)
-* [Fully compatible](src/mustachejs.spec.js) with MustacheJS for **interpolation**
-* Works in node (CommonJS) and Browser (using CommonJS build tools like
-  [Browserify](http://browserify.org/) or [WebPack](https://webpack.github.io/))
+* The object accessor syntax is closer to JavaScript than Mustache (support `[]` accessors). In case of template syntax errors, it throws a meaningful error making it easy to spot and fix.
+* Good developer experience (DX).
+* Works in node (CommonJS) and Browser (using CommonJS build tools like [Browserify](http://browserify.org/) or [WebPack](https://webpack.github.io/))
 * Well tested (full test coverage over 120+ tests)
-* Dead simple to learn yet a pleasure to use
-* Behaves similar to JavaScript and avoids quirks from lodash and Mustache
-* The code is small and easy to read and has full JSDoc documentation
-* Custom delimiters: instead of `{{ ... }}` use `{ ... }`, `( ... )`, `<% ... %>` or anything you desire*
-* Arrays as values: `{{ arrName[1] }}` (mustachejs does not support this)
+* Full JSDoc documentation
 * TypeScript types included and updated with every version of the library
 
 [Try it in your browser!](https://npm.runkit.com/micromustache)
 
-# Differences with Mustache
-
-Mustache allows variables with empty names. All of these are valid in Mustache:
-
-* `{{}}`
-* `{{ }}`
-* `{{   }}`
-
-Mustache accepts some other invalid parameters.
-For example:
-
-```javascript
-mustache.render('{{a{{b}}', {
-  a: 'a',
-  'a{{b': 'wat?',
-  b: 'b',
-  c: 'c'
-}) // gives "wat?"
-```
-
 ## Tradeoffs
 
-Micromustache achieves faster speed and smaller size by dropping the following
+Micromustache achieves its faster speed and smaller size by dropping the following
 features from [MustacheJS](https://github.com/janl/mustache.js):
 
 * Array iterations: *{{# ...}}*
@@ -73,7 +41,7 @@ features from [MustacheJS](https://github.com/janl/mustache.js):
 * Comments: *{{! ...}}*
 * HTML sanitization: *{{{ propertyName }}}*
 
-If you can live with this, read on...
+Otherwise it is so compatible with Mustache.js, it is a [drop-in replacement](src/mustachejs.spec.js) (for interpolation).
 
 # Getting started
 
@@ -101,12 +69,7 @@ If you can live with this, read on...
 
 ### Return
 
-The return is always the same type as the template itself (if template is not a string, it'll be
-returned untouched and no processing is done). All `{{varName}}` strings inside the template will
-be resolved with their corresponding value from the `scope` object.
-If a particular varName doesn't exist in the `scope` object, it'll be replaced with empty string (`''`).
-Objects will be `JSON.stringified()` but if there was an error doing so (for example when there's
-a loop in the object, they'll be simply replaced with `{...}`.
+The return is always the same type as the template itself (if template is not a string, it'll be returned untouched and no processing is done). All `{{varName}}` strings inside the template will be resolved with their corresponding value from the `scope` object. If a particular varName doesn't exist in the `scope` object, it'll be replaced with empty string (`''`). Objects will be `JSON.stringified()` but if there was an error doing so (for example when there's a loop in the object, they'll be simply replaced with `{...}`.
 
 ### Example:
 
@@ -123,8 +86,7 @@ micromustache.render('Search for {{first}} {{ last }} songs!', person);
 // ('last', person) <-- notice the varName is trimmed
 ```
 
-You can even access array elements and `length` because they are all valid keys in the array object
-in javascript:
+You can even access array elements and `length` because they are all valid keys in the array object in javascript:
 
 ```js
 var fruits = [ 'orange', 'apple', 'lemon' ];
@@ -185,8 +147,9 @@ micromustache.render("{{first}} {{last}} had {{children.length}} children: {{chi
 
 ### Differences with MustacheJS render() method
 
-* micromustache is a bit more forgiving than MustacheJS. For example, if the `scope` is `undefined`, MustacheJS throws an exception but micromustache doesn't. It just assumes an empty object for the scope.
+* Micromustache is a bit more forgiving than MustacheJS. For example, if the `scope` is `undefined`, MustacheJS throws an exception but micromustache doesn't. It just assumes an empty object for the scope.
 * also the `options` don't exist in MustacheJS but is a powerful little utility that helps some use cases.
+* Mustache.js caches parsed results to improve performance. However if you parse many different strings, the memory usage goes up and corrodes your application. Micromustache also does some caching but uses a least-recently-used (LRU) cache to prevent too much memory consumption.
 
 ## `compile(template, customResolver)`
 
@@ -280,9 +243,7 @@ Besides the `render()` function will never cache.
 
 **Q. I want loops**
 
-Unlike MustacheJS or Handlebars, micromustache does not have a custom syntax for
-loops. Instead it encourages you to use JavaScript for that (pretty much how
-JSX avoids custom template syntax that is common in Vue or Angular).
+Unlike MustacheJS or Handlebars, micromustache does not have a custom syntax for loops. Instead it encourages you to use JavaScript for that (pretty much how JSX avoids custom template syntax as opposed to Vue or Angular).
 
 For example if you have an array of objects:
 
@@ -306,27 +267,17 @@ And then somewhere else in your code you can use that template like:
 
 **Q. How do you threat resolver functions?**
 
-The `renderFn()` and `renderFnAsync()` get a function as their first parameter
-and run them for every variable name in the template.
-The function gets the variable name and the scope as arguments and is supposed
-to return the resolved value ready to be injected into the template string.
-If your function throws, `renderFn()/renderFnAsync()` throw as well.
+The `renderFn()` and `renderFnAsync()` get a function as their first parameter and run them for every variable name in the template. The function gets the variable name and the scope as arguments and is supposed to return the resolved value ready to be injected into the template string. If your function throws, `renderFn()/renderFnAsync()` throw as well.
 
 **Q. Do you support multiple scopes and lookup fall back mechanisms?**
 
-This can easily be done using JavaScript object-spread operator as seen in one
-of the [examples](./examples).
+This can easily be done using JavaScript object-spread operator as seen in one of the [examples](./examples).
 
 **Q. What about [ES6 template literals](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals) (AKA "template strings")? Aren't they gonna deprecate this library?**
 
-A. ES6 native Template literals work great when you have the template in the
-same scope as the values.
-If you want to build the template somewhere else (for example for
-internationalization) it gets complicated.
+A. ES6 native Template literals work great when you have the template in the same scope as the values. If you want to build the template somewhere else (for example for internationalization) it gets complicated.
 
-However, when you want to decouple the interpolation (rendering) from the scope
-there's currently no way to do that natively.
-Example suppose you have a code that converts an `Error` to a string:
+However, when you want to decouple the interpolation (rendering) from the scope there's currently no way to do that natively. Example suppose you have a code that converts an `Error` to a string:
 
 ```javascript
 const error = new Error('Just an example')
@@ -347,8 +298,7 @@ const renderError = (e, propName) => `Error message: ${e[propName]}!`
 message = renderError(error, 'stack')
 ```
 
-You can see that this soon becomes complicated.
-With micromustache you can do this a bit easier:
+You can see that this soon becomes complicated. With micromustache you can do this a bit easier:
 
 ```javascript
 const { compile } = require('micromustache')
@@ -356,15 +306,32 @@ const renderError = compile('Error message: {{message}}')
 message = renderError(error)
 ```
 
-If you want to generate a template programmatically, you cannot use the
-Template literals but with micromustache, you just build a string.
+If you want to generate a template programmatically, you cannot use the Template literals but with micromustache, you just build a string.
 
-Also this library allows you to refer to variables that are not in the scope and compile a template
-and will resolve those values lazily and/or at a different context.
+Also this library allows you to refer to variables that are not in the scope and compile a template and will resolve those values lazily and/or at a different context.
 
 **Q. I want "INSERT SOME MUSTACHE FEATURE HERE" but it's not available in MicroMustache. Can I add it?**
 
 A. Make an issue first. The goal of MicroMustache is to be super tiny and while addressing the most important use-case of Mustache. If there's something that is terribly missing, we may add it, otherwise, you may fork it and call it something else OR use MustacheJS.
+
+# Differences with Mustache
+
+Mustache allows variables with empty names. All of these are valid in Mustache:
+
+* `{{}}`
+* `{{ }}`
+* `{{   }}`
+
+However Mustache accepts some other invalid parameters.
+For example:
+
+```javascript
+mustache.render('{{a{{b}}', {
+  a: 'foo',
+  b: 'bar'
+  'a{{b': 'wat?',
+}) // gives "wat?"
+```
 
 # Known issues
 
@@ -392,9 +359,7 @@ const a = {
 }
 ```
 
-If you want to get the value of the `foo` property, in Javascript you can say
-`a['foo']`. This works in micromustache too but you can also say `a[foo]` which
-is not valid Javascript strictly speaking but works without error.
+If you want to get the value of the `foo` property, in Javascript you can say `a['foo']`. This works in micromustache too but you can also say `a[foo]` which is not valid Javascript strictly speaking but works without error.
 
 **No comments**
 
@@ -402,10 +367,7 @@ Unlike Mustache.js you cannot comment a variable name.
 
 **No escape sequence**
 
-The templates cannot currently contain `{{` and there's no way to escape it.
-One workaround is to literally pass `'{{'` as a value for a variable.
-Another workaround is to explicitly set the `tags` option to something other
-than `['{{', '}}']`, for example `['<', '>']`. 
+The templates cannot currently contain `{{` and there's no way to escape it. One workaround is to literally pass `'{{'` as a value for a variable. Another workaround is to explicitly set the `tags` option to something other than `['{{', '}}']`, for example `['<', '>']`. 
 
 **No nested variables**
 
@@ -420,5 +382,4 @@ const scope = {
 micromustache.render(`My favorite language is not {{a[b]}}`)
 ```
 
-Will not give `'Python'` because `a[b]` is treated as `a['b']` or `a.b`.
-In other words instead of `scope.a[scope.b]` it gives the value of `scope.a.b`.
+Will not give `'Python'` because `a[b]` is treated as `a['b']` or `a.b`. In other words instead of `scope.a[scope.b]` it gives the value of `scope.a.b`.
