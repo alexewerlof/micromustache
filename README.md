@@ -19,7 +19,7 @@ If variable interpolation is all you need, *micromustache* is a drop-in replacem
 * 🏃 **2x-3x** faster than MustacheJS
 * 🔒 **Secure**. Works in CSP environments (no usage of `eval()` or `new Function()`). Published only with 2FA. No risk for [regexp DDoS](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
 * 🎈 **Lightweight** No dependencies, less than 400 lines of code, small API surface, easy to pick up
-* 🐁 **Smaller memory footprint.** Does not aggressively cache all internal parsing results and does not introduce memory leaks
+* 🐁 **Smaller memory footprint.** sane caching, no memory leak
 * 🏳 **No dependencies**
 * 🤓 **Bracket notation** support `a[1]['foo']` accessors (mustache.js syntax of `a.1.foo` is still supported).
 * 🚩 **Meaningful errors** in case of template syntax errors to make it easy to spot and fix
