@@ -10,23 +10,23 @@
 
 ![Logo](https://raw.github.com/userpixel/micromustache/master/logo.png)
 
-A minimalist, fast and **secure** template engine with some handy additions.
+A minimalist, fast and **secure** [Mustache](https://mustache.github.io/) template engine with some handy additions.
 
-**Think of it as a sweet spot between plain text interpolation and [Mustache](https://mustache.github.io/); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to limit complexity.**
+**Think of it as a sweet spot between plain text interpolation and [mustache.js](https://github.com/janl/mustache.js); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to limit complexity.**
 
 If variable interpolation is all you need, *micromustache* is a drop-in replacement for MustacheJS.
 
-* **2x-3x** faster than MustacheJS
-* **Secure**. Works in CSP environments (no usage of `eval()` or `new Function()`). Published only with 2FA. No risk for [regexp DDoS](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
-* **Lightweight** (<400 source lines of code) small API surface, easy to pick up
-* **Smaller memory footprint.** Does not aggressively cache all internal parsing results and does not introduce memory leaks
-* No dependencies
-* The object accessor syntax is closer to JavaScript than Mustache (support `[]` accessors). In case of template syntax errors, it throws a meaningful error making it easy to spot and fix.
-* Good developer experience (DX).
+* 🏃 **2x-3x** faster than MustacheJS
+* 🔒 **Secure**. Works in CSP environments (no usage of `eval()` or `new Function()`). Published only with 2FA. No risk for [regexp DDoS](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
+* 🎈 **Lightweight** No dependencies, less than 400 lines of code, small API surface, easy to pick up
+* 🐁 **Smaller memory footprint.** Does not aggressively cache all internal parsing results and does not introduce memory leaks
+* 🏳 **No dependencies**
+* 🤓 **Bracket notation** support `a[1]['foo']` accessors (mustache.js syntax of `a.1.foo` is still supported).
+* 🚩 **Meaningful errors** in case of template syntax errors to make it easy to spot and fix
+* ⚡ **TypeScript** types included and updated with every version of the library
 * Works in node (CommonJS) and Browser (using CommonJS build tools like [Browserify](http://browserify.org/) or [WebPack](https://webpack.github.io/))
 * Well tested (full test coverage over 120+ tests)
 * Full JSDoc documentation
-* TypeScript types included and updated with every version of the library
 
 [Try it in your browser!](https://npm.runkit.com/micromustache)
 
