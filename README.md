@@ -12,9 +12,7 @@
 
 A minimalist, fast and **secure** [Mustache](https://mustache.github.io/) template engine with some handy additions.
 
-**Think of it as a sweet spot between plain text interpolation and [mustache.js](https://github.com/janl/mustache.js); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to limit complexity.**
-
-If variable interpolation is all you need, *micromustache* is a drop-in replacement for MustacheJS.
+**Think of it as a sweet spot between plain text interpolation and [mustache.js](https://github.com/janl/mustache.js); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to limit errors and improve performance.**
 
 * 🏃 **2x-3x** faster than MustacheJS
 * 🔒 **Secure**. Works in CSP environments (no usage of `eval()` or `new Function()`). Published only with 2FA. No risk for [regexp DDoS](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
@@ -32,8 +30,7 @@ If variable interpolation is all you need, *micromustache* is a drop-in replacem
 
 ## Tradeoffs
 
-Micromustache achieves its faster speed and smaller size by dropping the following
-features from [MustacheJS](https://github.com/janl/mustache.js):
+Micromustache achieves its faster speed and smaller size by dropping the following features from [MustacheJS](https://github.com/janl/mustache.js):
 
 * Array iterations: *{{# ...}}*
 * Partials: *{{> ...}}*
@@ -41,21 +38,139 @@ features from [MustacheJS](https://github.com/janl/mustache.js):
 * Comments: *{{! ...}}*
 * HTML sanitization: *{{{ propertyName }}}*
 
-Otherwise it is so compatible with Mustache.js, it is a [drop-in replacement](src/mustachejs.spec.js) (for interpolation).
+If variable interpolation is all you need, *micromustache* is a [drop-in replacement](src/mustachejs.spec.js) for MustacheJS.
 
 # Getting started
 
-> render
-> a use case that cannot be done with template literals (template not in scope)
-> Not just mustache syntax, in fact not the weird mustache and handlebars syntax: `a["b"]`
-> How about the errors?
-> render with a resolver
-> We have 'get'
-> How about arrays? JSX?
-> What if you use the same template again and again? First note that render doesn't cache anything
-> compile spits out Renderer
-> When the renderer is out of scope, the cache is freed
-> Link to how it compares with other libs
+Install:
+
+```bash
+$ npm i micromustache
+```
+
+Use:
+
+```javascript
+const { render } = require('micromustache')
+console.log(render('Hello {{name}}!', { name: 'world' }))
+// Hello world!
+```
+
+So what's the point? Why not just use EcmaScript [template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)?
+
+Template literals work great when the template and the variables are in the same scope. For example, suppose you have a function like this:
+
+```javascript
+function greet(name) {
+  return `Hi ${name}!`
+}
+```
+
+After your function became successful, you decide to dominate the world and expand to new markets which speak other languages. You need to internationalize it. Adding one more language is easy:
+
+```javascript
+function greet(name, lang) {
+  return lang === 'sv' ? `Hej ${name}!` : `Hi ${name}!`
+}
+```
+
+But how about a bunch of them?
+
+```javascript
+function greet(name, lang) {
+  switch (lang) {
+    case 'sv': return `Hej ${name}!`
+    case 'es': return `Hola ${name}!`
+    default:
+    case 'en': return `Hi ${name}!`
+  }
+}
+```
+
+You get the picture. The main problem is that the content (the text) is coupled to the function (the interpolation of name). Template engines like Mustache comes to play when you want to move the content out of the function and let something else deal with that concern.
+
+```javascript
+const { render } = require('micromustache')
+// A very simplified database of strings and languages
+const db = {
+  en: {
+    greeting: 'Hi {{name}}!',
+    // ...
+  },
+  sv: {
+    greeting: 'Hej {{name}}!',
+    // ...
+  },
+  // ...
+}
+
+function greet(name, lang) {
+  return render(db[lang].greeting, { name } )
+}
+```
+
+You can of course reference deep nested objects:
+
+```javascript
+const { render } = require('micromustache')
+const scope = {
+  fruits: [{
+    name: 'Apple', color: 'red',
+    name: 'Banana', color: 'yellow',
+  }]
+}
+console.log(render('I like {{fruits[1].color}}!', scope))
+// I like Bababa!
+```
+
+*It worth to note that Mustache and Handlebars don't support `fruits[1].color` syntax and rather expect you to write it as `fruits.1.color`.*
+
+The real power of micromustache comes from letting you resolve a variable name to something you choose. To pass a resolver function, you can use `renderFn()`
+
+```javascript
+const { renderFn } = require('micromustache')
+const star = str => '*'.repeat(str.length)
+
+console.log(renderFn('My password is {{monkey}}', star))
+// My password is ******
+```
+
+You can even resolve asynchronously using the `renderFnAsync()`. For example the following code uses [node-fetch](https://www.npmjs.com/package/node-fetch) to get a task title from the [jsonplaceholder API](https://jsonplaceholder.typicode.com).
+
+```javascript
+const { renderFnAsync } = require('micromustache')
+const fetch = require('node-fetch')
+
+async function taskTitleFromUrl(url) {
+  const response = await fetch(url)
+  const obj = await response.json()
+  return obj.title
+}
+
+console.log(await renderFnAsync('Got {{https://jsonplaceholder.typicode.com/todos/1}}!', fetch))
+// Got delectus aut autem
+```
+
+If you find yourself working on a particular template too often, you can compile it once and cache the result so the future renders will be much faster:
+
+```javascript
+const { compile } = require('micromustache')
+const compiled = compile('Hello {{name}}! I am {{age}} years old!')
+console.log(compiled.render({ name: 'world', age: 42 }))
+// Hello world! I'm 42
+```
+
+Of course there are `compiled.renderFn()` and `compiled.renderFnAsync()` exist and work as expected. *It worth to note that if `compiled` is garbage collected, the cache is freed (unlike some other template engines that dearly keep hold of the compiled result in their cache which leads to memory leaks and out of memory errors over longer usage).
+
+You can do all sorts of fancy stuff with some of the compiler options. For example, this is an imitation of the C# string interpolation syntax:
+
+```javascript
+const $ = scope => strings => render(strings[0], scope, { tags: ['{', '}'] })
+
+const name = 'Michael'
+console.log($({ name })`Hello {name}!`)
+// Hello Michael!
+```
 
 # API
 
@@ -175,6 +290,8 @@ output = templateEngine({first:'Albert',last:'Einstein'});
 
 `compile()` doesn't do any memoization so it doesn't introduce any performance improvmenet to your
 code.
+
+## `get(scope = {}, path)`
 
 # Command Line Interface
 
