@@ -4,3 +4,10 @@ node_js:
 - lts/*
 - node
 script: npm t
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: true
+  on:
+    branch: typescript #change to master
