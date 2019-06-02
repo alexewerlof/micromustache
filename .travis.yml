@@ -4,6 +4,7 @@ node_js:
 - lts/*
 - node
 script: npm t
+before_deploy: npm run docs
 deploy:
   provider: pages
   skip_cleanup: true
