@@ -14,7 +14,6 @@
     "microlibrary"
   ],
   "main": "dist/node/index.js",
-  "types": "./dist/node/types.d.ts",
   "bin": {
     "micromustache": "./bin/micromustache.js"
   },
@@ -32,6 +31,7 @@
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
     "mustache": "^3.0.1",
+    "pkg-ok": "^2.3.1",
     "prettier": "^1.17.1",
     "rimraf": "^2.6.3",
     "sloc": "^0.2.1",
