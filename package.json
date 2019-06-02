@@ -16,7 +16,7 @@
   "main": "dist/node/index.js",
   "types": "./dist/node/types.d.ts",
   "bin": {
-    "micromustache": "./bin/micromustache"
+    "micromustache": "./bin/micromustache.js"
   },
   "directories": {
     "lib": "./dist/node"
@@ -47,7 +47,7 @@
     "build:node": "tsc -p tsconfig-node.json",
     "build": "npm run build:amd && npm run build:node",
     "clean:build": "npm run clean && npm run build",
-    "docs": "typedoc --out docs/ --mode modules --tsconfig tsconfig-docs.json --readme ./README.md --theme minimal",
+    "docs": "typedoc --out docs/ --mode modules --tsconfig tsconfig-docs.json --theme minimal",
     "pretest": "npm run lint",
     "lint": "tslint -p .",
     "lint:fix": "npm run lint -- --fix",
