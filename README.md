@@ -42,6 +42,7 @@ Micromustache achieves its faster speed and smaller size by dropping the followi
 * Inverted selection: `{{^ ...}}`
 * Comments: `{{! ...}}`
 * HTML sanitization: `{{{ propertyName }}}`
+* [See all the differences with MustacheJS](https://github.com/userpixel/micromustache/wiki/Differences-with-Mustache)
 
 If variable interpolation is all you need, *micromustache* is a [drop-in replacement](src/mustachejs.spec.js) for MustacheJS.
 
@@ -205,106 +206,11 @@ console.log($({ name })`Hello {name}!`)
 
 # FAQ
 
-**Q. How do I do loops?**
-
-Unlike MustacheJS or Handlebars, micromustache does not have a custom syntax for loops. Instead it encourages you to use JavaScript for that (pretty much how JSX avoids custom template syntax and encourages using `.map()`).
-
-For example if you have an array of objects:
-
-```javascript
-const { render } = require('micromustache')
-
-const people = [
-  { name: 'Alex', age: 37 },
-  { name: 'Oskar', age: 35 },
-  { name: 'Anna', age: 43 }
-]
-
-console.log(render(`There are ${people.length} people:\n${peopleBrief}`, {
-  people,
-  peopleBrief: people.map(p => render(`${name}, ${age} years old`, p)).join('\n')
-}))
-```
-
-**Q. How do you threat resolver functions?**
-
-The `renderFn()` and `renderFnAsync()` get a function as their second parameter and run them for every variable name in the template. The function gets the variable name and the scope as arguments and is supposed to return the resolved value ready to be injected into the template string. If your function throws, `renderFn()/renderFnAsync()` throw as well.
-
-**Q. Do you support multiple scopes and lookup fall back mechanisms?**
-
-This can easily be done using JavaScript object-spread operator as seen in one of the [examples](./examples).
-
-# Differences with Mustache
-
-Mustache allows variables with empty names. All of these are valid in Mustache:
-
-* `{{}}`
-* `{{ }}`
-* `{{   }}`
-
-However Mustache accepts some other invalid parameters.
-For example:
-
-```javascript
-mustache.render('{{a{{b}}', {
-  a: 'foo',
-  b: 'bar'
-  'a{{b': 'wat?',
-}) // gives "wat?"
-```
+[On wiki](https://github.com/userpixel/micromustache/wiki/FAQ)
 
 # Known issues
 
-For the sake of speed and smaller code size, some edge cases are not addressed but you should be aware of:
-
-**A varName cannot include the `']'` character**
-
-For example if you have an object like:
-
-```javascript
-const a = {
-  ']': 'close'
-}
-```
-
-`a[']']` will not give `'close'` but rather throws a syntax error complaining that you have a mismatching quotation!
-
-**Variable names don't require string delimiters:**
-
-Suppose you have this in Javascript:
-
-```javascript
-const a = {
-  'foo': 'bar'
-}
-```
-
-If you want to get the value of the `foo` property, in Javascript you can say `a['foo']`. This works in micromustache too but you can also say `a[foo]` which is not valid Javascript strictly speaking but works without error.
-
-**No support for comments**
-
-Unlike Mustache.js you cannot comment a variable name.
-You can of course work around this limitation by using your own resolve function.
-
-**No escape sequence**
-
-The templates cannot currently contain `{{` and there's no way to escape it. One workaround is to literally pass `'{{'` as a value for a variable. Another workaround is to explicitly set the `tags` option to something other than `['{{', '}}']`, for example `['<', '>']`. 
-
-**No nested variables**
-
-Currently there is no way to use a nested variable name:
-
-```javascript
-const scope = {
-  a: ['Java', 'Python', 'Ruby'],
-  b: 'foo'
-}
-
-micromustache.render(`My favorite language is not {{a[b]}}`)
-// 'foo'
-```
-
-Will not give `'Python'` because `a[b]` is treated as `a['b']` or `a.b`. In other words instead of `scope.a[scope.b]` it gives the value of `scope.a.b`.
+[On wiki](https://github.com/userpixel/micromustache/wiki/Known-issues)
 
 ---
 
