@@ -12,19 +12,24 @@
 
 A minimalist, fast and **secure** [Mustache](https://mustache.github.io/) template engine with some handy additions.
 
-**Think of it as a sweet spot between plain text interpolation and [mustache.js](https://github.com/janl/mustache.js); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to limit errors and improve performance.**
+**Think of it as a sweet spot between plain text interpolation and [mustache.js](https://github.com/janl/mustache.js); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to reduce potential errors and improve performance.**
 
 * 🏃 **2x-3x** faster than MustacheJS
 * 🔒 **Secure**. Works in CSP environments (no usage of `eval()` or `new Function()`). Published only with 2FA. No risk for [regexp DDoS](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
-* 🎈 **Lightweight** No dependencies, less than 400 lines of code, small API surface, easy to pick up
+* 🎈 **Lightweight** No dependencies, less than 400 lines of source code, small API surface, easy to pick up
 * 🐁 **Smaller memory footprint.** sane caching, no memory leak
 * 🏳 **No dependencies**
 * 🤓 **Bracket notation** support `a[1]['foo']` accessors (mustache.js syntax of `a.1.foo` is still supported).
-* 🚩 **Meaningful errors** in case of template syntax errors to make it easy to spot and fix
+* 🚩 **Meaningful errors** in case of template syntax errors to make it easy to spot and fix. All functions test their input contracts and throw meaningful errors to improve developer experience (DX)
 * ⚡ **TypeScript** types included and updated with every version of the library
 * 🐇 Works in node (CommonJS) and Browser (using CommonJS build tools like [Browserify](http://browserify.org/) or [WebPack](https://webpack.github.io/))
 * 🛠 Well tested (full test coverage over 120+ tests)
 * 📖 Full JSDoc documentation
+* [CLI](./bin/README.md) for quickly doing interpolations without having to write a program
+
+<a href="https://opencollective.com/micromustache" target="_blank">
+  <img src="https://opencollective.com/micromustache/donate/button@2x.png?color=blue" width=300 />
+</a>
 
 [Try it in your browser!](https://npm.runkit.com/micromustache)
 
@@ -32,11 +37,11 @@ A minimalist, fast and **secure** [Mustache](https://mustache.github.io/) templa
 
 Micromustache achieves its faster speed and smaller size by dropping the following features from [MustacheJS](https://github.com/janl/mustache.js):
 
-* Array iterations: *{{# ...}}*
-* Partials: *{{> ...}}*
-* Inverted selection: *{{^ ...}}*
-* Comments: *{{! ...}}*
-* HTML sanitization: *{{{ propertyName }}}*
+* Array iterations: `{{# ...}}` (you can still pass the result in a variable)
+* Partials: `{{> ...}}`
+* Inverted selection: `{{^ ...}}`
+* Comments: `{{! ...}}`
+* HTML sanitization: `{{{ propertyName }}}`
 
 If variable interpolation is all you need, *micromustache* is a [drop-in replacement](src/mustachejs.spec.js) for MustacheJS.
 
@@ -66,7 +71,7 @@ function greet(name) {
 }
 ```
 
-After your function became successful, you decide to dominate the world and expand to new markets which speak other languages. You need to internationalize it. Adding one more language is easy:
+After your function became successful and you get rich, you may decide to dominate the world and expand to new markets which speak other languages. You need to internationalize it. Adding one more language is easy:
 
 ```javascript
 function greet(name, lang) {
@@ -87,11 +92,11 @@ function greet(name, lang) {
 }
 ```
 
-You get the picture. The main problem is that the content (the text) is coupled to the function (the interpolation of name). Template engines like Mustache comes to play when you want to move the content out of the function and let something else deal with that concern.
+You get the picture, that doesn't scale well! The main problem is that the content (the text) is coupled to the function (the variable interpolation). Template engines help you to move the content out of the function and let something else deal with that concern.
 
 ```javascript
 const { render } = require('micromustache')
-// A very simplified database of strings and languages
+// A very simplified i18n database
 const db = {
   en: {
     greeting: 'Hi {{name}}!',
@@ -109,7 +114,7 @@ function greet(name, lang) {
 }
 ```
 
-You can of course reference deep nested objects:
+Just like template literals, you can of course reference deep nested objects:
 
 ```javascript
 const { render } = require('micromustache')
@@ -125,15 +130,32 @@ console.log(render('I like {{fruits[1].color}}!', scope))
 
 *It worth to note that Mustache and Handlebars don't support `fruits[1].color` syntax and rather expect you to write it as `fruits.1.color`.*
 
-The real power of micromustache comes from letting you resolve a variable name to something you choose. To pass a resolver function, you can use `renderFn()`
+The real power of micromustache comes from letting you resolve a variable name to something you choose. To pass a resolver function, you can use `renderFn()` instead of `render()`:
 
 ```javascript
 const { renderFn } = require('micromustache')
-const star = str => '*'.repeat(str.length)
+const up = str => str.toUpperCase()
 
-console.log(renderFn('My password is {{monkey}}', star))
-// My password is ******
+console.log(renderFn('My name is {{Alex}}!', up))
+// My name is ALEX!
 ```
+
+If you want to lookup a key in an object, there's a `get()` function as well:
+
+```javascript
+const { renderFn, get } = require('micromustache')
+
+function star(str, scope) {
+  // str is 'password'
+  // scope is { password: 'abc' }
+  const value = get(scope, str) // value is 'abc'
+  return '*'.repeat(value.length)
+}
+
+console.log(renderFn('My password is {{password}}!', star, { password: 'abc' }))
+// My password is ***!
+```
+
 
 You can even resolve asynchronously using the `renderFnAsync()`. For example the following code uses [node-fetch](https://www.npmjs.com/package/node-fetch) to get a task title from the [jsonplaceholder API](https://jsonplaceholder.typicode.com).
 
@@ -151,20 +173,25 @@ console.log(await renderFnAsync('Got {{https://jsonplaceholder.typicode.com/todo
 // Got delectus aut autem
 ```
 
-If you find yourself working on a particular template too often, you can compile it once and cache the result so the future renders will be much faster:
+If you find yourself working on a particular template too often, you can compile it once and cache the result so the future renders will be much faster. The compiler returns an object with `render()`, `renderFn()` and `renderFnAsync()` methods with the difference that their first parameter is not the template string:
 
 ```javascript
 const { compile } = require('micromustache')
 const compiled = compile('Hello {{name}}! I am {{age}} years old!')
 console.log(compiled.render({ name: 'world', age: 42 }))
 // Hello world! I'm 42
+// The methods are bound so you can use the destructed version for brevity
+const { render } = compile
+console.log(render({ name: 'world', age: 42 }))
+// Hello world! I'm 42
 ```
 
-Of course there are `compiled.renderFn()` and `compiled.renderFnAsync()` exist and work as expected. *It worth to note that if `compiled` is garbage collected, the cache is freed (unlike some other template engines that dearly keep hold of the compiled result in their cache which leads to memory leaks and out of memory errors over longer usage).
+*If `compiled` is garbage collected, the cache is freed (unlike some other template engines that dearly keep hold of the compiled result in their cache which leads to memory leaks and out of memory errors over longer usage).*
 
-You can do all sorts of fancy stuff with some of the compiler options. For example, this is an imitation of the C# string interpolation syntax:
+Using the options you can do all sorts of fancy stuff. For example, here is an imitation of the C# string interpolation syntax:
 
 ```javascript
+const { render } = require('micromustache')
 const $ = scope => strings => render(strings[0], scope, { tags: ['{', '}'] })
 
 const name = 'Michael'
@@ -174,262 +201,38 @@ console.log($({ name })`Hello {name}!`)
 
 # API
 
-## `render(template, scope = {}, options)`
-
-### Parameters
-* `template: string`: The template containing one or more `{{variableNames}}`.
-* `scope: Object`: An optional object containing values for every variable names that is used in the
- template. If it's omitted, it'll be assumed an empty object.
-* `options` see compiler options
-
-### Return
-
-The return is always the same type as the template itself (if template is not a string, it'll be returned untouched and no processing is done). All `{{varName}}` strings inside the template will be resolved with their corresponding value from the `scope` object. If a particular varName doesn't exist in the `scope` object, it'll be replaced with empty string (`''`). Objects will be `JSON.stringified()` but if there was an error doing so (for example when there's a loop in the object, they'll be simply replaced with `{...}`.
-
-### Example:
-
-```js
-var person = {
-  first: 'Michael',
-  last: 'Jackson'
-};
-micromustache.render('Search for {{first}} {{ last }} songs!', person);
-// output = "Search for Michael Jackson songs!"
-
-// If a custom resolver was provided it would be called two times with these params:
-// ('first', person)
-// ('last', person) <-- notice the varName is trimmed
-```
-
-You can even access array elements and `length` because they are all valid keys in the array object in javascript:
-
-```js
-var fruits = [ 'orange', 'apple', 'lemon' ];
-micromustache.render('I like {{length}} fruits: {{0}}, {{1}} and {{2}}.', fruits);
-// output = "I like 3 fruits: orange, apple and lemon."
-// If a custom resolver was provided it would be called three times with these params:
-// ('0', person) <-- notice that the array indices are sent as strings.
-// ('1', person)
-// ('2', person)
-```
-
-*Note: if a key is missing or `null`, it'll be treated as if it contained a value
-of empty string (i.e. the {{variableName}} will be removed from the template).*
-
-```js
-var person = {
-  first: 'Michael',
-  last: 'Jackson'
-};
-micromustache.render('He was {{age}} years old!', person);
-// output = "He was  years old!"
-```
-
-You can easily reference deep object hierarchies:
-
-```js
-const singer = {
-  first: 'Michael',
-  last: 'Jackson',
-  children: [
-    {
-      first: 'Paris-Michael',
-      middle: 'Katherine',
-    },
-    {
-      first: 'Prince',
-      middle: 'Michael',
-      prefix: 'II'
-    },
-    {
-      first: 'Michael',
-      middle: 'Joseph',
-      prefix: 'Jr.'
-    }
-  ]
-}
-micromustache.render("{{first}} {{last}} had {{children.length}} children: {{children.0.first}}, {{children.1.first}} and {{children.2.first}}", singer);
-//output = "Michael Jackson had 3 children: Paris-Michael, Prince and Michael"
-```
-
-As you can see unlike MustacheJS, micromustache doesn't have loops but the work around is the same solution as when using string template literals:
-
-```js
-const scope = {...singer, children: singer.children.map(child => render('{{first}}', child).join(', '))}
-micromustache.render("{{first}} {{last}} had {{children.length}} children: {{children}}", scope);
-//output = "Michael Jackson had 3 children: Paris-Michael, Prince and Michael"
-```
-
-### Differences with MustacheJS render() method
-
-* Micromustache is a bit more forgiving than MustacheJS. For example, if the `scope` is `undefined`, MustacheJS throws an exception but micromustache doesn't. It just assumes an empty object for the scope.
-* also the `options` don't exist in MustacheJS but is a powerful little utility that helps some use cases.
-* Mustache.js caches parsed results to improve performance. However if you parse many different strings, the memory usage goes up and corrodes your application. Micromustache also does some caching but uses a least-recently-used (LRU) cache to prevent too much memory consumption.
-
-## `compile(template, customResolver)`
-
-This is a utility function that accepts a `template` and `customResolver` and returns a renderer
-function that only accepts scope and spits out filled template. This is useful when you find yourself
-using the render function over and over again with the same template. Under the hood it's just a thin
-layer on top of `render` so it uses the same parameters 👆.
-
-### Return
-
-A Renderer object that accepts a `scope` object and returns a rendered template string.
-
-### Example
-
-```js
-const templateEngine = micromustache.compile('Search {{first}} {{ last }} popcorn!');
-var output = templateEngine(person);
-// output = "Search Michael Jackson popcorn!"
-
-output = templateEngine({first:'Albert',last:'Einstein'});
-// output = "Search Albert Einstein popcorn!"
-```
-
-`compile()` doesn't do any memoization so it doesn't introduce any performance improvmenet to your
-code.
-
-## `get(scope = {}, path)`
-
-# Command Line Interface
-
-Micromustache comes with a simple CLI that brings the `render()` functionality to shell programming.
-
-```bash
-npm i -g micromustache
-```
-This will make the `micromustache` command available on your shell.
-It works like this:
-
-```bash
-micromustache templatePath scopePath
-```
-
-Both parameters are required.
-* `templatePath`: path to a template text file that contains {{varName}} in it
-* `scopePath`: path to a valid json file
-
-Files are read/write with utf8 encoding.
-By default CLI prints the output to console (and erros to stderr).
-You can redirect it to output file using `> outputPath`.
-
-### Example:
-
-```bash
-micromustache template.txt scope.json > output.txt
-```
-
-This command reads the contents of `template.txt` and `render()` it using data from `scope.json`
-and puts the result text in `output.txt`.
-
-# Tests
-
-We use Mocha/Chai for tests. If you want to run the tests, install dependencies and run them:
-
-```bash
-npm it
-```
-
-# Security
-
-Micromustache has been built from the ground up with security in mind:
-
-* It does not have any `dependency` which means there's zero change for malicious
-packages to your runtime security at risk.
-* The code is small. More code ~ more bugs and more places for bugs to hide and breed. The feature set and API surface is intentionally kept minimalistic to avoid complex logic. There's only enough code that needs to be.
-* It's only published with 2 factor authentication by the main author and no third party
-or automated deployment system is used.
-* It does not use any regular expression which reduces the risk for [Regex DDos](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02)
-* It does not use `new Function()` or `eval()` hence it can run in high security environments that enforce
-Content Security Policy (CSP)
-* All functions validate their parameter before execution. This not only prevents abuse but also improves the developer experience (DX) by throwing actionable error messages
-* It does not aggressively cache all template parsing results and therefore will not leak memory silently
-and crash your application or server. Once a `Renderer` is not referenced, all cache is freed.
-Besides the `render()` function will never cache.
-* I have no intention of selling it (koa-router sold: https://news.ycombinator.com/item?id=19156707)
-* The code is open source and very well documented so it is easy to inspect how it works.
-
-# Advanced usage
-
-> use it to search all tags
-> the Renderer render methods are bound and can be used with deconstructor syntax
+[On github pages](http(s)://userpixel.github.io/micromustache)
 
 # FAQ
 
-**Q. I want loops**
+**Q. How do I do loops?**
 
-Unlike MustacheJS or Handlebars, micromustache does not have a custom syntax for loops. Instead it encourages you to use JavaScript for that (pretty much how JSX avoids custom template syntax as opposed to Vue or Angular).
+Unlike MustacheJS or Handlebars, micromustache does not have a custom syntax for loops. Instead it encourages you to use JavaScript for that (pretty much how JSX avoids custom template syntax and encourages using `.map()`).
 
 For example if you have an array of objects:
 
 ```javascript
+const { render } = require('micromustache')
+
 const people = [
   { name: 'Alex', age: 37 },
   { name: 'Oskar', age: 35 },
   { name: 'Anna', age: 43 }
 ]
 
-let template = people.reduce(
-  t, ({name, age}) => t += `A person called {{name}} and is {{age}} years old`,
-  'The people are:\n'
-)
-```
-
-And then somewhere else in your code you can use that template like:
-
-```javascript
+console.log(render(`There are ${people.length} people:\n${peopleBrief}`, {
+  people,
+  peopleBrief: people.map(p => render(`${name}, ${age} years old`, p)).join('\n')
+}))
 ```
 
 **Q. How do you threat resolver functions?**
 
-The `renderFn()` and `renderFnAsync()` get a function as their first parameter and run them for every variable name in the template. The function gets the variable name and the scope as arguments and is supposed to return the resolved value ready to be injected into the template string. If your function throws, `renderFn()/renderFnAsync()` throw as well.
+The `renderFn()` and `renderFnAsync()` get a function as their second parameter and run them for every variable name in the template. The function gets the variable name and the scope as arguments and is supposed to return the resolved value ready to be injected into the template string. If your function throws, `renderFn()/renderFnAsync()` throw as well.
 
 **Q. Do you support multiple scopes and lookup fall back mechanisms?**
 
 This can easily be done using JavaScript object-spread operator as seen in one of the [examples](./examples).
-
-**Q. What about [ES6 template literals](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals) (AKA "template strings")? Aren't they gonna deprecate this library?**
-
-A. ES6 native Template literals work great when you have the template in the same scope as the values. If you want to build the template somewhere else (for example for internationalization) it gets complicated.
-
-However, when you want to decouple the interpolation (rendering) from the scope there's currently no way to do that natively. Example suppose you have a code that converts an `Error` to a string:
-
-```javascript
-const error = new Error('Just an example')
-let message = `Error message: ${e.message}!`
-```
-But what if you don't have the error object in the scope?
-You could use a function.
-
-```javascript
-const renderError = (e) => `Error message: ${e.message}!`
-message = renderError(error)
-```
-
-But what if your want to use a different property of the error?
-
-```javascript
-const renderError = (e, propName) => `Error message: ${e[propName]}!`
-message = renderError(error, 'stack')
-```
-
-You can see that this soon becomes complicated. With micromustache you can do this a bit easier:
-
-```javascript
-const { compile } = require('micromustache')
-const renderError = compile('Error message: {{message}}')
-message = renderError(error)
-```
-
-If you want to generate a template programmatically, you cannot use the Template literals but with micromustache, you just build a string.
-
-Also this library allows you to refer to variables that are not in the scope and compile a template and will resolve those values lazily and/or at a different context.
-
-**Q. I want "INSERT SOME MUSTACHE FEATURE HERE" but it's not available in MicroMustache. Can I add it?**
-
-A. Make an issue first. The goal of MicroMustache is to be super tiny and while addressing the most important use-case of Mustache. If there's something that is terribly missing, we may add it, otherwise, you may fork it and call it something else OR use MustacheJS.
 
 # Differences with Mustache
 
@@ -452,7 +255,7 @@ mustache.render('{{a{{b}}', {
 
 # Known issues
 
-For the sake of speed, code size and less complexity (which tends to attract bugs), some edge cases are not addressed:
+For the sake of speed and smaller code size, some edge cases are not addressed but you should be aware of:
 
 **A varName cannot include the `']'` character**
 
@@ -466,7 +269,7 @@ const a = {
 
 `a[']']` will not give `'close'` but rather throws a syntax error complaining that you have a mismatching quotation!
 
-**It doesn't require string delimiters:**
+**Variable names don't require string delimiters:**
 
 Suppose you have this in Javascript:
 
@@ -478,9 +281,10 @@ const a = {
 
 If you want to get the value of the `foo` property, in Javascript you can say `a['foo']`. This works in micromustache too but you can also say `a[foo]` which is not valid Javascript strictly speaking but works without error.
 
-**No comments**
+**No support for comments**
 
 Unlike Mustache.js you cannot comment a variable name.
+You can of course work around this limitation by using your own resolve function.
 
 **No escape sequence**
 
@@ -493,10 +297,15 @@ Currently there is no way to use a nested variable name:
 ```javascript
 const scope = {
   a: ['Java', 'Python', 'Ruby'],
-  b: 1
+  b: 'foo'
 }
 
 micromustache.render(`My favorite language is not {{a[b]}}`)
+// 'foo'
 ```
 
 Will not give `'Python'` because `a[b]` is treated as `a['b']` or `a.b`. In other words instead of `scope.a[scope.b]` it gives the value of `scope.a.b`.
+
+---
+
+_Made in Sweden 🇸🇪 by [@alexewerlof](https://mobile.twitter.com/alexewerlof)_
