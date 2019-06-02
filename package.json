@@ -26,20 +26,20 @@
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.6",
+    "@types/mocha": "^5.2.7",
     "@types/mustache": "^0.8.32",
-    "@types/node": "^11.13.8",
+    "@types/node": "^11.13.13",
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
     "mustache": "^3.0.1",
-    "prettier": "^1.17.0",
+    "prettier": "^1.17.1",
     "rimraf": "^2.6.3",
     "sloc": "^0.2.1",
-    "ts-node": "^8.1.0",
-    "tslint": "^5.16.0",
+    "ts-node": "^8.2.0",
+    "tslint": "^5.17.0",
     "tslint-config-prettier": "^1.18.0",
     "typedoc": "^0.14.2",
-    "typescript": "^3.4.5"
+    "typescript": "^3.5.1"
   },
   "scripts": {
     "clean": "rimraf dist",
