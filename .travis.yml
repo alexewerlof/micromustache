@@ -1,7 +1,14 @@
 language: node_js
 sudo: false
-cache: yarn
 node_js:
 - lts/*
 - node
 script: npm t
+before_deploy: npm run docs
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: true
+  on:
+    branch: master
