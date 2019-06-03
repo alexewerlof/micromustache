@@ -202,7 +202,7 @@ console.log($({ name })`Hello {name}!`)
 
 # API
 
-[On github pages](http(s)://userpixel.github.io/micromustache)
+[On github pages](https://userpixel.github.io/micromustache)
 
 # FAQ
 
