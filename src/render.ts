@@ -10,6 +10,10 @@ import { compile, ICompileOptions } from './compile'
  * placeholders for values from the `scope` parameter.
  * @param scope An object containing values for variable names from the the
  * template. If it's omitted, we default to an empty object.
+ * Since functions are objects in javascript, the `scope` can technically be a
+ * function too but it won't be called. It'll be treated as an object and its
+ * properties will be used for the lookup.
+ * @param options same options as the [[compile]] function
  * @throws any error that [[compile]] or [[Renderer.render]] may throw
  * @returns Template where its variable names replaced with
  * corresponding values.

@@ -202,7 +202,73 @@ console.log($({ name })`Hello {name}!`)
 
 # API
 
-[On github pages](https://userpixel.github.io/micromustache)
+## `render(template, scope, options)`
+
+* `template: string` The template containing one or more {{variableName}} as placeholders for values from the `scope` parameter.
+* `scope?: object` An object containing values for variable names from the the template. If it's omitted, we default to an empty object. Since functions are objects in javascript, the `scope` can technically be a function too but it won't be called. It'll be treated as an object and its properties will be used for the lookup.
+* `options?: object` see below 👇
+
+Replaces every {{varName}} inside the template with values from the scope parameter.
+
+* Returns the template string where its variable names replaced with corresponding values.
+* Throws `TypeError` if the `template` is not a string, `scope` is not an object, or `options` is invalid. `SyntaxError` if the template does not comply with the syntax.
+
+## `renderFn(template, resolveFn, scope, options)`
+
+Same as render but accepts a function that allows you to resolve the variable name to a value as you choose. _Tip: you may do some extra processing and use the `get()` function underneath but that's up to you._
+
+* `resolveFn: (varName, scope) => any` a function that takes a variable name and resolves it to a value. The value can be a number, string or boolean. If it is not, it'll be "stringified".
+
+## `renderFnAsync(template, resolveFnAsync, scope, options)`
+
+Same as `renderFn()` but expects an resolver function that always returns a promise.
+
+* `resolveFnAsync: (varName, scope) => Promise<any>` a function that takes a variable name and returns a promise that resolves to a value. The value can be a number, string or boolean. If it is not, it'll be "stringified".
+
+## `compile()`
+
+* `options?: object` see below 👇
+
+* Returns an object with 3 methods:
+  - `render(scope)` same as the `render()` function above but without the `template` parameter
+  - `renderFn(resolveFn, scope)` same as the `renderFn()` function above but without the `template` parameter
+  - `renderFnAsync(resolveFnAsync, scope)` same as the `renderFnAsync()` function above but without the `template` parameter
+* Throws `TypeError` if the `template` is not a string or `options` is invalid. `SyntaxError` if the template does not comply with the syntax.
+
+## `get(scope, varName, propExists)`
+
+* `scope: Scope` same as the `scope` parameter to the `render()` function above.
+* `varName: PropNames | string` a string like `a.b.c` or `a['b'].c`
+* `propExists?: boolean = false` see this field in the `options` below.
+
+A useful utility function that is used internally to lookup a variable name as a path to a property in an object.
+
+> Differences with JavaScript:
+> * No support for keys that include `[` or `]`.
+> * No support for keys that include `'` or `"` or `.
+> * `foo[bar]` is allowed while JavaScript treats `bar` as a variable and tries to lookup its value or throws a `ReferenceError` if there is no variable called `bar`.
+
+If it cannot find a value in the specified path, it may return undefined or throw an error depending on the value of the `propExists` param.
+
+* `scope: object` an object to resolve value from
+* `varNameOrPropNames: string | string[]` the variable name string or an array of property names. For example `a.b.c` or `a['b'].c` or `['a', 'b', 'c']`. _Tip: the array version is a whole lot faster because we skips parsing it._
+* `propExists: boolean = false` see the description in the `options` below
+
+* Returns the value or `undefined`. If the scope is `undefined` or `null` the result is always `undefined`.
+
+## `options`
+
+All the functions that can take an option, expect it as an object with these properties:
+
+* `explicit?: boolean = false` When set to a truthy value, rendering literally puts a `'null'` or `'undefined'` for values that are `null` or `undefined`. By default it swallows those values to be compatible with Mustache.
+* `propsExist?: boolean = false` When set to a truthy value, we throw a `ReferenceError` for invalid varNames. Invalid varNames are the ones that do not exist in the scope. In that case the value for the varNames will be assumed an empty string. By default we throw a `ReferenceError` to be compatible with how JavaScript threats such invalid reference.
+If a value does not exist in the scope, two things can happen:
+- if `propsExist` is truthy, the value will be resolved to an empty string
+- if `propsExist` is falsy, a `ReferenceError` will be thrown
+* `validateVarNames?: boolean = false` When set to a truthy value, validates the variable names
+* `tags?: string[2] = ['{{', '}}']` The string symbols that mark the opening and closing of a variable name in the template.
+
+[Full API docs](https://userpixel.github.io/micromustache)
 
 # FAQ
 
