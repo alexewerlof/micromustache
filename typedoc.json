@@ -1,7 +1,7 @@
 {
   "name": "MicroMustache",
   "hideGenerator": true,
-  "tsconfig": "./tsconfig-node.json",
+  "tsconfig": "./tsconfig.json",
   "module": "commonjs",
   "excludeNotExported": true,
   "mode": "file",
