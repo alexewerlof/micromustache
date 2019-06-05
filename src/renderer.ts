@@ -31,10 +31,10 @@ const defaultRendererOptions: IRendererOptions = {}
 
 /**
  * The callback for resolving a value (synchronous)
- * @param scope - the scope object that was passed to .render() function
- * @param path - variable name before being parsed.
- * @example - a var name that is {{a.b.c}} gives  'a.b.c'
- * @returns - the value to be interpolated.
+ * @param scope the scope object that was passed to .render() function
+ * @param path variable name before being parsed.
+ * @example a template that is `Hi {{a.b.c}}!` leads to `'a.b.c'` as path
+ * @returns the value to be interpolated.
  */
 export type ResolveFn = (varName: string, scope?: Scope) => any
 
@@ -59,6 +59,7 @@ export class Renderer {
    * Creates a new Renderer instance. This is called internally by the compiler.
    * @param tokens - the result of the `.tokenize()` function
    * @param options - some options for customizing the rendering process
+   * @throws `TypeError` if the token is invalid
    */
   constructor(
     private readonly tokens: ITokens,
@@ -95,6 +96,15 @@ export class Renderer {
     }
   }
 
+  /**
+   * Replaces every {{varName}} inside the template with values from the scope
+   * parameter.
+   *
+   * @param template The template containing one or more {{variableName}} as
+   * placeholders for values from the `scope` parameter.
+   * @param scope An object containing values for variable names from the the
+   * template. If it's omitted, we default to an empty object.
+   */
   public render = (scope: Scope = {}): string => {
     const { varNames } = this.tokens
     const { length } = varNames
@@ -106,11 +116,19 @@ export class Renderer {
     return this.stringify(values)
   }
 
+  /**
+   * Same as [[render]] but accepts a resolver function which will be
+   * responsible for returning a value for every varName.
+   */
   public renderFn = (resolveFn: ResolveFn, scope: Scope = {}): string => {
     const values = this.resolveVarNames(resolveFn, scope)
     return this.stringify(values)
   }
 
+  /**
+   * Same as [[render]] but accepts a resolver function which will be responsible
+   * for returning promise that resolves to a value for every varName.
+   */
   public renderFnAsync = (
     resolveFnAsync: ResolveFnAsync,
     scope: Scope = {}

@@ -24,9 +24,12 @@ const defaultCompileOptions: ICompileOptions = {}
  * Caching is stored in the resulting object, so if you free up all the
  * references to that object, the caches will be garbage collected.
  *
- * @param template - same as the template parameter to .render()
- * @param options - some options for customizing the compilation
- * @returns - an object with some methods that can do the actual rendering
+ * @param template same as the template parameter to .render()
+ * @param options some options for customizing the compilation
+ * @throws `TypeError` if the template is not a string
+ * @throws `TypeError` if the options is set but is not an object
+ * @throws any error that [[tokenize]] or [[Renderer.constructor]] may throw
+ * @returns an object with some methods that can do the actual rendering
  */
 export function compile(
   template: string,

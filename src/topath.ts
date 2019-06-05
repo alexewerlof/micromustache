@@ -11,6 +11,9 @@ export type PropNames = string[]
 const cacheSize = 100
 const quoteChars = '\'"`'
 
+/**
+ * @ignore
+ */
 export class Cache<T> {
   private map: {
     [varName: string]: T
@@ -45,13 +48,13 @@ export class Cache<T> {
   }
 }
 
-export const cache = new Cache<PropNames>(cacheSize)
+const cache = new Cache<PropNames>(cacheSize)
 
 /**
  * Removes the quotes from a string and returns it.
- * @throws if the quotation symbols don't match or one is missing
- * @param propName - an string with quotations
- * @returns - the input with its quotes removed
+ * @param propName an string with quotations
+ * @throws `SyntaxError` if the quotation symbols don't match or one is missing
+ * @returns the input with its quotes removed
  */
 function propBetweenBrackets(propName: string): string {
   // in our algorithms key is always a string and never only a string of spaces
@@ -116,6 +119,8 @@ function pushPropName(propNames: string[], propName: string, preDot: boolean) {
  * particular value from an object
  * @param varName - the variable name as it occurs in the template.
  * For example `a["b"].c`
+ * @throws `TypeError` if the varName is not a string
+ * @throws `SyntaxError` if the varName syntax has a problem
  * @returns - an array of property names that can be used to get a particular
  * value.
  * For example `['a', 'b', 'c']`
