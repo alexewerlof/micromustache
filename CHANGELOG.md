@@ -24,12 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 BREAKING CHANGES:
 - **The biggest change is that if you used `compile()` in version 5, it returned a function but since version 6, it returns an object that _has_ a `render()` function**
-- Also the behaviour of the resolver function has changed:
-  - `.render()` previously could accept a resolver function that would be able to
-  modify the input but in v6 that task is done by `.renderFn()`.
-  In v5 if the resolver threw an error we fell back to the standard `.get()`
-  functionality but v6 just throws that error in an effort to make debugging
-  easier. 
+- The behaviour of the resolver function has changed: In v5 if the resolver threw an error we fell back to the standard `.get()` functionality but v6 just throws that error in an effort to make debugging easier. 
 - We don't use default exports anymore so `const render = require('micromustache/render')`
   should be refactored to `const { render } = require('micromustache')`
 - Now the compiler returns a renderer object with a render() function
