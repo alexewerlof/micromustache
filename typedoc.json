@@ -1,0 +1,10 @@
+{
+  "name": "MicroMustache",
+  "hideGenerator": true,
+  "tsconfig": "./tsconfig.json",
+  "module": "commonjs",
+  "excludeNotExported": true,
+  "mode": "file",
+  "out": "docs",
+  "theme": "minimal"
+}

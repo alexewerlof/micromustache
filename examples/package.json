@@ -12,17 +12,8 @@
   },
   "main": "index.js",
   "dependencies": {
-    "async-main": "^1.0.2",
-    "dot": "^1.1.2",
-    "ejs": "^2.6.1",
-    "handlebars": "^4.1.0",
-    "lodash.template": "^4.4.0",
-    "micromustache": "^5.4.0",
-    "mustache": "^3.0.1",
-    "node-fetch": "^2.3.0",
-    "nunjucks": "^3.1.7",
-    "template7": "^1.4.1",
-    "underscore": "^1.9.1"
+    "am": "^1.0.1",
+    "node-fetch": "^2.6.0"
   },
   "author": "Alex Ewerlöf",
   "license": "MIT"

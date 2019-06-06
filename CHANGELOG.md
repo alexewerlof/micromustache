@@ -8,17 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unrelease
 
 - Support [optional chaining syntax](https://github.com/tc39/proposal-optional-chaining)
-- Add more examples of its selling points
-  - string templates
 - Support comments: `{{! ...}}` like MustacheJS
-- Test the async behaviour
 - Reenable tests/ for mustache compatibility and add relevant options
 - Add a string literal tag function (generic render)
 - Add the possibility to process variable names before and after they are resolved using `get()`. This can allow HTML escaping for example.
 
 ## 6.0.0
 
-- We no more try to JSON.stringify() arrays and objects. You can use .renderFn to do that. There's still the get() util you can use.
+- We no more try to JSON.stringify() arrays and objects. You can use `.renderFn()` to do that. There's still the `get()` utility function to help do the lookup.
 - Object bracket accessors are now supported: `obj['foo']` (previously only `obj.foo` worked like Mustache and handlebars)
 - Rewrote the project in TypeScript
 - Custom resolver can also be async (see `.renderFnAsync()`)
@@ -27,12 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 BREAKING CHANGES:
 - **The biggest change is that if you used `compile()` in version 5, it returned a function but since version 6, it returns an object that _has_ a `render()` function**
-- Also the behaviour of the resolver function has changed:
-  - `.render()` previously could accept a resolver function that would be able to
-  modify the input but in v6 that task is done by `.renderFn()`.
-  In v5 if the resolver threw an error we fell back to the standard `.get()`
-  functionality but v6 just throws that error in an effort to make debugging
-  easier. 
+- The behaviour of the resolver function has changed: In v5 if the resolver threw an error we fell back to the standard `.get()` functionality but v6 just throws that error in an effort to make debugging easier. 
 - We don't use default exports anymore so `const render = require('micromustache/render')`
   should be refactored to `const { render } = require('micromustache')`
 - Now the compiler returns a renderer object with a render() function
