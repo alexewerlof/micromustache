@@ -283,12 +283,12 @@ All the functions that can take an option, expect it as an object with these pro
 * `explicit?: boolean = false` When set to a truthy value, rendering literally puts a `'null'` or `'undefined'` for values that are `null` or `undefined`. By default it swallows those values to be compatible with Mustache.
 * `propsExist?: boolean = false` When set to a truthy value, we throw a `ReferenceError` for invalid varNames. Invalid varNames are the ones that do not exist in the scope. In that case the value for the varNames will be assumed an empty string. By default we throw a `ReferenceError` to be compatible with how JavaScript threats such invalid reference.
 If a value does not exist in the scope, two things can happen:
-- if `propsExist` is truthy, the value will be resolved to an empty string
-- if `propsExist` is falsy, a `ReferenceError` will be thrown
+  - if `propsExist` is truthy, the value will be resolved to an empty string
+  - if `propsExist` is falsy, a `ReferenceError` will be thrown
 * `validateVarNames?: boolean = false` When set to a truthy value, validates the variable names
 * `tags?: string[2] = ['{{', '}}']` The string symbols that mark the opening and closing of a variable name in the template.
 
-[Full API docs](https://userpixel.github.io/micromustache)
+[Full API docs](https://userpixel.github.io/micromustache) _(beta)_
 
 # FAQ
 
