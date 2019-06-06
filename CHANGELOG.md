@@ -8,17 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unrelease
 
 - Support [optional chaining syntax](https://github.com/tc39/proposal-optional-chaining)
-- Add more examples of its selling points
-  - string templates
 - Support comments: `{{! ...}}` like MustacheJS
-- Test the async behaviour
 - Reenable tests/ for mustache compatibility and add relevant options
 - Add a string literal tag function (generic render)
 - Add the possibility to process variable names before and after they are resolved using `get()`. This can allow HTML escaping for example.
 
 ## 6.0.0
 
-- We no more try to JSON.stringify() arrays and objects. You can use .renderFn to do that. There's still the get() util you can use.
+- We no more try to JSON.stringify() arrays and objects. You can use `.renderFn()` to do that. There's still the `get()` utility function to help do the lookup.
 - Object bracket accessors are now supported: `obj['foo']` (previously only `obj.foo` worked like Mustache and handlebars)
 - Rewrote the project in TypeScript
 - Custom resolver can also be async (see `.renderFnAsync()`)

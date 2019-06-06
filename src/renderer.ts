@@ -100,7 +100,7 @@ export class Renderer {
    * Replaces every {{varName}} inside the template with values from the scope
    * parameter.
    *
-   * @param template The template containing one or more {{variableName}} as
+   * @param template The template containing one or more {{varName}} as
    * placeholders for values from the `scope` parameter.
    * @param scope An object containing values for variable names from the the
    * template. If it's omitted, we default to an empty object.

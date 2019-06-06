@@ -10,41 +10,26 @@
 
 ![Logo](https://raw.github.com/userpixel/micromustache/master/logo.png)
 
-A minimalist, fast and **secure** [Mustache](https://mustache.github.io/) template engine with some handy additions.
+A **secure**, fast and lightweight template engine with some handy additions.
 
 **Think of it as a sweet spot between plain text interpolation and [mustache.js](https://github.com/janl/mustache.js); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to reduce potential errors and improve performance.**
 
 * 🏃 **2x-3x** faster than MustacheJS
-* 🔒 **Secure**. Works in CSP environments (no usage of `eval()` or `new Function()`). Published only with 2FA. No risk for [regexp DDoS](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
+* 🔒 **Secure**. Works in CSP environments (no usage of `eval()` or `new Function()`). Published only with 2FA. [No regexp](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
 * 🎈 **Lightweight** No dependencies, less than 400 lines of source code, small API surface, easy to pick up
-* 🐁 **Smaller memory footprint.** sane caching, no memory leak
+* 🐁 **Small memory footprint** sane caching strategy, no memory leak
 * 🏳 **No dependencies**
-* 🤓 **Bracket notation** support `a[1]['foo']` accessors (mustache.js syntax of `a.1.foo` is still supported).
+* ✏ **Bracket notation** support `a[1]['foo']` accessors (mustache.js syntax of `a.1.foo` is still supported).
 * 🚩 **Meaningful errors** in case of template syntax errors to make it easy to spot and fix. All functions test their input contracts and throw meaningful errors to improve developer experience (DX)
-* ⚡ **TypeScript** types included and updated with every version of the library
-* 🐇 Works in node (CommonJS) and Browser (using CommonJS build tools like [Browserify](http://browserify.org/) or [WebPack](https://webpack.github.io/))
-* 🛠 Well tested (full test coverage over 120+ tests)
+* ⚡ **TypeScript** types included out of the box and updated with every version of the library
+* 🐇 Works in node (CommonJS) and Browser (AMD)
+* 🛠 Well tested (full test coverage over 120+ tests). Also tested to produce the same results as [Mustache.js](https://github.com/janl/mustache.js/).
 * 📖 Full JSDoc documentation
 * [CLI](./bin/README.md) for quickly doing interpolations without having to write a program
 
-<a href="https://opencollective.com/micromustache" target="_blank">
-  <img src="https://opencollective.com/micromustache/donate/button@2x.png?color=blue" width=300 />
-</a>
+If variable interpolation is all you need, *micromustache* is a [drop-in replacement](src/mustachejs.spec.js) for MustacheJS (see its differences with [Mustache.js](https://github.com/userpixel/micromustache/wiki/Differences-with-Mustache.js))
 
 [Try it in your browser!](https://npm.runkit.com/micromustache)
-
-## Tradeoffs
-
-Micromustache achieves its faster speed and smaller size by dropping the following features from [MustacheJS](https://github.com/janl/mustache.js):
-
-* Array iterations: `{{# ...}}` (you can still pass the result in a variable)
-* Partials: `{{> ...}}`
-* Inverted selection: `{{^ ...}}`
-* Comments: `{{! ...}}`
-* HTML sanitization: `{{{ propertyName }}}`
-* [See all the differences with MustacheJS](https://github.com/userpixel/micromustache/wiki/Differences-with-Mustache)
-
-If variable interpolation is all you need, *micromustache* is a [drop-in replacement](src/mustachejs.spec.js) for MustacheJS.
 
 # Getting started
 
@@ -62,9 +47,9 @@ console.log(render('Hello {{name}}!', { name: 'world' }))
 // Hello world!
 ```
 
-So what's the point? Why not just use EcmaScript [template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)?
+Why not just use EcmaScript [template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)?
 
-Template literals work great when the template and the variables are in the same scope. For example, suppose you have a function like this:
+Template literals work great when the template and the variables are in the same scope but not so well when the template is in another scope or is not known ahead of time. For example, suppose you had a function like this:
 
 ```javascript
 function greet(name) {
@@ -72,10 +57,11 @@ function greet(name) {
 }
 ```
 
-After your function became successful and you get rich, you may decide to dominate the world and expand to new markets which speak other languages. You need to internationalize it. Adding one more language is easy:
+After your function became successful and you got rich 🤑 you may decide to dominate the world and expand to new markets which speak other languages. You need to internationalize it. Adding one more language is easy:
 
 ```javascript
 function greet(name, lang) {
+  // Note the lang parameter that contains a language code
   return lang === 'sv' ? `Hej ${name}!` : `Hi ${name}!`
 }
 ```
@@ -93,7 +79,7 @@ function greet(name, lang) {
 }
 ```
 
-You get the picture, that doesn't scale well! The main problem is that the content (the text) is coupled to the function (the variable interpolation). Template engines help you to move the content out of the function and let something else deal with that concern.
+That doesn't scale well as you dominate country after country and need to support more languages! Besides, that's just one string! The main problem is that the content (the text) is coupled to the code (the variable interpolation). **Template engines** help you to move the content out of the function and let something else deal with that concern.
 
 ```javascript
 const { render } = require('micromustache')
@@ -115,15 +101,16 @@ function greet(name, lang) {
 }
 ```
 
+Now it's better! 😎 All the templates are together and they are easy to update and translate. By default, we use the popular syntax that encloses variable names between double curly braces (`{{` and `}}`) but you can customize _micromustache_ if you prefer something else.
 Just like template literals, you can of course reference deep nested objects:
 
 ```javascript
 const { render } = require('micromustache')
 const scope = {
-  fruits: [{
-    name: 'Apple', color: 'red',
-    name: 'Banana', color: 'yellow',
-  }]
+  fruits: [
+    { name: 'Apple', color: 'red' },
+    { name: 'Banana', color: 'yellow' },
+  ]
 }
 console.log(render('I like {{fruits[1].color}}!', scope))
 // I like Bababa!
@@ -131,25 +118,27 @@ console.log(render('I like {{fruits[1].color}}!', scope))
 
 *It worth to note that Mustache and Handlebars don't support `fruits[1].color` syntax and rather expect you to write it as `fruits.1.color`.*
 
-The real power of micromustache comes from letting you resolve a variable name to something you choose. To pass a resolver function, you can use `renderFn()` instead of `render()`:
+The real power of micromustache comes from letting you resolve a variable name using your own functions! To pass a resolver function, you can use `renderFn()` instead of `render()`:
 
 ```javascript
 const { renderFn } = require('micromustache')
+// Just converts the variable name to upper case
 const up = str => str.toUpperCase()
 
 console.log(renderFn('My name is {{Alex}}!', up))
 // My name is ALEX!
 ```
 
-If you want to lookup a key in an object, there's a `get()` function as well:
+The resolver gets the scope as its second parameter. If you want to lookup a value, there's a `get()` function as well:
 
 ```javascript
 const { renderFn, get } = require('micromustache')
 
-function star(str, scope) {
-  // str is 'password'
+// Looks up the value and converts it to stars
+function star(varName, scope) {
+  // varName comes from the template and is 'password' here
   // scope is { password: 'abc' }
-  const value = get(scope, str) // value is 'abc'
+  const value = get(scope, varName) // value is 'abc'
   return '*'.repeat(value.length)
 }
 
@@ -157,8 +146,7 @@ console.log(renderFn('My password is {{password}}!', star, { password: 'abc' }))
 // My password is ***!
 ```
 
-
-You can even resolve asynchronously using the `renderFnAsync()`. For example the following code uses [node-fetch](https://www.npmjs.com/package/node-fetch) to get a task title from the [jsonplaceholder API](https://jsonplaceholder.typicode.com).
+If you want to resolve a value asynchronously, we got you covered using the `renderFnAsync()` instead of `renderFn()`. For example the following code uses [node-fetch](https://www.npmjs.com/package/node-fetch) to resolve a url.
 
 ```javascript
 const { renderFnAsync } = require('micromustache')
@@ -171,10 +159,10 @@ async function taskTitleFromUrl(url) {
 }
 
 console.log(await renderFnAsync('Got {{https://jsonplaceholder.typicode.com/todos/1}}!', fetch))
-// Got delectus aut autem
+// Got delectus aut autem!
 ```
 
-If you find yourself working on a particular template too often, you can compile it once and cache the result so the future renders will be much faster. The compiler returns an object with `render()`, `renderFn()` and `renderFnAsync()` methods with the difference that their first parameter is not the template string:
+If you find yourself working on a particular template too often, you can `compile()` it once and cache the result so the future renders will be much faster. The compiler returns an object with `render()`, `renderFn()` and `renderFnAsync()` methods. The only difference is that they don't get the template and only need a scope:
 
 ```javascript
 const { compile } = require('micromustache')
@@ -187,9 +175,9 @@ console.log(render({ name: 'world', age: 42 }))
 // Hello world! I'm 42
 ```
 
-*If `compiled` is garbage collected, the cache is freed (unlike some other template engines that dearly keep hold of the compiled result in their cache which leads to memory leaks and out of memory errors over longer usage).*
+*If the `compiled` variable above is garbage collected, the cache is freed (unlike some other template engines that dearly keep hold of the compiled result in their cache which may leads to memory leaks or **out of memory errors** over longer usage).*
 
-Using the options you can do all sorts of fancy stuff. For example, here is an imitation of the C# string interpolation syntax:
+Using the options you can do all sorts of fancy stuff. For example, here is an imitation of the **C#** string interpolation syntax:
 
 ```javascript
 const { render } = require('micromustache')
@@ -204,57 +192,89 @@ console.log($({ name })`Hello {name}!`)
 
 ## `render(template, scope, options)`
 
-* `template: string` The template containing one or more {{variableName}} as placeholders for values from the `scope` parameter.
+Replaces every {{varName}} inside the template with values from the scope parameter.
+
+###### Params
+
+* `template` The template string containing zero or more `{{varName}}` as placeholders for looking up values from the `scope` parameter.
 * `scope?: object` An object containing values for variable names from the the template. If it's omitted, we default to an empty object. Since functions are objects in javascript, the `scope` can technically be a function too but it won't be called. It'll be treated as an object and its properties will be used for the lookup.
 * `options?: object` see below 👇
 
-Replaces every {{varName}} inside the template with values from the scope parameter.
+###### Returns
 
-* Returns the template string where its variable names replaced with corresponding values.
-* Throws `TypeError` if the `template` is not a string, `scope` is not an object, or `options` is invalid. `SyntaxError` if the template does not comply with the syntax.
+The template string where its variable names replaced with corresponding values
+
+###### Throws
+
+* `TypeError` if the `template` is not a string, `scope` is not an object, or `options` is invalid
+* `SyntaxError` if the template does not comply with the syntax
 
 ## `renderFn(template, resolveFn, scope, options)`
 
 Same as render but accepts a function that allows you to resolve the variable name to a value as you choose. _Tip: you may do some extra processing and use the `get()` function underneath but that's up to you._
 
+###### New params
+
 * `resolveFn: (varName, scope) => any` a function that takes a variable name and resolves it to a value. The value can be a number, string or boolean. If it is not, it'll be "stringified".
 
 ## `renderFnAsync(template, resolveFnAsync, scope, options)`
 
-Same as `renderFn()` but expects an resolver function that always returns a promise.
+Same as `renderFn()` but expects a resolver function that always returns a promise.
+
+###### New params
 
 * `resolveFnAsync: (varName, scope) => Promise<any>` a function that takes a variable name and returns a promise that resolves to a value. The value can be a number, string or boolean. If it is not, it'll be "stringified".
 
-## `compile()`
+###### Returns
 
+A promise that resolves to the final output once all the `resolveFnAsync` functions are resolved
+
+## `compile(template, options)`
+
+Compiles a template and returns an object that has the render functions. This drammatically improves the interpolation speed (2x-3x) compared to `render()`.
+
+###### Params
+
+* `template` same template that is passed to `render()`
 * `options?: object` see below 👇
 
-* Returns an object with 3 methods:
-  - `render(scope)` same as the `render()` function above but without the `template` parameter
-  - `renderFn(resolveFn, scope)` same as the `renderFn()` function above but without the `template` parameter
-  - `renderFnAsync(resolveFnAsync, scope)` same as the `renderFnAsync()` function above but without the `template` parameter
-* Throws `TypeError` if the `template` is not a string or `options` is invalid. `SyntaxError` if the template does not comply with the syntax.
+###### Returns
+
+An object with 3 methods:
+* `render(scope)` same as the `render()` function above but without the `template` parameter
+* `renderFn(resolveFn, scope)` same as the `renderFn()` function above but without the `template` parameter
+* `renderFnAsync(resolveFnAsync, scope)` same as the `renderFnAsync()` function above but without the `template` parameter
+
+###### Throws
+
+* `TypeError` if the `template` is not a string or `options` is invalid.
+* `SyntaxError` if the template does not comply with the syntax.
 
 ## `get(scope, varName, propExists)`
 
-* `scope: Scope` same as the `scope` parameter to the `render()` function above.
-* `varName: PropNames | string` a string like `a.b.c` or `a['b'].c`
-* `propExists?: boolean = false` see this field in the `options` below.
-
 A useful utility function that is used internally to lookup a variable name as a path to a property in an object.
 
+###### Params
+
+* `scope` same as the `scope` parameter to the `render()` function above.
+* `varName: string | string[]` a string like `a.b.c` or `a['b'].c`. It can also be a path array like `['a', 'b', 'c']` (same as [lodash's get()](https://lodash.com/docs/4.17.11#get)). _Tip: the array version is a whole lot faster because we skips parsing it._
+* `propExists?: boolean = false` see the meaning of this param under the `options` below.
+
+
 > Differences with JavaScript:
-> * No support for keys that include `[` or `]`.
-> * No support for keys that include `'` or `"` or `.
-> * `foo[bar]` is allowed while JavaScript treats `bar` as a variable and tries to lookup its value or throws a `ReferenceError` if there is no variable called `bar`.
+> * No support for keys that include `[` or `]`. ex. `a['[']`
+> * No support for keys that include `'` or `"`. ex. `a['"']`
+> * `foo[bar]` is allowed and treated as `foo['bar']` (this behaviour is similar to how lodash `get()` works). But JavaScript treats `bar` as a variable and tries to lookup its value or throws a `ReferenceError` if there is no variable called `bar`.
 
-If it cannot find a value in the specified path, it may return undefined or throw an error depending on the value of the `propExists` param.
+###### Returns
 
-* `scope: object` an object to resolve value from
-* `varNameOrPropNames: string | string[]` the variable name string or an array of property names. For example `a.b.c` or `a['b'].c` or `['a', 'b', 'c']`. _Tip: the array version is a whole lot faster because we skips parsing it._
-* `propExists: boolean = false` see the description in the `options` below
+The value or `undefined`.
+If the scope is `undefined` or `null` the result is always `undefined`.
 
-* Returns the value or `undefined`. If the scope is `undefined` or `null` the result is always `undefined`.
+###### Throws
+
+* `ReferenceError` if it cannot find a value in the specified path and `propExists` is set.
+
 
 ## `options`
 
@@ -281,3 +301,7 @@ If a value does not exist in the scope, two things can happen:
 ---
 
 _Made in Sweden 🇸🇪 by [@alexewerlof](https://mobile.twitter.com/alexewerlof)_
+
+<a href="https://opencollective.com/micromustache" target="_blank">
+  <img src="https://opencollective.com/micromustache/donate/button@2x.png?color=white" width=300 />
+</a>
