@@ -125,4 +125,15 @@ describe('get()', () => {
     }
     expect(get(obj, 'undefined')).to.equal(obj.undefined)
   })
+
+  it('can lookup a property', () => {
+    class A {
+      get x() {
+        return 'the x value'
+      }
+    }
+    const obj = new A()
+    expect(get(obj, 'x')).to.equal('the x value')
+    expect(get(obj, '__proto__.x')).to.equal('the x value')
+  })
 })
