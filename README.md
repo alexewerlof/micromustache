@@ -213,9 +213,13 @@ The template string where its variable names replaced with corresponding values
 
 Same as render but accepts a function that allows you to resolve the variable name to a value as you choose. _Tip: you may do some extra processing and use the `get()` function underneath but that's up to you._
 
+**WARNING: When dealing with user input, always make sure to validate it.**
+
 ###### New params
 
 * `resolveFn: (varName, scope) => any` a function that takes a variable name and resolves it to a value. The value can be a number, string or boolean. If it is not, it'll be "stringified".
+
+**WARNING: When dealing with user input, always make sure to validate it.**
 
 ## `renderFnAsync(template, resolveFnAsync, scope, options)`
 
