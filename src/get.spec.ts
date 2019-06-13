@@ -97,4 +97,32 @@ describe('get()', () => {
     }
     expect(get(obj, 'foo[ 1 ]')).to.equal(obj.foo[1])
   })
+
+  it('can lookup null from an object', () => {
+    const obj = {
+      foo: null
+    }
+    expect(get(obj, 'foo')).to.equal(obj.foo)
+  })
+
+  it('can lookup undefined from an object', () => {
+    const obj = {
+      foo: undefined
+    }
+    expect(get(obj, 'foo')).to.equal(obj.foo)
+  })
+
+  it('can lookup a key that is literally "null"', () => {
+    const obj = {
+      null: 'some value for null'
+    }
+    expect(get(obj, 'null')).to.equal(obj.null)
+  })
+
+  it('can lookup a key that is literally "undefined"', () => {
+    const obj = {
+      undefined: 'some value for undefined'
+    }
+    expect(get(obj, 'undefined')).to.equal(obj.undefined)
+  })
 })
