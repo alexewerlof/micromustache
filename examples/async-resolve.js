@@ -1,20 +1,25 @@
-const fetch = require('node-fetch')
 const { renderFnAsync } = require('../dist/node')
-const am = require('am')
-am(async () => {
+
+function delayedResolver(varName) {
+  return new Promise((resolve) => {
+    const start = Date.now()
+    setTimeout(() => {
+      const duration = Date.now() - start
+      resolve(`${varName.toUpperCase()} (${duration}ms)`)
+    }, 1000)
+  })
+}
+
+(async () => {
   try {
     const result = await renderFnAsync(
-      'The first todo title is {{1}}',
-      async function (taskId) {
-            const response = await fetch(
-              'https://jsonplaceholder.typicode.com/todos/' + taskId
-        )
-        const taskData = await response.json()
-        return taskData.title
-      }
+      'I like {{apples}} and {{oranges}} because {{wood}} does not taste good',
+      // All resolve functions run in parallel
+      delayedResolver
     )
     console.log(result)
+    // I like APPLES (1002ms) and ORANGES (1003ms) because WOOD (1003ms) does not taste good
   } catch (e) {
     console.error(e)
   }
-})
+})()
