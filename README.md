@@ -27,7 +27,7 @@ A **secure**, fast and lightweight template engine with some handy additions.
 * 📖 Full JSDoc documentation
 * [CLI](./bin/README.md) for quickly doing interpolations without having to write a program
 
-If variable interpolation is all you need, *micromustache* is a [drop-in replacement](src/mustachejs.spec.js) for MustacheJS (see its differences with [Mustache.js](https://github.com/userpixel/micromustache/wiki/Differences-with-Mustache.js))
+If variable interpolation is all you need, *micromustache* is a [drop-in replacement](src/mustachejs.spec.ts) for MustacheJS (see its differences with [Mustache.js](https://github.com/userpixel/micromustache/wiki/Differences-with-Mustache.js))
 
 [Try it in your browser!](https://npm.runkit.com/micromustache)
 
