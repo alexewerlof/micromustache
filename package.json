@@ -44,8 +44,9 @@
   "scripts": {
     "clean": "rimraf dist",
     "build:amd": "tsc -p tsconfig-amd.json",
+    "build:commonjs": "tsc -p tsconfig-commonjs.json",
     "build:node": "tsc -p tsconfig-node.json",
-    "build": "npm run clean && npm run build:amd && npm run build:node",
+    "build": "npm run clean && npm run build:amd && npm run build:node && npm run build:commonjs",
     "docs": "typedoc src/",
     "lint": "tslint -p .",
     "lint:fix": "npm run lint -- --fix",

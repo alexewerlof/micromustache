@@ -5,13 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## Unrelease
+## Unreleased
 
 - Support [optional chaining syntax](https://github.com/tc39/proposal-optional-chaining)
 - Support comments: `{{! ...}}` like MustacheJS
 - Reenable tests/ for mustache compatibility and add relevant options
 - Add a string literal tag function (generic render)
 - Add the possibility to process variable names before and after they are resolved using `get()`. This can allow HTML escaping for example.
+- Expose a CommonJS build for the browser limited to ECMAScript 5 features.
 
 ## 6.0.0
 
@@ -24,7 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 BREAKING CHANGES:
 - **The biggest change is that if you used `compile()` in version 5, it returned a function but since version 6, it returns an object that _has_ a `render()` function**
-- The behaviour of the resolver function has changed: In v5 if the resolver threw an error we fell back to the standard `.get()` functionality but v6 just throws that error in an effort to make debugging easier. 
+- The behaviour of the resolver function has changed: In v5 if the resolver threw an error we fell back to the standard `.get()` functionality but v6 just throws that error in an effort to make debugging easier.
 - We don't use default exports anymore so `const render = require('micromustache/render')`
   should be refactored to `const { render } = require('micromustache')`
 - Now the compiler returns a renderer object with a render() function
