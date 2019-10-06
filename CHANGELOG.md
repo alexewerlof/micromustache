@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Reenable tests/ for mustache compatibility and add relevant options
 - Add a string literal tag function (generic render)
 - Add the possibility to process variable names before and after they are resolved using `get()`. This can allow HTML escaping for example.
-- Expose a CommonJS build for the browser limited to ECMAScript 5 features.
 
 ## 6.0.0
 
@@ -22,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Custom resolver can also be async (see `.renderFnAsync()`)
 - Compile and rendering is significantly faster than Mustache
 - A change in terminology to better reflect JavaScript terms: What Mustache and the previous version of the lib called `view` is not called `scope`.
+- Expose a CommonJS build for the browser limited to ECMAScript 5 features.
 
 BREAKING CHANGES:
 - **The biggest change is that if you used `compile()` in version 5, it returned a function but since version 6, it returns an object that _has_ a `render()` function**
