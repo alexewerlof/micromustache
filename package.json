@@ -1,6 +1,6 @@
 {
   "name": "micromustache",
-  "version": "6.0.1",
+  "version": "6.1.1",
   "description": "A fast, minimal and secure template engine for JavaScript",
   "keywords": [
     "template",
@@ -38,14 +38,15 @@
     "ts-node": "^8.2.0",
     "tslint": "^5.17.0",
     "tslint-config-prettier": "^1.18.0",
-    "typedoc": "^0.14.2",
+    "typedoc": "^0.15.0",
     "typescript": "^3.5.1"
   },
   "scripts": {
     "clean": "rimraf dist",
     "build:amd": "tsc -p tsconfig-amd.json",
+    "build:commonjs": "tsc -p tsconfig-commonjs.json",
     "build:node": "tsc -p tsconfig-node.json",
-    "build": "npm run clean && npm run build:amd && npm run build:node",
+    "build": "npm run clean && npm run build:amd && npm run build:node && npm run build:commonjs",
     "docs": "typedoc src/",
     "lint": "tslint -p .",
     "lint:fix": "npm run lint -- --fix",
