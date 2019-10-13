@@ -24,22 +24,22 @@
     "node": ">=8"
   },
   "devDependencies": {
-    "@types/chai": "^4.1.7",
+    "@types/chai": "^4.2.3",
     "@types/mocha": "^5.2.7",
     "@types/mustache": "^0.8.32",
-    "@types/node": "^11.13.13",
+    "@types/node": "^11.13.22",
     "chai": "^4.2.0",
-    "mocha": "^6.1.4",
-    "mustache": "^3.0.1",
+    "mocha": "^6.2.1",
+    "mustache": "^3.1.0",
     "pkg-ok": "^2.3.1",
-    "prettier": "^1.17.1",
-    "rimraf": "^2.6.3",
+    "prettier": "^1.18.2",
+    "rimraf": "^2.7.1",
     "sloc": "^0.2.1",
-    "ts-node": "^8.2.0",
-    "tslint": "^5.17.0",
+    "ts-node": "^8.4.1",
+    "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.18.0",
     "typedoc": "^0.15.0",
-    "typescript": "^3.5.1"
+    "typescript": "^3.6.4"
   },
   "scripts": {
     "clean": "rimraf dist",
