@@ -18,9 +18,9 @@ The flow is like this:
 
 ```
 render()
-  \___ compile()
-         |___tokenize()
-         |       \___parse()
-         \___resolve()
-                \___stringify()
+   \___ compile()
+           |___ tokenize()
+           |       \___ parse()
+           \___ resolve()
+                   \___ stringify()
 ```
