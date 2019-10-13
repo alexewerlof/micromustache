@@ -46,7 +46,7 @@ export function tokenize(
   ) {
     throw new TypeError(
       'The tags array should have two distinct non-empty strings. Got ' +
-        options.join(', ')
+        options.join()
     )
   }
 
