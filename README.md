@@ -33,6 +33,14 @@ If variable interpolation is all you need, *micromustache* is a [drop-in replace
 
 # Getting started
 
+Use directly with [UNPKG](https://unpkg.com/browse/micromustache/):
+
+```javascript
+import { render } from 'https://unpkg.com/browse/micromustache/dist/esm.js'
+console.log(render('Hello {{name}}!', { name: 'world' }))
+// Hello world!
+```
+
 Install:
 
 ```bash
