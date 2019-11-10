@@ -4,6 +4,5 @@
     "target": "es2017",
     "module": "commonjs",
     "outDir": "dist/node",
-    "declaration": true
   }
 }
