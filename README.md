@@ -1,9 +1,10 @@
 [![Downloads](https://img.shields.io/npm/dm/micromustache.svg?style=flat-square)](http://npm-stat.com/charts.html?package=micromustache&from=2017-01-01)
-[![Known Vulnerabilities](https://snyk.io/test/github/userpixel/micromustache/badge.svg)](https://snyk.io/test/github/userpixel/micromustache)
-[![MIT License](https://img.shields.io/npm/l/callifexists.svg?style=flat-square)](http://opensource.org/licenses/MIT)
+[![GitHub stars](https://img.shields.io/github/stars/userpixel/micromustache?style=flat-square)](https://github.com/userpixel/micromustache/stargazers)
+[![Known Vulnerabilities](https://snyk.io/test/github/userpixel/micromustache/badge.svg?style=flat-square)](https://snyk.io/test/github/userpixel/micromustache)
+[![GitHub license](https://img.shields.io/github/license/userpixel/micromustache?style=flat-square)](https://github.com/userpixel/micromustache/blob/master/LICENSE.md)
 [![Version](https://img.shields.io/npm/v/micromustache.svg?style=flat-square)](http://npm.im/micromustache)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-[![GitHub issues](https://img.shields.io/github/issues/userpixel/micromustache.svg)](https://github.com/userpixel/micromustache/issues)
+[![GitHub issues](https://img.shields.io/github/issues/userpixel/micromustache.svg?style=flat-square)](https://github.com/userpixel/micromustache/issues)
 
 # micromustache
 
