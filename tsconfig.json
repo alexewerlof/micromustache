@@ -12,7 +12,7 @@
     "listEmittedFiles": true,
     "target": "es5",
     "module": "commonjs",
-    "outDir": "dist",
+    "outDir": "dist/types"
   },
   "include": [
     "src/**/*.ts"
