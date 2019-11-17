@@ -22,7 +22,7 @@ A **secure**, fast and lightweight template engine with some handy additions.
 * ✏ **Bracket notation** support `a[1]['foo']` accessors (mustache.js syntax of `a.1.foo` is still supported).
 * 🚩 **Meaningful errors** in case of template syntax errors to make it easy to spot and fix. All functions test their input contracts and throw meaningful errors to improve developer experience (DX)
 * ⚡ **TypeScript** types included out of the box and updated with every version of the library
-* 🐇 Works in node (CommonJS) and Browser (AMD)
+* 🐇 Works in node (CommonJS) and Browser (UMD) and EcmaScript 6 Modules (ESM)
 * 🛠 Well tested (full test coverage over 120+ tests). Also tested to produce the same results as [Mustache.js](https://github.com/janl/mustache.js/).
 * 📖 Full JSDoc documentation
 * [CLI](./bin/README.md) for quickly doing interpolations without having to write a program
