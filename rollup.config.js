@@ -16,14 +16,14 @@ export default [
                 lib: ['es2015'],
             }),
             terser({
-                include: /\.min\.js$/,
+                include: /\.min\.$/,
                 safari10: true,
             }),
             gzipPlugin()
         ],
         output: [
             {
-                file: 'dist/cjs.js',
+                file: `dist/${name}.cjs`,
                 format: 'cjs',
                 banner,
                 sourcemap,
@@ -36,13 +36,13 @@ export default [
                 sourcemap,
             },
             {
-                file: 'dist/esm.js',
+                file: `dist/${name}.mjs`,
                 format: 'esm',
                 banner,
                 sourcemap,
             },
             {
-                file: 'dist/esm.min.js',
+                file: `dist/${name}.min.mjs`,
                 format: 'esm',
                 banner,
                 sourcemap,

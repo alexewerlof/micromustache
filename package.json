@@ -13,9 +13,10 @@
     "lodash template",
     "microlibrary"
   ],
-  "main": "dist/cjs.js",
   "types": "dist/types/index.d.ts",
-  "module": "dist/esm.js",
+  "type": "commonjs",
+  "main": "dist/micromustache.cjs",
+  "module": "dist/micromustache.mjs",
   "bin": {
     "micromustache": "./bin/micromustache.js"
   },
