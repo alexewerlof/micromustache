@@ -23,13 +23,20 @@ export default [
         ],
         output: [
             {
-                file: `dist/${name}.cjs`,
+                file: `dist/${name}.js`,
                 format: 'cjs',
                 banner,
                 sourcemap,
             },
             {
-                file: 'dist/umd.js',
+                file: `dist/${name}.umd.js`,
+                name,
+                format: 'umd',
+                banner,
+                sourcemap,
+            },
+            {
+                file: `dist/${name}.umd.min.js`,
                 name,
                 format: 'umd',
                 banner,

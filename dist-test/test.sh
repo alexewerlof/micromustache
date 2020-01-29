@@ -4,9 +4,12 @@
 
 set -e
 
-node node-cjs.js
-node --es-module-specifier-resolution=node --experimental-modules node-esm.mjs
 node --es-module-specifier-resolution=node --experimental-modules node-cjs-as-esm.mjs
+node node-cjs-ext.js
+node node-cjs-no-ext.js
+node --experimental-modules node-esm-ext.mjs
+node --es-module-specifier-resolution=node --experimental-modules node-esm-no-ext.mjs
+node node-pkg-traditional.js
 
 echo '+--------------------------------+'
 echo '|  All scripts ran successfully  |'

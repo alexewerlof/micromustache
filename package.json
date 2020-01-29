@@ -15,7 +15,7 @@
   ],
   "types": "dist/types/index.d.ts",
   "type": "commonjs",
-  "main": "dist/micromustache.cjs",
+  "main": "dist/micromustache.js",
   "module": "dist/micromustache.mjs",
   "bin": {
     "micromustache": "./bin/micromustache.js"

@@ -1,4 +1,4 @@
-import micromustache from '../dist/micromustache.js'
+import micromustache from '../dist/micromustache'
 
 const { render } = micromustache
 const result = render('Hello {{ name }}!', { name: 'Alex' })
