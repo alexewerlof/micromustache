@@ -1,10 +1,10 @@
-[![Build Status](https://travis-ci.org/userpixel/micromustache.svg?branch=master)](https://travis-ci.org/userpixel/micromustache)
-[![GitHub issues](https://img.shields.io/github/issues/userpixel/micromustache.svg)](https://github.com/userpixel/micromustache/issues)
-[![Version](https://img.shields.io/npm/v/micromustache.svg?style=flat-square)](http://npm.im/micromustache)
 [![Downloads](https://img.shields.io/npm/dm/micromustache.svg?style=flat-square)](http://npm-stat.com/charts.html?package=micromustache&from=2017-01-01)
+[![GitHub stars](https://img.shields.io/github/stars/userpixel/micromustache?style=flat-square)](https://github.com/userpixel/micromustache/stargazers)
+[![Known Vulnerabilities](https://snyk.io/test/github/userpixel/micromustache/badge.svg?style=flat-square)](https://snyk.io/test/github/userpixel/micromustache)
+[![GitHub license](https://img.shields.io/github/license/userpixel/micromustache?style=flat-square)](https://github.com/userpixel/micromustache/blob/master/LICENSE.md)
+[![Version](https://img.shields.io/npm/v/micromustache.svg?style=flat-square)](http://npm.im/micromustache)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-[![MIT License](https://img.shields.io/npm/l/callifexists.svg?style=flat-square)](http://opensource.org/licenses/MIT)
-[![Known Vulnerabilities](https://snyk.io/test/github/userpixel/micromustache/badge.svg)](https://snyk.io/test/github/userpixel/micromustache)
+[![GitHub issues](https://img.shields.io/github/issues/userpixel/micromustache.svg?style=flat-square)](https://github.com/userpixel/micromustache/issues)
 
 # micromustache
 
@@ -22,7 +22,7 @@ A **secure**, fast and lightweight template engine with some handy additions.
 * ✏ **Bracket notation** support `a[1]['foo']` accessors (mustache.js syntax of `a.1.foo` is still supported).
 * 🚩 **Meaningful errors** in case of template syntax errors to make it easy to spot and fix. All functions test their input contracts and throw meaningful errors to improve developer experience (DX)
 * ⚡ **TypeScript** types included out of the box and updated with every version of the library
-* 🐇 Works in node (CommonJS) and Browser (AMD)
+* 🐇 Works in node (CommonJS) and Browser (UMD) and EcmaScript 6 Modules (ESM)
 * 🛠 Well tested (full test coverage over 120+ tests). Also tested to produce the same results as [Mustache.js](https://github.com/janl/mustache.js/).
 * 📖 Full JSDoc documentation
 * [CLI](./bin/README.md) for quickly doing interpolations without having to write a program
@@ -32,6 +32,14 @@ If variable interpolation is all you need, *micromustache* is a [drop-in replace
 [Try it in your browser!](https://npm.runkit.com/micromustache)
 
 # Getting started
+
+Use directly with [UNPKG](https://unpkg.com/browse/micromustache/):
+
+```javascript
+import { render } from 'https://unpkg.com/browse/micromustache/dist/esm.js'
+console.log(render('Hello {{name}}!', { name: 'world' }))
+// Hello world!
+```
 
 Install:
 
