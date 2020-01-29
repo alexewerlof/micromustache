@@ -13,40 +13,46 @@
     "lodash template",
     "microlibrary"
   ],
-  "main": "dist/node/index.js",
+  "types": "dist/types/index.d.ts",
+  "type": "commonjs",
+  "main": "dist/micromustache.js",
+  "module": "dist/micromustache.mjs",
   "bin": {
     "micromustache": "./bin/micromustache.js"
   },
   "directories": {
-    "lib": "./dist/node"
+    "bin": "./bin",
+    "lib": "./dist"
   },
   "engines": {
     "node": ">=8"
   },
   "devDependencies": {
-    "@types/chai": "^4.1.7",
+    "@types/chai": "^4.2.8",
     "@types/mocha": "^5.2.7",
     "@types/mustache": "^0.8.32",
-    "@types/node": "^11.13.13",
+    "@types/node": "^12.12.26",
     "chai": "^4.2.0",
-    "mocha": "^6.1.4",
-    "mustache": "^3.0.1",
+    "mocha": "^6.2.2",
+    "mustache": "^3.2.1",
     "pkg-ok": "^2.3.1",
-    "prettier": "^1.17.1",
-    "rimraf": "^2.6.3",
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.1",
+    "rollup": "^1.30.1",
+    "rollup-plugin-gzip": "^2.2.0",
+    "rollup-plugin-terser": "^5.2.0",
+    "rollup-plugin-typescript": "^1.0.1",
     "sloc": "^0.2.1",
-    "ts-node": "^8.2.0",
-    "tslint": "^5.17.0",
+    "ts-node": "^8.6.2",
+    "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
-    "typedoc": "^0.15.0",
-    "typescript": "^3.5.1"
+    "typedoc": "^0.15.8",
+    "typescript": "^3.7.5"
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build:amd": "tsc -p tsconfig-amd.json",
-    "build:commonjs": "tsc -p tsconfig-commonjs.json",
-    "build:node": "tsc -p tsconfig-node.json",
-    "build": "npm run clean && npm run build:amd && npm run build:node && npm run build:commonjs",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build": "npm run clean && npm run build:types && rollup --config",
     "docs": "typedoc src/",
     "lint": "tslint -p .",
     "lint:fix": "npm run lint -- --fix",
@@ -63,6 +69,5 @@
     "url": "http://github.com/userpixel/micromustache.git"
   },
   "author": "Alex Ewerlöf",
-  "license": "MIT",
-  "dependencies": {}
+  "license": "MIT"
 }
