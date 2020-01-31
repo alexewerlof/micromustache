@@ -5,7 +5,7 @@ import { Renderer } from './renderer'
 
 describe('compile()', () => {
   it('returns a Renderer instance', () => {
-    const renderer = compile('Hello {{name}}!')
+    const renderer = compile('Hello!')
     expect(renderer).to.be.instanceOf(Renderer)
     expect(renderer.render).to.be.a('function')
   })
@@ -32,8 +32,9 @@ describe('compile()', () => {
       ).to.equal('')
     })
 
-    it('assumes empty value if the key does not exist', () => {
+    it('assumes empty value if the scope is empty', () => {
       expect(compile('{{i}}').render({})).to.equal('')
+      expect(compile(' {{i}} ').render({})).to.equal('  ')
     })
 
     it('assumes empty value if the key is missing', () => {
@@ -44,7 +45,7 @@ describe('compile()', () => {
       ).to.equal('')
     })
 
-    it('can replace a single variable', () => {
+    it('can interpolate a single variable', () => {
       expect(
         compile('{{i}}').render({
           i: 'hello'
@@ -61,10 +62,10 @@ describe('compile()', () => {
         })
       ).to.equal('Ohoy! hello')
       expect(
-        compile('Ohoy! {{i}} world').render({
+        compile('Aloha! {{i}} world').render({
           i: 'hello'
         })
-      ).to.equal('Ohoy! hello world')
+      ).to.equal('Aloha! hello world')
     })
 
     it('can replace two variables', () => {

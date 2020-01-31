@@ -8,7 +8,7 @@ import {
 import { expect } from 'chai'
 import { describe } from 'mocha'
 
-describe('Renderer', () => {
+describe('render', () => {
   describe('.render()', () => {
     it('uses get() by default', () => {
       expect(render('Hello! My name is {{name}}!', { name: 'Alex' })).to.equal(
