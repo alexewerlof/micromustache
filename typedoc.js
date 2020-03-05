@@ -1,6 +1,6 @@
 module.exports = {
   hideGenerator: true,
-  tsconfig: './tsconfig-docs.json',
+  tsconfig: './tsconfig.json',
   module: 'commonjs',
   excludeNotExported: true,
   excludePrivate: true,
