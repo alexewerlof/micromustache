@@ -1,12 +1,10 @@
 import { Renderer, ResolveFn } from './index'
-import { expect } from 'chai'
-import { describe } from 'mocha'
 
 describe('Renderer', () => {
   it('is a constructor', () => {
     expect(
       new Renderer({ strings: ['the string theory'], varNames: [] })
-    ).to.be.an('object')
+    ).toEqual(expect.any(Renderer))
   })
 
   // describe('.render()', () => {})
@@ -28,8 +26,8 @@ describe('Renderer', () => {
       ) => obj[varName]
 
       const scope = { name: 'Alex' }
-      expect(await resolveFn('name', scope)).to.equal(scope.name)
-      expect(await resolver.renderFnAsync(resolveFn, scope)).to.equal(
+      expect(await resolveFn('name', scope)).toBe(scope.name)
+      expect(await resolver.renderFnAsync(resolveFn, scope)).toBe(
         'Hello! My name is Alex!'
       )
     })

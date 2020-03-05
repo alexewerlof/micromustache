@@ -1,2 +1,0 @@
-This is {{name}} version {{version}} and it's awesome!
-The bin path is {{bin.micromustache}}

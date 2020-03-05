@@ -1,39 +1,37 @@
-import { expect } from 'chai'
-import { describe } from 'mocha'
 import { compile } from './compile'
 import { Renderer } from './renderer'
 
 describe('compile()', () => {
   it('returns a Renderer instance', () => {
     const renderer = compile('Hello {{name}}!')
-    expect(renderer).to.be.instanceOf(Renderer)
-    expect(renderer.render).to.be.a('function')
+    expect(renderer).toBeInstanceOf(Renderer)
+    expect(typeof renderer.render).toBe('function')
   })
 
   it('compiles a template', () => {
     const template = 'Hello {{name}}!'
     const renderer = compile(template)
-    expect(renderer).to.be.instanceOf(Renderer)
+    expect(renderer).toBeInstanceOf(Renderer)
   })
 
   it('compiles an empty template', () => {
     const renderer = compile('')
-    expect(renderer).to.be.instanceOf(Renderer)
+    expect(renderer).toBeInstanceOf(Renderer)
   })
 
   describe('.render()', () => {
     it('returns an empty string if the template is empty', () => {
       const renderer = compile('')
-      expect(renderer.render({})).to.equal('')
+      expect(renderer.render({})).toBe('')
       expect(
         renderer.render({
           a: 'b'
         })
-      ).to.equal('')
+      ).toBe('')
     })
 
     it('assumes empty value if the key does not exist', () => {
-      expect(compile('{{i}}').render({})).to.equal('')
+      expect(compile('{{i}}').render({})).toBe('')
     })
 
     it('assumes empty value if the key is missing', () => {
@@ -41,7 +39,7 @@ describe('compile()', () => {
         compile('{{i}}').render({
           j: 1
         })
-      ).to.equal('')
+      ).toBe('')
     })
 
     it('can replace a single variable', () => {
@@ -49,22 +47,22 @@ describe('compile()', () => {
         compile('{{i}}').render({
           i: 'hello'
         })
-      ).to.equal('hello')
+      ).toBe('hello')
       expect(
         compile('{{i}} world').render({
           i: 'hello'
         })
-      ).to.equal('hello world')
+      ).toBe('hello world')
       expect(
         compile('Ohoy! {{i}}').render({
           i: 'hello'
         })
-      ).to.equal('Ohoy! hello')
+      ).toBe('Ohoy! hello')
       expect(
         compile('Ohoy! {{i}} world').render({
           i: 'hello'
         })
-      ).to.equal('Ohoy! hello world')
+      ).toBe('Ohoy! hello world')
     })
 
     it('can replace two variables', () => {
@@ -73,35 +71,35 @@ describe('compile()', () => {
           i: 'hello',
           j: 'world'
         })
-      ).to.equal('helloworld')
+      ).toBe('helloworld')
       expect(
         compile('{{i}} {{j}}').render({
           i: 'hello',
           j: 'world'
         })
-      ).to.equal('hello world')
+      ).toBe('hello world')
       expect(
         compile('{{i}} {{j}} {{k}}').render({
           i: 'hello',
           j: 'world'
         })
-      ).to.equal('hello world ')
+      ).toBe('hello world ')
       expect(
         compile('{{var1}} {{var2}}').render({
           var1: 'hello',
           var2: 'world'
         })
-      ).to.equal('hello world')
+      ).toBe('hello world')
     })
 
     it('interpolates all variables with empty string when scope is empty', () => {
-      expect(compile('{{i}}').render({})).to.equal('')
+      expect(compile('{{i}}').render({})).toBe('')
     })
 
     it('interpolates all variables with empty string when scope is missing', () => {
-      expect(compile('{{i}}{{j}}').render()).to.equal('')
-      expect(compile('{{i}} {{j}}').render()).to.equal(' ')
-      expect(compile(' {{abc}} {{def}} ').render()).to.equal('   ')
+      expect(compile('{{i}}{{j}}').render()).toBe('')
+      expect(compile('{{i}} {{j}}').render()).toBe(' ')
+      expect(compile(' {{abc}} {{def}} ').render()).toBe('   ')
     })
 
     it('allows $ as a value', () => {
@@ -109,42 +107,42 @@ describe('compile()', () => {
         compile('{{a}}').render({
           a: '$'
         })
-      ).to.equal('$')
+      ).toBe('$')
       expect(
         compile('{{a}}').render({
           a: ' $'
         })
-      ).to.equal(' $')
+      ).toBe(' $')
       expect(
         compile('{{a}}').render({
           a: '$ '
         })
-      ).to.equal('$ ')
+      ).toBe('$ ')
       expect(
         compile('{{a}}').render({
           a: '$$'
         })
-      ).to.equal('$$')
+      ).toBe('$$')
       expect(
         compile('{{a}}').render({
           a: '$&'
         })
-      ).to.equal('$&')
+      ).toBe('$&')
       expect(
         compile('{{a}}').render({
           a: '$`'
         })
-      ).to.equal('$`')
+      ).toBe('$`')
       expect(
         compile('{{a}}').render({
           a: "$'"
         })
-      ).to.equal("$'")
+      ).toBe("$'")
       expect(
         compile('{{a}}').render({
           a: '$1'
         })
-      ).to.equal('$1')
+      ).toBe('$1')
     })
 
     it('deals with boolean values properly', () => {
@@ -152,12 +150,12 @@ describe('compile()', () => {
         compile('{{a}}').render({
           a: true
         })
-      ).to.equal('true')
+      ).toBe('true')
       expect(
         compile('{{a}}').render({
           a: false
         })
-      ).to.equal('false')
+      ).toBe('false')
     })
 
     it('deals with numerical values properly', () => {
@@ -165,22 +163,22 @@ describe('compile()', () => {
         compile('{{a}}').render({
           a: 0
         })
-      ).to.equal('0')
+      ).toBe('0')
       expect(
         compile('{{a}}').render({
           a: 1
         })
-      ).to.equal('1')
+      ).toBe('1')
       expect(
         compile('{{a}}').render({
           a: 999
         })
-      ).to.equal('999')
+      ).toBe('999')
       expect(
         compile('{{a}}').render({
           a: Number.NaN
         })
-      ).to.equal('NaN')
+      ).toBe('NaN')
     })
 
     it('ignores null or undefined values properly', () => {
@@ -188,12 +186,12 @@ describe('compile()', () => {
         compile('a{{b}}c').render({
           b: null
         })
-      ).to.equal('ac')
+      ).toBe('ac')
       expect(
         compile('a{{b}}c').render({
           b: undefined
         })
-      ).to.equal('ac')
+      ).toBe('ac')
     })
 
     it('ignores a variable name with space in it', () => {
@@ -203,7 +201,7 @@ describe('compile()', () => {
           b: 2,
           ab: 3
         })
-      ).to.equal('')
+      ).toBe('')
     })
 
     it('can handle spaces before and after variable names', () => {
@@ -213,7 +211,7 @@ describe('compile()', () => {
           b: true,
           cc: 33
         })
-      ).to.equal('-1-true-33-')
+      ).toBe('-1-true-33-')
     })
 
     it('multiple occurances of the variable', () => {
@@ -221,13 +219,13 @@ describe('compile()', () => {
         compile('{{a}}{{a}}{{a}}').render({
           a: 'hello'
         })
-      ).to.equal('hellohellohello')
+      ).toBe('hellohellohello')
       expect(
         compile('{{a}}{{b}}{{a}}{{b}}').render({
           a: '1',
           b: '2'
         })
-      ).to.equal('1212')
+      ).toBe('1212')
     })
 
     it('can access array elements', () => {
@@ -237,18 +235,18 @@ describe('compile()', () => {
           'apple',
           'lemon'
         ])
-      ).to.equal('I like orange, apple and lemon')
+      ).toBe('I like orange, apple and lemon')
     })
 
     it('can access array length', () => {
-      expect(compile('{{length}}').render([])).to.equal('0')
+      expect(compile('{{length}}').render([])).toBe('0')
     })
 
     it('accepts a function as scope', () => {
       // tslint:disable-next-line no-empty
       function scope() {}
       scope.A = 'Cat'
-      expect(compile('X={{A}}').render(scope)).to.equal('X=Cat')
+      expect(compile('X={{A}}').render(scope)).toBe('X=Cat')
     })
 
     it('accepts class as scope', () => {
@@ -264,7 +262,7 @@ describe('compile()', () => {
       const scope = new Scope()
       // @ts-ignore
       scope.C = 'Alice'
-      expect(compile('{{A}} or {{B}} and {{C}}').render(scope)).to.equal(
+      expect(compile('{{A}} or {{B}} and {{C}}').render(scope)).toBe(
         'Crocodile or Mobile and Alice'
       )
     })
@@ -277,7 +275,7 @@ describe('compile()', () => {
             c: 'world'
           }
         })
-      ).to.equal('hello world')
+      ).toBe('hello world')
       expect(
         compile('{{a}}{{b.c}}').render({
           a: 1,
@@ -285,7 +283,7 @@ describe('compile()', () => {
             c: 2
           }
         })
-      ).to.equal('12')
+      ).toBe('12')
     })
 
     it('can access nested objects with three level nesting', () => {
@@ -298,7 +296,7 @@ describe('compile()', () => {
             }
           }
         })
-      ).to.equal('13')
+      ).toBe('13')
     })
 
     it('can access nested objects with six level nesting', () => {
@@ -316,7 +314,7 @@ describe('compile()', () => {
             }
           }
         })
-      ).to.equal('finally!')
+      ).toBe('finally!')
     })
 
     it('if one of the nested keys do not exist, it throws', () => {
@@ -334,7 +332,7 @@ describe('compile()', () => {
             }
           }
         })
-      ).to.throw()
+      ).toThrow()
     })
 
     it('can access nested objects with array index', () => {
@@ -343,7 +341,7 @@ describe('compile()', () => {
           a: 'a',
           b: [10, 11]
         })
-      ).to.equal('a-11')
+      ).toBe('a-11')
     })
 
     it('can access objects in an array', () => {
@@ -358,7 +356,7 @@ describe('compile()', () => {
             }
           ]
         })
-      ).to.equal('13')
+      ).toBe('13')
     })
 
     it('works for Michael Jackson, so it should work for everyone', () => {
@@ -388,7 +386,7 @@ describe('compile()', () => {
           '{{first}} {{last}} had {{children.length}} children: {{children.0.first}}, ' +
             '{{children.1.first}} and {{children.2.first}}'
         ).render(singer)
-      ).to.equal(
+      ).toBe(
         'Michael Jackson had 3 children: Paris-Michael, Prince and Michael'
       )
     })

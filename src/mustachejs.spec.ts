@@ -1,4 +1,3 @@
-import { expect } from 'chai'
 import * as mustache from 'mustache'
 import { Scope, render } from './index'
 
@@ -273,7 +272,7 @@ describe('MustacheJS compatibility', () => {
     it(`shows the same behaviour as mustache for ${description}`, () => {
       const micromustacheOutput = render(template, scope)
       const mustacheOutput = mustache.render(template, scope)
-      expect(micromustacheOutput).to.equal(mustacheOutput)
+      expect(micromustacheOutput).toBe(mustacheOutput)
     })
   })
 })

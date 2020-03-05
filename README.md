@@ -25,7 +25,6 @@ A **secure**, fast and lightweight template engine with some handy additions.
 * 🐇 Works in node (CommonJS) and Browser (UMD) and EcmaScript 6 Modules (ESM)
 * 🛠 Well tested (full test coverage over 120+ tests). Also tested to produce the same results as [Mustache.js](https://github.com/janl/mustache.js/).
 * 📖 Full JSDoc documentation
-* [CLI](./bin/README.md) for quickly doing interpolations without having to write a program
 
 If variable interpolation is all you need, *micromustache* is a [drop-in replacement](src/mustachejs.spec.ts) for MustacheJS (see its differences with [Mustache.js](https://github.com/userpixel/micromustache/wiki/Differences-with-Mustache.js))
 

@@ -28,13 +28,25 @@ export function tokenize(
   template: string,
   options: TokenizeOptions = defaultTokenizeOptions
 ): ITokens {
-  if (!Array.isArray(options) || options.length !== 2) {
+  if (!Array.isArray(options)) {
     throw Error(
-      'Tags should be an array with exactly two strings. Got ' + options
+      `Tags should be an array. Got ${options}`
     )
   }
 
+  if (options.length !== 2) {
+    throw new TypeError(`The tags array should contain exactly two elements, got ${options.length}`)
+  }
+
   const [openSym, closeSym] = options
+  if (typeof openSym !== 'string' || openSym.length === 0) {
+    throw new TypeError(`openSym should be a non-empty string. Got ${openSym}`)
+  }
+  if (typeof closeSym !== 'string' || closeSym.length === 0) {
+    throw new TypeError(`closeSym should be a non-empty string. Got ${closeSym}`)
+  }
+  
+  const maxVarNameLength = 1000
 
   if (
     typeof openSym !== 'string' ||
@@ -76,6 +88,10 @@ export function tokenize(
 
     if (varName.length === 0) {
       throw new SyntaxError('Unexpected token ' + closeSym)
+    }
+
+    if (varName.length >= maxVarNameLength) {
+      throw new SyntaxError(`The variable name is longer than expected. Max: ${maxVarNameLength}, Got: ${varName.length}`)
     }
 
     if (varName.includes(openSym)) {

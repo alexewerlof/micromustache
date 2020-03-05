@@ -1,4 +1,3 @@
-import { expect } from 'chai'
 import { toPath } from './topath'
 
 interface ISuccessCases {
@@ -61,66 +60,66 @@ describe('toPath()', () => {
 
     for (const [input, output] of Object.entries(testCases)) {
       it(`'${input}'  ⇨  ${stringArrToString(output)}`, () => {
-        expect(toPath(input)).to.deep.equal(output)
+        expect(toPath(input)).toEqual(output)
       })
     }
   })
 
-  describe('error cases:', () => {
+  describe('SyntaxError cases:', () => {
     // all these strings throw a syntax error
-    const syntaxErrorsCases = {
-      'a.': SyntaxError,
-      'a..': SyntaxError,
-      'a..b': SyntaxError,
-      'a ..b': SyntaxError,
-      'a . .b': SyntaxError,
-      'a . . b': SyntaxError,
-      'a .. b': SyntaxError,
-      '..': SyntaxError,
-      '. .': SyntaxError,
-      ' . . ': SyntaxError,
-      ' .. ': SyntaxError,
-      ' .. . ': SyntaxError,
-      ' ... ': SyntaxError,
-      '.a': SyntaxError,
-      ' .a': SyntaxError,
-      ' . a': SyntaxError,
-      '. a': SyntaxError,
-      '.["a"]': SyntaxError,
-      '.': SyntaxError,
-      ' . ': SyntaxError,
-      'a["b"]c': SyntaxError,
-      'a.["b"]c': SyntaxError,
-      'a.["b"]c["d"]': SyntaxError,
-      'a["b"]c["d"]': SyntaxError,
-      'a["b"].c["d"]e': SyntaxError,
-      'a["b"].c.': SyntaxError,
-      'a ["b"] c': SyntaxError,
-      'a["]': SyntaxError,
-      'a.[b]': SyntaxError,
-      'a[\'b"]': SyntaxError,
-      'a[[': SyntaxError,
-      'a["b\']': SyntaxError,
-      'a["b`]': SyntaxError,
-      'a[11"]': SyntaxError,
-      'a[`11]': SyntaxError,
-      'a[ `11 ]': SyntaxError,
+    const syntaxErrorsCases: string[] = [
+      'a.',
+      'a..',
+      'a..b',
+      'a ..b',
+      'a . .b',
+      'a . . b',
+      'a .. b',
+      '..',
+      '. .',
+      ' . . ',
+      ' .. ',
+      ' .. . ',
+      ' ... ',
+      '.a',
+      ' .a',
+      ' . a',
+      '. a',
+      '.["a"]',
+      '.',
+      ' . ',
+      'a["b"]c',
+      'a.["b"]c',
+      'a.["b"]c["d"]',
+      'a["b"]c["d"]',
+      'a["b"].c["d"]e',
+      'a["b"].c.',
+      'a ["b"] c',
+      'a["]',
+      'a.[b]',
+      'a[\'b"]',
+      'a[[',
+      'a["b\']',
+      'a["b`]',
+      'a[11"]',
+      'a[`11]',
+      'a[ `11 ]',
       // Special cases
-      'a["]"]': SyntaxError,
-      'a[[]]': SyntaxError
-    }
+      'a["]"]',
+      'a[[]]'
+    ]
 
-    for (const [input, errorConstructor] of Object.entries(syntaxErrorsCases)) {
-      it(`throws ${errorConstructor.name} for "${input}"`, () => {
-        expect(() => toPath(input)).to.throw(errorConstructor)
+    for (const input of syntaxErrorsCases) {
+      it(`throws SyntaxError for "${input}"`, () => {
+        expect(() => toPath(input)).toThrow(SyntaxError)
       })
     }
 
     it(`throws type error for invalid input types`, () => {
       // @ts-ignore
-      expect(() => toPath(undefined), 'for undefined').to.throw(TypeError)
+      expect(() => toPath(undefined)).toThrow(TypeError)
       // @ts-ignore
-      expect(() => toPath(13), 'for a number').to.throw(TypeError)
+      expect(() => toPath(13)).toThrow(TypeError)
     })
   })
 })

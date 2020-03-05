@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add a string literal tag function (generic render)
 - Add the possibility to process variable names before and after they are resolved using `get()`. This can allow HTML escaping for example.
 
+## 7.0.0
+
+BREAKING CHANGES:
+
+- **The CLI is removed**
+- Variable names cannot be longer than 1000 characters
+
 ## 6.0.0
 
 - We no more try to JSON.stringify() arrays and objects. You can use `.renderFn()` to do that. There's still the `get()` utility function to help do the lookup.
