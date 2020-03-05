@@ -14,13 +14,13 @@ A **secure**, fast and lightweight template engine with some handy additions.
 
 **Think of it as a sweet spot between plain text interpolation and [mustache.js](https://github.com/janl/mustache.js); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to reduce potential errors and improve performance.**
 
-* 🏃 **2x-3x** faster than MustacheJS
-* 🔒 **Secure**. Works in CSP environments (no usage of `eval()` or `new Function()`). Published only with 2FA. [No regexp](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
-* 🎈 **Lightweight** No dependencies, less than 400 lines of source code, small API surface, easy to pick up
+* 🏃 **2x-3x** faster than MustacheJS (_Micromustache is the fastest template engine that doesn't need pre-compilation and still works in CSP environments_)
+* 🔒 **Secure** has limits for variable length, number of interpolations, nesting debth and common Javascript pitfalls (`__proto__`, `constructor`, getters/etc). Works in CSP environments (no usage of `eval()` or `new Function()`). Published only with 2FA. [No regexp](https://medium.com/@liran.tal/node-js-pitfalls-how-a-regex-can-bring-your-system-down-cbf1dc6c4e02).
+* 🎈 **Lightweight** No dependencies, less than 400 lines of source code, easy to audit, small API surface, easy to pick up
 * 🐁 **Small memory footprint** sane caching strategy, no memory leak
 * 🏳 **No dependencies**
-* ✏ **Bracket notation** support `a[1]['foo']` accessors (mustache.js syntax of `a.1.foo` is still supported).
-* 🚩 **Meaningful errors** in case of template syntax errors to make it easy to spot and fix. All functions test their input contracts and throw meaningful errors to improve developer experience (DX)
+* ✏ **Bracket notation** support `a[1]['foo']` accessors (mustache.js/handlebar syntax of `a.1.foo` is also supported).
+* 🚩 **Meaningful errors** in case of template syntax errors to make it easy to spot and fix. All functions test their input contracts and throw meaningful errors to improve developer experience (DX).
 * ⚡ **TypeScript** types included out of the box and updated with every version of the library
 * 🐇 Works in node (CommonJS) and Browser (UMD) and EcmaScript 6 Modules (ESM)
 * 🛠 Well tested (full test coverage over 120+ tests). Also tested to produce the same results as [Mustache.js](https://github.com/janl/mustache.js/).
@@ -220,9 +220,13 @@ The template string where its variable names replaced with corresponding values
 
 Same as render but accepts a function that allows you to resolve the variable name to a value as you choose. _Tip: you may do some extra processing and use the `get()` function underneath but that's up to you._
 
+**WARNING: When dealing with user input, always make sure to validate it.**
+
 ###### New params
 
 * `resolveFn: (varName, scope) => any` a function that takes a variable name and resolves it to a value. The value can be a number, string or boolean. If it is not, it'll be "stringified".
+
+**WARNING: When dealing with user input, always make sure to validate it.**
 
 ## `renderFnAsync(template, resolveFnAsync, scope, options)`
 

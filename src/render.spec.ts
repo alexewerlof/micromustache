@@ -6,7 +6,7 @@ import {
   ResolveFnAsync
 } from './index'
 
-describe('Renderer', () => {
+describe('render', () => {
   describe('.render()', () => {
     it('uses get() by default', () => {
       expect(render('Hello! My name is {{name}}!', { name: 'Alex' })).toBe(

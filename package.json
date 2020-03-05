@@ -17,9 +17,6 @@
   "type": "commonjs",
   "main": "dist/micromustache.js",
   "module": "dist/micromustache.mjs",
-  "bin": {
-    "micromustache": "./bin/micromustache.js"
-  },
   "directories": {
     "bin": "./bin",
     "lib": "./dist"
@@ -29,14 +26,14 @@
   },
   "devDependencies": {
     "@types/jest": "^25.1.3",
-    "@types/mustache": "^4.0.0",
-    "@types/node": "^13.7.0",
+    "@types/mustache": "^4.0.1",
+    "@types/node": "^13.7.7",
     "jest": "^25.1.0",
     "mustache": "^4.0.0",
     "pkg-ok": "^2.3.1",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.2",
-    "rollup": "^1.31.0",
+    "rollup": "^1.32.0",
     "rollup-plugin-gzip": "^2.3.0",
     "rollup-plugin-terser": "^5.2.0",
     "rollup-plugin-typescript": "^1.0.1",
@@ -45,8 +42,8 @@
     "ts-node": "^8.6.2",
     "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.18.0",
-    "typedoc": "^0.16.9",
-    "typescript": "^3.7.5"
+    "typedoc": "^0.16.11",
+    "typescript": "^3.8.3"
   },
   "scripts": {
     "clean": "rimraf dist",

@@ -96,4 +96,43 @@ describe('get()', () => {
     }
     expect(get(obj, 'foo[ 1 ]')).toBe(obj.foo[1])
   })
+
+  it('can lookup null from an object', () => {
+    const obj = {
+      foo: null
+    }
+    expect(get(obj, 'foo')).toBe(obj.foo)
+  })
+
+  it('can lookup undefined from an object', () => {
+    const obj = {
+      foo: undefined
+    }
+    expect(get(obj, 'foo')).toBe(obj.foo)
+  })
+
+  it('can lookup a key that is literally "null"', () => {
+    const obj = {
+      null: 'some value for null'
+    }
+    expect(get(obj, 'null')).toBe(obj.null)
+  })
+
+  it('can lookup a key that is literally "undefined"', () => {
+    const obj = {
+      undefined: 'some value for undefined'
+    }
+    expect(get(obj, 'undefined')).toBe(obj.undefined)
+  })
+
+  it('can lookup a property', () => {
+    class A {
+      get x() {
+        return 'the x value'
+      }
+    }
+    const obj = new A()
+    expect(get(obj, 'x')).toBe('the x value')
+    expect(get(obj, '__proto__.x')).toBe('the x value')
+  })
 })

@@ -60,7 +60,7 @@ describe('tokenize()', () => {
 
   it('throws a syntax error if the open symbol is not closed', () => {
     expect(() => tokenize('Hi {{')).toThrow(
-      new SyntaxError('Missing }} in the template expression Hi {{')
+      new SyntaxError('Missing "}}" in the template expression Hi {{')
     )
   })
 
@@ -70,13 +70,13 @@ describe('tokenize()', () => {
 
   it('throws a syntax error if the variable name is an empty string', () => {
     expect(() => tokenize('Hi {{}}')).toThrow(
-      new SyntaxError('Unexpected token }}')
+      new SyntaxError('Unexpected "}}" tag found at position 3')
     )
   })
 
   it('throws a syntax error if the value name is just spaces', () => {
     expect(() => tokenize('Hi {{ }}')).toThrow(
-      new SyntaxError('Unexpected token }}')
+      new SyntaxError('Unexpected "}}" tag found at position 3')
     )
   })
 

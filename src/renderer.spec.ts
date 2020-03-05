@@ -7,9 +7,30 @@ describe('Renderer', () => {
     ).toEqual(expect.any(Renderer))
   })
 
-  // describe('.render()', () => {})
+  describe('.render()', () => {
+    it('renders a simple template that only contains numbers', () => {
+      const renderer = new Renderer({
+        strings: ['4', '6'],
+        varNames: ['foo']
+      })
+      expect(renderer.render({ foo: 5 })).toEqual('456')
+    })
+  })
 
-  // describe('.renderFn()', () => {})
+  describe('.renderFn()', () => {
+    it('runs the function for every varName', () => {
+      const renderer = new Renderer({
+        strings: ['4', '6'],
+        varNames: ['foo']
+      })
+      function resolver(this: null, varName: string): string {
+        expect(varName).toEqual('foo')
+        expect(this as null).toEqual(null)
+        return varName.toUpperCase()
+      }
+      expect(renderer.renderFn(resolver, { foo: 5 })).toEqual('4FOO6')
+    })
+  })
 
   describe('.renderFnAsync()', () => {
     it('passes the scope to the custom resolve function', async () => {

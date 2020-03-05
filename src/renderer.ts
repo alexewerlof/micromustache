@@ -147,7 +147,7 @@ export class Renderer {
     const { length } = varNames
     const values = new Array(length)
     for (let i = 0; i < length; i++) {
-      values[i] = resolveFn(varNames[i], scope)
+      values[i] = resolveFn.call(null, varNames[i], scope)
     }
     return values
   }

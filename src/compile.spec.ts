@@ -42,7 +42,7 @@ describe('compile()', () => {
       ).toBe('')
     })
 
-    it('can replace a single variable', () => {
+    it('can interpolate a single variable', () => {
       expect(
         compile('{{i}}').render({
           i: 'hello'
@@ -59,10 +59,10 @@ describe('compile()', () => {
         })
       ).toBe('Ohoy! hello')
       expect(
-        compile('Ohoy! {{i}} world').render({
+        compile('Aloha! {{i}} world').render({
           i: 'hello'
         })
-      ).toBe('Ohoy! hello world')
+      ).toBe('Aloha! hello world')
     })
 
     it('can replace two variables', () => {

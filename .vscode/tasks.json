@@ -5,13 +5,21 @@
     "tasks": [
         {
             "type": "npm",
-            "script": "build:node",
+            "script": "build",
             "problemMatcher": [
                 "$tsc"
             ],
             "group": {
-              "kind": "build",
-              "isDefault": true
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "npm",
+            "script": "test",
+            "group": {
+                "kind": "test",
+                "isDefault": true
             }
         }
     ]

@@ -57,7 +57,7 @@ export function tokenize(
   ) {
     throw new TypeError(
       'The tags array should have two distinct non-empty strings. Got ' +
-        options.join(', ')
+        options.join()
     )
   }
 
@@ -80,14 +80,30 @@ export function tokenize(
     closeIndex = template.indexOf(closeSym, openIndex)
     if (closeIndex === -1) {
       throw new SyntaxError(
-        'Missing ' + closeSym + ' in the template expression ' + template
+        'Missing "' + closeSym + '" in the template expression ' + template
       )
     }
 
-    varName = template.substring(openIndex + openSymLen, closeIndex).trim()
+    const varNameStartIndex = openIndex + openSymLen
+    const varNameLength = closeIndex - varNameStartIndex
+    if (varNameLength > maxVarNameLength) {
+      throw new SyntaxError(
+        'Variable name cannot be longer than ' +
+          maxVarNameLength +
+          ' but at position ' +
+          openIndex +
+          ' it is "' +
+          varNameLength +
+          '"'
+      )
+    }
+
+    varName = template.substr(varNameStartIndex, varNameLength).trim()
 
     if (varName.length === 0) {
-      throw new SyntaxError('Unexpected token ' + closeSym)
+      throw new SyntaxError(
+        'Unexpected "' + closeSym + '" tag found at position ' + openIndex
+      )
     }
 
     if (varName.length >= maxVarNameLength) {
@@ -96,7 +112,13 @@ export function tokenize(
 
     if (varName.includes(openSym)) {
       throw new SyntaxError(
-        'Variable names cannot have ' + openSym + ' ' + varName
+        'Variable names cannot have "' +
+          openSym +
+          '". But at position ' +
+          openIndex +
+          ' got "' +
+          varName +
+          '"'
       )
     }
 
