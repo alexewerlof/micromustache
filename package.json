@@ -64,6 +64,7 @@
     "type": "git",
     "url": "http://github.com/userpixel/micromustache.git"
   },
+  "funding": "https://github.com/userpixel/micromustache/blob/master/.github/FUNDING.yml",
   "author": "Alex Ewerlöf",
   "license": "MIT"
 }
