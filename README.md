@@ -35,7 +35,7 @@ If variable interpolation is all you need, *micromustache* is a [drop-in replace
 Use directly with [UNPKG](https://unpkg.com/browse/micromustache/):
 
 ```javascript
-import { render } from 'https://unpkg.com/browse/micromustache/dist/esm.js'
+import { render } from 'https://unpkg.com/browse/micromustache/dist/micromustache.mjs'
 console.log(render('Hello {{name}}!', { name: 'world' }))
 // Hello world!
 ```
