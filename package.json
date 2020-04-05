@@ -19,6 +19,7 @@
   "module": "dist/micromustache.mjs",
   "directories": {
     "bin": "./bin",
+    "example": "examples",
     "lib": "./dist"
   },
   "engines": {
