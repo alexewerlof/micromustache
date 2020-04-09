@@ -44,6 +44,7 @@ describe('Renderer', () => {
         obj: {
           [varName: string]: string
         }
+      // eslint-disable-next-line @typescript-eslint/require-await
       ) => obj[varName]
 
       const scope = { name: 'Alex' }

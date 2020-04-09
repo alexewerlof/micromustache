@@ -46,6 +46,7 @@
             "never"
         ],
         "no-unused-vars": "warn",
+        "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/ban-ts-ignore": "warn",
         "@typescript-eslint/member-delimiter-style": [
           "warn",
