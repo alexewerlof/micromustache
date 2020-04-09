@@ -51,7 +51,7 @@
     "clean": "rimraf dist",
     "build:types": "tsc --emitDeclarationOnly --outDir dist/types -p tsconfig-types.json",
     "build:ts": "rollup --config",
-    "build": "npm run clean && npm run build:types && rollup --config",
+    "build": "npm run clean && npm run build:types && rollup --config && ./dist-test.sh",
     "docs": "typedoc src/",
     "lint": "eslint --ext .ts src",
     "lint:fix": "npm run lint -- --fix",
