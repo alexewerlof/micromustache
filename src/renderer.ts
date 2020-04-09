@@ -86,7 +86,7 @@ export class Renderer {
    * value, this function is called immediately which leads to a validation as
    * well because it throws an error if it cannot parse variable names.
    */
-  private cacheParsedPaths() {
+  private cacheParsedPaths(): void {
     const { varNames } = this.tokens
     if (this.toPathCache === undefined) {
       this.toPathCache = new Array(varNames.length)

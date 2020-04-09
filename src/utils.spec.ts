@@ -16,9 +16,9 @@ describe('utils', () => {
     [[], false],
     [null, false],
     ['', false],
-    [() => undefined, true],
+    [(): undefined => undefined, true],
     [
-      function noOp() {
+      function noOp(): undefined {
         return undefined
       },
       true,

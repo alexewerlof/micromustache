@@ -243,8 +243,8 @@ describe('compile()', () => {
     })
 
     it('accepts a function as scope', () => {
-      // tslint:disable-next-line no-empty
-      function scope() {}
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      function scope(): void {}
       scope.A = 'Cat'
       expect(compile('X={{A}}').render(scope)).toBe('X=Cat')
     })
@@ -253,14 +253,13 @@ describe('compile()', () => {
       class Parent {
         constructor(public B = 'Mobile') {}
       }
-      // tslint:disable-next-line max-classes-per-file
       class Scope extends Parent {
+        public C: string;
         constructor(public A = 'Crocodile') {
           super()
         }
       }
       const scope = new Scope()
-      // @ts-ignore
       scope.C = 'Alice'
       expect(compile('{{A}} or {{B}} and {{C}}').render(scope)).toBe(
         'Crocodile or Mobile and Alice'

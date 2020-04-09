@@ -127,7 +127,7 @@ describe('get()', () => {
 
   it('can lookup a property', () => {
     class A {
-      get x() {
+      get x(): string {
         return 'the x value'
       }
     }

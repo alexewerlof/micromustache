@@ -2,7 +2,7 @@ import * as mustache from 'mustache'
 import { Scope, render } from './index'
 
 class ClassWithToString {
-  public toString() {
+  public toString(): string {
     return 'Hello world'
   }
 }

@@ -25,7 +25,7 @@ describe('Renderer', () => {
       })
       function resolver(this: null, varName: string): string {
         expect(varName).toEqual('foo')
-        expect(this as null).toEqual(null)
+        expect(this).toEqual(null)
         return varName.toUpperCase()
       }
       expect(renderer.renderFn(resolver, { foo: 5 })).toEqual('4FOO6')

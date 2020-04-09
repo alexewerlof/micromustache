@@ -1,14 +1,16 @@
 import { toPath, PropNames } from './topath'
 
-// tslint:disable-next-line ban-types
-export type Scope = {} | Function
+export type Scope = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [val: string]: Scope | any
+}
 
 /**
  * Checks if the provided value can be used as a scope, that is a non-null
  * object or a function.
  * @param val the value that is supposed to be tested
  */
-function isValidScope(val: any): val is Scope {
+function isValidScope(val: unknown): val is Scope {
   if (val) {
     // At this point `null` is filtered out
     const type = typeof val
@@ -43,7 +45,7 @@ export function get(
   scope: Scope,
   varNameOrPropNames: PropNames | string,
   propExists?: boolean
-): any {
+): undefined | Scope {
   const propNames = Array.isArray(varNameOrPropNames)
     ? varNameOrPropNames
     : toPath.cached(varNameOrPropNames)
@@ -51,7 +53,6 @@ export function get(
   let currentScope = scope
   for (const propName of propNames) {
     if (isValidScope(currentScope)) {
-      // @ts-ignore
       currentScope = currentScope[propName]
     } else if (propExists) {
       throw new ReferenceError(

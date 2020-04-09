@@ -45,7 +45,7 @@ export function tokenize(
   if (typeof closeSym !== 'string' || closeSym.length === 0) {
     throw new TypeError(`closeSym should be a non-empty string. Got ${closeSym}`)
   }
-  
+
   const maxVarNameLength = 1000
 
   if (
@@ -65,7 +65,7 @@ export function tokenize(
   const closeSymLen = closeSym.length
 
   let openIndex: number
-  let closeIndex: number = 0
+  let closeIndex = 0
   let varName: string
   const strings: string[] = []
   const varNames: string[] = []

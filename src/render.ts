@@ -22,7 +22,7 @@ export function render(
   template: string,
   scope?: Scope,
   options?: ICompileOptions
-) {
+): string {
   const renderer: Renderer = compile(template, options)
   return renderer.render(scope)
 }
@@ -37,7 +37,7 @@ export function renderFn(
   resolveFn: ResolveFn,
   scope?: Scope,
   options?: ICompileOptions
-) {
+): string {
   const renderer: Renderer = compile(template, options)
   return renderer.renderFn(resolveFn, scope)
 }
@@ -52,7 +52,7 @@ export function renderFnAsync(
   resolveFnAsync: ResolveFnAsync,
   scope?: Scope,
   options?: ICompileOptions
-) {
+): Promise<string> {
   const renderer: Renderer = compile(template, options)
   return renderer.renderFnAsync(resolveFnAsync, scope)
 }

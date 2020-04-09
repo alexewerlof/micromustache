@@ -26,7 +26,7 @@ export class Cache<T> {
     this.reset()
   }
 
-  public reset() {
+  public reset(): void {
     this.oldestIndex = 0
     this.map = {}
     this.cachedKeys = new Array(this.size)
@@ -36,7 +36,7 @@ export class Cache<T> {
     return this.map[key]
   }
 
-  public set(key: string, value: T) {
+  public set(key: string, value: T): void {
     this.map[key] = value
     const oldestKey = this.cachedKeys[this.oldestIndex]
     if (oldestKey !== undefined) {
@@ -79,7 +79,7 @@ function propBetweenBrackets(propName: string): string {
   return propName
 }
 
-function pushPropName(propNames: string[], propName: string, preDot: boolean) {
+function pushPropName(propNames: string[], propName: string, preDot: boolean): string[] {
   let pName = propName.trim()
   if (pName === '') {
     return propNames
@@ -131,7 +131,7 @@ export function toPath(varName: string): PropNames {
   }
 
   let openBracketIndex: number
-  let closeBracketIndex: number = 0
+  let closeBracketIndex = 0
   let beforeBracket: string
   let propName: string
   let preDot = false

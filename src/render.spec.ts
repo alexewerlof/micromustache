@@ -57,7 +57,8 @@ describe('render', () => {
         obj: {
           [varName: string]: string
         }
-      ) => obj[varName]
+      // eslint-disable-next-line @typescript-eslint/require-await
+      ): Promise<string | undefined> => obj[varName]
 
       const scope = { name: 'Alex' }
       expect(await resolveFn('name', scope)).toBe(scope.name)

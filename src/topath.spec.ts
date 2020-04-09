@@ -4,7 +4,7 @@ interface ISuccessCases {
   [input: string]: string[]
 }
 
-function stringArrToString(arr: string[]) {
+function stringArrToString(arr: string[]): string {
   return '[' + arr.map(s => `'${s}'`).join(', ') + ']'
 }
 
@@ -116,10 +116,8 @@ describe('toPath()', () => {
     }
 
     it('throws type error for invalid input types', () => {
-      // @ts-ignore
-      expect(() => toPath(undefined)).toThrow(TypeError)
-      // @ts-ignore
-      expect(() => toPath(13)).toThrow(TypeError)
+      expect(() => toPath(undefined as unknown as string)).toThrow(TypeError)
+      expect(() => toPath(13 as unknown as string)).toThrow(TypeError)
     })
   })
 })

@@ -1,19 +1,19 @@
-export function isObj(x: any): x is object {
+export function isObj(x: unknown): x is object {
   return Boolean(x) && typeof x === 'object'
 }
 
-export function isFn<T>(x: any): x is T {
+export function isFn<T>(x: unknown): x is T {
   return typeof x === 'function'
 }
 
-export function isStr(x: any, minLength = 0): x is string {
+export function isStr(x: unknown, minLength = 0): x is string {
   return typeof x === 'string' && x.length >= minLength
 }
 
-export function isNum(x: any): x is number {
-  return Number.isFinite(x)
+export function isNum(x: unknown): x is number {
+  return Number.isFinite(x as number)
 }
 
-export function isArr(x: any): x is any[] {
+export function isArr(x: unknown): x is unknown[] {
   return Array.isArray(x)
 }
