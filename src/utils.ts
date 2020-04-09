@@ -2,7 +2,6 @@ export function isObj(x: any): x is object {
   return Boolean(x) && typeof x === 'object'
 }
 
-// eslint-disable-next-line ban-types
 export function isFn<T>(x: any): x is T {
   return typeof x === 'function'
 }
