@@ -7,7 +7,9 @@
     },
     "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended"
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -16,7 +18,8 @@
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": 2018,
-        "sourceType": "module"
+        "sourceType": "module",
+        "project": "./tsconfig.json"
     },
     "plugins": [
         "@typescript-eslint"
@@ -42,8 +45,27 @@
             "warn",
             "never"
         ],
-        "no-unused-vars": [
-          "warn"
-        ]
+        "no-unused-vars": "warn",
+        "@typescript-eslint/ban-ts-ignore": "warn",
+        "@typescript-eslint/member-delimiter-style": [
+          "warn",
+          {
+            "multiline": {
+              "delimiter": "none",
+              "requireLast": true
+            },
+            "singleline": {
+                "delimiter": "semi",
+                "requireLast": true
+            }
+          }
+        ],
+        "@typescript-eslint/interface-name-prefix": [
+          "warn",
+          {
+            "prefixWithI": "always"
+          }
+        ],
+        "@typescript-eslint/require-await": "warn"
     }
 }

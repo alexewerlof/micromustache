@@ -1,25 +1,25 @@
 import { terser } from 'rollup-plugin-terser'
-import gzipPlugin from 'rollup-plugin-gzip'
-import typescript from 'rollup-plugin-typescript'
+import typescript from '@rollup/plugin-typescript'
 import { name, version } from './package.json'
 
+/*
+typescript and tslib are peer dependencies of @rollup/plugin-typescript
+*/
 const banner = `/* ${name} v${version} */`
 const sourcemap = true
 
 export default [
-    {
+  {
         input: 'src/index.ts',
         plugins: [
             typescript({
-                target: 'es5',
-                module: 'es6',
-                lib: ['es2015'],
+                // These options are what you would pass to compilerOptions
+                tsconfig: './tsconfig-build.json'
             }),
             terser({
                 include: /\.min\.$/,
                 safari10: true,
             }),
-            gzipPlugin()
         ],
         output: [
             {
@@ -44,16 +44,16 @@ export default [
             },
             {
                 file: `dist/${name}.mjs`,
-                format: 'esm',
+                format: 'es',
                 banner,
                 sourcemap,
             },
             {
                 file: `dist/${name}.min.mjs`,
-                format: 'esm',
+                format: 'es',
                 banner,
                 sourcemap,
             },
         ]
-    }
+  }
 ]
