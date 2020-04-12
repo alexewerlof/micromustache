@@ -33,13 +33,14 @@ function compare(name, f1, f2, ...args) {
   start = process.hrtime()
   f2(...args)
   const f2duration = timestamp2ms(process.hrtime(start))
+  console.log(`⏲   micromustache: ${f1duration}ms\tMustache.js: ${f2duration}ms`)
   if (f1duration < f2duration) {
     console.log(
       `👍  micromustache is ${(f2duration / f1duration).toFixed(1)}x faster`
     )
   } else {
     console.log(
-      `👎  micromustache is ${(f1duration / f2duration).toFixed(1)}x slower`
+      `👎  Mustache.JS is ${(f1duration / f2duration).toFixed(1)}x faster`
     )
   }
 }
