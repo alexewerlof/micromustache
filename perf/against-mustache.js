@@ -1,7 +1,7 @@
-const micromustache = require('../dist/node')
+const micromustache = require('../')
 const mustache = require('mustache')
 
-const LEN = 1000
+const LEN = 270
 
 const longScope = { a: 'fooooooooooooooooooooooooooooooooooooooooo' }
 const longTemplate = '{{a}} and '.repeat(LEN)
