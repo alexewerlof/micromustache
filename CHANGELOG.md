@@ -4,14 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-
 ## Unreleased
 
 - Support [optional chaining syntax](https://github.com/tc39/proposal-optional-chaining)
 - Support comments: `{{! ...}}` like MustacheJS
 - Reenable tests/ for mustache compatibility and add relevant options
 - Add a string literal tag function (generic render)
-- Add the possibility to process variable names before and after they are resolved using `get()`. This can allow HTML escaping for example.
+- Add the possibility to process variable names before and after they are resolved using `get()`. This can allow HTML escaping for example. Also see #50
 
 ## 7.0.0
 
