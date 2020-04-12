@@ -1,4 +1,4 @@
-const { renderFn } = require('../dist/node')
+const { renderFn } = require('../')
 
 function beforeLookup(varName) {
   switch (varName.toLowerCase()) {

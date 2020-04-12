@@ -1,4 +1,4 @@
-const { renderFn, get } = require('../dist/node')
+const { renderFn, get } = require('../')
 
 function compose(fnArr, initialValue) {
   return fnArr.reduce((input, fn) => fn(input), initialValue)

@@ -1,4 +1,4 @@
-const { render } = require('../dist/node')
+const { render } = require('../')
 
 try {
   console.log(

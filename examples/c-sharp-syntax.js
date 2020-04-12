@@ -1,7 +1,7 @@
 // Inspired by:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated
 
-const { render } = require('../dist/node')
+const { render } = require('../')
 
 const csDelimiters = {
   tags: ['{', '}']

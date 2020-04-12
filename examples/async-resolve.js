@@ -1,4 +1,4 @@
-const { renderFnAsync } = require('../dist/node')
+const { renderFnAsync } = require('../')
 
 function delayedResolver(varName) {
   return new Promise((resolve) => {

@@ -1,4 +1,4 @@
-const { render } = require('../dist/node')
+const { render } = require('../')
 
 const scope1 = {
   foo: 'bar',

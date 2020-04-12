@@ -1,4 +1,4 @@
-const { renderFn, get } = require('../dist/node')
+const { renderFn, get } = require('../')
 
 const processors = {
   pow: (a, b) => a ** b,
