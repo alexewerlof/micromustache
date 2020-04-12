@@ -26,12 +26,17 @@ const deepTemplate = '{{' + indices.join('.') + '}}'
 const timestamp2ms = ([sec, nano]) => sec * 1e3 + nano / 1e6
 
 function compare(name, f1, f2, ...args) {
-  console.log('Comparing', name)
+  const iterations = 10000
+  console.log(`Comparing ${name} for ${iterations} iterations...`)
   let start = process.hrtime()
-  f1(...args)
+  for (let i = 0; i < iterations; i++) {
+    f1(...args)
+  }
   const f1duration = timestamp2ms(process.hrtime(start))
   start = process.hrtime()
-  f2(...args)
+  for (let i = 0; i < iterations; i++) {
+    f2(...args)
+  }
   const f2duration = timestamp2ms(process.hrtime(start))
   console.log(`⏲   micromustache: ${f1duration}ms\tMustache.js: ${f2duration}ms`)
   if (f1duration < f2duration) {
