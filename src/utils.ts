@@ -1,5 +1,5 @@
 export function isObj(x: unknown): x is object {
-  return Boolean(x) && typeof x === 'object'
+  return x !== null && typeof x === 'object'
 }
 
 export function isFn<T>(x: unknown): x is T {
