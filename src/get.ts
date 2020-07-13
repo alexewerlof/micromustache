@@ -11,12 +11,14 @@ export type Scope = {
  * @param val the value that is supposed to be tested
  */
 function isValidScope(val: unknown): val is Scope {
-  if (val) {
-    // At this point `null` is filtered out
-    const type = typeof val
-    return type === 'object' || type === 'function'
+  switch (typeof val) {
+  case 'object':
+    return Boolean(val)
+  case 'function':
+    return true
+  default:
+    return false
   }
-  return false
 }
 
 /**
@@ -56,11 +58,7 @@ export function get(
       currentScope = currentScope[propName]
     } else if (propExists) {
       throw new ReferenceError(
-        propName +
-          ' is not defined in the scope (' +
-          scope +
-          '). Parsed path: ' +
-          propNames
+        propName + ' is not defined in the scope (' + scope + '). Parsed path: ' + propNames
       )
     } else {
       return

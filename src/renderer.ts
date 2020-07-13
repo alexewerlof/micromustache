@@ -1,3 +1,4 @@
+import { isFn, isObj, isArr } from './utils'
 import { Scope, get } from './get'
 import { PropNames, toPath } from './topath'
 import { ITokens } from './tokenize'
@@ -66,10 +67,9 @@ export class Renderer {
     private readonly options: IRendererOptions = defaultRendererOptions
   ) {
     if (
-      tokens === null ||
-      typeof tokens !== 'object' ||
-      !Array.isArray(tokens.strings) ||
-      !Array.isArray(tokens.varNames) ||
+      !isObj(tokens) ||
+      !isArr(tokens.strings) ||
+      !isArr(tokens.varNames) ||
       tokens.strings.length !== tokens.varNames.length + 1
     ) {
       throw new TypeError('Invalid tokens object ' + tokens)
@@ -140,7 +140,7 @@ export class Renderer {
 
   private resolveVarNames(resolveFn: ResolveFn, scope: Scope = {}): any[] {
     const { varNames } = this.tokens
-    if (typeof resolveFn !== 'function') {
+    if (!isFn<ResolveFnAsync>(resolveFn)) {
       throw new TypeError('Expected a resolver function but got ' + resolveFn)
     }
 

@@ -1,3 +1,5 @@
+import { isStr } from './utils'
+
 export type PropNames = string[]
 
 /**
@@ -126,7 +128,7 @@ function pushPropName(propNames: string[], propName: string, preDot: boolean): s
  * For example `['a', 'b', 'c']`
  */
 export function toPath(varName: string): PropNames {
-  if (typeof varName !== 'string') {
+  if (!isStr(varName)) {
     throw new TypeError('Expected string but Got ' + varName)
   }
 

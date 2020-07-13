@@ -2,7 +2,7 @@ export function isObj(x: unknown): x is object {
   return x !== null && typeof x === 'object'
 }
 
-export function isFn<T>(x: unknown): x is T {
+export function isFn<T extends Function>(x: unknown): x is T {
   return typeof x === 'function'
 }
 

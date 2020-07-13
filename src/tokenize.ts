@@ -1,3 +1,5 @@
+import { isStr, isArr } from './utils'
+
 export interface ITokens {
   /** An array of constant strings */
   readonly strings: string[]
@@ -28,7 +30,7 @@ export function tokenize(
   template: string,
   options: TokenizeOptions = defaultTokenizeOptions
 ): ITokens {
-  if (!Array.isArray(options)) {
+  if (!isArr(options)) {
     throw Error(
       `Tags should be an array. Got ${options}`
     )
@@ -39,26 +41,17 @@ export function tokenize(
   }
 
   const [openSym, closeSym] = options
-  if (typeof openSym !== 'string' || openSym.length === 0) {
+  if (!isStr(openSym, 1)) {
     throw new TypeError(`openSym should be a non-empty string. Got ${openSym}`)
   }
-  if (typeof closeSym !== 'string' || closeSym.length === 0) {
+  if (!isStr(closeSym, 1)) {
     throw new TypeError(`closeSym should be a non-empty string. Got ${closeSym}`)
   }
 
   const maxVarNameLength = 1000
 
-  if (
-    typeof openSym !== 'string' ||
-    typeof closeSym !== 'string' ||
-    openSym.length === 0 ||
-    closeSym.length === 0 ||
-    openSym === closeSym
-  ) {
-    throw new TypeError(
-      'The tags array should have two distinct non-empty strings. Got ' +
-        options.join()
-    )
+  if (openSym === closeSym) {
+    throw new TypeError(`The open and close symbols should be different. Got ${openSym}" and "${closeSym}`)
   }
 
   const openSymLen = openSym.length
