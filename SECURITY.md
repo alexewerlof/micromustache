@@ -2,12 +2,13 @@
 
 ## Supported Versions
 
-Due to available resources and differences in code, only version 6+ is supported.
+Due to available resources and differences in code, only the recent versions are supported:
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 8.x.x   | :white_check_mark: |
 | 7.x.x   | :white_check_mark: |
-| 6.x.x   | :white_check_mark: |
+| 6.x.x   | :x:                |
 | < 5.x   | :x:                |
 
 ## Reporting a Vulnerability
