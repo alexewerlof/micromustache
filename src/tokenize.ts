@@ -1,4 +1,4 @@
-import { isStr, isArr } from './utils'
+import { isStr, isArr, isObj, isInt } from './utils'
 
 export interface ITokens {
   /** An array of constant strings */
@@ -7,13 +7,24 @@ export interface ITokens {
   readonly varNames: string[]
 }
 
+export type ITags = [string, string]
+
 /**
- * An array of two strings specifying the opening and closing tags that mark
- * the start and end of a variable name in the template.
- * It defaults to `['{{', '}}']`
+ * The options that goes to the tokenization algorithm
  */
-export type TokenizeOptions = [string, string]
-const defaultTokenizeOptions: TokenizeOptions = ['{{', '}}']
+export interface ITokenizeOptions {
+  /**
+   * Maximum allowed variable name. Set this to a safe value to prevent a bad template from blocking
+   * the tokenization unnecessarily
+   */
+  maxVarNameLength?: number
+  /**
+   * The string symbols that mark the opening and closing of a variable name in
+   * the template.
+   * It defaults to `['{{', '}}']`
+   */
+  tags?: ITags
+}
 
 /**
  * Parse a template and returns the tokens in an object.
@@ -28,39 +39,38 @@ const defaultTokenizeOptions: TokenizeOptions = ['{{', '}}']
  */
 export function tokenize(
   template: string,
-  options: TokenizeOptions = defaultTokenizeOptions
+  options: ITokenizeOptions = {}
 ): ITokens {
   if (!isStr(template)) {
     throw new TypeError(
-      'The template parameter must be a string. Got ' + template
+      `The template parameter must be a string. Got ${template}`
     )
   }
 
-  if (!isArr(options)) {
-    throw Error(
-      `Tags should be an array. Got ${options}`
+  if (!isObj(options)) {
+    throw new TypeError(
+      `The tokenize options should be an object. Got ${options}`
     )
   }
 
-  if (options.length !== 2) {
-    throw new TypeError(`The tags array should contain exactly two elements, got ${options.length}`)
+  const { tags = ['{{', '}}'], maxVarNameLength = 1000 } = options
+
+  if (!isArr(tags) || tags.length !== 2) {
+    throw TypeError(
+      `tags should be an array of two elements. Got ${tags}`
+    )
   }
 
-  const [openSym, closeSym] = options
+  const [openSym, closeSym] = tags
 
-  if (!isStr(openSym, 1)) {
-    throw new TypeError(`openSym should be a non-empty string. Got ${openSym}`)
+  if (!isStr(openSym, 1) || !isStr(closeSym, 1) || openSym === closeSym) {
+    throw new TypeError(`The open and close symbols should be two distinct non-empty strings. Got ${openSym}" and "${closeSym}`)
   }
 
-  if (!isStr(closeSym, 1)) {
-    throw new TypeError(`closeSym should be a non-empty string. Got ${closeSym}`)
+  if (!isInt(maxVarNameLength) || maxVarNameLength <= 0) {
+    throw new Error(`Expected a positive number for maxVarNameLength. Got ${maxVarNameLength}`)
   }
 
-  if (openSym === closeSym) {
-    throw new TypeError(`The open and close symbols should be different. Got ${openSym}" and "${closeSym}`)
-  }
-
-  const maxVarNameLength = 1000
   const openSymLen = openSym.length
   const closeSymLen = closeSym.length
 
@@ -80,7 +90,7 @@ export function tokenize(
     closeIndex = template.indexOf(closeSym, openIndex)
     if (closeIndex === -1) {
       throw new SyntaxError(
-        'Missing "' + closeSym + '" in the template expression ' + template
+        `Missing "${closeSym}" in the template expression from position ${currentIndex}`
       )
     }
 
@@ -88,13 +98,7 @@ export function tokenize(
     const varNameLength = closeIndex - varNameStartIndex
     if (varNameLength > maxVarNameLength) {
       throw new SyntaxError(
-        'Variable name cannot be longer than ' +
-          maxVarNameLength +
-          ' but at position ' +
-          openIndex +
-          ' it is "' +
-          varNameLength +
-          '"'
+        `Variable name cannot be longer than ${maxVarNameLength} but at position ${openIndex} it is "${varNameLength}"`
       )
     }
 
@@ -102,7 +106,7 @@ export function tokenize(
 
     if (varName.length === 0) {
       throw new SyntaxError(
-        'Unexpected "' + closeSym + '" tag found at position ' + openIndex
+        `Unexpected "${closeSym}" tag found at position ${openIndex}`
       )
     }
 
@@ -112,13 +116,7 @@ export function tokenize(
 
     if (varName.includes(openSym)) {
       throw new SyntaxError(
-        'Variable names cannot have "' +
-          openSym +
-          '". But at position ' +
-          openIndex +
-          ' got "' +
-          varName +
-          '"'
+        `Variable names cannot have "${openSym}". But at position ${openIndex}. Got "${varName}"`
       )
     }
 

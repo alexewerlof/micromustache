@@ -9,14 +9,14 @@ describe('tokenize()', () => {
   })
 
   it('supports customized tags', () => {
-    expect(tokenize('Hello {name}!', ['{', '}'])).toEqual({
+    expect(tokenize('Hello {name}!', { tags: ['{', '}'] })).toEqual({
       strings: ['Hello ', '!'],
       varNames: ['name']
     })
   })
 
   it('throws if the open and close tag are the same', () => {
-    expect(() => tokenize('Hello |name|!', ['|', '|'])).toThrow(TypeError)
+    expect(() => tokenize('Hello |name|!', { tags: ['|', '|'] })).toThrow(TypeError)
   })
 
   it('returns an empty string and no varNames when the template is an empty string', () => {
@@ -60,7 +60,7 @@ describe('tokenize()', () => {
 
   it('throws a syntax error if the open symbol is not closed', () => {
     expect(() => tokenize('Hi {{')).toThrow(
-      new SyntaxError('Missing "}}" in the template expression Hi {{')
+      new SyntaxError('Missing "}}" in the template expression from position 0')
     )
   })
 
