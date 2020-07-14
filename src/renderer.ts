@@ -28,8 +28,6 @@ export interface IRendererOptions {
   readonly validateVarNames?: boolean
 }
 
-const defaultRendererOptions: IRendererOptions = {}
-
 /**
  * The callback for resolving a value (synchronous)
  * @param scope the scope object that was passed to .render() function
@@ -64,7 +62,7 @@ export class Renderer {
    */
   constructor(
     private readonly tokens: ITokens,
-    private readonly options: IRendererOptions = defaultRendererOptions
+    private readonly options: IRendererOptions = {}
   ) {
     if (
       !isObj(tokens) ||
@@ -73,6 +71,11 @@ export class Renderer {
       tokens.strings.length !== tokens.varNames.length + 1
     ) {
       throw new TypeError('Invalid tokens object ' + tokens)
+    }
+    if (!isObj(options)) {
+      throw new TypeError(
+        'The compiler options should be an object. Got ' + options
+      )
     }
     if (options.validateVarNames) {
       // trying to initialize toPathCache parses them which is also validation
