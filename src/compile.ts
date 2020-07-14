@@ -36,12 +36,6 @@ export function compile(
   template: string,
   options: ICompileOptions = defaultCompileOptions
 ): Renderer {
-  if (!isStr(template)) {
-    throw new TypeError(
-      'The template parameter must be a string. Got ' + template
-    )
-  }
-
   if (!isObj(options)) {
     throw new TypeError(
       'The compiler options should be an object. Got ' + options

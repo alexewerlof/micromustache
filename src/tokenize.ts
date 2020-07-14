@@ -30,6 +30,12 @@ export function tokenize(
   template: string,
   options: TokenizeOptions = defaultTokenizeOptions
 ): ITokens {
+  if (!isStr(template)) {
+    throw new TypeError(
+      'The template parameter must be a string. Got ' + template
+    )
+  }
+
   if (!isArr(options)) {
     throw Error(
       `Tags should be an array. Got ${options}`
