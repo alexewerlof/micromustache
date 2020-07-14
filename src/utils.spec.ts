@@ -1,4 +1,4 @@
-import { isObj, isFn, isStr, isNum, isArr } from './utils'
+import { isObj, isFn, isStr, isNum, isArr, isInt } from './utils'
 
 describe('utils', () => {
   it.each([
@@ -47,9 +47,53 @@ describe('utils', () => {
     [null, false],
     [NaN, false],
     [undefined, false],
+    ['-1', false],
+    ['0', false],
     ['1', false],
   ])('isNum()', (x, result) => {
     expect(isNum(x)).toBe(result)
+  })
+
+  it.each([
+    [0, undefined, true],
+    [0, false, true],
+    [0, true, true],
+    [1, undefined, true],
+    [1, false, true],
+    [1, true, true],
+    [-1, undefined, true],
+    [-1, false, true],
+    [-1, true, false],
+    [1.1, undefined, false],
+    [1.1, false, false],
+    [1.1, true, false],
+    [-1.1, undefined, false],
+    [-1.1, false, false],
+    [-1.1, true, false],
+    [Number.MAX_SAFE_INTEGER, false, true],
+    [Number.MIN_SAFE_INTEGER, false, true],
+    [Number.MAX_SAFE_INTEGER, true, true],
+    [Number.MIN_SAFE_INTEGER, true, false],
+    [null, undefined, false],
+    [null, true, false],
+    [null, false, false],
+    [NaN, undefined, false],
+    [NaN, true, false],
+    [NaN, false, false],
+    [undefined, undefined, false],
+    [undefined, true, false],
+    [undefined, false, false],
+    ['-1', undefined, false],
+    ['-1', true, false],
+    ['-1', false, false],
+    ['0', undefined, false],
+    ['0', true, false],
+    ['0', false, false],
+    ['1', undefined, false],
+    ['1', true, false],
+    ['1', false, false],
+  ])('isInt()', (x, shouldBePositiveOr0, result) => {
+    expect(isInt(x, shouldBePositiveOr0)).toBe(result)
   })
 
   it.each([
