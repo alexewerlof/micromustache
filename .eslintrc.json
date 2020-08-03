@@ -9,7 +9,8 @@
         "eslint:recommended",
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "prettier"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -47,7 +48,6 @@
         ],
         "no-unused-vars": "warn",
         "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/ban-ts-ignore": "warn",
         "@typescript-eslint/member-delimiter-style": [
           "warn",
           {
@@ -61,12 +61,7 @@
             }
           }
         ],
-        "@typescript-eslint/interface-name-prefix": [
-          "warn",
-          {
-            "prefixWithI": "always"
-          }
-        ],
-        "@typescript-eslint/require-await": "warn"
+        "@typescript-eslint/require-await": "warn",
+        "@typescript-eslint/no-unsafe-assignment": "warn"
     }
 }

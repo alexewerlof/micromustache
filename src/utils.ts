@@ -1,7 +1,16 @@
+// eslint-disable-next-line @typescript-eslint/unbound-method
+const { hasOwnProperty } = {}
+// eslint-disable-next-line @typescript-eslint/unbound-method
+const { isFinite, isInteger } = (42).constructor as NumberConstructor
+// eslint-disable-next-line @typescript-eslint/unbound-method
+const { isArray } = [].constructor as ArrayConstructor
+
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function isObj(x: unknown): x is object {
   return x !== null && typeof x === 'object'
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function isFn<T extends Function>(x: unknown): x is T {
   return typeof x === 'function'
 }
@@ -11,13 +20,21 @@ export function isStr(x: unknown, minLength = 0): x is string {
 }
 
 export function isNum(x: unknown): x is number {
-  return Number.isFinite(x as number)
+  return isFinite(x as number)
 }
 
 export function isInt(x: unknown): x is number {
-  return Number.isInteger(x)
+  return isInteger(x)
 }
 
 export function isArr(x: unknown): x is unknown[] {
-  return Array.isArray(x)
+  return isArray(x)
+}
+
+export function isProp<K extends string | number | symbol>(x: unknown, propName: K): x is Record<K, any> {
+  return isObj(x) && propName in x
+}
+
+export function isOwnProp<K extends string | number | symbol>(x: unknown, propName: K): x is Record<K, any> {
+  return isObj(x) && hasOwnProperty.call(x, propName) as boolean
 }

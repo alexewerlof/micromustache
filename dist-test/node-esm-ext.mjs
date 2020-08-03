@@ -1,3 +1,4 @@
+// This is a Node ESM file which tries to import the ESM version of the library by explicitly mentioning its extension
 import { render } from '../dist/micromustache.mjs'
 
 const result = render('Hello {{ name }}!', { name: 'Alex' })

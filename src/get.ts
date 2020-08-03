@@ -1,24 +1,8 @@
-import { toPath, PropNames } from './topath'
+import { toPath } from './topath'
+import { isProp } from './utils'
 
-export type Scope = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [val: string]: Scope | any
-}
-
-/**
- * Checks if the provided value can be used as a scope, that is a non-null
- * object or a function.
- * @param val the value that is supposed to be tested
- */
-function isValidScope(val: unknown): val is Scope {
-  switch (typeof val) {
-  case 'object':
-    return Boolean(val)
-  case 'function':
-    return true
-  default:
-    return false
-  }
+export interface Scope {
+  [key: string]: Scope | any
 }
 
 /**
@@ -45,20 +29,20 @@ function isValidScope(val: unknown): val is Scope {
  */
 export function get(
   scope: Scope,
-  varNameOrPropNames: PropNames | string,
+  varNameOrPropNames: string | string[],
   propExists?: boolean
-): undefined | Scope {
+): any {
   const propNames = Array.isArray(varNameOrPropNames)
     ? varNameOrPropNames
     : toPath.cached(varNameOrPropNames)
 
   let currentScope = scope
   for (const propName of propNames) {
-    if (isValidScope(currentScope)) {
+    if (isProp(currentScope, propName)) {
       currentScope = currentScope[propName]
     } else if (propExists) {
       throw new ReferenceError(
-        propName + ' is not defined in the scope (' + scope + '). Parsed path: ' + propNames
+        `${propName} is not defined in the scope (${String(scope)}) at path: ${propNames.join('.')}`
       )
     } else {
       return

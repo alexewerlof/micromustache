@@ -8,8 +8,6 @@
 * **Renderer**: an object that holds a parsed template and have methods for rendering.
 * **Parsing**: as step during compilation for breaking a template into parts
 * **Tokenization**: going through the parsed results and creating tokens for varNames
-* **PropNames**: is an array of property names that can be used to access a nested
-property from an object.
 * **Stringification**: the process of putting everything together and creating the
 final string result _(in compiler slag it is called a generator)_
 * **Tag** the strings that are used for marking varNames in the template. By default they are '{{' and '}}' respectively.

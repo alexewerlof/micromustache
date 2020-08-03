@@ -1,6 +1,6 @@
 import { isFn, isObj, isArr } from './utils'
 import { Scope, get } from './get'
-import { PropNames, toPath } from './topath'
+import { toPath } from './topath'
 import { ITokens } from './tokenize'
 
 /**
@@ -52,7 +52,7 @@ export class Renderer {
   /**
    * Another cache that holds the parsed values for `toPath()` one per varName
    */
-  private toPathCache: PropNames[]
+  private toPathCache: string[][]
 
   /**
    * Creates a new Renderer instance. This is called internally by the compiler.
@@ -70,11 +70,12 @@ export class Renderer {
       !isArr(tokens.varNames) ||
       tokens.strings.length !== tokens.varNames.length + 1
     ) {
-      throw new TypeError('Invalid tokens object ' + tokens)
+      // This is most likely an internal error from tokenization algorithm
+      throw new TypeError(`Invalid tokens object`)
     }
     if (!isObj(options)) {
       throw new TypeError(
-        'The compiler options should be an object. Got ' + options
+        `Options should be an object. Got a ${typeof options}`
       )
     }
     if (options.validateVarNames) {
@@ -92,7 +93,7 @@ export class Renderer {
   private cacheParsedPaths(): void {
     const { varNames } = this.tokens
     if (this.toPathCache === undefined) {
-      this.toPathCache = new Array(varNames.length)
+      this.toPathCache = new Array<string[]>(varNames.length)
       for (let i = 0; i < varNames.length; i++) {
         this.toPathCache[i] = toPath.cached(varNames[i])
       }
@@ -112,7 +113,7 @@ export class Renderer {
     const { varNames } = this.tokens
     const { length } = varNames
     this.cacheParsedPaths()
-    const values = new Array(length)
+    const values = new Array<any>(length)
     for (let i = 0; i < length; i++) {
       values[i] = get(scope, this.toPathCache[i], this.options.propsExist)
     }
@@ -144,14 +145,15 @@ export class Renderer {
   private resolveVarNames(resolveFn: ResolveFn, scope: Scope = {}): any[] {
     const { varNames } = this.tokens
     if (!isFn<ResolveFnAsync>(resolveFn)) {
-      throw new TypeError('Expected a resolver function but got ' + resolveFn)
+      throw new TypeError(`Expected a resolver function. Got ${String(resolveFn)}`)
     }
 
     const { length } = varNames
-    const values = new Array(length)
+    const values = new Array<any>(length)
     for (let i = 0; i < length; i++) {
       values[i] = resolveFn.call(null, varNames[i], scope)
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return values
   }
 

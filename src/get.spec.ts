@@ -1,7 +1,7 @@
 import { get } from './get'
 
 describe('get()', () => {
-  it('can resolve 1-level object', () => {
+  it('can resolve 1-level deep object', () => {
     const obj = {
       foo: 'bar',
       baz: 2
@@ -27,6 +27,7 @@ describe('get()', () => {
     const obj = {
       foo: 'bar'
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     expect(() => get(obj, 'hello')).not.toThrow()
   })
 
@@ -34,6 +35,7 @@ describe('get()', () => {
     const obj = {
       foo: 'bar'
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     expect(() => get(obj, 'hello.kitty', true)).toThrow()
   })
 
@@ -49,7 +51,7 @@ describe('get()', () => {
     expect(get(obj, 'arr[1]')).toBe('apple')
   })
 
-  it('supports array syntax', () => {
+  it('supports array indices', () => {
     const arr = ['banana', 'mandarin', 'orange', 'pear']
     const obj = {
       fruits: ['ananas', 'kiwi']
@@ -125,7 +127,7 @@ describe('get()', () => {
     expect(get(obj, 'undefined')).toBe(obj.undefined)
   })
 
-  it('can lookup a property', () => {
+  it('supports getts property', () => {
     class A {
       get x(): string {
         return 'the x value'
@@ -133,6 +135,5 @@ describe('get()', () => {
     }
     const obj = new A()
     expect(get(obj, 'x')).toBe('the x value')
-    expect(get(obj, '__proto__.x')).toBe('the x value')
   })
 })

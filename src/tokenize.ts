@@ -43,13 +43,13 @@ export function tokenize(
 ): ITokens {
   if (!isStr(template)) {
     throw new TypeError(
-      `The template parameter must be a string. Got ${template}`
+      `The template parameter must be a string. Got ${template as string}`
     )
   }
 
   if (!isObj(options)) {
     throw new TypeError(
-      `The tokenize options should be an object. Got ${options}`
+      `Options should be an object. Got a ${typeof options}`
     )
   }
 
@@ -57,7 +57,7 @@ export function tokenize(
 
   if (!isArr(tags) || tags.length !== 2) {
     throw TypeError(
-      `tags should be an array of two elements. Got ${tags}`
+      `tags should be an array of two elements. Got ${String(tags)}`
     )
   }
 

@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "declaration": true,
     "noImplicitAny": true,
     "sourceMap": true,
     "strictNullChecks": true,
@@ -11,6 +10,5 @@
     "newLine": "LF",
     "listEmittedFiles": true,
     "target": "es5",
-    "module": "commonjs"
   }
 }

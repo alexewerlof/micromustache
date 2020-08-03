@@ -1,7 +1,5 @@
 import { isStr } from './utils'
 
-export type PropNames = string[]
-
 /**
  * The number of different varNames that will be cached.
  * If a varName is cached, the actual parsing algorithm will not be called
@@ -31,7 +29,7 @@ export class Cache<T> {
   public reset(): void {
     this.oldestIndex = 0
     this.map = {}
-    this.cachedKeys = new Array(this.size)
+    this.cachedKeys = new Array<string>(this.size)
   }
 
   public get(key: string): T {
@@ -50,7 +48,7 @@ export class Cache<T> {
   }
 }
 
-const cache = new Cache<PropNames>(cacheSize)
+const cache = new Cache<string[]>(cacheSize)
 
 /**
  * Removes the quotes from a string and returns it.
@@ -127,9 +125,9 @@ function pushPropName(propNames: string[], propName: string, preDot: boolean): s
  * value.
  * For example `['a', 'b', 'c']`
  */
-export function toPath(varName: string): PropNames {
+export function toPath(varName: string): string[] {
   if (!isStr(varName)) {
-    throw new TypeError('Expected string but Got ' + varName)
+    throw new TypeError(`Cannot parse path. Expected string. Got ${String(varName)}`)
   }
 
   let openBracketIndex: number
@@ -137,7 +135,7 @@ export function toPath(varName: string): PropNames {
   let beforeBracket: string
   let propName: string
   let preDot = false
-  const propNames: PropNames = []
+  const propNames = new Array<string>(0)
 
   for (
     let currentIndex = 0;
@@ -175,7 +173,7 @@ export function toPath(varName: string): PropNames {
 /**
  * This is just a faster version of `toPath()`
  */
-function toPathCached(varName: string): PropNames {
+function toPathCached(varName: string): string[] {
   let result = cache.get(varName)
   if (result === undefined) {
     result = toPath(varName)
