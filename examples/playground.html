@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micromustache Playground</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        textarea {
+            display: block;
+            border: 2px solid transparent;
+            background-color: rgb(195, 195, 195);
+            box-sizing: border-box;
+            width: 100vw;   
+            height: 30vh;
+            padding: 1em;
+        }
+        textarea:focus {
+            background-color: white;
+        }
+        .error {
+            background-color: rgb(253, 153, 153);
+        }
+        label {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <label for="template">Template</label>
+    <textarea id="template">Hello {{name}}!</textarea>
+    <div id="template-error" class="error"></div>
+    <label for="scope">Scope</label>
+    <textarea id="scope">{
+    "name": "Michael Jackson"
+}</textarea>
+    <div id="scope-error" class="error"></div>
+    <label>Result</label>
+    <div id="result"></div>
+    <script src="../dist/micromustache.umd.js"></script>
+    <script>
+        const template = document.getElementById('template')
+        const templateError = document.getElementById('template-error')
+        const scope = document.getElementById('scope')
+        const scopeError = document.getElementById('scope-error')
+        const result = document.getElementById('result')
+        scope.addEventListener('keyup', () => {
+            try {
+                JSON.parse(scope.value)
+                scope.classList.remove('error')
+                scopeError.innerText = ''
+                render()
+            } catch (err) {
+                scope.classList.toggle('error', true)
+                scopeError.innerText = err
+            }
+        })
+        template.addEventListener('keyup', () => {
+            try {
+                micromustache.compile(template.value)
+                template.classList.remove('error')
+                templateError.innerText = ''
+                render()
+            } catch (err) {
+                template.classList.toggle('error', true)
+                templateError.innerText = err
+            }
+        })
+        function render() {
+            const scopeObj = JSON.parse(scope.value)
+            try {
+                result.innerText = micromustache.render(template.value, scopeObj)
+                result.classList.remove('error')
+            } catch (err) {
+                result.innerText = err
+                result.classList.toggle('error', true)
+            }
+        }
+        render()
+    </script>
+</body>
+</html>
