@@ -36,7 +36,21 @@ describe('get()', () => {
       foo: 'bar',
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    expect(() => get(obj, 'hello.kitty', { propsExist: true })).toThrow()
+    expect(() => get(obj, 'cux', { propsExist: true })).toThrow()
+  })
+
+  it('throws if the path is too deep', () => {
+    const obj = {
+      a: {
+        b: {
+          c: 37.5,
+        },
+      },
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    expect(() => get(obj, 'a.b.c', { depth: 2 })).toThrow()
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    expect(() => get(obj, 'a.b.c', { depth: 3 })).not.toThrow()
   })
 
   it('can access array elements', () => {

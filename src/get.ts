@@ -17,6 +17,14 @@ export interface IGetOptions {
    * - if `propsExist` is falsy, a ReferenceError will be thrown
    */
   readonly propsExist?: boolean
+  /**
+   * Drilling a nested object to get the value assinged with a path is a relatively expensive
+   * computation. Therefore you can set a value of how deep you are expecting a template to go and
+   * if the nesting is deeper than that, the computation stops with an error.
+   * This prevents a malicious or erronous template with deep nesting to block the JavaScript event
+   * loop. The default is 10.
+   */
+  readonly depth?: number
 }
 
 /**
@@ -50,6 +58,12 @@ export function get(
     ? varNameOrPropNames
     : toPath.cached(varNameOrPropNames)
 
+  const { depth = 10 } = options
+  if (propNames.length > depth) {
+    throw new ReferenceError(
+      `The path cannot be deeper than ${depth} levels. Got "${propNames.join(' > ')}"`
+    )
+  }
   let currentScope = scope
   for (const propName of propNames) {
     if (isProp(currentScope, propName)) {

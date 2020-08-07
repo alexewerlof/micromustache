@@ -292,6 +292,7 @@ If the scope is `undefined` or `null` the result is always `undefined`.
 All the functions that can take an option, expect it as an object with these properties:
 
 * `explicit?: boolean = false` When set to a truthy value, rendering literally puts a `'null'` or `'undefined'` for values that are `null` or `undefined`. By default it swallows those values to be compatible with Mustache.
+* `depth?: boolean = 10` how deep you are expecting a variable name resolution to go. If the depth is longer than what is specified an error will be thrown.
 * `propsExist?: boolean = false` When set to a truthy value, we throw a `ReferenceError` for invalid varNames. Invalid varNames are the ones that do not exist in the scope. By default, invalid varNames will be resolved to an empty string.
 If a value does not exist in the scope, two things can happen:
   - if `propsExist` is falsy (default), the value will be resolved to an empty string

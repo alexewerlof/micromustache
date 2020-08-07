@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## 8.0.0
 
 - The CommonJS file has changed name: V7=`dist/micromustache.js` v8=`dist/micromustache.cjs`. If you just use `require('micromustache')` it sould work without any change.
+- The `depth` option is added
 - Updated the dependencies
 - Addressed known security issues
 
