@@ -10,8 +10,19 @@ const mustache = require('mustache')
 const ITERATIONS = 10000
 
 const hrtime2ms = ([sec, nano]) => sec * 1e3 + nano / 1e6
-const x = (a, b) => (a / b > 1 ? `(${(a / b).toFixed(1)}x faster🔥)` : '')
+function x(a, b) {
+  const ratio = a / b
+  if (ratio < 1) {
+    return ''
+  }
+
+  let ret = '🔥 ('
+  ret += ratio < 2 ? (((a - b) * 100) / b).toFixed(0) + '%' : ratio.toFixed(1) + 'x'
+  ret += ' faster)'
+  return ret
+}
 const ms = (a) => Math.round(a) + 'ms'
+
 function compare(f1, f2) {
   const f1name = f1.name
   const f2name = f2.name
