@@ -1,5 +1,5 @@
 import { toPath } from './topath'
-import { isObj, isProp } from './utils'
+import { isObj, isProp, isNum } from './utils'
 
 export interface Scope {
   [key: string]: Scope | any
@@ -54,11 +54,14 @@ export function get(
   if (!isObj(options)) {
     throw new TypeError(`get expects an object option. Got ${typeof options}`)
   }
+  const { depth = 10 } = options
+  if (!isNum(depth) || depth <= 0) {
+    throw new RangeError(`Expected a positive number for depth. Got ${depth}`)
+  }
   const propNames = Array.isArray(varNameOrPropNames)
     ? varNameOrPropNames
     : toPath.cached(varNameOrPropNames)
 
-  const { depth = 10 } = options
   if (propNames.length > depth) {
     throw new ReferenceError(
       `The path cannot be deeper than ${depth} levels. Got "${propNames.join(' > ')}"`
