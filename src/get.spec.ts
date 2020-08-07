@@ -36,7 +36,7 @@ describe('get()', () => {
       foo: 'bar'
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    expect(() => get(obj, 'hello.kitty', true)).toThrow()
+    expect(() => get(obj, 'hello.kitty', { propsExist: true })).toThrow()
   })
 
   it('can access array elements', () => {

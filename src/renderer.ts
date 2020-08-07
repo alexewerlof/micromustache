@@ -1,29 +1,18 @@
 import { isFn, isObj, isArr } from './utils'
-import { Scope, get } from './get'
+import { Scope, get, IGetOptions } from './get'
 import { toPath } from './topath'
 import { ITokens } from './tokenize'
 
 /**
  * The options passed to Renderer's constructor
  */
-export interface IRendererOptions {
+export interface IRendererOptions extends IGetOptions {
   /**
    * When set to a truthy value, rendering literally puts a 'null' or
    * 'undefined' for values that are `null` or `undefined`.
    * By default it swallows those values to be compatible with Mustache.
    */
   readonly explicit?: boolean
-  /**
-   * When set to a truthy value, we throw a ReferenceError for invalid varNames.
-   * Invalid varNames are the ones that do not exist in the scope.
-   * In that case the value for the varNames will be assumed an empty string.
-   * By default we throw a ReferenceError to be compatible with how JavaScript
-   * threats such invalid reference.
-   * If a value does not exist in the scope, two things can happen:
-   * - if `propsExist` is truthy, the value will be assumed empty string
-   * - if `propsExist` is falsy, a ReferenceError will be thrown
-   */
-  readonly propsExist?: boolean
   /** when set to a truthy value, validates the variable names */
   readonly validateVarNames?: boolean
 }
@@ -115,7 +104,7 @@ export class Renderer {
     this.cacheParsedPaths()
     const values = new Array<any>(length)
     for (let i = 0; i < length; i++) {
-      values[i] = get(scope, this.toPathCache[i], this.options.propsExist)
+      values[i] = get(scope, this.toPathCache[i], this.options)
     }
     return this.stringify(values)
   }
