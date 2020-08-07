@@ -73,7 +73,8 @@
     "prepublishOnly": "npm run test && npm run build && pkg-ok",
     "postversion": "git push && git push --tags",
     "api-extractor": "api-extractor run --local",
-    "sloc": "sloc src -e .*spec.* -k source --format cli-table"
+    "sloc": "sloc src -e .*spec.* -k source --format cli-table",
+    "perf": "npm run build:ts && node perf/against-mustache.js"
   },
   "dependencies": {}
 }
