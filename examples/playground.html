@@ -6,29 +6,33 @@
     <title>Micromustache Playground</title>
     <style>
         body, html {
+            background-color: rgb(95 104 117);
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
             margin: 0;
             padding: 0.5em;
-            font-family: 'Courier New', Courier, monospace;
-            color: white;
-            background-color: rgb(122, 112, 112);
         }
-        textarea {
-            display: block;
-            border: 0.3em solid transparent;
+        .io {
             background-color: rgb(195, 195, 195);
-            color: black;
+            border: 0.3em solid transparent;
             box-sizing: border-box;
-            resize: vertical;
-            width: 100%;   
-            height: 30vh;
+            color: black;
+            display: block;
+            font-family: inherit;
+            font-size: inherit;
             padding: 1em;
+            width: 100%;
         }
-        textarea:hover {
-            background-color: rgb(231, 231, 231);
+        .entry:hover {
+            background-color: rgb(238, 238, 238);
         }
-        textarea:focus {
+        .entry:focus {
             background-color: white;
             outline: none;
+        }
+        textarea {
+            resize: vertical;
+            height: 15vh;
         }
         textarea.error {
             border-color: rgb(253, 153, 153);
@@ -37,63 +41,129 @@
             background-color: rgb(253, 153, 153);
         }
         label {
-            font-size: 1.2em;
-            font-weight: bold;
+            margin-top: 0.5em;
+            display: block;
+            font-size: 2em;
+            font-weight: lighter;
+            font-family: Tahoma, Geneva, sans-serif;
         }
     </style>
 </head>
 <body>
+    <label for="presets">Presets</label>
+    <select id="presets" class="io entry"></select>
     <label for="template">Template</label>
-    <textarea id="template">Hello {{name}}!</textarea>
+    <textarea id="template" class="io entry"></textarea>
     <div id="template-error" class="error"></div>
     <label for="scope">Scope</label>
-    <textarea id="scope">{
-    "name": "Michael Jackson"
-}</textarea>
+    <textarea id="scope" class="io entry"></textarea>
     <div id="scope-error" class="error"></div>
     <label>Result</label>
-    <div id="result"></div>
+    <div id="result" class="io"></div>
     <script src="../dist/micromustache.umd.js"></script>
     <script>
-        const template = document.getElementById('template')
-        const templateError = document.getElementById('template-error')
-        const scope = document.getElementById('scope')
-        const scopeError = document.getElementById('scope-error')
-        const result = document.getElementById('result')
-        scope.addEventListener('keyup', render)
-        template.addEventListener('keyup', render)
+        const examples = [
+            {
+                name: 'Simple',
+                template: 'Hello {{name}}!',
+                scope: {
+                    name: 'Alex'
+                }
+            },{
+                name: 'Array',
+                template: 'I like {{0}}, {{4}} and {{[2]}}!',
+                scope: ['Apple', 'Orange', 'Banana', 'Citrun', 'Tomato']
+            },
+            {
+                name: 'Nested',
+                template: '{{person.name}}\'s mobile nr is: {{person.contacts.tel[1].nr}}!',
+                scope: {
+                    person: {
+                        name: 'Alex',
+                        contacts: {
+                            address: 'Stockholm, Sweden',
+                            tel: [
+                                {
+                                    nr: '+4600000000'
+                                },
+                                {
+                                    nr: '+4611111111'
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        ]
+
+        const getEl = id => document.getElementById(id)
+        const createEl = tagName => document.createElement(tagName)
+        const on = (target, eventName, handler) => target.addEventListener(eventName, handler)
+        const trigger = (target, eventName) => target.dispatchEvent(new Event(eventName ))
+        const ready = fn => ['complete', 'interactive'].includes(document.readyState) ? fn() : on(document, 'DOMContentLoaded', fn)
+
+        const presets = getEl('presets')
+        const template = getEl('template')
+        const templateError = getEl('template-error')
+        const scope = getEl('scope')
+        const scopeError = getEl('scope-error')
+        const result = getEl('result')
+
+        on(scope, 'keyup', render)
+        on(template, 'keyup', render)
+
         function render() {
+            // Handle the template errors
             let renderer
             try {
                 renderer = micromustache.compile(template.value, { validateVarNames: true })
                 template.classList.remove('error')
                 templateError.innerText = ''
             } catch (err) {
-                template.classList.toggle('error', true)
+                template.classList.add('error')
                 templateError.innerText = err
             }
+            // Handle the scope errors
             let scopeObj
             try {
                 scopeObj = JSON.parse(scope.value)
                 scope.classList.remove('error')
                 scopeError.innerText = ''
             } catch (err) {
-                scope.classList.toggle('error', true)
+                scope.classList.add('error')
                 scopeError.innerText = err
             }
+
             if (!renderer || !scopeObj) {
                 result.innerText = ''
                 return
             }
+
+            // If all is well try to generate the results handling the errors
             try {
-                result.innerText = renderer.render(template.value, scopeObj)
+                result.innerText = renderer.render(scopeObj)
                 result.classList.remove('error')
             } catch (err) {
                 result.innerText = err
-                result.classList.toggle('error', true)
+                result.classList.add('error')
             }
         }
-        render()
+
+        ready(() => {
+            examples.forEach((example, i) => {
+                const option = createEl('option')
+                option.innerText = example.name
+                option.value = i
+                presets.appendChild(option)
+            })
+            on(presets, 'change', () => {
+                const example = examples[presets.selectedOptions[0].value]
+                template.value = example.template
+                scope.value = JSON.stringify(example.scope, null, 2)
+                render()
+            })
+            presets.dispatchEvent(new Event('change'))
+        })
     </script>
 </body>
 </html>
