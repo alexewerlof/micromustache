@@ -4,7 +4,7 @@ describe('get()', () => {
   it('can resolve 1-level deep object', () => {
     const obj = {
       foo: 'bar',
-      baz: 2
+      baz: 2,
     }
     expect(get(obj, 'foo')).toBe('bar')
     expect(get(obj, 'baz')).toBe(2)
@@ -15,17 +15,17 @@ describe('get()', () => {
       a: {
         b: {
           c: {
-            foo: 'bar'
-          }
-        }
-      }
+            foo: 'bar',
+          },
+        },
+      },
     }
     expect(get(obj, 'a.b.c.foo')).toBe('bar')
   })
 
   it('does not throw when the value is supposed to be undefined', () => {
     const obj = {
-      foo: 'bar'
+      foo: 'bar',
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     expect(() => get(obj, 'hello')).not.toThrow()
@@ -33,7 +33,7 @@ describe('get()', () => {
 
   it('throws if it cannot resolve nested objects', () => {
     const obj = {
-      foo: 'bar'
+      foo: 'bar',
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     expect(() => get(obj, 'hello.kitty', { propsExist: true })).toThrow()
@@ -46,7 +46,7 @@ describe('get()', () => {
 
   it('can access a nested array object', () => {
     const obj = {
-      arr: ['banana', 'apple', 'orange', 'pear']
+      arr: ['banana', 'apple', 'orange', 'pear'],
     }
     expect(get(obj, 'arr[1]')).toBe('apple')
   })
@@ -54,7 +54,7 @@ describe('get()', () => {
   it('supports array indices', () => {
     const arr = ['banana', 'mandarin', 'orange', 'pear']
     const obj = {
-      fruits: ['ananas', 'kiwi']
+      fruits: ['ananas', 'kiwi'],
     }
     expect(get(arr, '[1]')).toBe('mandarin')
     expect(get(obj, 'fruits[1]')).toBe('kiwi')
@@ -66,10 +66,10 @@ describe('get()', () => {
       baz: {
         a: {
           b: {
-            c: [0, 1, 2, 3]
-          }
-        }
-      }
+            c: [0, 1, 2, 3],
+          },
+        },
+      },
     }
 
     expect(get(obj, '["foo"]')).toBe('bar')
@@ -78,7 +78,7 @@ describe('get()', () => {
 
   it('behaves the same as javascript when accessing keys with spaces around them', () => {
     const obj = {
-      foo: 'bar'
+      foo: 'bar',
     }
     expect(get(obj, ' foo ')).toBe(obj.foo)
   })
@@ -86,43 +86,43 @@ describe('get()', () => {
   it('behaves the same as javascript when accessing keys with quotes and spaces around them', () => {
     const obj = {
       foo: {
-        bar: 'baz'
-      }
+        bar: 'baz',
+      },
     }
     expect(get(obj, 'foo[ "bar" ]')).toBe(obj.foo.bar)
   })
 
   it('behaves the same as javascript when accessing array indices with spaces around them', () => {
     const obj = {
-      foo: [10, 20, 30]
+      foo: [10, 20, 30],
     }
     expect(get(obj, 'foo[ 1 ]')).toBe(obj.foo[1])
   })
 
   it('can lookup null from an object', () => {
     const obj = {
-      foo: null
+      foo: null,
     }
     expect(get(obj, 'foo')).toBe(obj.foo)
   })
 
   it('can lookup undefined from an object', () => {
     const obj = {
-      foo: undefined
+      foo: undefined,
     }
     expect(get(obj, 'foo')).toBe(obj.foo)
   })
 
   it('can lookup a key that is literally "null"', () => {
     const obj = {
-      null: 'some value for null'
+      null: 'some value for null',
     }
     expect(get(obj, 'null')).toBe(obj.null)
   })
 
   it('can lookup a key that is literally "undefined"', () => {
     const obj = {
-      undefined: 'some value for undefined'
+      undefined: 'some value for undefined',
     }
     expect(get(obj, 'undefined')).toBe(obj.undefined)
   })

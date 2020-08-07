@@ -2,16 +2,16 @@ import { Renderer, ResolveFn } from './index'
 
 describe('Renderer', () => {
   it('is a constructor', () => {
-    expect(
-      new Renderer({ strings: ['the string theory'], varNames: [] })
-    ).toEqual(expect.any(Renderer))
+    expect(new Renderer({ strings: ['the string theory'], varNames: [] })).toEqual(
+      expect.any(Renderer)
+    )
   })
 
   describe('.render()', () => {
     it('renders a simple template that only contains numbers', () => {
       const renderer = new Renderer({
         strings: ['4', '6'],
-        varNames: ['foo']
+        varNames: ['foo'],
       })
       expect(renderer.render({ foo: 5 })).toEqual('456')
     })
@@ -21,7 +21,7 @@ describe('Renderer', () => {
     it('runs the function for every varName', () => {
       const renderer = new Renderer({
         strings: ['4', '6'],
-        varNames: ['foo']
+        varNames: ['foo'],
       })
       function resolver(this: null, varName: string): string {
         expect(varName).toEqual('foo')
@@ -36,7 +36,7 @@ describe('Renderer', () => {
     it('passes the scope to the custom resolve function', async () => {
       const resolver = new Renderer({
         strings: ['Hello! My name is ', '!'],
-        varNames: ['name']
+        varNames: ['name'],
       })
       // Just returns the reversed variable name regardless of value
       const resolveFn: ResolveFn = async (
@@ -44,14 +44,12 @@ describe('Renderer', () => {
         obj: {
           [varName: string]: string
         }
-      // eslint-disable-next-line @typescript-eslint/require-await
+        // eslint-disable-next-line @typescript-eslint/require-await
       ) => obj[varName]
 
       const scope = { name: 'Alex' }
       expect(await resolveFn('name', scope)).toBe(scope.name)
-      expect(await resolver.renderFnAsync(resolveFn, scope)).toBe(
-        'Hello! My name is Alex!'
-      )
+      expect(await resolver.renderFnAsync(resolveFn, scope)).toBe('Hello! My name is Alex!')
     })
   })
 })

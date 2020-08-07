@@ -10,7 +10,7 @@ function delayedResolver(varName) {
   })
 }
 
-(async () => {
+;(async () => {
   try {
     const result = await renderFnAsync(
       'I like {{apples}} and {{oranges}} because {{wood}} does not taste good',

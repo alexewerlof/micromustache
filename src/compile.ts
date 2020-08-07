@@ -22,10 +22,7 @@ export interface ICompileOptions extends IRendererOptions, ITokenizeOptions {}
  * @throws any error that [[tokenize]] or [[Renderer.constructor]] may throw
  * @returns an object with some methods that can do the actual rendering
  */
-export function compile(
-  template: string,
-  options: ICompileOptions = {}
-): Renderer {
+export function compile(template: string, options: ICompileOptions = {}): Renderer {
   const tokens = tokenize(template, options)
   return new Renderer(tokens, options)
 }

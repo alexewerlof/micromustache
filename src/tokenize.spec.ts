@@ -4,14 +4,14 @@ describe('tokenize()', () => {
   it('returns the string intact if no interpolation is found', () => {
     expect(tokenize('Hello world')).toEqual({
       strings: ['Hello world'],
-      varNames: []
+      varNames: [],
     })
   })
 
   it('supports customized tags', () => {
     expect(tokenize('Hello {name}!', { tags: ['{', '}'] })).toEqual({
       strings: ['Hello ', '!'],
-      varNames: ['name']
+      varNames: ['name'],
     })
   })
 
@@ -22,21 +22,21 @@ describe('tokenize()', () => {
   it('returns an empty string and no varNames when the template is an empty string', () => {
     expect(tokenize('')).toEqual({
       strings: [''],
-      varNames: []
+      varNames: [],
     })
   })
 
   it('handles interpolation correctly at the start of the template', () => {
     expect(tokenize('{{name}}! How are you?')).toEqual({
       strings: ['', '! How are you?'],
-      varNames: ['name']
+      varNames: ['name'],
     })
   })
 
   it('handles interpolation correctly at the end of the template', () => {
     expect(tokenize('My name is {{name}}')).toEqual({
       strings: ['My name is ', ''],
-      varNames: ['name']
+      varNames: ['name'],
     })
   })
 
@@ -50,11 +50,11 @@ describe('tokenize()', () => {
   it('can handle a close symbol without an open symbol', () => {
     expect(tokenize('Hi}} {{name}}')).toEqual({
       strings: ['Hi}} ', ''],
-      varNames: ['name']
+      varNames: ['name'],
     })
     expect(tokenize('Hi {{name}} }}')).toEqual({
       strings: ['Hi ', ' }}'],
-      varNames: ['name']
+      varNames: ['name'],
     })
   })
 

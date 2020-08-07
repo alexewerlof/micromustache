@@ -21,9 +21,7 @@ export default [
     plugins: [
       typescript({
         rootDir: 'src',
-        exclude: [
-          'src/**/*.spec.*'
-        ],
+        exclude: ['src/**/*.spec.*'],
       }),
     ],
     output: [

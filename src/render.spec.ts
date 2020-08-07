@@ -1,10 +1,4 @@
-import {
-  render,
-  renderFn,
-  renderFnAsync,
-  ResolveFn,
-  ResolveFnAsync
-} from './index'
+import { render, renderFn, renderFnAsync, ResolveFn, ResolveFnAsync } from './index'
 
 describe('render', () => {
   describe('.render()', () => {
@@ -25,22 +19,22 @@ describe('render', () => {
     it('can interpolate a single variable', () => {
       expect(
         render('{{i}}', {
-          i: 'hello'
+          i: 'hello',
         })
       ).toBe('hello')
       expect(
         render('{{i}} world', {
-          i: 'hello'
+          i: 'hello',
         })
       ).toBe('hello world')
       expect(
         render('Ohoy! {{i}}', {
-          i: 'hello'
+          i: 'hello',
         })
       ).toBe('Ohoy! hello')
       expect(
         render('Aloha! {{i}} world', {
-          i: 'hello'
+          i: 'hello',
         })
       ).toBe('Aloha! hello world')
     })
@@ -49,25 +43,25 @@ describe('render', () => {
       expect(
         render('{{i}}{{j}}', {
           i: 'hello',
-          j: 'world'
+          j: 'world',
         })
       ).toBe('helloworld')
       expect(
         render('{{i}} {{j}}', {
           i: 'hello',
-          j: 'world'
+          j: 'world',
         })
       ).toBe('hello world')
       expect(
         render('{{i}} {{j}} {{k}}', {
           i: 'hello',
-          j: 'world'
+          j: 'world',
         })
       ).toBe('hello world ')
       expect(
         render('{{var1}} {{var2}}', {
           var1: 'hello',
-          var2: 'world'
+          var2: 'world',
         })
       ).toBe('hello world')
     })
@@ -75,12 +69,12 @@ describe('render', () => {
     it('deals with boolean values properly', () => {
       expect(
         render('{{a}}', {
-          a: true
+          a: true,
         })
       ).toBe('true')
       expect(
         render('{{a}}', {
-          a: false
+          a: false,
         })
       ).toBe('false')
     })
@@ -88,22 +82,22 @@ describe('render', () => {
     it('deals with numerical values properly', () => {
       expect(
         render('{{a}}', {
-          a: 0
+          a: 0,
         })
       ).toBe('0')
       expect(
         render('{{a}}', {
-          a: 1
+          a: 1,
         })
       ).toBe('1')
       expect(
         render('{{a}}', {
-          a: 999
+          a: 999,
         })
       ).toBe('999')
       expect(
         render('{{a}}', {
-          a: Number.NaN
+          a: Number.NaN,
         })
       ).toBe('NaN')
     })
@@ -111,12 +105,12 @@ describe('render', () => {
     it('ignores null or undefined values properly', () => {
       expect(
         render('a{{b}}c', {
-          b: null
+          b: null,
         })
       ).toBe('ac')
       expect(
         render('a{{b}}c', {
-          b: undefined
+          b: undefined,
         })
       ).toBe('ac')
     })
@@ -126,7 +120,7 @@ describe('render', () => {
         render('{{a b}}', {
           a: 1,
           b: 2,
-          ab: 3
+          ab: 3,
         })
       ).toBe('')
     })
@@ -134,25 +128,21 @@ describe('render', () => {
     it('can interpolate multiple occurances of the variable', () => {
       expect(
         render('{{a}}{{a}}{{a}}', {
-          a: 'hello'
+          a: 'hello',
         })
       ).toBe('hellohellohello')
       expect(
         render('{{a}}{{b}}{{a}}{{b}}', {
           a: '1',
-          b: '2'
+          b: '2',
         })
       ).toBe('1212')
     })
 
     it('can access array elements', () => {
-      expect(
-        render('I like {{0}}, {{1}} and {{2}}', [
-          'orange',
-          'apple',
-          'lemon'
-        ])
-      ).toBe('I like orange, apple and lemon')
+      expect(render('I like {{0}}, {{1}} and {{2}}', ['orange', 'apple', 'lemon'])).toBe(
+        'I like orange, apple and lemon'
+      )
     })
 
     it('can access array length', () => {
@@ -164,16 +154,14 @@ describe('render', () => {
         constructor(public B = 'Mobile') {}
       }
       class Scope extends Parent {
-        public C: string;
+        public C: string
         constructor(public A = 'Crocodile') {
           super()
         }
       }
       const scope = new Scope()
       scope.C = 'Alice'
-      expect(render('{{A}} or {{B}} and {{C}}', scope)).toBe(
-        'Crocodile or Mobile and Alice'
-      )
+      expect(render('{{A}} or {{B}} and {{C}}', scope)).toBe('Crocodile or Mobile and Alice')
     })
 
     it('can access nested objects', () => {
@@ -181,16 +169,16 @@ describe('render', () => {
         render('{{a}} {{b.c}}', {
           a: 'hello',
           b: {
-            c: 'world'
-          }
+            c: 'world',
+          },
         })
       ).toBe('hello world')
       expect(
         render('{{a}}{{b.c}}', {
           a: 1,
           b: {
-            c: 2
-          }
+            c: 2,
+          },
         })
       ).toBe('12')
     })
@@ -201,9 +189,9 @@ describe('render', () => {
           a: 1,
           b: {
             c: {
-              d: 3
-            }
-          }
+              d: 3,
+            },
+          },
         })
       ).toBe('13')
     })
@@ -216,29 +204,33 @@ describe('render', () => {
               c: {
                 d: {
                   e: {
-                    f: 'finally!'
-                  }
-                }
-              }
-            }
-          }
+                    f: 'finally!',
+                  },
+                },
+              },
+            },
+          },
         })
       ).toBe('finally!')
     })
 
     it('if one of the nested keys do not exist, it throws', () => {
       expect(() =>
-        render('{{a.b.c.d.e}}', {
-          a: {
-            b: {
-              c: {
-                d: {
-                  z: 'Zee?!'
-                }
-              }
-            }
-          }
-        }, { propsExist: true })
+        render(
+          '{{a.b.c.d.e}}',
+          {
+            a: {
+              b: {
+                c: {
+                  d: {
+                    z: 'Zee?!',
+                  },
+                },
+              },
+            },
+          },
+          { propsExist: true }
+        )
       ).toThrow()
     })
 
@@ -246,7 +238,7 @@ describe('render', () => {
       expect(
         render('{{a}}-{{b.1}}', {
           a: 'a',
-          b: [10, 11]
+          b: [10, 11],
         })
       ).toBe('a-11')
     })
@@ -256,12 +248,12 @@ describe('render', () => {
         render('{{a.1.b.c}}', {
           a: [
             {
-              b: { c: 11 }
+              b: { c: 11 },
             },
             {
-              b: { c: 13 }
-            }
-          ]
+              b: { c: 13 },
+            },
+          ],
         })
       ).toBe('13')
     })
@@ -274,44 +266,39 @@ describe('render', () => {
         children: [
           {
             first: 'Paris-Michael',
-            middle: 'Katherine'
+            middle: 'Katherine',
           },
           {
             first: 'Prince',
             middle: 'Michael',
-            prefix: 'II'
+            prefix: 'II',
           },
           {
             first: 'Michael',
             middle: 'Joseph',
-            prefix: 'Jr.'
-          }
-        ]
+            prefix: 'Jr.',
+          },
+        ],
       }
       expect(
         render(
           '{{first}} {{last}} had {{children.length}} children: {{children.0.first}}, ' +
-            '{{children.1.first}} and {{children.2.first}}'
-        ,singer)
-      ).toBe(
-        'Michael Jackson had 3 children: Paris-Michael, Prince and Michael'
-      )
+            '{{children.1.first}} and {{children.2.first}}',
+          singer
+        )
+      ).toBe('Michael Jackson had 3 children: Paris-Michael, Prince and Michael')
     })
   })
 
   describe('.renderFn()', () => {
     it('calls the custom resolve function', () => {
       // Just returns the reversed variable name regardless of value
-      const reverseString: ResolveFn = varName =>
-        varName
-          .split('')
-          .reverse()
-          .join('')
+      const reverseString: ResolveFn = (varName) => varName.split('').reverse().join('')
 
       expect(reverseString('Alex')).toBe('xelA')
       expect(
         renderFn('Hello! My name is {{name}}!', reverseString, {
-          name: 'Alex'
+          name: 'Alex',
         })
       ).toBe('Hello! My name is eman!')
     })
@@ -327,9 +314,9 @@ describe('render', () => {
 
       const scope = { name: 'Alex' }
       expect(resolveFn('name', scope)).toBe(scope.name)
-      expect(
-        renderFn('Hello! My name is {{name}}!', resolveFn, scope)
-      ).toBe('Hello! My name is Alex!')
+      expect(renderFn('Hello! My name is {{name}}!', resolveFn, scope)).toBe(
+        'Hello! My name is Alex!'
+      )
     })
   })
 
@@ -341,14 +328,14 @@ describe('render', () => {
         obj: {
           [varName: string]: string
         }
-      // eslint-disable-next-line @typescript-eslint/require-await
+        // eslint-disable-next-line @typescript-eslint/require-await
       ): Promise<string | undefined> => obj[varName]
 
       const scope = { name: 'Alex' }
       expect(await resolveFn('name', scope)).toBe(scope.name)
-      expect(
-        await renderFnAsync('Hello! My name is {{name}}!', resolveFn, scope)
-      ).toBe('Hello! My name is Alex!')
+      expect(await renderFnAsync('Hello! My name is {{name}}!', resolveFn, scope)).toBe(
+        'Hello! My name is Alex!'
+      )
     })
   })
 })

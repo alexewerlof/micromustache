@@ -137,11 +137,7 @@ export function toPath(varName: string): string[] {
   let preDot = false
   const propNames = new Array<string>(0)
 
-  for (
-    let currentIndex = 0;
-    currentIndex < varName.length;
-    currentIndex = closeBracketIndex
-  ) {
+  for (let currentIndex = 0; currentIndex < varName.length; currentIndex = closeBracketIndex) {
     openBracketIndex = varName.indexOf('[', currentIndex)
     if (openBracketIndex === -1) {
       break

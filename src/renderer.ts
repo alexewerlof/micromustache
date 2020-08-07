@@ -49,10 +49,7 @@ export class Renderer {
    * @param options - some options for customizing the rendering process
    * @throws `TypeError` if the token is invalid
    */
-  constructor(
-    private readonly tokens: ITokens,
-    private readonly options: IRendererOptions = {}
-  ) {
+  constructor(private readonly tokens: ITokens, private readonly options: IRendererOptions = {}) {
     if (
       !isObj(tokens) ||
       !isArr(tokens.strings) ||
@@ -63,9 +60,7 @@ export class Renderer {
       throw new TypeError(`Invalid tokens object`)
     }
     if (!isObj(options)) {
-      throw new TypeError(
-        `Options should be an object. Got a ${typeof options}`
-      )
+      throw new TypeError(`Options should be an object. Got a ${typeof options}`)
     }
     if (options.validateVarNames) {
       // trying to initialize toPathCache parses them which is also validation
@@ -104,6 +99,7 @@ export class Renderer {
     this.cacheParsedPaths()
     const values = new Array<any>(length)
     for (let i = 0; i < length; i++) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       values[i] = get(scope, this.toPathCache[i], this.options)
     }
     return this.stringify(values)
@@ -122,12 +118,9 @@ export class Renderer {
    * Same as [[render]] but accepts a resolver function which will be responsible
    * for returning promise that resolves to a value for every varName.
    */
-  public renderFnAsync = (
-    resolveFnAsync: ResolveFnAsync,
-    scope: Scope = {}
-  ): Promise<string> => {
-    return Promise.all(this.resolveVarNames(resolveFnAsync, scope)).then(
-      values => this.stringify(values)
+  public renderFnAsync = (resolveFnAsync: ResolveFnAsync, scope: Scope = {}): Promise<string> => {
+    return Promise.all(this.resolveVarNames(resolveFnAsync, scope)).then((values) =>
+      this.stringify(values)
     )
   }
 
@@ -140,6 +133,7 @@ export class Renderer {
     const { length } = varNames
     const values = new Array<any>(length)
     for (let i = 0; i < length; i++) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       values[i] = resolveFn.call(null, varNames[i], scope)
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -158,6 +152,7 @@ export class Renderer {
     const { length } = values
     for (let i = 0; i < length; i++) {
       ret += strings[i]
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const value = values[i]
       if (explicit || (value !== null && value !== undefined)) {
         ret += value

@@ -11,7 +11,7 @@ for (let i = 0; i < LEN; i++) {
   diverseScope[`key_${i}`] = i + ' is ' + Math.random()
 }
 const diverseTemplate = Object.keys(diverseScope)
-  .map(key => ` {{${key}}} `)
+  .map((key) => ` {{${key}}} `)
   .join('and')
 
 const deepScope = {}
@@ -40,22 +40,12 @@ function compare(name, f1, f2, ...args) {
   const f2duration = timestamp2ms(process.hrtime(start))
   console.log(`⏲   micromustache: ${f1duration}ms\tMustache.js: ${f2duration}ms`)
   if (f1duration < f2duration) {
-    console.log(
-      `👍  micromustache is ${(f2duration / f1duration).toFixed(1)}x faster`
-    )
+    console.log(`👍  micromustache is ${(f2duration / f1duration).toFixed(1)}x faster`)
   } else {
-    console.log(
-      `👎  Mustache.JS is ${(f1duration / f2duration).toFixed(1)}x faster`
-    )
+    console.log(`👎  Mustache.JS is ${(f1duration / f2duration).toFixed(1)}x faster`)
   }
 }
 
 compare('long', micromustache.render, mustache.render, longTemplate, longScope)
-compare(
-  'diverse',
-  micromustache.render,
-  mustache.render,
-  diverseTemplate,
-  diverseScope
-)
+compare('diverse', micromustache.render, mustache.render, diverseTemplate, diverseScope)
 compare('deep', micromustache.render, mustache.render, deepTemplate, deepScope)

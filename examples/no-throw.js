@@ -7,7 +7,7 @@ try {
       'There is no {{a.b.c}}!',
       {},
       {
-        propsExist: true
+        propsExist: true,
       }
     )
   )

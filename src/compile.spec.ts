@@ -19,6 +19,6 @@ describe('compile()', () => {
     const renderer = compile(template, {
       tags: ['<', '>'],
     })
-    expect(renderer.render({ name: 'Alfred'})).toBe('Hello Alfred!')
+    expect(renderer.render({ name: 'Alfred' })).toBe('Hello Alfred!')
   })
 })

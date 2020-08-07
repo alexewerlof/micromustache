@@ -10,7 +10,7 @@ const pipes = {
   },
   stars(n) {
     return '*'.repeat(n)
-  }
+  },
 }
 
 const template = "{{name}}'s password is {{password | charCount | stars}}!"
@@ -19,15 +19,10 @@ function resolveFn(varName, scope) {
   const [vn, ...pipeNames] = varName.split('|')
   const value = get(scope, vn)
   if (pipeNames.length) {
-    const fnArr = pipeNames.map(pipeName => pipes[pipeName.trim()])
-    return compose(
-      fnArr,
-      value
-    )
+    const fnArr = pipeNames.map((pipeName) => pipes[pipeName.trim()])
+    return compose(fnArr, value)
   }
   return value
 }
 
-console.log(
-  renderFn(template, resolveFn, { name: 'Kathrina', password: 'MonkeyIsland' })
-)
+console.log(renderFn(template, resolveFn, { name: 'Kathrina', password: 'MonkeyIsland' }))

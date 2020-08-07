@@ -18,11 +18,7 @@ import { compile, ICompileOptions } from './compile'
  * @returns Template where its variable names replaced with
  * corresponding values.
  */
-export function render(
-  template: string,
-  scope?: Scope,
-  options?: ICompileOptions
-): string {
+export function render(template: string, scope?: Scope, options?: ICompileOptions): string {
   const renderer: Renderer = compile(template, options)
   return renderer.render(scope)
 }

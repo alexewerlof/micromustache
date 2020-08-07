@@ -53,6 +53,7 @@ export function get(
   let currentScope = scope
   for (const propName of propNames) {
     if (isProp(currentScope, propName)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       currentScope = currentScope[propName]
     } else if (options.propsExist) {
       throw new ReferenceError(

@@ -37,34 +37,27 @@ export interface ITokenizeOptions {
  * @param closeSym the string that marks the start of a variable name
  * @returns the resulting tokens as an object that has strings and variable names
  */
-export function tokenize(
-  template: string,
-  options: ITokenizeOptions = {}
-): ITokens {
+export function tokenize(template: string, options: ITokenizeOptions = {}): ITokens {
   if (!isStr(template)) {
-    throw new TypeError(
-      `The template parameter must be a string. Got ${template as string}`
-    )
+    throw new TypeError(`The template parameter must be a string. Got ${template as string}`)
   }
 
   if (!isObj(options)) {
-    throw new TypeError(
-      `Options should be an object. Got a ${typeof options}`
-    )
+    throw new TypeError(`Options should be an object. Got a ${typeof options}`)
   }
 
   const { tags = ['{{', '}}'], maxVarNameLength = 1000 } = options
 
   if (!isArr(tags) || tags.length !== 2) {
-    throw TypeError(
-      `tags should be an array of two elements. Got ${String(tags)}`
-    )
+    throw TypeError(`tags should be an array of two elements. Got ${String(tags)}`)
   }
 
   const [openSym, closeSym] = tags
 
   if (!isStr(openSym, 1) || !isStr(closeSym, 1) || openSym === closeSym) {
-    throw new TypeError(`The open and close symbols should be two distinct non-empty strings. Got ${openSym}" and "${closeSym}`)
+    throw new TypeError(
+      `The open and close symbols should be two distinct non-empty strings. Got ${openSym}" and "${closeSym}`
+    )
   }
 
   if (!isInt(maxVarNameLength) || maxVarNameLength <= 0) {
@@ -105,13 +98,13 @@ export function tokenize(
     varName = template.substr(varNameStartIndex, varNameLength).trim()
 
     if (varName.length === 0) {
-      throw new SyntaxError(
-        `Unexpected "${closeSym}" tag found at position ${openIndex}`
-      )
+      throw new SyntaxError(`Unexpected "${closeSym}" tag found at position ${openIndex}`)
     }
 
     if (varName.length >= maxVarNameLength) {
-      throw new SyntaxError(`The variable name is longer than expected. Max: ${maxVarNameLength}, Got: ${varName.length}`)
+      throw new SyntaxError(
+        `The variable name is longer than expected. Max: ${maxVarNameLength}, Got: ${varName.length}`
+      )
     }
 
     if (varName.includes(openSym)) {

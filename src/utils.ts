@@ -31,10 +31,16 @@ export function isArr(x: unknown): x is unknown[] {
   return isArray(x)
 }
 
-export function isProp<K extends string | number | symbol>(x: unknown, propName: K): x is Record<K, any> {
+export function isProp<K extends string | number | symbol>(
+  x: unknown,
+  propName: K
+): x is Record<K, any> {
   return isObj(x) && propName in x
 }
 
-export function isOwnProp<K extends string | number | symbol>(x: unknown, propName: K): x is Record<K, any> {
-  return isObj(x) && hasOwnProperty.call(x, propName) as boolean
+export function isOwnProp<K extends string | number | symbol>(
+  x: unknown,
+  propName: K
+): x is Record<K, any> {
+  return isObj(x) && (hasOwnProperty.call(x, propName) as boolean)
 }
