@@ -171,10 +171,12 @@ export function toPath(varName: string): string[] {
  */
 function toPathCached(varName: string): string[] {
   let result = cache.get(varName)
+
   if (result === undefined) {
     result = toPath(varName)
     cache.set(varName, result)
   }
+
   return result
 }
 

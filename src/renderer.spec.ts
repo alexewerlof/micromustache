@@ -13,6 +13,7 @@ describe('Renderer', () => {
         strings: ['4', '6'],
         varNames: ['foo'],
       })
+
       expect(renderer.render({ foo: 5 })).toEqual('456')
     })
   })
@@ -23,11 +24,13 @@ describe('Renderer', () => {
         strings: ['4', '6'],
         varNames: ['foo'],
       })
+
       function resolver(this: null, varName: string): string {
         expect(varName).toEqual('foo')
         expect(this).toEqual(null)
         return varName.toUpperCase()
       }
+
       expect(renderer.renderFn(resolver, { foo: 5 })).toEqual('4FOO6')
     })
   })
@@ -48,6 +51,7 @@ describe('Renderer', () => {
       ) => obj[varName]
 
       const scope = { name: 'Alex' }
+
       expect(await resolveFn('name', scope)).toBe(scope.name)
       expect(await resolver.renderFnAsync(resolveFn, scope)).toBe('Hello! My name is Alex!')
     })

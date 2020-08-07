@@ -54,10 +54,12 @@ export function get(
   if (!isObj(options)) {
     throw new TypeError(`get expects an object option. Got ${typeof options}`)
   }
+
   const { depth = 10 } = options
   if (!isNum(depth) || depth <= 0) {
     throw new RangeError(`Expected a positive number for depth. Got ${depth}`)
   }
+
   const propNames = Array.isArray(varNameOrPropNames)
     ? varNameOrPropNames
     : toPath.cached(varNameOrPropNames)
@@ -69,6 +71,7 @@ export function get(
       `The path cannot be deeper than ${depth} levels. Got "${propNamesAsStr()}"`
     )
   }
+
   let currentScope = scope
   for (const propName of propNames) {
     if (isProp(currentScope, propName)) {

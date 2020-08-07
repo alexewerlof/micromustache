@@ -59,9 +59,11 @@ export class Renderer {
       // This is most likely an internal error from tokenization algorithm
       throw new TypeError(`Invalid tokens object`)
     }
+
     if (!isObj(options)) {
       throw new TypeError(`Options should be an object. Got a ${typeof options}`)
     }
+
     if (options.validateVarNames) {
       // trying to initialize toPathCache parses them which is also validation
       this.cacheParsedPaths()
@@ -78,6 +80,7 @@ export class Renderer {
     const { varNames } = this.tokens
     if (this.toPathCache === undefined) {
       this.toPathCache = new Array<string[]>(varNames.length)
+
       for (let i = 0; i < varNames.length; i++) {
         this.toPathCache[i] = toPath.cached(varNames[i])
       }
@@ -96,12 +99,16 @@ export class Renderer {
   public render = (scope: Scope = {}): string => {
     const { varNames } = this.tokens
     const { length } = varNames
+
     this.cacheParsedPaths()
+
     const values = new Array<any>(length)
+
     for (let i = 0; i < length; i++) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       values[i] = get(scope, this.toPathCache[i], this.options)
     }
+
     return this.stringify(values)
   }
 
@@ -136,6 +143,7 @@ export class Renderer {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       values[i] = resolveFn.call(null, varNames[i], scope)
     }
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return values
   }
@@ -148,18 +156,21 @@ export class Renderer {
   private stringify(values: any[]): string {
     const { strings } = this.tokens
     const { explicit } = this.options
-    let ret = ''
     const { length } = values
+
+    let ret = ''
     for (let i = 0; i < length; i++) {
       ret += strings[i]
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const value = values[i]
+
       if (explicit || (value !== null && value !== undefined)) {
         ret += value
       }
     }
 
     ret += strings[length]
+
     return ret
   }
 }
