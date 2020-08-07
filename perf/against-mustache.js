@@ -1,32 +1,17 @@
 const micromustache = require('../')
 const mustache = require('mustache')
 
+/*
+ * Notes to keep in mind:
+ * 1. These examples are not realistic. In practice you won't use these extremes.
+ * 2. To Mustache.js defense, it does much more than interpolation so it's not an apple to apple...
+ */
+
 const ITERATIONS = 10000
-const LEN = 1000
-
-const longScope = { a: 'fooooooooooooooooooooooooooooooooooooooooo' }
-const longTemplate = '{{a}} and '.repeat(LEN)
-
-const diverseScope = {}
-for (let i = 0; i < LEN; i++) {
-  diverseScope[`key_${i}`] = i + ' is ' + Math.random()
-}
-const diverseTemplate = Object.keys(diverseScope)
-  .map((key) => ` {{${key}}} `)
-  .join('and')
-
-const deepScope = {}
-const indices = []
-for (let i = 0, currObj = deepScope; i < LEN; i++) {
-  currObj[i] = {}
-  currObj = currObj[i]
-  indices.push(i)
-}
-const deepTemplate = '{{' + indices.join('.') + '}}'
 
 const hrtime2ms = ([sec, nano]) => sec * 1e3 + nano / 1e6
-const x = (a, b) => (a / b).toFixed(1) + 'x ' + (a / b < 1 ? 'slower🔻' : 'faster🔺')
-
+const x = (a, b) => (a / b > 1 ? `(${(a / b).toFixed(1)}x faster🔥)` : '')
+const ms = (a) => Math.round(a) + 'ms'
 function compare(f1, f2) {
   const f1name = f1.name
   const f2name = f2.name
@@ -43,12 +28,35 @@ function compare(f1, f2) {
   }
   const f2duration = hrtime2ms(process.hrtime(start))
 
-  console.log(`${f1name}: ${f1duration}ms (${x(f2duration, f1duration)})`)
-  console.log(`${f2name}: ${f2duration}ms (${x(f1duration, f2duration)})`)
+  console.log(`${f1name}: ${ms(f1duration)} ${x(f2duration, f1duration)}`)
+  console.log(`${f2name}: ${ms(f2duration)} ${x(f1duration, f2duration)}`)
 }
 
+const LEN = 1000
+
+const longVarName = 'x'.repeat(LEN)
+const longScope = { [longVarName]: 'y'.repeat(LEN) }
+const longTemplate = '{{' + longVarName + '}} and '.repeat(LEN)
+
+const diverseScope = {}
+for (let i = 0; i < LEN; i++) {
+  diverseScope[`key_${i}`] = i + ' is ' + Math.random()
+}
+const diverseTemplate = Object.keys(diverseScope)
+  .map((key) => `{{${key}}}`)
+  .join(' ')
+
+const deepScope = {}
+const indices = []
+for (let i = 0, currObj = deepScope; i < LEN; i++) {
+  currObj[i] = {}
+  currObj = currObj[i]
+  indices.push(i)
+}
+const deepTemplate = '{{' + indices.join('.') + '}}'
+
 function micromustacheLong() {
-  return micromustache.render(longTemplate, longScope)
+  return micromustache.render(longTemplate, longScope, { maxVarNameLength: 999999 })
 }
 
 function mustacheLong() {
