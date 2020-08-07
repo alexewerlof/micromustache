@@ -43,11 +43,11 @@ function compare(f1, f2) {
   console.log(`${f2name}: ${ms(f2duration)} ${x(f2duration, f1duration)}`)
 }
 
-const LEN = 1000
+const LEN = 100
 
 const longVarName = 'x'.repeat(LEN)
 const longScope = { [longVarName]: 'y'.repeat(LEN) }
-const longTemplate = '{{' + longVarName + '}} and '.repeat(LEN)
+const longTemplate = ('{{' + longVarName + '}} and ').repeat(LEN)
 
 function micromustacheLong() {
   return micromustache.render(longTemplate, longScope, { maxVarNameLength: 999999 })
