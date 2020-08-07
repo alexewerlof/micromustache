@@ -62,9 +62,11 @@ export function get(
     ? varNameOrPropNames
     : toPath.cached(varNameOrPropNames)
 
+  const propNamesAsStr = () => propNames.join(' > ')
+
   if (propNames.length > depth) {
     throw new ReferenceError(
-      `The path cannot be deeper than ${depth} levels. Got "${propNames.join(' > ')}"`
+      `The path cannot be deeper than ${depth} levels. Got "${propNamesAsStr()}"`
     )
   }
   let currentScope = scope
@@ -74,7 +76,7 @@ export function get(
       currentScope = currentScope[propName]
     } else if (options.propsExist) {
       throw new ReferenceError(
-        `${propName} is not defined in the scope (${String(scope)}) at path: ${propNames.join('.')}`
+        `${propName} is not defined in the scope (${String(scope)}) at path: "${propNamesAsStr()}"}`
       )
     } else {
       return
