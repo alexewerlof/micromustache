@@ -1,4 +1,4 @@
-const micromustache = require('../dist/node/index')
+const micromustache = require('../dist/types')
 
 const ITERATIONS = 100000
 
