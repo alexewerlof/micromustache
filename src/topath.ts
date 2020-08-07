@@ -8,7 +8,7 @@ import { isStr } from './utils'
  * over a period of time.
  * If the cache is full, we start removing older varNames one at a time.
  */
-const cacheSize = 100
+const cacheSize = 1000
 const quoteChars = '\'"`'
 
 /**
