@@ -20,7 +20,7 @@ export interface ICompileOptions extends IRendererOptions, ITokenizeOptions {}
  * @throws `TypeError` if the template is not a string
  * @throws `TypeError` if the options is set but is not an object
  * @throws any error that [[tokenize]] or [[Renderer.constructor]] may throw
- * @returns an object with some methods that can do the actual rendering
+ * @returns a [[Renderer]] object which has render methods
  */
 export function compile(template: string, options: ICompileOptions = {}): Renderer {
   const tokens = tokenize(template, options)

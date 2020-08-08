@@ -197,110 +197,7 @@ console.log($({ name })`Hello {name}!`)
 
 # API
 
-## `render(template, scope, options)`
-
-Replaces every {{varName}} inside the template with values from the scope parameter.
-
-###### Params
-
-* `template` The template string containing zero or more `{{varName}}` as placeholders for looking up values from the `scope` parameter.
-* `scope?: object` An object containing values for variable names from the the template. If it's omitted, we default to an empty object. Since functions are objects in javascript, the `scope` can technically be a function too but it won't be called. It'll be treated as an object and its properties will be used for the lookup.
-* `options?: object` see below 👇
-
-###### Returns
-
-The template string where its variable names replaced with corresponding values
-
-###### Throws
-
-* `TypeError` if the `template` is not a string, `scope` is not an object, or `options` is invalid
-* `SyntaxError` if the template does not comply with the syntax
-
-## `renderFn(template, resolveFn, scope, options)`
-
-Same as render but accepts a function that allows you to resolve the variable name to a value as you choose. _Tip: you may do some extra processing and use the `get()` function underneath but that's up to you._
-
-**WARNING: When dealing with user input, always make sure to validate it.**
-
-###### New params
-
-* `resolveFn: (varName, scope) => any` a function that takes a variable name and resolves it to a value. The value can be a number, string or boolean. If it is not, it'll be "stringified".
-
-**WARNING: When dealing with user input, always make sure to validate it.**
-
-## `renderFnAsync(template, resolveFnAsync, scope, options)`
-
-Same as `renderFn()` but expects a resolver function that always returns a promise.
-
-###### New params
-
-* `resolveFnAsync: (varName, scope) => Promise<any>` a function that takes a variable name and returns a promise that resolves to a value. The value can be a number, string or boolean. If it is not, it'll be "stringified".
-
-###### Returns
-
-A promise that resolves to the final output once all the `resolveFnAsync` functions are resolved
-
-## `compile(template, options)`
-
-Compiles a template and returns an object that has the render functions. This drammatically improves the interpolation speed (2x-3x) compared to `render()`.
-
-###### Params
-
-* `template` same template that is passed to `render()`
-* `options?: object` see below 👇
-
-###### Returns
-
-An object with 3 methods:
-* `render(scope)` same as the `render()` function above but without the `template` parameter
-* `renderFn(resolveFn, scope)` same as the `renderFn()` function above but without the `template` parameter
-* `renderFnAsync(resolveFnAsync, scope)` same as the `renderFnAsync()` function above but without the `template` parameter
-
-###### Throws
-
-* `TypeError` if the `template` is not a string or `options` is invalid.
-* `SyntaxError` if the template does not comply with the syntax.
-
-## `get(scope, varName, propExists)`
-
-A useful utility function that is used internally to lookup a variable name as a path to a property in an object.
-
-###### Params
-
-* `scope` same as the `scope` parameter to the `render()` function above.
-* `varName: string | string[]` a string like `a.b.c` or `a['b'].c`. It can also be a path array like `['a', 'b', 'c']` (same as [lodash's get()](https://lodash.com/docs/4.17.11#get)). _Tip: the array version is a whole lot faster because we skips parsing it._
-* `propExists?: boolean = false` see the meaning of this param under the `options` below.
-
-
-> Differences with JavaScript:
-> * No support for keys that include `[` or `]`. ex. `a['[']`
-> * No support for keys that include `'` or `"`. ex. `a['"']`
-> * `foo[bar]` is allowed and treated as `foo['bar']` (this behaviour is similar to how lodash `get()` works). But JavaScript treats `bar` as a variable and tries to lookup its value or throws a `ReferenceError` if there is no variable called `bar`.
-
-###### Returns
-
-The value or `undefined`.
-If the scope is `undefined` or `null` the result is always `undefined`.
-
-###### Throws
-
-* `ReferenceError` if it cannot find a value in the specified path and `propExists` is set.
-
-
-## `options`
-
-All the functions that can take an option, expect it as an object with these properties:
-
-* `explicit?: boolean = false` When set to a truthy value, rendering literally puts a `'null'` or `'undefined'` for values that are `null` or `undefined`. By default it swallows those values to be compatible with Mustache.
-* `depth?: boolean = 10` how deep you are expecting a variable name resolution to go. If the depth is longer than what is specified an error will be thrown.
-* `propsExist?: boolean = false` When set to a truthy value, we throw a `ReferenceError` for invalid varNames. Invalid varNames are the ones that do not exist in the scope. By default, invalid varNames will be resolved to an empty string.
-If a value does not exist in the scope, two things can happen:
-  - if `propsExist` is falsy (default), the value will be resolved to an empty string
-  - if `propsExist` is truthy, a `ReferenceError` will be thrown
-* `validateVarNames?: boolean = false` When set to a truthy value, validates the variable names
-* `tags?: string[2] = ['{{', '}}']` The string symbols that mark the opening and closing of a variable name in the template.
-
-[Full API docs](https://userpixel.github.io/micromustache) _(beta)_
+[On Github pages](https://userpixel.github.io/micromustache/)
 
 # FAQ
 
@@ -309,6 +206,10 @@ If a value does not exist in the scope, two things can happen:
 # Known issues
 
 [On wiki](https://github.com/userpixel/micromustache/wiki/Known-issues)
+
+# License
+
+[MIT](./LICENSE.md)
 
 ---
 

@@ -28,11 +28,14 @@ export interface IGetOptions {
 }
 
 /**
- * Similar to lodash `_.get()`
+ * A useful utility function that is used internally to lookup a variable name as a path to a
+ * property in an object. It can also be used in your custom resolver functions if needed.
  *
- * Differences with JavaScript:
- * No support for keys that include `[` or `]`.
- * No support for keys that include `'` or `"` or `.`.
+ * This is similar to [Lodash's `_.get()`](https://lodash.com/docs/#get)
+ *
+ * It has a few differences with plain JavaScript syntax:
+ * - No support for keys that include `[` or `]`.
+ * - No support for keys that include `'` or `"` or `.`.
  * @see https://github.com/userpixel/micromustache/wiki/Known-issues
  * If it cannot find a value in the specified path, it may return undefined or throw an error
  * depending on the value of the `propsExist` param.
