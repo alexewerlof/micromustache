@@ -12,3 +12,4 @@ deploy:
   github_token: $GITHUB_TOKEN
   on:
     branch: update
+    node_js: lts/*
