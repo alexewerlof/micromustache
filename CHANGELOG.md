@@ -4,18 +4,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-
 ## Unreleased
 
-- Support [optional chaining syntax](https://github.com/tc39/proposal-optional-chaining)
+- Support [optional chaining syntax](https://github.com/tc39/proposal-optional-chaining). But the default behaviour of mustache is like we use `?.` everywhere we write `.`.
 - Support comments: `{{! ...}}` like MustacheJS
 - Reenable tests/ for mustache compatibility and add relevant options
 - Add a string literal tag function (generic render)
-- Add the possibility to process variable names before and after they are resolved using `get()`. This can allow HTML escaping for example.
+- Add the possibility to process variable names before and after they are resolved using `get()`. This can allow HTML escaping for example. Also see #50
+
+## 8.0.0
+
+- The CommonJS file has changed name: V7=`dist/micromustache.js` v8=`dist/micromustache.cjs`. If you just use `require('micromustache')` it sould work without any change.
+- The `depth` option is added
+- Updated the dependencies
+- Addressed known security issues
+
+### BREAKING CHANGES
+
+- The `scope` could be a `function` as well, but with this release we only accept `Object`.
+- Previously string characters could be accessed with array-index syntax, but now it is not possible (eg. `render('{{str[0]}}', { str: 'Hello' })` will not return `'H'` anymore)
+- Drop support for Safari10
 
 ## 7.0.0
 
-BREAKING CHANGES:
+### BREAKING CHANGES:
 
 - **The CLI is removed**
 - Variable names cannot be longer than 1000 characters
@@ -30,7 +42,7 @@ BREAKING CHANGES:
 - A change in terminology to better reflect JavaScript terms: What Mustache and the previous version of the lib called `view` is not called `scope`.
 - Expose a CommonJS build for the browser limited to ECMAScript 5 features.
 
-BREAKING CHANGES:
+### BREAKING CHANGES:
 - **The biggest change is that if you used `compile()` in version 5, it returned a function but since version 6, it returns an object that _has_ a `render()` function**
 - The behaviour of the resolver function has changed: In v5 if the resolver threw an error we fell back to the standard `.get()` functionality but v6 just throws that error in an effort to make debugging easier.
 - We don't use default exports anymore so `const render = require('micromustache/render')`

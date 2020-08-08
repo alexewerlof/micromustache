@@ -4,8 +4,8 @@ interface ISuccessCases {
   [input: string]: string[]
 }
 
-function stringArrToString(arr: string[]) {
-  return '[' + arr.map(s => `'${s}'`).join(', ') + ']'
+function stringArrToString(arr: string[]): string {
+  return '[' + arr.map((s) => `'${s}'`).join(', ') + ']'
 }
 
 describe('toPath()', () => {
@@ -55,7 +55,7 @@ describe('toPath()', () => {
       'a["+1.1"]': ['a', '+1.1'],
       '[13]': ['13'],
       '[17].c': ['17', 'c'],
-      'a["["]': ['a', '[']
+      'a["["]': ['a', '['],
     }
 
     for (const [input, output] of Object.entries(testCases)) {
@@ -106,7 +106,7 @@ describe('toPath()', () => {
       'a[ `11 ]',
       // Special cases
       'a["]"]',
-      'a[[]]'
+      'a[[]]',
     ]
 
     for (const input of syntaxErrorsCases) {
@@ -115,11 +115,9 @@ describe('toPath()', () => {
       })
     }
 
-    it(`throws type error for invalid input types`, () => {
-      // @ts-ignore
-      expect(() => toPath(undefined)).toThrow(TypeError)
-      // @ts-ignore
-      expect(() => toPath(13)).toThrow(TypeError)
+    it('throws type error for invalid input types', () => {
+      expect(() => toPath((undefined as unknown) as string)).toThrow(TypeError)
+      expect(() => toPath((13 as unknown) as string)).toThrow(TypeError)
     })
   })
 })

@@ -1,6 +1,7 @@
-export type PropNames = string[]
+import { isStr } from './utils'
 
 /**
+ * @internal
  * The number of different varNames that will be cached.
  * If a varName is cached, the actual parsing algorithm will not be called
  * which significantly improves performance.
@@ -8,11 +9,13 @@ export type PropNames = string[]
  * over a period of time.
  * If the cache is full, we start removing older varNames one at a time.
  */
-const cacheSize = 100
+const cacheSize = 1000
+
+/** @internal */
 const quoteChars = '\'"`'
 
 /**
- * @ignore
+ * @internal
  */
 export class Cache<T> {
   private map: {
@@ -26,17 +29,17 @@ export class Cache<T> {
     this.reset()
   }
 
-  public reset() {
+  public reset(): void {
     this.oldestIndex = 0
     this.map = {}
-    this.cachedKeys = new Array(this.size)
+    this.cachedKeys = new Array<string>(this.size)
   }
 
   public get(key: string): T {
     return this.map[key]
   }
 
-  public set(key: string, value: T) {
+  public set(key: string, value: T): void {
     this.map[key] = value
     const oldestKey = this.cachedKeys[this.oldestIndex]
     if (oldestKey !== undefined) {
@@ -48,9 +51,11 @@ export class Cache<T> {
   }
 }
 
-const cache = new Cache<PropNames>(cacheSize)
+/** @internal */
+const cache = new Cache<string[]>(cacheSize)
 
 /**
+ * @internal
  * Removes the quotes from a string and returns it.
  * @param propName an string with quotations
  * @throws `SyntaxError` if the quotation symbols don't match or one is missing
@@ -79,7 +84,8 @@ function propBetweenBrackets(propName: string): string {
   return propName
 }
 
-function pushPropName(propNames: string[], propName: string, preDot: boolean) {
+/** @internal */
+function pushPropName(propNames: string[], propName: string, preDot: boolean): string[] {
   let pName = propName.trim()
   if (pName === '') {
     return propNames
@@ -125,23 +131,19 @@ function pushPropName(propNames: string[], propName: string, preDot: boolean) {
  * value.
  * For example `['a', 'b', 'c']`
  */
-export function toPath(varName: string): PropNames {
-  if (typeof varName !== 'string') {
-    throw new TypeError('Expected string but Got ' + varName)
+export function toPath(varName: string): string[] {
+  if (!isStr(varName)) {
+    throw new TypeError(`Cannot parse path. Expected string. Got ${String(varName)}`)
   }
 
   let openBracketIndex: number
-  let closeBracketIndex: number = 0
+  let closeBracketIndex = 0
   let beforeBracket: string
   let propName: string
   let preDot = false
-  const propNames: PropNames = []
+  const propNames = new Array<string>(0)
 
-  for (
-    let currentIndex = 0;
-    currentIndex < varName.length;
-    currentIndex = closeBracketIndex
-  ) {
+  for (let currentIndex = 0; currentIndex < varName.length; currentIndex = closeBracketIndex) {
     openBracketIndex = varName.indexOf('[', currentIndex)
     if (openBracketIndex === -1) {
       break
@@ -173,12 +175,14 @@ export function toPath(varName: string): PropNames {
 /**
  * This is just a faster version of `toPath()`
  */
-function toPathCached(varName: string): PropNames {
+function toPathCached(varName: string): string[] {
   let result = cache.get(varName)
+
   if (result === undefined) {
     result = toPath(varName)
     cache.set(varName, result)
   }
+
   return result
 }
 

@@ -1,4 +1,4 @@
-import { isObj, isFn, isStr, isNum, isArr } from './utils';
+import { isObj, isFn, isStr, isNum, isArr, isInt } from './utils'
 
 describe('utils', () => {
   it.each([
@@ -8,24 +8,24 @@ describe('utils', () => {
     ['', false],
     [true, false],
   ])('isObj()', (x, result) => {
-    expect(isObj(x)).toBe(result);
-  });
+    expect(isObj(x)).toBe(result)
+  })
 
   it.each([
     [{}, false],
     [[], false],
     [null, false],
     ['', false],
-    [() => undefined, true],
+    [(): undefined => undefined, true],
     [
-      function noOp() {
-        return undefined;
+      function noOp(): undefined {
+        return undefined
       },
       true,
     ],
   ])('isFn()', (x, result) => {
-    expect(isFn(x)).toBe(result);
-  });
+    expect(isFn(x)).toBe(result)
+  })
 
   it.each([
     ['', undefined, true],
@@ -34,8 +34,8 @@ describe('utils', () => {
     [2, undefined, false],
     [undefined, undefined, false],
   ])('isStr()', (x, minLength, result) => {
-    expect(isStr(x, minLength)).toBe(result);
-  });
+    expect(isStr(x, minLength)).toBe(result)
+  })
 
   it.each([
     [1, true],
@@ -47,10 +47,30 @@ describe('utils', () => {
     [null, false],
     [NaN, false],
     [undefined, false],
+    ['-1', false],
+    ['0', false],
     ['1', false],
   ])('isNum()', (x, result) => {
-    expect(isNum(x)).toBe(result);
-  });
+    expect(isNum(x)).toBe(result)
+  })
+
+  it.each([
+    [1, true],
+    [1.1, false],
+    [0, true],
+    [-1, true],
+    [-1.1, false],
+    [Number.MAX_SAFE_INTEGER, true],
+    [Number.MIN_SAFE_INTEGER, true],
+    [null, false],
+    [NaN, false],
+    [undefined, false],
+    ['-1', false],
+    ['0', false],
+    ['1', false],
+  ])('isInt()', (x, result) => {
+    expect(isInt(x)).toBe(result)
+  })
 
   it.each([
     [{}, false],
@@ -60,6 +80,6 @@ describe('utils', () => {
     [null, false],
     [true, false],
   ])('isArr()', (x, result) => {
-    expect(isArr(x)).toBe(result);
-  });
-});
+    expect(isArr(x)).toBe(result)
+  })
+})

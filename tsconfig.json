@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "declaration": true,
     "noImplicitAny": true,
     "sourceMap": true,
     "strictNullChecks": true,
@@ -11,13 +10,5 @@
     "newLine": "LF",
     "listEmittedFiles": true,
     "target": "es5",
-    "module": "commonjs",
-    "outDir": "dist/types"
-  },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "src/**/*.spec.ts"
-  ]
+  }
 }

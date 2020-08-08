@@ -1,10 +1,10 @@
 // Inspired by:
 // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated
 
-const { render } = require('../dist/node')
+const { render } = require('../')
 
 const csDelimiters = {
-  tags: ['{', '}']
+  tags: ['{', '}'],
 }
 const name = 'Mark'
 const date = new Date()
@@ -14,7 +14,7 @@ function csRender(template, ...variables) {
 }
 
 function $(scope) {
-  return strings => {
+  return (strings) => {
     return render(strings[0], scope, { tags: ['{', '}'] })
   }
 }
@@ -37,12 +37,6 @@ console.log(
   )
 )
 // String interpolation:
-console.log(
-  render(
-    'Hello, {name}! It is {d} now.',
-    { name, d: date.getDate() },
-    csDelimiters
-  )
-)
+console.log(render('Hello, {name}! It is {d} now.', { name, d: date.getDate() }, csDelimiters))
 // $ syntax even more familiar for C# devs
 console.log($({ name, d: date.getDate() })`Hello, {name}! It is {d} now.`)

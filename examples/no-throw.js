@@ -1,4 +1,4 @@
-const { render } = require('../dist/node')
+const { render } = require('../')
 
 try {
   console.log(
@@ -7,7 +7,7 @@ try {
       'There is no {{a.b.c}}!',
       {},
       {
-        propsExist: true
+        propsExist: true,
       }
     )
   )

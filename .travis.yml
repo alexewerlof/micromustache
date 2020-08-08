@@ -6,9 +6,10 @@ node_js:
 script: npm t
 before_deploy: npm run docs
 deploy:
+  local_dir: docs
   provider: pages
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
-  keep_history: true
   on:
     branch: master
+    node_js: node

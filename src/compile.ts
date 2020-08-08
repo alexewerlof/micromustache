@@ -1,20 +1,11 @@
 import { Renderer, IRendererOptions } from './renderer'
-import { tokenize, TokenizeOptions } from './tokenize'
+import { tokenize, ITokenizeOptions } from './tokenize'
 
 /**
  * The options that customize the tokenization of the template and the renderer
  * object that is returned
  */
-export interface ICompileOptions extends IRendererOptions {
-  /**
-   * The string symbols that mark the opening and closing of a variable name in
-   * the template.
-   * It defaults to `['{{', '}}']`
-   */
-  readonly tags?: TokenizeOptions
-}
-
-const defaultCompileOptions: ICompileOptions = {}
+export interface ICompileOptions extends IRendererOptions, ITokenizeOptions {}
 
 /**
  * Compiles a template and returns an object with functions that render it.
@@ -29,24 +20,9 @@ const defaultCompileOptions: ICompileOptions = {}
  * @throws `TypeError` if the template is not a string
  * @throws `TypeError` if the options is set but is not an object
  * @throws any error that [[tokenize]] or [[Renderer.constructor]] may throw
- * @returns an object with some methods that can do the actual rendering
+ * @returns a [[Renderer]] object which has render methods
  */
-export function compile(
-  template: string,
-  options: ICompileOptions = defaultCompileOptions
-): Renderer {
-  if (typeof template !== 'string') {
-    throw new TypeError(
-      'The template parameter must be a string. Got ' + template
-    )
-  }
-
-  if (options === null || typeof options !== 'object') {
-    throw new TypeError(
-      'The compiler options should be an object. Got ' + options
-    )
-  }
-
-  const tokens = tokenize(template, options.tags)
+export function compile(template: string, options: ICompileOptions = {}): Renderer {
+  const tokens = tokenize(template, options)
   return new Renderer(tokens, options)
 }

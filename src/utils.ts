@@ -1,20 +1,63 @@
-export function isObj(x: any): x is object {
-  return Boolean(x) && typeof x === 'object'
+/** @internal */
+// eslint-disable-next-line @typescript-eslint/unbound-method
+const hasOwnProperty = {}.hasOwnProperty
+/** @internal */
+// eslint-disable-next-line @typescript-eslint/unbound-method
+const numberConstructor = (0).constructor as NumberConstructor
+/** @internal */
+// eslint-disable-next-line @typescript-eslint/unbound-method
+const isFinite = numberConstructor.isFinite
+/** @internal */
+// eslint-disable-next-line @typescript-eslint/unbound-method
+const isInteger = numberConstructor.isInteger
+/** @internal */
+// eslint-disable-next-line @typescript-eslint/unbound-method
+const isArray = ([].constructor as ArrayConstructor).isArray
+
+/** @internal */
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function isObj(x: unknown): x is object {
+  return x !== null && typeof x === 'object'
 }
 
-// eslint-disable-next-line ban-types
-export function isFn<T>(x: any): x is T {
+/** @internal */
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function isFn<T extends Function>(x: unknown): x is T {
   return typeof x === 'function'
 }
 
-export function isStr(x: any, minLength = 0): x is string {
+/** @internal */
+export function isStr(x: unknown, minLength = 0): x is string {
   return typeof x === 'string' && x.length >= minLength
 }
 
-export function isNum(x: any): x is number {
-  return Number.isFinite(x)
+/** @internal */
+export function isNum(x: unknown): x is number {
+  return isFinite(x as number)
 }
 
-export function isArr(x: any): x is any[] {
-  return Array.isArray(x)
+/** @internal */
+export function isInt(x: unknown): x is number {
+  return isInteger(x)
+}
+
+/** @internal */
+export function isArr(x: unknown): x is unknown[] {
+  return isArray(x)
+}
+
+/** @internal */
+export function isProp<K extends string | number | symbol>(
+  x: unknown,
+  propName: K
+): x is Record<K, any> {
+  return isObj(x) && propName in x
+}
+
+/** @internal */
+export function isOwnProp<K extends string | number | symbol>(
+  x: unknown,
+  propName: K
+): x is Record<K, any> {
+  return isObj(x) && (hasOwnProperty.call(x, propName) as boolean)
 }

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micromustache Playground</title>
+    <style>
+        body, html {
+            background-color: rgb(95 104 117);
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 0.5em;
+        }
+        .io {
+            background-color: rgb(195, 195, 195);
+            border: 0.3em solid transparent;
+            box-sizing: border-box;
+            color: black;
+            display: block;
+            font-family: inherit;
+            font-size: inherit;
+            padding: 1em;
+            width: 100%;
+        }
+        .entry:hover {
+            background-color: rgb(238, 238, 238);
+        }
+        .entry:focus {
+            background-color: white;
+            outline: none;
+        }
+        textarea {
+            resize: vertical;
+            height: 15vh;
+        }
+        textarea.error {
+            border-color: rgb(253, 153, 153);
+        }
+        .error {
+            background-color: rgb(253, 153, 153);
+        }
+        label {
+            margin-top: 0.5em;
+            display: block;
+            font-size: 2em;
+            font-weight: lighter;
+            font-family: Tahoma, Geneva, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <label for="presets">Presets</label>
+    <select id="presets" class="io entry"></select>
+    <label for="template">Template</label>
+    <textarea id="template" class="io entry"></textarea>
+    <div id="template-error" class="error"></div>
+    <label for="scope">Scope</label>
+    <textarea id="scope" class="io entry"></textarea>
+    <div id="scope-error" class="error"></div>
+    <label>Result</label>
+    <div id="result" class="io"></div>
+    <script src="../dist/micromustache.umd.js"></script>
+    <script>
+        const examples = [
+            {
+                name: 'Simple',
+                template: 'Hello {{name}}!',
+                scope: {
+                    name: 'Alex'
+                }
+            },{
+                name: 'Array',
+                template: 'I like {{0}}, {{4}} and {{[2]}}!',
+                scope: ['Apple', 'Orange', 'Banana', 'Citrun', 'Tomato']
+            },
+            {
+                name: 'Nested',
+                template: '{{person.name}}\'s mobile nr is: {{person.contacts.tel[1].nr}}!',
+                scope: {
+                    person: {
+                        name: 'Alex',
+                        contacts: {
+                            address: 'Stockholm, Sweden',
+                            tel: [
+                                {
+                                    nr: '+4600000000'
+                                },
+                                {
+                                    nr: '+4611111111'
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        ]
+
+        const getEl = id => document.getElementById(id)
+        const createEl = tagName => document.createElement(tagName)
+        const on = (el, eventName, handler) => el.addEventListener(eventName, handler)
+        const fire = (el, eventName) => el.dispatchEvent(new Event(eventName ))
+        const ready = fn => ['complete', 'interactive'].includes(document.readyState) ? fn() : on(document, 'DOMContentLoaded', fn)
+
+        const presets = getEl('presets')
+        const template = getEl('template')
+        const templateError = getEl('template-error')
+        const scope = getEl('scope')
+        const scopeError = getEl('scope-error')
+        const result = getEl('result')
+
+        function render() {
+            // Handle the template errors
+            let renderer
+            try {
+                renderer = micromustache.compile(template.value, { validateVarNames: true })
+                template.classList.remove('error')
+                templateError.innerText = ''
+            } catch (err) {
+                template.classList.add('error')
+                templateError.innerText = err
+            }
+            // Handle the scope errors
+            let scopeObj
+            try {
+                scopeObj = JSON.parse(scope.value)
+                scope.classList.remove('error')
+                scopeError.innerText = ''
+            } catch (err) {
+                scope.classList.add('error')
+                scopeError.innerText = err
+            }
+
+            if (!renderer || !scopeObj) {
+                result.innerText = ''
+                return
+            }
+
+            // If all is well try to generate the results handling the errors
+            try {
+                result.innerText = renderer.render(scopeObj)
+                result.classList.remove('error')
+            } catch (err) {
+                result.innerText = err
+                result.classList.add('error')
+            }
+        }
+
+        ready(() => {
+            examples.forEach((example, i) => {
+                const option = createEl('option')
+                option.innerText = example.name
+                option.value = i
+                presets.appendChild(option)
+            })
+            on(scope, 'keyup', render)
+            on(template, 'keyup', render)
+            on(presets, 'change', () => {
+                const example = examples[presets.selectedOptions[0].value]
+                template.value = example.template
+                scope.value = JSON.stringify(example.scope, null, 2)
+                render()
+            })
+            fire(presets, 'change')
+        })
+    </script>
+</body>
+</html>

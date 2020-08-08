@@ -1,33 +1,21 @@
-import { Scope, get } from './get'
-import { PropNames, toPath } from './topath'
+import { isFn, isObj, isArr } from './utils'
+import { Scope, get, IGetOptions } from './get'
+import { toPath } from './topath'
 import { ITokens } from './tokenize'
 
 /**
  * The options passed to Renderer's constructor
  */
-export interface IRendererOptions {
+export interface IRendererOptions extends IGetOptions {
   /**
    * When set to a truthy value, rendering literally puts a 'null' or
    * 'undefined' for values that are `null` or `undefined`.
    * By default it swallows those values to be compatible with Mustache.
    */
   readonly explicit?: boolean
-  /**
-   * When set to a truthy value, we throw a ReferenceError for invalid varNames.
-   * Invalid varNames are the ones that do not exist in the scope.
-   * In that case the value for the varNames will be assumed an empty string.
-   * By default we throw a ReferenceError to be compatible with how JavaScript
-   * threats such invalid reference.
-   * If a value does not exist in the scope, two things can happen:
-   * - if `propsExist` is truthy, the value will be assumed empty string
-   * - if `propsExist` is falsy, a ReferenceError will be thrown
-   */
-  readonly propsExist?: boolean
   /** when set to a truthy value, validates the variable names */
   readonly validateVarNames?: boolean
 }
-
-const defaultRendererOptions: IRendererOptions = {}
 
 /**
  * The callback for resolving a value (synchronous)
@@ -53,7 +41,7 @@ export class Renderer {
   /**
    * Another cache that holds the parsed values for `toPath()` one per varName
    */
-  private toPathCache: PropNames[]
+  private toPathCache: string[][]
 
   /**
    * Creates a new Renderer instance. This is called internally by the compiler.
@@ -61,19 +49,21 @@ export class Renderer {
    * @param options - some options for customizing the rendering process
    * @throws `TypeError` if the token is invalid
    */
-  constructor(
-    private readonly tokens: ITokens,
-    private readonly options: IRendererOptions = defaultRendererOptions
-  ) {
+  constructor(private readonly tokens: ITokens, private readonly options: IRendererOptions = {}) {
     if (
-      tokens === null ||
-      typeof tokens !== 'object' ||
-      !Array.isArray(tokens.strings) ||
-      !Array.isArray(tokens.varNames) ||
+      !isObj(tokens) ||
+      !isArr(tokens.strings) ||
+      !isArr(tokens.varNames) ||
       tokens.strings.length !== tokens.varNames.length + 1
     ) {
-      throw new TypeError('Invalid tokens object ' + tokens)
+      // This is most likely an internal error from tokenization algorithm
+      throw new TypeError(`Invalid tokens object`)
     }
+
+    if (!isObj(options)) {
+      throw new TypeError(`Options should be an object. Got a ${typeof options}`)
+    }
+
     if (options.validateVarNames) {
       // trying to initialize toPathCache parses them which is also validation
       this.cacheParsedPaths()
@@ -86,10 +76,11 @@ export class Renderer {
    * value, this function is called immediately which leads to a validation as
    * well because it throws an error if it cannot parse variable names.
    */
-  private cacheParsedPaths() {
+  private cacheParsedPaths(): void {
     const { varNames } = this.tokens
     if (this.toPathCache === undefined) {
-      this.toPathCache = new Array(varNames.length)
+      this.toPathCache = new Array<string[]>(varNames.length)
+
       for (let i = 0; i < varNames.length; i++) {
         this.toPathCache[i] = toPath.cached(varNames[i])
       }
@@ -108,11 +99,16 @@ export class Renderer {
   public render = (scope: Scope = {}): string => {
     const { varNames } = this.tokens
     const { length } = varNames
+
     this.cacheParsedPaths()
-    const values = new Array(length)
+
+    const values = new Array<any>(length)
+
     for (let i = 0; i < length; i++) {
-      values[i] = get(scope, this.toPathCache[i], this.options.propsExist)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      values[i] = get(scope, this.toPathCache[i], this.options)
     }
+
     return this.stringify(values)
   }
 
@@ -129,26 +125,26 @@ export class Renderer {
    * Same as [[render]] but accepts a resolver function which will be responsible
    * for returning promise that resolves to a value for every varName.
    */
-  public renderFnAsync = (
-    resolveFnAsync: ResolveFnAsync,
-    scope: Scope = {}
-  ): Promise<string> => {
-    return Promise.all(this.resolveVarNames(resolveFnAsync, scope)).then(
-      values => this.stringify(values)
+  public renderFnAsync = (resolveFnAsync: ResolveFnAsync, scope: Scope = {}): Promise<string> => {
+    return Promise.all(this.resolveVarNames(resolveFnAsync, scope)).then((values) =>
+      this.stringify(values)
     )
   }
 
   private resolveVarNames(resolveFn: ResolveFn, scope: Scope = {}): any[] {
     const { varNames } = this.tokens
-    if (typeof resolveFn !== 'function') {
-      throw new TypeError('Expected a resolver function but got ' + resolveFn)
+    if (!isFn<ResolveFnAsync>(resolveFn)) {
+      throw new TypeError(`Expected a resolver function. Got ${String(resolveFn)}`)
     }
 
     const { length } = varNames
-    const values = new Array(length)
+    const values = new Array<any>(length)
     for (let i = 0; i < length; i++) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       values[i] = resolveFn.call(null, varNames[i], scope)
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return values
   }
 
@@ -160,17 +156,21 @@ export class Renderer {
   private stringify(values: any[]): string {
     const { strings } = this.tokens
     const { explicit } = this.options
-    let ret = ''
     const { length } = values
+
+    let ret = ''
     for (let i = 0; i < length; i++) {
       ret += strings[i]
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const value = values[i]
+
       if (explicit || (value !== null && value !== undefined)) {
         ret += value
       }
     }
 
     ret += strings[length]
+
     return ret
   }
 }
