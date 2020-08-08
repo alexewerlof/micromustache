@@ -1,6 +1,7 @@
 import { isStr } from './utils'
 
 /**
+ * @internal
  * The number of different varNames that will be cached.
  * If a varName is cached, the actual parsing algorithm will not be called
  * which significantly improves performance.
@@ -9,10 +10,12 @@ import { isStr } from './utils'
  * If the cache is full, we start removing older varNames one at a time.
  */
 const cacheSize = 1000
+
+/** @internal */
 const quoteChars = '\'"`'
 
 /**
- * @ignore
+ * @internal
  */
 export class Cache<T> {
   private map: {
@@ -48,9 +51,11 @@ export class Cache<T> {
   }
 }
 
+/** @internal */
 const cache = new Cache<string[]>(cacheSize)
 
 /**
+ * @internal
  * Removes the quotes from a string and returns it.
  * @param propName an string with quotations
  * @throws `SyntaxError` if the quotation symbols don't match or one is missing
@@ -79,6 +84,7 @@ function propBetweenBrackets(propName: string): string {
   return propName
 }
 
+/** @internal */
 function pushPropName(propNames: string[], propName: string, preDot: boolean): string[] {
   let pName = propName.trim()
   if (pName === '') {

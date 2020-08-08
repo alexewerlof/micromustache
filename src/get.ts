@@ -7,14 +7,14 @@ export interface Scope {
 
 export interface IGetOptions {
   /**
-   * When set to a truthy value, we throw a ReferenceError for invalid varNames.
+   * When set to a truthy value, we throw a `ReferenceError` for invalid varNames.
    * Invalid varNames are the ones that do not exist in the scope.
    * In that case the value for the varNames will be assumed an empty string.
-   * By default we throw a ReferenceError to be compatible with how JavaScript
+   * By default we throw a `ReferenceError` to be compatible with how JavaScript
    * threats such invalid reference.
    * If a value does not exist in the scope, two things can happen:
    * - if `propsExist` is truthy, the value will be assumed empty string
-   * - if `propsExist` is falsy, a ReferenceError will be thrown
+   * - if `propsExist` is falsy, a `ReferenceError` will be thrown
    */
   readonly propsExist?: boolean
   /**
@@ -32,9 +32,8 @@ export interface IGetOptions {
  *
  * Differences with JavaScript:
  * No support for keys that include `[` or `]`.
- * No support for keys that include `'` or `"` or `.
- * `foo[bar]` is allowed while JavaScript treats `bar` as a variable and tries to lookup its value
- * or throws a `ReferenceError` if there is no variable called `bar`.
+ * No support for keys that include `'` or `"` or `.`.
+ * @see https://github.com/userpixel/micromustache/wiki/Known-issues
  * If it cannot find a value in the specified path, it may return undefined or throw an error
  * depending on the value of the `propsExist` param.
  * @param scope an object to resolve value from

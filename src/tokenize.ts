@@ -7,6 +7,9 @@ export interface ITokens {
   readonly varNames: string[]
 }
 
+/**
+ * Declares the open and close tag respectively
+ */
 export type ITags = [string, string]
 
 /**
@@ -27,7 +30,7 @@ export interface ITokenizeOptions {
 }
 
 /**
- * Parse a template and returns the tokens in an object.
+ * Parses a template and returns the tokens in an object.
  *
  * @throws `TypeError` if there's an issue with its inputs
  * @throws `SyntaxError` if there's an issue with the template
