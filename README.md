@@ -199,6 +199,11 @@ console.log($({ name })`Hello {name}!`)
 
 [On Github pages](https://userpixel.github.io/micromustache/)
 
+# Examples
+
+Check out the [`examples`](./examples) directory.
+_Note that they need you to build the project locally._
+
 # FAQ
 
 [On wiki](https://github.com/userpixel/micromustache/wiki/FAQ)
