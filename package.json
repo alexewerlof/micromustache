@@ -1,6 +1,6 @@
 {
   "name": "micromustache",
-  "version": "7.1.0",
+  "version": "8.0.0",
   "description": "A fast, minimal and secure template engine for JavaScript",
   "keywords": [
     "template",
