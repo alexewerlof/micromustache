@@ -98,8 +98,8 @@
 
         const getEl = id => document.getElementById(id)
         const createEl = tagName => document.createElement(tagName)
-        const on = (target, eventName, handler) => target.addEventListener(eventName, handler)
-        const trigger = (target, eventName) => target.dispatchEvent(new Event(eventName ))
+        const on = (el, eventName, handler) => el.addEventListener(eventName, handler)
+        const fire = (el, eventName) => el.dispatchEvent(new Event(eventName ))
         const ready = fn => ['complete', 'interactive'].includes(document.readyState) ? fn() : on(document, 'DOMContentLoaded', fn)
 
         const presets = getEl('presets')
@@ -108,9 +108,6 @@
         const scope = getEl('scope')
         const scopeError = getEl('scope-error')
         const result = getEl('result')
-
-        on(scope, 'keyup', render)
-        on(template, 'keyup', render)
 
         function render() {
             // Handle the template errors
@@ -156,13 +153,15 @@
                 option.value = i
                 presets.appendChild(option)
             })
+            on(scope, 'keyup', render)
+            on(template, 'keyup', render)
             on(presets, 'change', () => {
                 const example = examples[presets.selectedOptions[0].value]
                 template.value = example.template
                 scope.value = JSON.stringify(example.scope, null, 2)
                 render()
             })
-            presets.dispatchEvent(new Event('change'))
+            fire(presets, 'change')
         })
     </script>
 </body>
