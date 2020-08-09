@@ -6,14 +6,14 @@
     <title>Micromustache Playground</title>
     <style>
         body, html {
-            background-color: rgb(95 104 117);
-            color: white;
+            background-color: #5f6875;
+            color: #c3c3c3;
             font-family: 'Courier New', Courier, monospace;
             margin: 0;
             padding: 0.5em;
         }
         .io {
-            background-color: rgb(195, 195, 195);
+            background-color: #c3c3c3;
             border: 0.3em solid transparent;
             box-sizing: border-box;
             color: black;
@@ -24,7 +24,7 @@
             width: 100%;
         }
         .entry:hover {
-            background-color: rgb(238, 238, 238);
+            background-color: #d6d6d6;
         }
         .entry:focus {
             background-color: white;
@@ -35,10 +35,10 @@
             height: 15vh;
         }
         textarea.error {
-            border-color: rgb(253, 153, 153);
+            border-color: #fd9999;
         }
         .error {
-            background-color: rgb(253, 153, 153);
+            background-color: #fd9999;
         }
         label {
             margin-top: 0.5em;
@@ -71,7 +71,7 @@
                 }
             },{
                 name: 'Array',
-                template: 'I like {{0}}, {{4}} and {{[2]}}!',
+                template: 'I like {{0}}, {{4}} and {{[2]}} out of {{length}} fruits!',
                 scope: ['Apple', 'Orange', 'Banana', 'Citrun', 'Tomato']
             },
             {
