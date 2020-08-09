@@ -7,7 +7,7 @@
     <style>
         body, html {
             background-color: #5f6875;
-            color: #c3c3c3;
+            color: #dfeaf1;
             font-family: 'Courier New', Courier, monospace;
             margin: 0;
             padding: 0.5em;
@@ -35,21 +35,35 @@
             height: 15vh;
         }
         textarea.error {
-            border-color: #fd9999;
+            border-color: #ffbdbd;
         }
         .error {
-            background-color: #fd9999;
+            background-color: #ffbdbd;
+            color: red;
+        }
+        h1, label {
+            font-family: Tahoma, Geneva, sans-serif;
         }
         label {
             margin-top: 0.5em;
             display: block;
             font-size: 2em;
             font-weight: lighter;
-            font-family: Tahoma, Geneva, sans-serif;
+        }
+        a {
+            color: inherit;
+        }
+        footer ul {
+            padding: 0;
+        }
+        footer li {
+            list-style-type: none;
+            display: inline;
         }
     </style>
 </head>
 <body>
+    <header><h1>Micromustache Playground</h1></header>
     <label for="presets">Presets</label>
     <select id="presets" class="io entry"></select>
     <label for="template">Template</label>
@@ -60,6 +74,17 @@
     <div id="scope-error" class="error"></div>
     <label>Result</label>
     <div id="result" class="io"></div>
+    <div id="result-error" class="error"></div>
+    <footer>
+        <ul>
+            <li><a href="https://github.com/userpixel/micromustache">Github</a></li>
+            <li><a href="https://www.npmjs.com/package/micromustache">NPM</a></li>
+            <li><a href="https://userpixel.github.io/micromustache/">API</a></li>
+            <li><a href="https://github.com/userpixel/micromustache/wiki/FAQ">FAQ</a></li>
+            <li><a href="https://github.com/userpixel/micromustache/wiki/Known-issues">Known Issues</a></li>
+            <li><a href="https://twitter.com/alexewerlof">Twitter</a></li>
+        </ul>
+    </footer>
     <script src="../dist/micromustache.umd.js"></script>
     <script>
         const examples = [
@@ -98,6 +123,9 @@
 
         const getEl = id => document.getElementById(id)
         const createEl = tagName => document.createElement(tagName)
+        const text = (el, contents) => el.innerText = contents
+        const getVal = (el) => el.value
+        const setVal = (el, value) => el.value = value
         const on = (el, eventName, handler) => el.addEventListener(eventName, handler)
         const fire = (el, eventName) => el.dispatchEvent(new Event(eventName ))
         const ready = fn => ['complete', 'interactive'].includes(document.readyState) ? fn() : on(document, 'DOMContentLoaded', fn)
@@ -108,57 +136,51 @@
         const scope = getEl('scope')
         const scopeError = getEl('scope-error')
         const result = getEl('result')
+        const resultError = getEl('result-error')
+
+        function runFn(successEl, errorEl, fn) {
+            try {
+                const result = fn()
+                successEl.classList.remove('error')
+                text(errorEl, '')
+                return result
+            } catch (err) {
+                successEl.classList.add('error')
+                text(errorEl, '⛔ ' + err)
+            }
+        }
 
         function render() {
             // Handle the template errors
-            let renderer
-            try {
-                renderer = micromustache.compile(template.value, { validateVarNames: true })
-                template.classList.remove('error')
-                templateError.innerText = ''
-            } catch (err) {
-                template.classList.add('error')
-                templateError.innerText = err
-            }
+            const renderer = runFn(
+                template,
+                templateError,
+                () => micromustache.compile(getVal(template), { validateVarNames: true })
+            )
             // Handle the scope errors
-            let scopeObj
-            try {
-                scopeObj = JSON.parse(scope.value)
-                scope.classList.remove('error')
-                scopeError.innerText = ''
-            } catch (err) {
-                scope.classList.add('error')
-                scopeError.innerText = err
-            }
+            const scopeObj = runFn(scope, scopeError, () => JSON.parse(getVal(scope)))
 
             if (!renderer || !scopeObj) {
-                result.innerText = ''
-                return
+                return text(result, '')
             }
 
             // If all is well try to generate the results handling the errors
-            try {
-                result.innerText = renderer.render(scopeObj)
-                result.classList.remove('error')
-            } catch (err) {
-                result.innerText = err
-                result.classList.add('error')
-            }
+            text(result, runFn(result, resultError, () => renderer.render(scopeObj)))
         }
 
         ready(() => {
             examples.forEach((example, i) => {
                 const option = createEl('option')
-                option.innerText = example.name
-                option.value = i
+                text(option, example.name)
+                setVal(option, i)
                 presets.appendChild(option)
             })
             on(scope, 'keyup', render)
             on(template, 'keyup', render)
             on(presets, 'change', () => {
-                const example = examples[presets.selectedOptions[0].value]
-                template.value = example.template
-                scope.value = JSON.stringify(example.scope, null, 2)
+                const example = examples[getVal(presets)]
+                setVal(template, example.template)
+                setVal(scope, JSON.stringify(example.scope, null, 2))
                 render()
             })
             fire(presets, 'change')
