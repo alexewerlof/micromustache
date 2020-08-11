@@ -1,66 +1,44 @@
-/*global micromustache*/
+/*global micromustache,examples*/
 
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-const examples = [
-  {
-    name: 'Simple',
-    template: 'Hello {{name}}!',
-    scope: {
-      name: 'Alex',
-    },
-  },
-  {
-    name: 'Array',
-    template: 'I like {{0}}, {{4}} and {{[2]}} out of {{length}} fruits!',
-    scope: ['Apple', 'Orange', 'Banana', 'Citrun', 'Tomato'],
-  },
-  {
-    name: 'Nested',
-    template: "{{person.name}}'s mobile nr is: {{person.contacts.tel[1].nr}}!",
-    scope: {
-      person: {
-        name: 'Alex',
-        contacts: {
-          address: 'Stockholm, Sweden',
-          tel: [
-            {
-              nr: '+4600000000',
-            },
-            {
-              nr: '+4611111111',
-            },
-          ],
-        },
-      },
-    },
-  },
-]
 
-const getEl = (id) => document.getElementById(id)
+const id = (id) => document.getElementById(id)
 const createEl = (tagName) => document.createElement(tagName)
 const text = (el, contents) => (el.innerText = contents)
-const getVal = (el) => el.value
+const getVal = (el) => {
+  switch (el.type) {
+    case 'checkbox':
+      return el.checked
+    case 'number':
+      return el.valueAsNumber
+    default:
+      return el.value
+  }
+}
 const setVal = (el, value) => (el.value = value)
 const on = (el, eventName, handler) => el.addEventListener(eventName, handler)
+const onInput = (el, handler) => on(el, 'input', handler)
 const fire = (el, eventName) => el.dispatchEvent(new Event(eventName))
 const ready = (fn) =>
   ['complete', 'interactive'].includes(document.readyState)
     ? fn()
     : on(document, 'DOMContentLoaded', fn)
 
-const exampleSelector = getEl('example-selector')
-const template = getEl('template')
-const optionsToggle = getEl('options-toggle')
-const templateError = getEl('template-error')
-const scope = getEl('scope')
-const scopeError = getEl('scope-error')
-const result = getEl('result')
-const resultError = getEl('result-error')
+const exampleSelector = id('example-selector')
+const template = id('template')
+const optionsToggle = id('options-toggle')
+const options = id('options')
+const templateError = id('template-error')
+const scope = id('scope')
+const scopeError = id('scope-error')
+const result = id('result')
+const resultError = id('result-error')
 
+// Runs a function showing its results or errors in appropriate DOM elements
 function runFn(successEl, errorEl, fn) {
   if (typeof fn !== 'function') {
     throw new TypeError(`Expected a function. Got ${fn}`)
@@ -77,9 +55,17 @@ function runFn(successEl, errorEl, fn) {
 }
 
 function render() {
+  console.log('Render', getVal(id('validateVarNames')))
   // Handle the template errors
   const renderer = runFn(template, templateError, () =>
-    micromustache.compile(getVal(template), { validateVarNames: true })
+    micromustache.compile(getVal(template), {
+      depth: getVal(id('depth')),
+      explicit: getVal(id('explicit')),
+      maxVarNameLength: getVal(id('maxVarNameLength')),
+      propsExist: getVal(id('propsExist')),
+      tags: [getVal(id('tag0')), getVal(id('tag1'))],
+      validateVarNames: getVal(id('validateVarNames')),
+    })
   )
   // Handle the scope errors
   const scopeObj = runFn(scope, scopeError, () => JSON.parse(getVal(scope)))
@@ -102,17 +88,23 @@ ready(() => {
     setVal(option, i)
     exampleSelector.appendChild(option)
   })
-  on(optionsToggle, 'click', () => {
-    const contents = optionsToggle.nextElementSibling
-    contents.hidden = !contents.hidden
-  })
-  on(scope, 'keyup', render)
-  on(template, 'keyup', render)
-  on(exampleSelector, 'change', () => {
+
+  onInput(optionsToggle, () => (options.hidden = !optionsToggle.checked))
+  onInput(scope, render)
+  onInput(template, render)
+  onInput(id('depth'), render)
+  onInput(id('explicit'), render)
+  onInput(id('maxVarNameLength'), render)
+  onInput(id('propsExist'), render)
+  onInput(id('tag0'), render)
+  onInput(id('tag1'), render)
+  onInput(id('validateVarNames'), render)
+
+  onInput(exampleSelector, () => {
     const example = examples[getVal(exampleSelector)]
     setVal(template, example.template)
     setVal(scope, JSON.stringify(example.scope, null, 2))
     render()
   })
-  fire(exampleSelector, 'change')
+  fire(exampleSelector, 'input')
 })
