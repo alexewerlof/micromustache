@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+    <!-- A super simple and stupid JQuery-slide playground to try micromustache -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,16 @@
             font-family: 'Courier New', Courier, monospace;
             margin: 0;
             padding: 0.5em;
+        }
+        aside {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background-color: #586579;
+            box-shadow: 0 0 1em black;
+            padding: 1em;
+            z-index: 1;
         }
         .io {
             background-color: #c3c3c3;
@@ -41,14 +52,18 @@
             background-color: #ffbdbd;
             color: red;
         }
-        h1, label {
+        h1, h2, h3 {
             font-family: Tahoma, Geneva, sans-serif;
-        }
-        label {
-            margin-top: 0.5em;
-            display: block;
-            font-size: 2em;
             font-weight: lighter;
+        }
+        h1 {
+            font-size: 2em;
+        }
+        h2 {
+            font-size: 1.5em;
+        }
+        h3 {
+            font-size: 1.2em;
         }
         a {
             color: inherit;
@@ -57,34 +72,63 @@
             padding: 0;
         }
         footer li {
-            list-style-type: none;
             display: inline;
+        }
+        footer li + li::before {
+            content: '| ';
         }
     </style>
 </head>
 <body>
-    <header><h1>Micromustache Playground</h1></header>
-    <label for="presets">Presets</label>
-    <select id="presets" class="io entry"></select>
-    <label for="template">Template</label>
-    <textarea id="template" class="io entry"></textarea>
-    <div id="template-error" class="error"></div>
-    <label for="scope">Scope</label>
-    <textarea id="scope" class="io entry"></textarea>
-    <div id="scope-error" class="error"></div>
-    <label>Result</label>
-    <div id="result" class="io"></div>
-    <div id="result-error" class="error"></div>
-    <footer>
-        <ul>
-            <li><a href="https://github.com/userpixel/micromustache">Github</a></li>
-            <li><a href="https://www.npmjs.com/package/micromustache">NPM</a></li>
-            <li><a href="https://userpixel.github.io/micromustache/">API</a></li>
-            <li><a href="https://github.com/userpixel/micromustache/wiki/FAQ">FAQ</a></li>
-            <li><a href="https://github.com/userpixel/micromustache/wiki/Known-issues">Known Issues</a></li>
-            <li><a href="https://twitter.com/alexewerlof">Twitter</a></li>
-        </ul>
-    </footer>
+    <h2 id="options-toggle">⚙ Options</h2>
+    <div id="aside-visible-overlay"></div>
+    <aside>
+        <label for="example-selector"><h2>Examples</h2></label>
+        <select id="example-selector" class="io entry"></select>
+        <hr/>
+        <label><input type="checkbox"/>Props Exist</label>
+        <br/>
+        <label><input type="checkbox"/>Explicit</label>
+        <br/>
+        <label><input type="checkbox"/>Validate Var Names</label>
+        <br/>
+        <label><h3>Depth</h3><input class="io entry" type="number" min="0" max="20" value="5"/></label>
+        <label><h3>Max var name length</h3><input class="io entry" type="number" min="0" max="20" value="5"/></label>
+        <label>
+            <h3>Open tag</h3>
+            <input class="io entry" type="text" value="{{"/>
+        </label>
+        <label>
+            <h3>Close tag</h3>
+            <input class="io entry" type="text" value="}}"/>
+        </label>
+    </aside>
+    <div style="position: absolute;top: 0;bottom: 0;left: 0;right: 0;backdrop-filter: blur(3px);"></div>
+    <main>
+        <header>
+            <h1>Micromustache Playground</h1>
+        </header>
+        <label for="template"><h2>Template</h2></label>
+        <textarea id="template" class="io entry"></textarea>
+        <div id="template-error" class="error"></div>
+        <label for="scope"><h2>Scope</h2></label>
+        <textarea id="scope" class="io entry"></textarea>
+        <div id="scope-error" class="error"></div>
+
+        <label><h2>Result</h2></label>
+        <div id="result" class="io"></div>
+        <div id="result-error" class="error"></div>
+        <footer>
+            <ul>
+                <li><a href="https://github.com/userpixel/micromustache">Github</a></li>
+                <li><a href="https://www.npmjs.com/package/micromustache">NPM</a></li>
+                <li><a href="https://userpixel.github.io/micromustache/">API</a></li>
+                <li><a href="https://github.com/userpixel/micromustache/wiki/FAQ">FAQ</a></li>
+                <li><a href="https://github.com/userpixel/micromustache/wiki/Known-issues">Known Issues</a></li>
+                <li><a href="https://twitter.com/alexewerlof">Twitter</a></li>
+            </ul>
+        </footer>
+    </main>
     <script src="../dist/micromustache.umd.js"></script>
     <script>
         const examples = [
@@ -130,8 +174,9 @@
         const fire = (el, eventName) => el.dispatchEvent(new Event(eventName ))
         const ready = fn => ['complete', 'interactive'].includes(document.readyState) ? fn() : on(document, 'DOMContentLoaded', fn)
 
-        const presets = getEl('presets')
+        const exampleSelector = getEl('example-selector')
         const template = getEl('template')
+        const optionsToggle = getEl('options-toggle')
         const templateError = getEl('template-error')
         const scope = getEl('scope')
         const scopeError = getEl('scope-error')
@@ -173,17 +218,21 @@
                 const option = createEl('option')
                 text(option, example.name)
                 setVal(option, i)
-                presets.appendChild(option)
+                exampleSelector.appendChild(option)
+            })
+            on(optionsToggle, 'click', () => {
+                const contents = optionsToggle.nextElementSibling
+                contents.hidden = !contents.hidden
             })
             on(scope, 'keyup', render)
             on(template, 'keyup', render)
-            on(presets, 'change', () => {
-                const example = examples[getVal(presets)]
+            on(exampleSelector, 'change', () => {
+                const example = examples[getVal(exampleSelector)]
                 setVal(template, example.template)
                 setVal(scope, JSON.stringify(example.scope, null, 2))
                 render()
             })
-            fire(presets, 'change')
+            fire(exampleSelector, 'change')
         })
     </script>
 </body>
