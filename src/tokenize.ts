@@ -42,7 +42,7 @@ export interface ITokenizeOptions {
  */
 export function tokenize(template: string, options: ITokenizeOptions = {}): ITokens {
   if (!isStr(template)) {
-    throw new TypeError(`The template parameter must be a string. Got ${template as string}`)
+    throw new TypeError(`The template parameter must be a string. Got a ${typeof template}`)
   }
 
   if (!isObj(options)) {
@@ -59,7 +59,7 @@ export function tokenize(template: string, options: ITokenizeOptions = {}): ITok
 
   if (!isStr(openSym, 1) || !isStr(closeSym, 1) || openSym === closeSym) {
     throw new TypeError(
-      `The open and close symbols should be two distinct non-empty strings. Got ${openSym}" and "${closeSym}`
+      `The open and close symbols should be two distinct non-empty strings. Got "${openSym}" and "${closeSym}"`
     )
   }
 
@@ -94,7 +94,7 @@ export function tokenize(template: string, options: ITokenizeOptions = {}): ITok
     const varNameLength = closeIndex - varNameStartIndex
     if (varNameLength > maxVarNameLength) {
       throw new SyntaxError(
-        `Variable name cannot be longer than ${maxVarNameLength} but at position ${openIndex} it is "${varNameLength}"`
+        `Variable name cannot be longer than ${maxVarNameLength} but at position ${openIndex} it is ${varNameLength}`
       )
     }
 

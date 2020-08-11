@@ -67,13 +67,13 @@ function propBetweenBrackets(propName: string): string {
   const lastChar = propName.substr(-1)
   if (quoteChars.includes(firstChar) || quoteChars.includes(lastChar)) {
     if (propName.length < 2 || firstChar !== lastChar) {
-      throw new SyntaxError('Mismatching string quotation: ' + propName)
+      throw new SyntaxError(`Mismatching string quotation: "${propName}"`)
     }
     return propName.substring(1, propName.length - 1)
   }
 
   if (propName.includes('[')) {
-    throw new SyntaxError('Missing ] in varName ' + propName)
+    throw new SyntaxError(`Missing ] in varName "${propName}"`)
   }
 
   // Normalize leading plus from numerical indices
@@ -98,21 +98,21 @@ function pushPropName(propNames: string[], propName: string, preDot: boolean): s
         return propNames
       }
     } else {
-      throw new SyntaxError('Unexpected . at the start of "' + propName + '"')
+      throw new SyntaxError(`Unexpected . at the start of "${propName}"`)
     }
   } else if (preDot) {
-    throw new SyntaxError('Missing . at the start of "' + propName + '"')
+    throw new SyntaxError(`Missing . at the start of "${propName}"`)
   }
 
   if (pName.endsWith('.')) {
-    throw new SyntaxError('Unexpected "." at the end of "' + propName + '"')
+    throw new SyntaxError(`Unexpected "." at the end of "${propName}"`)
   }
 
   const propNameParts = pName.split('.')
   for (const propNamePart of propNameParts) {
     const trimmedPropName = propNamePart.trim()
     if (trimmedPropName === '') {
-      throw new SyntaxError('Empty prop name when parsing "' + propName + '"')
+      throw new SyntaxError(`Empty prop name when parsing "${propName}"`)
     }
     propNames.push(trimmedPropName)
   }
@@ -133,7 +133,7 @@ function pushPropName(propNames: string[], propName: string, preDot: boolean): s
  */
 export function toPath(varName: string): string[] {
   if (!isStr(varName)) {
-    throw new TypeError(`Cannot parse path. Expected string. Got ${String(varName)}`)
+    throw new TypeError(`Cannot parse path. Expected string. Got a ${typeof varName}`)
   }
 
   let openBracketIndex: number
@@ -151,7 +151,7 @@ export function toPath(varName: string): string[] {
 
     closeBracketIndex = varName.indexOf(']', openBracketIndex)
     if (closeBracketIndex === -1) {
-      throw new SyntaxError('Missing ] in varName ' + varName)
+      throw new SyntaxError(`Missing ] in varName "${varName}"`)
     }
 
     propName = varName.substring(openBracketIndex + 1, closeBracketIndex).trim()

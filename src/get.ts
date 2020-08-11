@@ -81,7 +81,7 @@ export function get(
       currentScope = currentScope[propName]
     } else if (options.propsExist) {
       throw new ReferenceError(
-        `${propName} is not defined in the scope (${String(scope)}) at path: "${propNamesAsStr()}"}`
+        `${propName} is not defined in the scope at path: "${propNamesAsStr()}"`
       )
     } else {
       return
