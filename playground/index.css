@@ -1,0 +1,71 @@
+body, html {
+    background-color: #5f6875;
+    color: #dfeaf1;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 0.5em;
+}
+aside {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: #586579;
+    box-shadow: 0 0 1em black;
+    padding: 1em;
+    z-index: 1;
+}
+.io {
+    background-color: #c3c3c3;
+    border: 0.3em solid transparent;
+    box-sizing: border-box;
+    color: black;
+    display: block;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 1em;
+    width: 100%;
+}
+.entry:hover {
+    background-color: #d6d6d6;
+}
+.entry:focus {
+    background-color: white;
+    outline: none;
+}
+textarea {
+    resize: vertical;
+    height: 15vh;
+}
+textarea.error {
+    border-color: #ffbdbd;
+}
+.error {
+    background-color: #ffbdbd;
+    color: red;
+}
+h1, h2, h3 {
+    font-family: Tahoma, Geneva, sans-serif;
+    font-weight: lighter;
+}
+h1 {
+    font-size: 2em;
+}
+h2 {
+    font-size: 1.5em;
+}
+h3 {
+    font-size: 1.2em;
+}
+a {
+    color: inherit;
+}
+footer ul {
+    padding: 0;
+}
+footer li {
+    display: inline;
+}
+footer li + li::before {
+    content: '| ';
+}

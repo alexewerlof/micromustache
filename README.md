@@ -12,7 +12,7 @@
 
 A **secure**, fast and lightweight template engine with some handy additions.
 
-⛹ Check out **[the playground](https://unpkg.com/micromustache/dist/playground.html)**
+⛹ Check out **[the playground](https://unpkg.com/micromustache/playground/index.html)**
 
 Think of it as a sweet spot between plain text interpolation and [mustache.js](https://github.com/janl/mustache.js); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to reduce potential errors and improve performance. This tool has a limited scope that doesn't attempt to solve everybody's use case, and instead do a specific thing well.
 
