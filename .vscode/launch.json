@@ -8,13 +8,8 @@
             "type": "node",
             "request": "launch",
             "name": "Debug this test file",
-            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
             "args": [
-              "-r",
-              "ts-node/register",
-              "--timeout",
-              "999999",
-              "--colors",
               "${file}"
             ],
             "console": "integratedTerminal",
