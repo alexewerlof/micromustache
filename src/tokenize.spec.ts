@@ -60,7 +60,9 @@ describe('tokenize()', () => {
 
   it('throws a syntax error if the open symbol is not closed', () => {
     expect(() => tokenize('Hi {{')).toThrow(
-      new SyntaxError('Missing "}}" in the template for the "{{" at position 3')
+      new SyntaxError(
+        'Missing "}}" in the template for the "{{" at position 3 within 1000 characters'
+      )
     )
   })
 

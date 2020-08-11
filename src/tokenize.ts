@@ -91,7 +91,7 @@ export function tokenize(template: string, options: ITokenizeOptions = {}): ITok
 
     if (closeIndex === -1) {
       throw new SyntaxError(
-        `Missing "${closeSym}" in the template for the "${openSym}" at position ${openIndex}`
+        `Missing "${closeSym}" in the template for the "${openSym}" at position ${openIndex} within ${maxVarNameLength} characters`
       )
     }
 
