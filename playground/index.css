@@ -1,0 +1,85 @@
+body, html {
+    background-color: #5f6875;
+    color: #dfeaf1;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+}
+main {
+    display: flex;
+}
+section {
+    flex-grow: 1;
+    margin: 1em;
+    display: flex;
+    flex-direction: column;
+}
+section .entry {
+    flex-grow: 1;
+}
+aside {
+    flex: 0 0;
+    min-width: 13rem;
+    border-right: 1px solid #ffffff3d;
+    padding: 1em;
+}
+.io {
+    background-color: #c3c3c3;
+    border: 0.3em solid transparent;
+    box-sizing: border-box;
+    color: black;
+    display: block;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 1em;
+    width: 100%;
+}
+aside .io {
+    padding: 0.5em;
+}
+.entry:hover {
+    background-color: #d6d6d6;
+}
+.entry:focus {
+    background-color: white;
+    outline: none;
+}
+textarea {
+    resize: vertical;
+    height: 15vh;
+}
+textarea.error {
+    border-color: #ffbdbd;
+}
+.error {
+    background-color: #ffbdbd;
+    color: red;
+}
+h1, h2, h3 {
+    font-family: Tahoma, Geneva, sans-serif;
+    font-weight: lighter;
+}
+h1 {
+    font-size: 3em;
+    margin: 0.3em;
+}
+h2 {
+    font-size: 1.5em;
+}
+h3 {
+    font-size: 1.2em;
+}
+a {
+    color: inherit;
+}
+footer {
+    text-align: center;
+}
+footer ul {
+    padding: 0;
+}
+footer li {
+    display: inline;
+}
+footer li + li::before {
+    content: '| ';
+}

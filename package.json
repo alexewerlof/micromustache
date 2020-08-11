@@ -57,10 +57,9 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist",
-    "build:playground": "cp examples/playground.html dist/",
     "build:ts": "rollup --config",
     "build:types": "tsc src/index.ts --declaration --emitDeclarationOnly --declarationDir dist/types",
-    "build": "npm run build:ts && npm run build:types && npm run build:playground",
+    "build": "npm run build:ts && npm run build:types",
     "docs": "typedoc src/index.ts",
     "lint": "eslint --ext .ts src",
     "lint:fix": "npm run lint -- --fix",

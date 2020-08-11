@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micromustache Playground</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <header>
+        <h1>
+            <label title="Options"><input type="checkbox" id="options-toggle" hidden />⚙</span></label>
+            Micromustache Playground
+        </h1>
+    </header>
+    <main>
+        <aside id="options" hidden>
+            <h2>Options</h2>
+            <label><input type="checkbox" id="propsExist" />Props Exist</label>
+            <br/>
+            <label><input type="checkbox" id="explicit" />Explicit</label>
+            <br/>
+            <label><input type="checkbox" id="validateVarNames" />Validate Var Names</label>
+            <br/>
+            <label><h3>Depth</h3><input id="depth" class="io entry" type="number" min="0" max="20" value="5"/></label>
+            <label><h3>Max var name length</h3><input id="maxVarNameLength" class="io entry" type="number" min="0" max="100" value="30"/></label>
+            <label>
+                <h3>Open tag</h3>
+                <input id="tag0" class="io entry" type="text" value="{{"/>
+            </label>
+            <label>
+                <h3>Close tag</h3>
+                <input id="tag1" class="io entry" type="text" value="}}"/>
+            </label>
+        </aside>
+        <section>
+            <label for="example-selector"><h2>Examples</h2></label>
+            <select id="example-selector" class="io entry"></select>
+
+            <label for="template"><h2>Template</h2></label>
+            <textarea id="template" class="io entry"></textarea>
+            <div id="template-error" class="error"></div>
+
+            <label for="scope"><h2>Scope</h2></label>
+            <textarea id="scope" class="io entry"></textarea>
+            <div id="scope-error" class="error"></div>
+
+            <label><h2>Result</h2></label>
+            <div id="result" class="io"></div>
+            <div id="result-error" class="error"></div>
+        </section>
+    </main>
+    <footer>
+        <ul>
+            <li><a href="https://github.com/userpixel/micromustache">Github</a></li>
+            <li><a href="https://www.npmjs.com/package/micromustache">NPM</a></li>
+            <li><a href="https://userpixel.github.io/micromustache/">API</a></li>
+            <li><a href="https://github.com/userpixel/micromustache/wiki/FAQ">FAQ</a></li>
+            <li><a href="https://github.com/userpixel/micromustache/wiki/Known-issues">Known Issues</a></li>
+            <li><a href="https://twitter.com/alexewerlof">Twitter</a></li>
+        </ul>
+    </footer>
+    <script src="../dist/micromustache.umd.js"></script>
+    <script src="examples.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
