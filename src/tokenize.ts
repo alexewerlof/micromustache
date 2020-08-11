@@ -1,4 +1,4 @@
-import { isStr, isArr, isObj, isInt } from './utils'
+import { isStr, isArr, isObj, isNum } from './utils'
 
 export interface ITokens {
   /** An array of constant strings */
@@ -63,7 +63,7 @@ export function tokenize(template: string, options: ITokenizeOptions = {}): ITok
     )
   }
 
-  if (!isInt(maxVarNameLength) || maxVarNameLength <= 0) {
+  if (!isNum(maxVarNameLength) || maxVarNameLength <= 0) {
     throw new Error(`Expected a positive number for maxVarNameLength. Got ${maxVarNameLength}`)
   }
 
@@ -83,31 +83,24 @@ export function tokenize(template: string, options: ITokenizeOptions = {}): ITok
       break
     }
 
-    closeIndex = template.indexOf(closeSym, openIndex)
+    const varNameStartIndex = openIndex + openSymLen
+
+    closeIndex = template
+      .substr(varNameStartIndex, maxVarNameLength + closeSymLen)
+      .indexOf(closeSym)
+
     if (closeIndex === -1) {
       throw new SyntaxError(
-        `Missing "${closeSym}" in the template expression from position ${currentIndex}`
+        `Missing "${closeSym}" in the template for the "${openSym}" at position ${openIndex}`
       )
     }
 
-    const varNameStartIndex = openIndex + openSymLen
-    const varNameLength = closeIndex - varNameStartIndex
-    if (varNameLength > maxVarNameLength) {
-      throw new SyntaxError(
-        `Variable name cannot be longer than ${maxVarNameLength} but at position ${openIndex} it is ${varNameLength}`
-      )
-    }
+    closeIndex += varNameStartIndex
 
-    varName = template.substr(varNameStartIndex, varNameLength).trim()
+    varName = template.substring(varNameStartIndex, closeIndex).trim()
 
     if (varName.length === 0) {
       throw new SyntaxError(`Unexpected "${closeSym}" tag found at position ${openIndex}`)
-    }
-
-    if (varName.length >= maxVarNameLength) {
-      throw new SyntaxError(
-        `The variable name is longer than expected. Max: ${maxVarNameLength}, Got: ${varName.length}`
-      )
     }
 
     if (varName.includes(openSym)) {

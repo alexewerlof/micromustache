@@ -60,7 +60,7 @@ describe('tokenize()', () => {
 
   it('throws a syntax error if the open symbol is not closed', () => {
     expect(() => tokenize('Hi {{')).toThrow(
-      new SyntaxError('Missing "}}" in the template expression from position 0')
+      new SyntaxError('Missing "}}" in the template for the "{{" at position 3')
     )
   })
 
@@ -82,5 +82,10 @@ describe('tokenize()', () => {
 
   it('throws for nested open and close symbol', () => {
     expect(() => tokenize('Hello {{ {{name}} }}!')).toThrow()
+  })
+
+  it('throws if the variable name is too long', () => {
+    expect(() => tokenize('Hej {{n2345}}!', { maxVarNameLength: 5 })).not.toThrow()
+    expect(() => tokenize('Hej {{n2345}}!', { maxVarNameLength: 4 })).toThrow()
   })
 })
