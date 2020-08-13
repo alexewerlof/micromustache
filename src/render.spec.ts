@@ -115,14 +115,14 @@ describe('render', () => {
       ).toBe('ac')
     })
 
-    it('ignores a variable name with space in it', () => {
-      expect(
+    it.skip('throws for an invalid var name', () => {
+      expect(() =>
         render('{{a b}}', {
           a: 1,
           b: 2,
           ab: 3,
         })
-      ).toBe('')
+      ).toThrow()
     })
 
     it('can interpolate multiple occurances of the variable', () => {
