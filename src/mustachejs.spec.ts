@@ -105,13 +105,6 @@ const testCases: ITestCase[] = [
     },
   },
   {
-    description: 'a dash as variable name',
-    template: '{{-}}',
-    scope: {
-      '-': '-',
-    },
-  },
-  {
     description: 'an invalid javascript id as variable name',
     template: '{{1a}}',
     scope: {
@@ -227,13 +220,6 @@ const testCases: ITestCase[] = [
     template: '{{   a   }}',
     scope: {
       a: 'test',
-    },
-  },
-  {
-    description: '% as a variable name',
-    template: '{{%}}',
-    scope: {
-      '%': 'test',
     },
   },
   {
