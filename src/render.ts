@@ -1,6 +1,6 @@
 import { Renderer, ResolveFn, ResolveFnAsync } from './renderer'
 import { Scope } from './get'
-import { compile, ICompileOptions } from './compile'
+import { compile, CompileOptions } from './compile'
 
 /**
  * Replaces every {{varName}} inside the template with values from the scope
@@ -18,7 +18,7 @@ import { compile, ICompileOptions } from './compile'
  * @returns Template where its variable names replaced with
  * corresponding values.
  */
-export function render(template: string, scope?: Scope, options?: ICompileOptions): string {
+export function render(template: string, scope?: Scope, options?: CompileOptions): string {
   const renderer: Renderer = compile(template, options)
   return renderer.render(scope)
 }
@@ -36,7 +36,7 @@ export function renderFn(
   template: string,
   resolveFn: ResolveFn,
   scope?: Scope,
-  options?: ICompileOptions
+  options?: CompileOptions
 ): string {
   const renderer: Renderer = compile(template, options)
   return renderer.renderFn(resolveFn, scope)
@@ -55,7 +55,7 @@ export function renderFnAsync(
   template: string,
   resolveFnAsync: ResolveFnAsync,
   scope?: Scope,
-  options?: ICompileOptions
+  options?: CompileOptions
 ): Promise<string> {
   const renderer: Renderer = compile(template, options)
   return renderer.renderFnAsync(resolveFnAsync, scope)

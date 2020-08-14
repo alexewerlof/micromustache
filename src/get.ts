@@ -5,7 +5,7 @@ export interface Scope {
   [key: string]: Scope | any
 }
 
-export interface IGetOptions {
+export interface GetOptions {
   /**
    * When set to a truthy value, we throw a `ReferenceError` for invalid varNames.
    * Invalid varNames are the ones that do not exist in the scope.
@@ -51,7 +51,7 @@ export interface IGetOptions {
 export function get(
   scope: Scope,
   varNameOrPropNames: string | string[],
-  options: IGetOptions = {}
+  options: GetOptions = {}
 ): any {
   if (!isObj(options)) {
     throw new TypeError(`get expects an object option. Got ${typeof options}`)

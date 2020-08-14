@@ -1,12 +1,12 @@
 import { isFn, isObj, isArr } from './utils'
-import { Scope, get, IGetOptions } from './get'
+import { Scope, get, GetOptions } from './get'
 import { toPath } from './topath'
-import { ITokens } from './tokenize'
+import { Tokens } from './tokenize'
 
 /**
  * The options passed to Renderer's constructor
  */
-export interface IRendererOptions extends IGetOptions {
+export interface RendererOptions extends GetOptions {
   /**
    * When set to a truthy value, rendering literally puts a 'null' or
    * 'undefined' for values that are `null` or `undefined`.
@@ -49,7 +49,7 @@ export class Renderer {
    * @param options - some options for customizing the rendering process
    * @throws `TypeError` if the token is invalid
    */
-  constructor(private readonly tokens: ITokens, private readonly options: IRendererOptions = {}) {
+  constructor(private readonly tokens: Tokens, private readonly options: RendererOptions = {}) {
     if (
       !isObj(tokens) ||
       !isArr(tokens.strings) ||
