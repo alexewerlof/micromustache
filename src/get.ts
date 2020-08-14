@@ -1,4 +1,4 @@
-import { toPath } from './parse'
+import { parseRef } from './parse'
 import { isObj, isProp, isNum } from './utils'
 
 export interface Scope {
@@ -42,7 +42,7 @@ export interface GetOptions {
  * If it cannot find a value in the specified path, it may return undefined or throw an error
  * depending on the value of the `validatePath` param.
  * @param scope an object to resolve value from
- * @param refOrPath the ref string or a path array (see [[toPath]])
+ * @param refOrPath the ref string or a path array (see [[parseRef]])
  * @throws `SyntaxError` if the ref string cannot be parsed
  * @throws `ReferenceError` if the scope does not contain the requested key and the `validatePath`
  * is set to a truthy value
@@ -59,7 +59,7 @@ export function get(scope: Scope, refOrPath: string | string[], options: GetOpti
     throw new RangeError(`Expected a positive number for maxPathLen. Got ${maxPathLen}`)
   }
 
-  const path = Array.isArray(refOrPath) ? refOrPath : toPath.cached(refOrPath)
+  const path = Array.isArray(refOrPath) ? refOrPath : parseRef.cached(refOrPath)
 
   const propNamesAsStr = () => path.join(' > ')
 

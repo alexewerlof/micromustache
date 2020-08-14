@@ -1,6 +1,6 @@
 import { isFn, isObj, isArr } from './utils'
 import { Scope, get, GetOptions } from './get'
-import { toPath } from './parse'
+import { parseRef } from './parse'
 import { Tokens } from './tokenize'
 
 /**
@@ -39,9 +39,9 @@ export type ResolveFnAsync = (ref: string, scope?: Scope) => Promise<any>
  */
 export class Renderer {
   /**
-   * Another cache that holds the parsed values for `toPath()` one per ref
+   * Another cache that holds the parsed values for `parseRef()` one per ref
    */
-  private toPathCache: string[][]
+  private parseRefCache: string[][]
 
   /**
    * Creates a new Renderer instance. This is called internally by the compiler.
@@ -65,24 +65,24 @@ export class Renderer {
     }
 
     if (options.validateRef) {
-      // trying to initialize toPathCache parses them which is also validation
+      // trying to initialize parseRefCache parses them which is also validation
       this.cacheParsedPaths()
     }
   }
 
   /**
-   * This function is called internally for filling in the `toPathCache` cache.
+   * This function is called internally for filling in the `parseRefCache` cache.
    * If the `validateRef` option for the constructor is set to a truthy
    * value, this function is called immediately which leads to a validation as
    * well because it throws an error if it cannot parse refs.
    */
   private cacheParsedPaths(): void {
     const { refs } = this.tokens
-    if (this.toPathCache === undefined) {
-      this.toPathCache = new Array<string[]>(refs.length)
+    if (this.parseRefCache === undefined) {
+      this.parseRefCache = new Array<string[]>(refs.length)
 
       for (let i = 0; i < refs.length; i++) {
-        this.toPathCache[i] = toPath.cached(refs[i])
+        this.parseRefCache[i] = parseRef.cached(refs[i])
       }
     }
   }
@@ -106,7 +106,7 @@ export class Renderer {
 
     for (let i = 0; i < length; i++) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      values[i] = get(scope, this.toPathCache[i], this.options)
+      values[i] = get(scope, this.parseRefCache[i], this.options)
     }
 
     return this.stringify(values)

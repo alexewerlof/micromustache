@@ -81,7 +81,7 @@ const pathPatterns: Array<RegExp> = [
  * value.
  * For example `['a', 'b', 'c']`
  */
-export function toPath(ref: string): string[] {
+export function parseRef(ref: string): string[] {
   if (!isStr(ref)) {
     throw new TypeError(`Cannot parse path. Expected string. Got a ${typeof ref}`)
   }
@@ -120,18 +120,18 @@ export function toPath(ref: string): string[] {
 }
 
 /**
- * This is just a faster version of `toPath()`
+ * This is just a faster version of `parseRef()`
  * @internal
  */
-function toPathCached(ref: string): string[] {
+function parseRefCached(ref: string): string[] {
   let result = cache.get(ref)
 
   if (result === undefined) {
-    result = toPath(ref)
+    result = parseRef(ref)
     cache.set(ref, result)
   }
 
   return result
 }
 
-toPath.cached = toPathCached
+parseRef.cached = parseRefCached
