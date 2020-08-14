@@ -1,6 +1,6 @@
 import { isFn, isObj, isArr } from './utils'
 import { Scope, get, GetOptions } from './get'
-import { toPath } from './topath'
+import { toPath } from './parse'
 import { Tokens } from './tokenize'
 
 /**

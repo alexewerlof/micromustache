@@ -1,4 +1,4 @@
-import { toPath } from './topath'
+import { toPath } from './parse'
 import { isObj, isProp, isNum } from './utils'
 
 export interface Scope {

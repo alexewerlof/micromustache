@@ -1,4 +1,4 @@
-import { toPath } from './topath'
+import { toPath } from './parse'
 
 interface ISuccessCases {
   [input: string]: string[]
