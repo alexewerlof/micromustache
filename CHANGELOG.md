@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The `scope` could be a `function` as well, but with this release we only accept `Object`.
 - Previously string characters could be accessed with array-index syntax, but now it is not possible (eg. `render('{{str[0]}}', { str: 'Hello' })` will not return `'H'` anymore)
 - Drop support for Safari10
+- v8.1+: parsing varNames is now more accurate. As a result of that, a few edge cases that would pass previously will throw an error. For example `a[-11]` was OK before but it's an error now (`a[11]` or `a[+11]` still work as expected). The bracket accessor will only accept numbers or quoted strings (`a["true"]` or `a['true']` work while `a[true]` is an error). So you might want to ensure that your templates don't have such issues.
 
 ## 7.0.0
 

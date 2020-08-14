@@ -11,9 +11,6 @@ import { isStr } from './utils'
  */
 const cacheSize = 1000
 
-/** @internal */
-const quoteChars = '\'"`'
-
 /**
  * @internal
  */
@@ -54,71 +51,23 @@ export class Cache<T> {
 /** @internal */
 const cache = new Cache<string[]>(cacheSize)
 
-/**
- * @internal
- * Removes the quotes from a string and returns it.
- * @param propName an string with quotations
- * @throws `SyntaxError` if the quotation symbols don't match or one is missing
- * @returns the input with its quotes removed
- */
-function propBetweenBrackets(propName: string): string {
-  // in our algorithms key is always a string and never only a string of spaces
-  const firstChar = propName.charAt(0)
-  const lastChar = propName.substr(-1)
-  if (quoteChars.includes(firstChar) || quoteChars.includes(lastChar)) {
-    if (propName.length < 2 || firstChar !== lastChar) {
-      throw new SyntaxError(`Mismatching string quotation: "${propName}"`)
-    }
-    return propName.substring(1, propName.length - 1)
+/** internal */
+interface RegExpWithNameGroup extends RegExpExecArray {
+  groups: {
+    name: string
   }
-
-  if (propName.includes('[')) {
-    throw new SyntaxError(`Missing ] in varName "${propName}"`)
-  }
-
-  // Normalize leading plus from numerical indices
-  if (firstChar === '+') {
-    return propName.substr(1)
-  }
-
-  return propName
 }
 
-/** @internal */
-function pushPropName(propNames: string[], propName: string, preDot: boolean): string[] {
-  let pName = propName.trim()
-  if (pName === '') {
-    return propNames
-  }
-
-  if (pName.startsWith('.')) {
-    if (preDot) {
-      pName = pName.substr(1).trim()
-      if (pName === '') {
-        return propNames
-      }
-    } else {
-      throw new SyntaxError(`Unexpected . at the start of "${propName}"`)
-    }
-  } else if (preDot) {
-    throw new SyntaxError(`Missing . at the start of "${propName}"`)
-  }
-
-  if (pName.endsWith('.')) {
-    throw new SyntaxError(`Unexpected "." at the end of "${propName}"`)
-  }
-
-  const propNameParts = pName.split('.')
-  for (const propNamePart of propNameParts) {
-    const trimmedPropName = propNamePart.trim()
-    if (trimmedPropName === '') {
-      throw new SyntaxError(`Empty prop name when parsing "${propName}"`)
-    }
-    propNames.push(trimmedPropName)
-  }
-
-  return propNames
-}
+const parserPatterns: Array<RegExp> = [
+  // `.a` the most common patter (hence first)
+  /\s*\.\s*(?<name>[$_\w]+)\s*/y,
+  // `a['b']` or `a["b"]` or `a[\`b\`]`
+  /\s*\[\s*(?<quote>['"`])(?<name>.*?)\k<quote>\s*\]\s*/y,
+  // `a[N]` where N is a positive integer (`String(Number.MAX_SAFE_INTEGER).length` is 16)
+  /\s*\[\s*\+?\s*0*(?<name>\d{1,16}?)\s*\]\s*/y,
+  // `a` at the start of the string
+  /^\s*(?<name>[$_\w]+)\s*/y,
+]
 
 /**
  * Breaks a variable name to an array of strings that can be used to get a
@@ -136,40 +85,36 @@ export function toPath(varName: string): string[] {
     throw new TypeError(`Cannot parse path. Expected string. Got a ${typeof varName}`)
   }
 
-  let openBracketIndex: number
-  let closeBracketIndex = 0
-  let beforeBracket: string
-  let propName: string
-  let preDot = false
-  const propNames = new Array<string>(0)
+  const result: string[] = []
 
-  for (let currentIndex = 0; currentIndex < varName.length; currentIndex = closeBracketIndex) {
-    openBracketIndex = varName.indexOf('[', currentIndex)
-    if (openBracketIndex === -1) {
-      break
-    }
-
-    closeBracketIndex = varName.indexOf(']', openBracketIndex)
-    if (closeBracketIndex === -1) {
-      throw new SyntaxError(`Missing ] in varName "${varName}"`)
-    }
-
-    propName = varName.substring(openBracketIndex + 1, closeBracketIndex).trim()
-
-    if (propName.length === 0) {
-      throw new SyntaxError('Unexpected token ]')
-    }
-
-    closeBracketIndex++
-    beforeBracket = varName.substring(currentIndex, openBracketIndex)
-    pushPropName(propNames, beforeBracket, preDot)
-
-    propNames.push(propBetweenBrackets(propName))
-    preDot = true
+  if (varName.trim() === '') {
+    return result
   }
 
-  const rest = varName.substring(closeBracketIndex)
-  return pushPropName(propNames, rest, preDot)
+  let currIndex = 0
+
+  let patternMatched
+  do {
+    patternMatched = false
+    for (const pattern of parserPatterns) {
+      pattern.lastIndex = currIndex
+      const parsedResult = pattern.exec(varName)
+
+      if (parsedResult) {
+        patternMatched = true
+        currIndex = pattern.lastIndex
+        // For perf reasons we assume that all regex groups have a capture group called name
+        result.push((parsedResult as RegExpWithNameGroup).groups.name)
+        break
+      }
+    }
+  } while (patternMatched)
+
+  if (currIndex !== varName.length) {
+    throw new SyntaxError(`Could not parse varName: "${varName}"`)
+  }
+
+  return result
 }
 
 /**

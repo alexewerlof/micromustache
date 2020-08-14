@@ -28,10 +28,10 @@ describe('render', () => {
         })
       ).toBe('hello world')
       expect(
-        render('Ohoy! {{i}}', {
+        render('Ahoy! {{i}}', {
           i: 'hello',
         })
-      ).toBe('Ohoy! hello')
+      ).toBe('Ahoy! hello')
       expect(
         render('Aloha! {{i}} world', {
           i: 'hello',
@@ -41,11 +41,11 @@ describe('render', () => {
 
     it('can replace two variables', () => {
       expect(
-        render('{{i}}{{j}}', {
+        render('{{i}} {{j}}', {
           i: 'hello',
           j: 'world',
         })
-      ).toBe('helloworld')
+      ).toBe('hello world')
       expect(
         render('{{i}} {{j}}', {
           i: 'hello',
@@ -115,7 +115,7 @@ describe('render', () => {
       ).toBe('ac')
     })
 
-    it.skip('throws for an invalid var name', () => {
+    it('throws for an invalid var name', () => {
       expect(() =>
         render('{{a b}}', {
           a: 1,
@@ -125,7 +125,7 @@ describe('render', () => {
       ).toThrow()
     })
 
-    it('can interpolate multiple occurances of the variable', () => {
+    it('can interpolate multiple occupance of the variable', () => {
       expect(
         render('{{a}}{{a}}{{a}}', {
           a: 'hello',
