@@ -2,12 +2,12 @@ const { render } = require('../')
 
 try {
   console.log(
-    'We claim that all varNames refer to properties that should exist: ',
+    'We claim that all refs refer to properties that should exist: ',
     render(
       'There is no {{a.b.c}}!',
       {},
       {
-        propsExist: true,
+        validatePath: true,
       }
     )
   )
@@ -15,6 +15,6 @@ try {
   console.log('That is why it throws:', e.message)
 }
 
-console.log('But without propsExist flag it is more forgiving:')
+console.log('But without validatePath flag it is more forgiving:')
 
 console.log(render('There is no {{a.b.c}}!', { a: 'foo' }))

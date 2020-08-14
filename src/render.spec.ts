@@ -115,7 +115,7 @@ describe('render', () => {
       ).toBe('ac')
     })
 
-    it('throws for an invalid var name', () => {
+    it('throws for an invalid ref', () => {
       expect(() =>
         render('{{a b}}', {
           a: 1,
@@ -229,7 +229,7 @@ describe('render', () => {
               },
             },
           },
-          { propsExist: true }
+          { validatePath: true }
         )
       ).toThrow()
     })
@@ -292,8 +292,8 @@ describe('render', () => {
 
   describe('.renderFn()', () => {
     it('calls the custom resolve function', () => {
-      // Just returns the reversed variable name regardless of value
-      const reverseString: ResolveFn = (varName) => varName.split('').reverse().join('')
+      // Just returns the reversed ref regardless of value
+      const reverseString: ResolveFn = (ref) => ref.split('').reverse().join('')
 
       expect(reverseString('Alex')).toBe('xelA')
       expect(
@@ -304,13 +304,13 @@ describe('render', () => {
     })
 
     it('passes the scope to the custom resolve function', () => {
-      // Just returns the reversed variable name regardless of value
+      // Just returns the reversed ref regardless of value
       const resolveFn: ResolveFn = (
-        varName,
+        ref,
         obj: {
-          [varName: string]: string
+          [ref: string]: string
         }
-      ) => obj[varName]
+      ) => obj[ref]
 
       const scope = { name: 'Alex' }
       expect(resolveFn('name', scope)).toBe(scope.name)
@@ -322,14 +322,14 @@ describe('render', () => {
 
   describe('.renderFnAsync()', () => {
     it('passes the scope to the custom resolve function', async () => {
-      // Just returns the reversed variable name regardless of value
+      // Just returns the reversed ref regardless of value
       const resolveFn: ResolveFnAsync = async (
-        varName,
+        ref,
         obj: {
-          [varName: string]: string
+          [ref: string]: string
         }
         // eslint-disable-next-line @typescript-eslint/require-await
-      ): Promise<string | undefined> => obj[varName]
+      ): Promise<string | undefined> => obj[ref]
 
       const scope = { name: 'Alex' }
       expect(await resolveFn('name', scope)).toBe(scope.name)

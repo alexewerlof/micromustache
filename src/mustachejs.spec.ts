@@ -98,14 +98,14 @@ const testCases: ITestCase[] = [
     },
   },
   {
-    description: 'numerical variable name',
+    description: 'numerical ref',
     template: '{{1}}',
     scope: {
       '1': '-',
     },
   },
   {
-    description: 'an invalid javascript id as variable name',
+    description: 'an invalid javascript id as ref',
     template: '{{1a}}',
     scope: {
       '1a': '-',
@@ -188,42 +188,42 @@ const testCases: ITestCase[] = [
     },
   },
   {
-    description: '$ as variable name',
+    description: '$ as ref',
     template: '{{$}}',
     scope: {
       $: 'test',
     },
   },
   {
-    description: 'underline variable name',
+    description: 'underline ref',
     template: '{{_}}',
     scope: {
       _: 'test',
     },
   },
   {
-    description: 'empty spaces before variable name',
+    description: 'empty spaces before ref',
     template: '{{   a}}',
     scope: {
       a: 'test',
     },
   },
   {
-    description: 'empty spaces after variable name',
+    description: 'empty spaces after ref',
     template: '{{a   }}',
     scope: {
       a: 'test',
     },
   },
   {
-    description: 'empty spaces around the variable name',
+    description: 'empty spaces around the ref',
     template: '{{   a   }}',
     scope: {
       a: 'test',
     },
   },
   {
-    description: '"var" as variable name',
+    description: '"var" as ref',
     template: '{{var}}',
     scope: {
       var: 'test',

@@ -8,9 +8,9 @@ const scope = {
 console.log(
   renderFn(
     'Hi {{names[<idx>]}}!',
-    function resolveFn(varName, scope) {
+    function resolveFn(ref, scope) {
       // we'll get names[<idx>] here
-      const interpolateAngleBrackets = render(varName, scope, { tags: ['<', '>'] })
+      const interpolateAngleBrackets = render(ref, scope, { tags: ['<', '>'] })
       // Now we have names[2] which we can feed into the render function again
       return render('{{' + interpolateAngleBrackets + '}}', scope)
     },

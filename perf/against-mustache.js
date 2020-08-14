@@ -45,12 +45,12 @@ function compare(f1, f2) {
 
 const LEN = 100
 
-const longVarName = 'x'.repeat(LEN)
-const longScope = { [longVarName]: 'y'.repeat(LEN) }
-const longTemplate = ('{{' + longVarName + '}} and ').repeat(LEN)
+const longRef = 'x'.repeat(LEN)
+const longScope = { [longRef]: 'y'.repeat(LEN) }
+const longTemplate = ('{{' + longRef + '}} and ').repeat(LEN)
 
 function micromustacheLong() {
-  return micromustache.render(longTemplate, longScope, { maxVarNameLength: 999999 })
+  return micromustache.render(longTemplate, longScope, { maxRefLen: 999999 })
 }
 
 function mustacheLong() {
@@ -86,7 +86,7 @@ for (let i = 0, currObj = deepScope; i < LEN; i++) {
 const deepTemplate = '{{' + indices.join('.') + '}}'
 
 function micromustacheDeep() {
-  return micromustache.render(deepTemplate, deepScope, { depth: LEN, maxVarNameLength: 999999 })
+  return micromustache.render(deepTemplate, deepScope, { maxPathLen: LEN, maxRefLen: 999999 })
 }
 
 function mustacheDeep() {

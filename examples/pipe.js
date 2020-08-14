@@ -15,8 +15,8 @@ const pipes = {
 
 const template = "{{name}}'s password is {{password | charCount | stars}}!"
 
-function resolveFn(varName, scope) {
-  const [vn, ...pipeNames] = varName.split('|')
+function resolveFn(ref, scope) {
+  const [vn, ...pipeNames] = ref.split('|')
   const value = get(scope, vn)
   if (pipeNames.length) {
     const fnArr = pipeNames.map((pipeName) => pipes[pipeName.trim()])

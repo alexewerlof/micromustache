@@ -55,16 +55,16 @@ function runFn(successEl, errorEl, fn) {
 }
 
 function render() {
-  console.log('Render', getVal(id('validateVarNames')))
+  console.log('Render', getVal(id('validateRef')))
   // Handle the template errors
   const renderer = runFn(template, templateError, () =>
     micromustache.compile(getVal(template), {
-      depth: getVal(id('depth')),
       explicit: getVal(id('explicit')),
-      maxVarNameLength: getVal(id('maxVarNameLength')),
-      propsExist: getVal(id('propsExist')),
-      tags: [getVal(id('tag0')), getVal(id('tag1'))],
-      validateVarNames: getVal(id('validateVarNames')),
+      validateRef: getVal(id('validateRef')),
+      validatePath: getVal(id('validatePath')),
+      maxRefLen: getVal(id('maxRefLen')),
+      maxPathLen: getVal(id('maxPathLen')),
+      tags: [getVal(id('tags0')), getVal(id('tags1'))],
     })
   )
   // Handle the scope errors
@@ -92,13 +92,13 @@ ready(() => {
   onInput(optionsToggle, () => (options.hidden = !optionsToggle.checked))
   onInput(scope, render)
   onInput(template, render)
-  onInput(id('depth'), render)
   onInput(id('explicit'), render)
-  onInput(id('maxVarNameLength'), render)
-  onInput(id('propsExist'), render)
-  onInput(id('tag0'), render)
-  onInput(id('tag1'), render)
-  onInput(id('validateVarNames'), render)
+  onInput(id('validateRef'), render)
+  onInput(id('validatePath'), render)
+  onInput(id('maxRefLen'), render)
+  onInput(id('maxPathLen'), render)
+  onInput(id('tags0'), render)
+  onInput(id('tags1'), render)
 
   onInput(exampleSelector, () => {
     const example = examples[getVal(exampleSelector)]

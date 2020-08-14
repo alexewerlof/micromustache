@@ -110,7 +110,7 @@ function greet(name, lang) {
 }
 ```
 
-Now it's better! 😎 All the templates are together and they are easy to update and translate. By default, we use the popular syntax that encloses variable names between double curly braces (`{{` and `}}`) but you can customize _micromustache_ if you prefer something else.
+Now it's better! 😎 All the templates are together and they are easy to update and translate. By default, we use the popular syntax that encloses refs between double curly braces (`{{` and `}}`) but you can customize _micromustache_ if you prefer something else.
 Just like template literals, you can of course reference deep nested objects:
 
 ```javascript
@@ -127,11 +127,11 @@ console.log(render('I like {{fruits[1].color}}!', scope))
 
 *It worth to note that Mustache and Handlebars don't support `fruits[1].color` syntax and rather expect you to write it as `fruits.1.color`.*
 
-The real power of micromustache comes from letting you resolve a variable name using your own functions! To pass a resolver function, you can use `renderFn()` instead of `render()`:
+The real power of micromustache comes from letting you resolve a ref using your own functions! To pass a resolver function, you can use `renderFn()` instead of `render()`:
 
 ```javascript
 const { renderFn } = require('micromustache')
-// Just converts the variable name to upper case
+// Just converts the ref to upper case
 const up = str => str.toUpperCase()
 
 console.log(renderFn('My name is {{Alex}}!', up))
@@ -144,10 +144,10 @@ The resolver gets the scope as its second parameter. If you want to lookup a val
 const { renderFn, get } = require('micromustache')
 
 // Looks up the value and converts it to stars
-function star(varName, scope) {
-  // varName comes from the template and is 'password' here
+function star(ref, scope) {
+  // ref comes from the template and is 'password' here
   // scope is { password: 'abc' }
-  const value = get(scope, varName) // value is 'abc'
+  const value = get(scope, ref) // value is 'abc'
   return '*'.repeat(value.length)
 }
 

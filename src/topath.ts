@@ -2,12 +2,12 @@ import { isStr } from './utils'
 
 /**
  * @internal
- * The number of different varNames that will be cached.
- * If a varName is cached, the actual parsing algorithm will not be called
+ * The number of different refs that will be cached.
+ * If a ref is cached, the actual parsing algorithm will not be called
  * which significantly improves performance.
  * However, this cache is size-limited to prevent degrading the user's software
  * over a period of time.
- * If the cache is full, we start removing older varNames one at a time.
+ * If the cache is full, we start removing older refs one at a time.
  */
 const cacheSize = 1000
 
@@ -16,7 +16,7 @@ const cacheSize = 1000
  */
 export class Cache<T> {
   private map: {
-    [varName: string]: T
+    [ref: string]: T
   }
 
   private cachedKeys: string[]
@@ -71,25 +71,25 @@ const pathPatterns: Array<RegExp> = [
 ]
 
 /**
- * Breaks a variable name to an array of strings that can be used to get a
- * particular value from an object
- * @param varName - the variable name as it occurs in the template.
+ * Breaks a reference to an array of strings.
+ * The result can be used to [[get]] a particular value from a [[Scope]] object
+ * @param ref - the ref as it occurs in the template.
  * For example `a["b"].c`
- * @throws `TypeError` if the varName is not a string
- * @throws `SyntaxError` if the varName syntax has a problem
+ * @throws `TypeError` if the ref is not a string
+ * @throws `SyntaxError` if the ref syntax has a problem
  * @returns - an array of property names that can be used to get a particular
  * value.
  * For example `['a', 'b', 'c']`
  */
-export function toPath(varName: string): string[] {
-  if (!isStr(varName)) {
-    throw new TypeError(`Cannot parse path. Expected string. Got a ${typeof varName}`)
+export function toPath(ref: string): string[] {
+  if (!isStr(ref)) {
+    throw new TypeError(`Cannot parse path. Expected string. Got a ${typeof ref}`)
   }
 
-  const result: string[] = []
+  const path: string[] = []
 
-  if (varName.trim() === '') {
-    return result
+  if (ref.trim() === '') {
+    return path
   }
 
   let currIndex = 0
@@ -100,34 +100,35 @@ export function toPath(varName: string): string[] {
     patternMatched = false
     for (const pattern of pathPatterns) {
       pattern.lastIndex = currIndex
-      const parsedResult = pattern.exec(varName)
+      const parsedResult = pattern.exec(ref)
 
       if (parsedResult) {
         patternMatched = true
         currIndex = pattern.lastIndex
         // For perf reasons we assume that all regex groups have a capture group called name
-        result.push((parsedResult as RegExpWithNameGroup).groups.name)
+        path.push((parsedResult as RegExpWithNameGroup).groups.name)
         break
       }
     }
   } while (patternMatched)
 
-  if (currIndex !== varName.length) {
-    throw new SyntaxError(`Could not parse varName: "${varName}"`)
+  if (currIndex !== ref.length) {
+    throw new SyntaxError(`Could not parse ref: "${ref}"`)
   }
 
-  return result
+  return path
 }
 
 /**
  * This is just a faster version of `toPath()`
+ * @internal
  */
-function toPathCached(varName: string): string[] {
-  let result = cache.get(varName)
+function toPathCached(ref: string): string[] {
+  let result = cache.get(ref)
 
   if (result === undefined) {
-    result = toPath(varName)
-    cache.set(varName, result)
+    result = toPath(ref)
+    cache.set(ref, result)
   }
 
   return result

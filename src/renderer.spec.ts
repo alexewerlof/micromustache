@@ -2,16 +2,14 @@ import { Renderer, ResolveFn } from './index'
 
 describe('Renderer', () => {
   it('is a constructor', () => {
-    expect(new Renderer({ strings: ['the string theory'], varNames: [] })).toEqual(
-      expect.any(Renderer)
-    )
+    expect(new Renderer({ strings: ['the string theory'], refs: [] })).toEqual(expect.any(Renderer))
   })
 
   describe('.render()', () => {
     it('renders a simple template that only contains numbers', () => {
       const renderer = new Renderer({
         strings: ['4', '6'],
-        varNames: ['foo'],
+        refs: ['foo'],
       })
 
       expect(renderer.render({ foo: 5 })).toEqual('456')
@@ -19,16 +17,16 @@ describe('Renderer', () => {
   })
 
   describe('.renderFn()', () => {
-    it('runs the function for every varName', () => {
+    it('runs the function for every ref', () => {
       const renderer = new Renderer({
         strings: ['4', '6'],
-        varNames: ['foo'],
+        refs: ['foo'],
       })
 
-      function resolver(this: null, varName: string): string {
-        expect(varName).toEqual('foo')
+      function resolver(this: null, ref: string): string {
+        expect(ref).toEqual('foo')
         expect(this).toEqual(null)
-        return varName.toUpperCase()
+        return ref.toUpperCase()
       }
 
       expect(renderer.renderFn(resolver, { foo: 5 })).toEqual('4FOO6')
@@ -39,16 +37,16 @@ describe('Renderer', () => {
     it('passes the scope to the custom resolve function', async () => {
       const resolver = new Renderer({
         strings: ['Hello! My name is ', '!'],
-        varNames: ['name'],
+        refs: ['name'],
       })
-      // Just returns the reversed variable name regardless of value
+      // Just returns the reversed ref regardless of value
       const resolveFn: ResolveFn = async (
-        varName,
+        ref,
         obj: {
-          [varName: string]: string
+          [ref: string]: string
         }
         // eslint-disable-next-line @typescript-eslint/require-await
-      ) => obj[varName]
+      ) => obj[ref]
 
       const scope = { name: 'Alex' }
 
