@@ -98,14 +98,14 @@ const testCases: ITestCase[] = [
     },
   },
   {
-    description: 'numerical ref',
+    description: 'numerical path',
     template: '{{1}}',
     scope: {
       '1': '-',
     },
   },
   {
-    description: 'an invalid javascript id as ref',
+    description: 'an invalid javascript id as path',
     template: '{{1a}}',
     scope: {
       '1a': '-',
@@ -188,42 +188,42 @@ const testCases: ITestCase[] = [
     },
   },
   {
-    description: '$ as ref',
+    description: '$ as path',
     template: '{{$}}',
     scope: {
       $: 'test',
     },
   },
   {
-    description: 'underline ref',
+    description: 'underline path',
     template: '{{_}}',
     scope: {
       _: 'test',
     },
   },
   {
-    description: 'empty spaces before ref',
+    description: 'empty spaces before path',
     template: '{{   a}}',
     scope: {
       a: 'test',
     },
   },
   {
-    description: 'empty spaces after ref',
+    description: 'empty spaces after path',
     template: '{{a   }}',
     scope: {
       a: 'test',
     },
   },
   {
-    description: 'empty spaces around the ref',
+    description: 'empty spaces around the path',
     template: '{{   a   }}',
     scope: {
       a: 'test',
     },
   },
   {
-    description: '"var" as ref',
+    description: '"var" as path',
     template: '{{var}}',
     scope: {
       var: 'test',

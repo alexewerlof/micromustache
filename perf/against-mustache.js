@@ -50,7 +50,7 @@ const longScope = { [longRef]: 'y'.repeat(LEN) }
 const longTemplate = ('{{' + longRef + '}} and ').repeat(LEN)
 
 function micromustacheLong() {
-  return micromustache.render(longTemplate, longScope, { maxRefLen: 999999 })
+  return micromustache.render(longTemplate, longScope, { maxPathLen: 999999 })
 }
 
 function mustacheLong() {
@@ -86,7 +86,7 @@ for (let i = 0, currObj = deepScope; i < LEN; i++) {
 const deepTemplate = '{{' + indices.join('.') + '}}'
 
 function micromustacheDeep() {
-  return micromustache.render(deepTemplate, deepScope, { maxPathLen: LEN, maxRefLen: 999999 })
+  return micromustache.render(deepTemplate, deepScope, { maxRefDepth: LEN, maxPathLen: 999999 })
 }
 
 function mustacheDeep() {

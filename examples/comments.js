@@ -3,7 +3,7 @@ const { renderFn, get } = require('../')
 console.log(
   renderFn(
     'This is not commented: "{{a}}" but this is: "{{!b}}"',
-    (ref, scope) => (/^\s*?!/.test(ref) ? '' : get(scope, ref)),
+    (path, scope) => (/^\s*?!/.test(path) ? '' : get(scope, path)),
     { a: 'hello', b: 'world' }
   )
 )

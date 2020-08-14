@@ -1,4 +1,4 @@
-import { parseRef } from './parse'
+import { parsePath } from './parse'
 
 interface ISuccessCases {
   [input: string]: string[]
@@ -8,7 +8,7 @@ function stringArrToString(arr: string[]): string {
   return '[' + arr.map((s) => `'${s}'`).join(', ') + ']'
 }
 
-describe('parseRef()', () => {
+describe('parsePath()', () => {
   describe('success cases:', () => {
     // input: expected output
     const testCases: ISuccessCases = {
@@ -83,7 +83,7 @@ describe('parseRef()', () => {
 
     for (const [input, output] of Object.entries(testCases)) {
       it(`'${input}'  ⇨  ${stringArrToString(output)}`, () => {
-        expect(parseRef(input)).toEqual(output)
+        expect(parsePath(input)).toEqual(output)
       })
     }
   })
@@ -142,13 +142,13 @@ describe('parseRef()', () => {
 
     for (const input of syntaxErrorsCases) {
       it(`throws SyntaxError for "${input}"`, () => {
-        expect(() => parseRef(input)).toThrow(SyntaxError)
+        expect(() => parsePath(input)).toThrow(SyntaxError)
       })
     }
 
     it('throws type error for invalid input types', () => {
-      expect(() => parseRef((undefined as unknown) as string)).toThrow(TypeError)
-      expect(() => parseRef((13 as unknown) as string)).toThrow(TypeError)
+      expect(() => parsePath((undefined as unknown) as string)).toThrow(TypeError)
+      expect(() => parsePath((13 as unknown) as string)).toThrow(TypeError)
     })
   })
 })

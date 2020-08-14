@@ -1,6 +1,6 @@
 import { isFn, isObj, isArr } from './utils'
 import { Scope, get, GetOptions } from './get'
-import { parseRef } from './parse'
+import { parsePath } from './parse'
 import { Tokens } from './tokenize'
 
 /**
@@ -13,23 +13,23 @@ export interface RendererOptions extends GetOptions {
    * By default it swallows those values to be compatible with Mustache.
    */
   readonly explicit?: boolean
-  /** when set to a truthy value, validates the refs */
-  readonly validateRef?: boolean
+  /** when set to a truthy value, validates the paths */
+  readonly validatePath?: boolean
 }
 
 /**
  * The callback for resolving a value (synchronous)
  * @param scope the scope object that was passed to .render() function
- * @param ref a string that appeared in the string between open and close tags
- * @example a template that is `Hi {{a.b.c}}!` leads to `'a.b.c'` as path
+ * @param path a string that appeared in the string between open and close tags
+ * @example a template that is `Hi {{a.b.c}}!` leads to `'a.b.c'` as ref
  * @returns the value to be interpolated.
  */
-export type ResolveFn = (ref: string, scope?: Scope) => any
+export type ResolveFn = (path: string, scope?: Scope) => any
 
 /**
  * Same as `ResolveFn` but for asynchronous functions
  */
-export type ResolveFnAsync = (ref: string, scope?: Scope) => Promise<any>
+export type ResolveFnAsync = (path: string, scope?: Scope) => Promise<any>
 
 /**
  * This class does the heavy lifting of interpolation (putting the actual values
@@ -39,7 +39,7 @@ export type ResolveFnAsync = (ref: string, scope?: Scope) => Promise<any>
  */
 export class Renderer {
   /**
-   * Another cache that holds the parsed values for `parseRef()` one per ref
+   * Another cache that holds the parsed values for `parsePath()` one per path
    */
   private parseRefCache: string[][]
 
@@ -53,8 +53,8 @@ export class Renderer {
     if (
       !isObj(tokens) ||
       !isArr(tokens.strings) ||
-      !isArr(tokens.refs) ||
-      tokens.strings.length !== tokens.refs.length + 1
+      !isArr(tokens.paths) ||
+      tokens.strings.length !== tokens.paths.length + 1
     ) {
       // This is most likely an internal error from tokenization algorithm
       throw new TypeError(`Invalid tokens object`)
@@ -64,7 +64,7 @@ export class Renderer {
       throw new TypeError(`Options should be an object. Got a ${typeof options}`)
     }
 
-    if (options.validateRef) {
+    if (options.validatePath) {
       // trying to initialize parseRefCache parses them which is also validation
       this.cacheParsedPaths()
     }
@@ -72,33 +72,33 @@ export class Renderer {
 
   /**
    * This function is called internally for filling in the `parseRefCache` cache.
-   * If the `validateRef` option for the constructor is set to a truthy
+   * If the `validatePath` option for the constructor is set to a truthy
    * value, this function is called immediately which leads to a validation as
-   * well because it throws an error if it cannot parse refs.
+   * well because it throws an error if it cannot parse paths.
    */
   private cacheParsedPaths(): void {
-    const { refs } = this.tokens
+    const { paths } = this.tokens
     if (this.parseRefCache === undefined) {
-      this.parseRefCache = new Array<string[]>(refs.length)
+      this.parseRefCache = new Array<string[]>(paths.length)
 
-      for (let i = 0; i < refs.length; i++) {
-        this.parseRefCache[i] = parseRef.cached(refs[i])
+      for (let i = 0; i < paths.length; i++) {
+        this.parseRefCache[i] = parsePath.cached(paths[i])
       }
     }
   }
 
   /**
-   * Replaces every {{ref}} inside the template with values from the scope
+   * Replaces every path inside the template with values from the scope
    * parameter.
    *
-   * @param template The template containing one or more {{ref}} as
-   * placeholders for values from the `scope` parameter.
-   * @param scope An object containing values for refs from the the
-   * template. If it's omitted, we default to an empty object.
+   * @param template The template containing one or more path as placeholders for values from the
+   * `scope` parameter.
+   * @param scope An object containing values for paths from the the template.
+   * If it's omitted, we default to an empty object.
    */
   public render = (scope: Scope = {}): string => {
-    const { refs } = this.tokens
-    const { length } = refs
+    const { paths } = this.tokens
+    const { length } = paths
 
     this.cacheParsedPaths()
 
@@ -113,8 +113,7 @@ export class Renderer {
   }
 
   /**
-   * Same as [[render]] but accepts a resolver function which will be
-   * responsible for returning a value for every ref.
+   * Same as [[render]] but accepts a resolver function which returns a value for every path.
    */
   public renderFn = (resolveFn: ResolveFn, scope: Scope = {}): string => {
     const values = this.resolveRefs(resolveFn, scope)
@@ -122,8 +121,8 @@ export class Renderer {
   }
 
   /**
-   * Same as [[render]] but accepts a resolver function which will be responsible
-   * for returning promise that resolves to a value for every ref.
+   * Same as [[render]] but accepts a resolver function which returns a promise that resolves to a
+   * value for every path.
    */
   public renderFnAsync = (resolveFnAsync: ResolveFnAsync, scope: Scope = {}): Promise<string> => {
     return Promise.all(this.resolveRefs(resolveFnAsync, scope)).then((values) =>
@@ -132,16 +131,16 @@ export class Renderer {
   }
 
   private resolveRefs(resolveFn: ResolveFn, scope: Scope = {}): any[] {
-    const { refs } = this.tokens
+    const { paths } = this.tokens
     if (!isFn<ResolveFnAsync>(resolveFn)) {
       throw new TypeError(`Expected a resolver function. Got ${String(resolveFn)}`)
     }
 
-    const { length } = refs
+    const { length } = paths
     const values = new Array<any>(length)
     for (let i = 0; i < length; i++) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      values[i] = resolveFn.call(null, refs[i], scope)
+      values[i] = resolveFn.call(null, paths[i], scope)
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return

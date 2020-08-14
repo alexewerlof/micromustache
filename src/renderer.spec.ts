@@ -2,14 +2,16 @@ import { Renderer, ResolveFn } from './index'
 
 describe('Renderer', () => {
   it('is a constructor', () => {
-    expect(new Renderer({ strings: ['the string theory'], refs: [] })).toEqual(expect.any(Renderer))
+    expect(new Renderer({ strings: ['the string theory'], paths: [] })).toEqual(
+      expect.any(Renderer)
+    )
   })
 
   describe('.render()', () => {
     it('renders a simple template that only contains numbers', () => {
       const renderer = new Renderer({
         strings: ['4', '6'],
-        refs: ['foo'],
+        paths: ['foo'],
       })
 
       expect(renderer.render({ foo: 5 })).toEqual('456')
@@ -17,16 +19,16 @@ describe('Renderer', () => {
   })
 
   describe('.renderFn()', () => {
-    it('runs the function for every ref', () => {
+    it('runs the function for every path', () => {
       const renderer = new Renderer({
         strings: ['4', '6'],
-        refs: ['foo'],
+        paths: ['foo'],
       })
 
-      function resolver(this: null, ref: string): string {
-        expect(ref).toEqual('foo')
+      function resolver(this: null, path: string): string {
+        expect(path).toEqual('foo')
         expect(this).toEqual(null)
-        return ref.toUpperCase()
+        return path.toUpperCase()
       }
 
       expect(renderer.renderFn(resolver, { foo: 5 })).toEqual('4FOO6')
@@ -37,16 +39,16 @@ describe('Renderer', () => {
     it('passes the scope to the custom resolve function', async () => {
       const resolver = new Renderer({
         strings: ['Hello! My name is ', '!'],
-        refs: ['name'],
+        paths: ['name'],
       })
-      // Just returns the reversed ref regardless of value
+      // Just returns the reversed path regardless of value
       const resolveFn: ResolveFn = async (
-        ref,
+        path,
         obj: {
-          [ref: string]: string
+          [path: string]: string
         }
         // eslint-disable-next-line @typescript-eslint/require-await
-      ) => obj[ref]
+      ) => obj[path]
 
       const scope = { name: 'Alex' }
 

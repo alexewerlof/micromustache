@@ -1,11 +1,11 @@
 const { renderFnAsync } = require('../')
 
-function delayedResolver(ref) {
+function delayedResolver(path) {
   return new Promise((resolve) => {
     const start = Date.now()
     setTimeout(() => {
       const duration = Date.now() - start
-      resolve(`${ref.toUpperCase()} (${duration}ms)`)
+      resolve(`${path.toUpperCase()} (${duration}ms)`)
     }, 1000)
   })
 }

@@ -14,8 +14,8 @@ const scope = {
 
 const template = 'x²={{pow(x, 2)}} and y³={{pow(y, 3)}} and |z|={{abs(z)}}'
 
-function resolveFn(ref, scope) {
-  const matches = ref.match(/(\w+)\(([^)]*)\)/)
+function resolveFn(path, scope) {
+  const matches = path.match(/(\w+)\(([^)]*)\)/)
   if (matches) {
     const [, fnName, params] = matches
     const paramNames = params.split(',').map((p) => p.trim())

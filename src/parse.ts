@@ -2,12 +2,12 @@ import { isStr } from './utils'
 
 /**
  * @internal
- * The number of different refs that will be cached.
- * If a ref is cached, the actual parsing algorithm will not be called
+ * The number of different paths that will be cached.
+ * If a path is cached, the actual parsing algorithm will not be called
  * which significantly improves performance.
  * However, this cache is size-limited to prevent degrading the user's software
  * over a period of time.
- * If the cache is full, we start removing older refs one at a time.
+ * If the cache is full, we start removing older paths one at a time.
  */
 const cacheSize = 1000
 
@@ -16,7 +16,7 @@ const cacheSize = 1000
  */
 export class Cache<T> {
   private map: {
-    [ref: string]: T
+    [path: string]: T
   }
 
   private cachedKeys: string[]
@@ -71,25 +71,24 @@ const pathPatterns: Array<RegExp> = [
 ]
 
 /**
- * Breaks a ref to an array of strings.
+ * Breaks a path to an array of strings.
  * The result can be used to [[get]] a particular value from a [[Scope]] object
- * @param ref - the ref as it occurs in the template.
+ * @param path - the path as it occurs in the template.
  * For example `a["b"].c`
- * @throws `TypeError` if the ref is not a string
- * @throws `SyntaxError` if the ref syntax has a problem
- * @returns - an array of property names that can be used to get a particular
- * value.
+ * @throws `TypeError` if the path is not a string
+ * @throws `SyntaxError` if the path syntax has a problem
+ * @returns - an array of property names that can be used to get a particular value.
  * For example `['a', 'b', 'c']`
  */
-export function parseRef(ref: string): string[] {
-  if (!isStr(ref)) {
-    throw new TypeError(`Cannot parse path. Expected string. Got a ${typeof ref}`)
+export function parsePath(path: string): string[] {
+  if (!isStr(path)) {
+    throw new TypeError(`Cannot parse ref. Expected string. Got a ${typeof path}`)
   }
 
-  const path: string[] = []
+  const ref: string[] = []
 
-  if (ref.trim() === '') {
-    return path
+  if (path.trim() === '') {
+    return ref
   }
 
   let currIndex = 0
@@ -100,38 +99,38 @@ export function parseRef(ref: string): string[] {
     patternMatched = false
     for (const pattern of pathPatterns) {
       pattern.lastIndex = currIndex
-      const parsedResult = pattern.exec(ref)
+      const parsedResult = pattern.exec(path)
 
       if (parsedResult) {
         patternMatched = true
         currIndex = pattern.lastIndex
         // For perf reasons we assume that all regex groups have a capture group called name
-        path.push((parsedResult as RegExpWithNameGroup).groups.name)
+        ref.push((parsedResult as RegExpWithNameGroup).groups.name)
         break
       }
     }
   } while (patternMatched)
 
-  if (currIndex !== ref.length) {
-    throw new SyntaxError(`Could not parse ref: "${ref}"`)
+  if (currIndex !== path.length) {
+    throw new SyntaxError(`Could not parse path: "${path}"`)
   }
 
-  return path
+  return ref
 }
 
 /**
- * This is just a faster version of `parseRef()`
+ * This is just a faster version of `parsePath()`
  * @internal
  */
-function parseRefCached(ref: string): string[] {
-  let result = cache.get(ref)
+function parseRefCached(path: string): string[] {
+  let result = cache.get(path)
 
   if (result === undefined) {
-    result = parseRef(ref)
-    cache.set(ref, result)
+    result = parsePath(path)
+    cache.set(path, result)
   }
 
   return result
 }
 
-parseRef.cached = parseRefCached
+parsePath.cached = parseRefCached

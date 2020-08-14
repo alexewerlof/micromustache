@@ -1,10 +1,10 @@
 import { isStr, isArr, isObj, isNum } from './utils'
 
 export interface Tokens {
-  /** An array of constant strings */
+  /** An array of constant strings extracted from the template */
   readonly strings: string[]
-  /** An array of refs */
-  readonly refs: string[]
+  /** An array of path strings extracted from the template */
+  readonly paths: string[]
 }
 
 /**
@@ -12,12 +12,12 @@ export interface Tokens {
  */
 export interface TokenizeOptions {
   /**
-   * Maximum allowed ref. Set this to a safe value to prevent a bad template from blocking
+   * Maximum allowed path. Set this to a safe value to prevent a bad template from blocking
    * the tokenization unnecessarily
    */
-  maxRefLen?: number
+  maxPathLen?: number
   /**
-   * The string symbols that mark the opening and closing of a ref in the template.
+   * The string symbols that mark the opening and closing of a path in the template.
    * It should be an array of exactly two distinct strings otherwise an error is thrown.
    * It defaults to `['{{', '}}']`
    */
@@ -31,9 +31,9 @@ export interface TokenizeOptions {
  * @throws `SyntaxError` if there's an issue with the template
  *
  * @param template the template
- * @param openSym the string that marks the start of a ref
- * @param closeSym the string that marks the start of a ref
- * @returns the resulting tokens as an object that has strings and refs
+ * @param openSym the string that marks the start of a path
+ * @param closeSym the string that marks the start of a path
+ * @returns the resulting tokens as an object that has strings and paths
  */
 export function tokenize(template: string, options: TokenizeOptions = {}): Tokens {
   if (!isStr(template)) {
@@ -44,7 +44,7 @@ export function tokenize(template: string, options: TokenizeOptions = {}): Token
     throw new TypeError(`Options should be an object. Got a ${typeof options}`)
   }
 
-  const { tags = ['{{', '}}'], maxRefLen: maxRefLen = 1000 } = options
+  const { tags = ['{{', '}}'], maxPathLen = 1000 } = options
 
   if (!isArr(tags) || tags.length !== 2) {
     throw TypeError(`tags should be an array of two elements. Got ${String(tags)}`)
@@ -64,8 +64,8 @@ export function tokenize(template: string, options: TokenizeOptions = {}): Token
     )
   }
 
-  if (!isNum(maxRefLen) || maxRefLen <= 0) {
-    throw new Error(`Expected a positive number for maxRefLen. Got ${maxRefLen}`)
+  if (!isNum(maxPathLen) || maxPathLen <= 0) {
+    throw new Error(`Expected a positive number for maxPathLen. Got ${maxPathLen}`)
   }
 
   const openTagLen = openTag.length
@@ -74,11 +74,11 @@ export function tokenize(template: string, options: TokenizeOptions = {}): Token
   let lastOpenTagIndex: number
   let lastCloseTagIndex = 0
   let currentIndex = 0
-  let ref: string
+  let path: string
 
   // The result
   const strings: string[] = []
-  const refs: string[] = []
+  const paths: string[] = []
 
   while (currentIndex < template.length) {
     lastOpenTagIndex = template.indexOf(openTag, currentIndex)
@@ -88,29 +88,29 @@ export function tokenize(template: string, options: TokenizeOptions = {}): Token
 
     const refStartIndex = lastOpenTagIndex + openTagLen
 
-    lastCloseTagIndex = template.substr(refStartIndex, maxRefLen + closeTagLen).indexOf(closeTag)
+    lastCloseTagIndex = template.substr(refStartIndex, maxPathLen + closeTagLen).indexOf(closeTag)
 
     if (lastCloseTagIndex === -1) {
       throw new SyntaxError(
-        `Missing "${closeTag}" in the template for the "${openTag}" at position ${lastOpenTagIndex} within ${maxRefLen} characters`
+        `Missing "${closeTag}" in the template for the "${openTag}" at position ${lastOpenTagIndex} within ${maxPathLen} characters`
       )
     }
 
     lastCloseTagIndex += refStartIndex
 
-    ref = template.substring(refStartIndex, lastCloseTagIndex).trim()
+    path = template.substring(refStartIndex, lastCloseTagIndex).trim()
 
-    if (ref.length === 0) {
+    if (path.length === 0) {
       throw new SyntaxError(`Unexpected "${closeTag}" tag found at position ${lastOpenTagIndex}`)
     }
 
-    if (ref.includes(openTag)) {
+    if (path.includes(openTag)) {
       throw new SyntaxError(
-        `Ref cannot have "${openTag}". But at position ${lastOpenTagIndex} got "${ref}"`
+        `Path cannot have "${openTag}". But at position ${lastOpenTagIndex} got "${path}"`
       )
     }
 
-    refs.push(ref)
+    paths.push(path)
 
     lastCloseTagIndex += closeTagLen
     strings.push(template.substring(currentIndex, lastOpenTagIndex))
@@ -119,5 +119,5 @@ export function tokenize(template: string, options: TokenizeOptions = {}): Token
 
   strings.push(template.substring(lastCloseTagIndex))
 
-  return { strings, refs }
+  return { strings, paths }
 }
