@@ -2,7 +2,7 @@ import { Renderer, ResolveFn } from './index'
 
 describe('Renderer', () => {
   it('is a constructor', () => {
-    expect(new Renderer({ strings: ['the string theory'], varNames: [] })).toEqual(
+    expect(new Renderer({ strings: ['the string theory'], paths: [] })).toEqual(
       expect.any(Renderer)
     )
   })
@@ -11,7 +11,7 @@ describe('Renderer', () => {
     it('renders a simple template that only contains numbers', () => {
       const renderer = new Renderer({
         strings: ['4', '6'],
-        varNames: ['foo'],
+        paths: ['foo'],
       })
 
       expect(renderer.render({ foo: 5 })).toEqual('456')
@@ -19,16 +19,16 @@ describe('Renderer', () => {
   })
 
   describe('.renderFn()', () => {
-    it('runs the function for every varName', () => {
+    it('runs the function for every path', () => {
       const renderer = new Renderer({
         strings: ['4', '6'],
-        varNames: ['foo'],
+        paths: ['foo'],
       })
 
-      function resolver(this: null, varName: string): string {
-        expect(varName).toEqual('foo')
+      function resolver(this: null, path: string): string {
+        expect(path).toEqual('foo')
         expect(this).toEqual(null)
-        return varName.toUpperCase()
+        return path.toUpperCase()
       }
 
       expect(renderer.renderFn(resolver, { foo: 5 })).toEqual('4FOO6')
@@ -39,16 +39,16 @@ describe('Renderer', () => {
     it('passes the scope to the custom resolve function', async () => {
       const resolver = new Renderer({
         strings: ['Hello! My name is ', '!'],
-        varNames: ['name'],
+        paths: ['name'],
       })
-      // Just returns the reversed variable name regardless of value
+      // Just returns the reversed path regardless of value
       const resolveFn: ResolveFn = async (
-        varName,
+        path,
         obj: {
-          [varName: string]: string
+          [path: string]: string
         }
         // eslint-disable-next-line @typescript-eslint/require-await
-      ) => obj[varName]
+      ) => obj[path]
 
       const scope = { name: 'Alex' }
 

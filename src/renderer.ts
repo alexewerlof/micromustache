@@ -1,35 +1,35 @@
 import { isFn, isObj, isArr } from './utils'
-import { Scope, get, IGetOptions } from './get'
-import { toPath } from './topath'
-import { ITokens } from './tokenize'
+import { Scope, get, GetOptions } from './get'
+import { parsePath } from './parse'
+import { Tokens } from './tokenize'
 
 /**
- * The options passed to Renderer's constructor
+ * The options for the Renderer's constructor
  */
-export interface IRendererOptions extends IGetOptions {
+export interface RendererOptions extends GetOptions {
   /**
    * When set to a truthy value, rendering literally puts a 'null' or
    * 'undefined' for values that are `null` or `undefined`.
    * By default it swallows those values to be compatible with Mustache.
    */
   readonly explicit?: boolean
-  /** when set to a truthy value, validates the variable names */
-  readonly validateVarNames?: boolean
+  /** when set to a truthy value, validates the paths */
+  readonly validatePath?: boolean
 }
 
 /**
  * The callback for resolving a value (synchronous)
  * @param scope the scope object that was passed to .render() function
- * @param path variable name before being parsed.
- * @example a template that is `Hi {{a.b.c}}!` leads to `'a.b.c'` as path
+ * @param path a string that appeared in the string between open and close tags
+ * @example a template that is `Hi {{a.b.c}}!` leads to `'a.b.c'` as ref
  * @returns the value to be interpolated.
  */
-export type ResolveFn = (varName: string, scope?: Scope) => any
+export type ResolveFn = (path: string, scope?: Scope) => any
 
 /**
  * Same as `ResolveFn` but for asynchronous functions
  */
-export type ResolveFnAsync = (varName: string, scope?: Scope) => Promise<any>
+export type ResolveFnAsync = (path: string, scope?: Scope) => Promise<any>
 
 /**
  * This class does the heavy lifting of interpolation (putting the actual values
@@ -39,9 +39,9 @@ export type ResolveFnAsync = (varName: string, scope?: Scope) => Promise<any>
  */
 export class Renderer {
   /**
-   * Another cache that holds the parsed values for `toPath()` one per varName
+   * Another cache that holds the parsed values for `parsePath()` one per path
    */
-  private toPathCache: string[][]
+  private parseRefCache: string[][]
 
   /**
    * Creates a new Renderer instance. This is called internally by the compiler.
@@ -49,12 +49,12 @@ export class Renderer {
    * @param options - some options for customizing the rendering process
    * @throws `TypeError` if the token is invalid
    */
-  constructor(private readonly tokens: ITokens, private readonly options: IRendererOptions = {}) {
+  constructor(private readonly tokens: Tokens, private readonly options: RendererOptions = {}) {
     if (
       !isObj(tokens) ||
       !isArr(tokens.strings) ||
-      !isArr(tokens.varNames) ||
-      tokens.strings.length !== tokens.varNames.length + 1
+      !isArr(tokens.paths) ||
+      tokens.strings.length !== tokens.paths.length + 1
     ) {
       // This is most likely an internal error from tokenization algorithm
       throw new TypeError(`Invalid tokens object`)
@@ -64,41 +64,41 @@ export class Renderer {
       throw new TypeError(`Options should be an object. Got a ${typeof options}`)
     }
 
-    if (options.validateVarNames) {
-      // trying to initialize toPathCache parses them which is also validation
+    if (options.validatePath) {
+      // trying to initialize parseRefCache parses them which is also validation
       this.cacheParsedPaths()
     }
   }
 
   /**
-   * This function is called internally for filling in the `toPathCache` cache.
-   * If the `validateVarNames` option for the constructor is set to a truthy
+   * This function is called internally for filling in the `parseRefCache` cache.
+   * If the `validatePath` option for the constructor is set to a truthy
    * value, this function is called immediately which leads to a validation as
-   * well because it throws an error if it cannot parse variable names.
+   * well because it throws an error if it cannot parse paths.
    */
   private cacheParsedPaths(): void {
-    const { varNames } = this.tokens
-    if (this.toPathCache === undefined) {
-      this.toPathCache = new Array<string[]>(varNames.length)
+    const { paths } = this.tokens
+    if (this.parseRefCache === undefined) {
+      this.parseRefCache = new Array<string[]>(paths.length)
 
-      for (let i = 0; i < varNames.length; i++) {
-        this.toPathCache[i] = toPath.cached(varNames[i])
+      for (let i = 0; i < paths.length; i++) {
+        this.parseRefCache[i] = parsePath.cached(paths[i])
       }
     }
   }
 
   /**
-   * Replaces every {{varName}} inside the template with values from the scope
+   * Replaces every path inside the template with values from the scope
    * parameter.
    *
-   * @param template The template containing one or more {{varName}} as
-   * placeholders for values from the `scope` parameter.
-   * @param scope An object containing values for variable names from the the
-   * template. If it's omitted, we default to an empty object.
+   * @param template The template containing one or more path as placeholders for values from the
+   * `scope` parameter.
+   * @param scope An object containing values for paths from the the template.
+   * If it's omitted, we default to an empty object.
    */
   public render = (scope: Scope = {}): string => {
-    const { varNames } = this.tokens
-    const { length } = varNames
+    const { paths } = this.tokens
+    const { length } = paths
 
     this.cacheParsedPaths()
 
@@ -106,42 +106,41 @@ export class Renderer {
 
     for (let i = 0; i < length; i++) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      values[i] = get(scope, this.toPathCache[i], this.options)
+      values[i] = get(scope, this.parseRefCache[i], this.options)
     }
 
     return this.stringify(values)
   }
 
   /**
-   * Same as [[render]] but accepts a resolver function which will be
-   * responsible for returning a value for every varName.
+   * Same as [[render]] but accepts a resolver function which returns a value for every path.
    */
   public renderFn = (resolveFn: ResolveFn, scope: Scope = {}): string => {
-    const values = this.resolveVarNames(resolveFn, scope)
+    const values = this.resolveRefs(resolveFn, scope)
     return this.stringify(values)
   }
 
   /**
-   * Same as [[render]] but accepts a resolver function which will be responsible
-   * for returning promise that resolves to a value for every varName.
+   * Same as [[render]] but accepts a resolver function which returns a promise that resolves to a
+   * value for every path.
    */
   public renderFnAsync = (resolveFnAsync: ResolveFnAsync, scope: Scope = {}): Promise<string> => {
-    return Promise.all(this.resolveVarNames(resolveFnAsync, scope)).then((values) =>
+    return Promise.all(this.resolveRefs(resolveFnAsync, scope)).then((values) =>
       this.stringify(values)
     )
   }
 
-  private resolveVarNames(resolveFn: ResolveFn, scope: Scope = {}): any[] {
-    const { varNames } = this.tokens
+  private resolveRefs(resolveFn: ResolveFn, scope: Scope = {}): any[] {
+    const { paths } = this.tokens
     if (!isFn<ResolveFnAsync>(resolveFn)) {
       throw new TypeError(`Expected a resolver function. Got ${String(resolveFn)}`)
     }
 
-    const { length } = varNames
+    const { length } = paths
     const values = new Array<any>(length)
     for (let i = 0; i < length; i++) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      values[i] = resolveFn.call(null, varNames[i], scope)
+      values[i] = resolveFn.call(null, paths[i], scope)
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return

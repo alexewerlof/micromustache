@@ -2,12 +2,12 @@ import { isStr } from './utils'
 
 /**
  * @internal
- * The number of different varNames that will be cached.
- * If a varName is cached, the actual parsing algorithm will not be called
+ * The number of different paths that will be cached.
+ * If a path is cached, the actual parsing algorithm will not be called
  * which significantly improves performance.
  * However, this cache is size-limited to prevent degrading the user's software
  * over a period of time.
- * If the cache is full, we start removing older varNames one at a time.
+ * If the cache is full, we start removing older paths one at a time.
  */
 const cacheSize = 1000
 
@@ -16,7 +16,7 @@ const cacheSize = 1000
  */
 export class Cache<T> {
   private map: {
-    [varName: string]: T
+    [path: string]: T
   }
 
   private cachedKeys: string[]
@@ -51,14 +51,15 @@ export class Cache<T> {
 /** @internal */
 const cache = new Cache<string[]>(cacheSize)
 
-/** internal */
+/** @internal */
 interface RegExpWithNameGroup extends RegExpExecArray {
   groups: {
     name: string
   }
 }
 
-const parserPatterns: Array<RegExp> = [
+/** @internal */
+const pathPatterns: Array<RegExp> = [
   // `.a` the most common patter (hence first)
   /\s*\.\s*(?<name>[$_\w]+)\s*/y,
   // `a['b']` or `a["b"]` or `a[\`b\`]`
@@ -70,65 +71,66 @@ const parserPatterns: Array<RegExp> = [
 ]
 
 /**
- * Breaks a variable name to an array of strings that can be used to get a
- * particular value from an object
- * @param varName - the variable name as it occurs in the template.
+ * Breaks a path to an array of strings.
+ * The result can be used to [[get]] a particular value from a [[Scope]] object
+ * @param path - the path as it occurs in the template.
  * For example `a["b"].c`
- * @throws `TypeError` if the varName is not a string
- * @throws `SyntaxError` if the varName syntax has a problem
- * @returns - an array of property names that can be used to get a particular
- * value.
+ * @throws `TypeError` if the path is not a string
+ * @throws `SyntaxError` if the path syntax has a problem
+ * @returns - an array of property names that can be used to get a particular value.
  * For example `['a', 'b', 'c']`
  */
-export function toPath(varName: string): string[] {
-  if (!isStr(varName)) {
-    throw new TypeError(`Cannot parse path. Expected string. Got a ${typeof varName}`)
+export function parsePath(path: string): string[] {
+  if (!isStr(path)) {
+    throw new TypeError(`Cannot parse ref. Expected string. Got a ${typeof path}`)
   }
 
-  const result: string[] = []
+  const ref: string[] = []
 
-  if (varName.trim() === '') {
-    return result
+  if (path.trim() === '') {
+    return ref
   }
 
   let currIndex = 0
 
   let patternMatched
+
   do {
     patternMatched = false
-    for (const pattern of parserPatterns) {
+    for (const pattern of pathPatterns) {
       pattern.lastIndex = currIndex
-      const parsedResult = pattern.exec(varName)
+      const parsedResult = pattern.exec(path)
 
       if (parsedResult) {
         patternMatched = true
         currIndex = pattern.lastIndex
         // For perf reasons we assume that all regex groups have a capture group called name
-        result.push((parsedResult as RegExpWithNameGroup).groups.name)
+        ref.push((parsedResult as RegExpWithNameGroup).groups.name)
         break
       }
     }
   } while (patternMatched)
 
-  if (currIndex !== varName.length) {
-    throw new SyntaxError(`Could not parse varName: "${varName}"`)
+  if (currIndex !== path.length) {
+    throw new SyntaxError(`Could not parse path: "${path}"`)
   }
 
-  return result
+  return ref
 }
 
 /**
- * This is just a faster version of `toPath()`
+ * This is just a faster version of `parsePath()`
+ * @internal
  */
-function toPathCached(varName: string): string[] {
-  let result = cache.get(varName)
+function parseRefCached(path: string): string[] {
+  let result = cache.get(path)
 
   if (result === undefined) {
-    result = toPath(varName)
-    cache.set(varName, result)
+    result = parsePath(path)
+    cache.set(path, result)
   }
 
   return result
 }
 
-toPath.cached = toPathCached
+parsePath.cached = parseRefCached

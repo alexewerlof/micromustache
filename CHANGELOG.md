@@ -10,11 +10,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support comments: `{{! ...}}` like MustacheJS
 - Reenable tests/ for mustache compatibility and add relevant options
 - Add a string literal tag function (generic render)
-- Add the possibility to process variable names before and after they are resolved using `get()`. This can allow HTML escaping for example. Also see #50
+- Add the possibility to process paths before and after they are resolved using `get()`. This can allow HTML escaping for example. Also see #50
+
+### BREAKING CHANGES
+
+- v9.0.0: all interfaces are renamed to have no "I" prefix. Also the `ITags` interface is removed.
+- v9.0.0: parsing paths is now more accurate. As a result of that, a few edge cases that would pass previously will throw an error. For example `a[-11]` was OK before but it's an error now (`a[11]` or `a[+11]` still work as expected). The bracket accessor will only accept numbers or quoted strings (`a["true"]` or `a['true']` work while `a[true]` is an error). So you might want to ensure that your templates don't have such issues.
+- v9.0.0: The terminology is update. Instead of "VarName", we use "Path" for the string form of it (as it appears in the template) and "Ref" for when it is parsed to an array of strings
+- v9.0.0: The result of `tokenize()` now looks like `{ strings, paths }` instead of `{ strings, varNames }`
+- v9.0.0: The `maxVarNameLength` option is renamed to `maxPathLen`
+- v9.0.0: The `propsExist` option is renamed to `validateRef`
+- v9.0.0: The `validateVarNames` option is renamed to `validatePath`
+- v9.0.0: The `depth` option is renamed to `maxRefDepth`
+- v9.0.0: The internal `toPath` function is renamed to `parsePath`
 
 ## 8.0.0
 
-- The CommonJS file has changed name: V7=`dist/micromustache.js` v8=`dist/micromustache.cjs`. If you just use `require('micromustache')` it sould work without any change.
+- The CommonJS file has changed name: V7=`dist/micromustache.js` v8=`dist/micromustache.cjs`. If you just use `require('micromustache')` it should work without any change.
 - The `depth` option is added
 - Updated the dependencies
 - Addressed known security issues
@@ -24,7 +36,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The `scope` could be a `function` as well, but with this release we only accept `Object`.
 - Previously string characters could be accessed with array-index syntax, but now it is not possible (eg. `render('{{str[0]}}', { str: 'Hello' })` will not return `'H'` anymore)
 - Drop support for Safari10
-- v8.1+: parsing varNames is now more accurate. As a result of that, a few edge cases that would pass previously will throw an error. For example `a[-11]` was OK before but it's an error now (`a[11]` or `a[+11]` still work as expected). The bracket accessor will only accept numbers or quoted strings (`a["true"]` or `a['true']` work while `a[true]` is an error). So you might want to ensure that your templates don't have such issues.
 
 ## 7.0.0
 
@@ -68,7 +79,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Converted to CommonJS (dropped AMD and UMD in favor of modern build tools)
 - Use yarn
 - Rewrote test with chai.expect instead of chai.assert
-- list of params for resolver is reversed to (varName, view)
+- list of params for resolver is reversed to (path, view)
 - dropped to_html alias
 - dropped bower support
 - dropped CDN support

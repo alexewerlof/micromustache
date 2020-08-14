@@ -1,4 +1,4 @@
-import { toPath } from './topath'
+import { parsePath } from './parse'
 
 interface ISuccessCases {
   [input: string]: string[]
@@ -8,7 +8,7 @@ function stringArrToString(arr: string[]): string {
   return '[' + arr.map((s) => `'${s}'`).join(', ') + ']'
 }
 
-describe('toPath()', () => {
+describe('parsePath()', () => {
   describe('success cases:', () => {
     // input: expected output
     const testCases: ISuccessCases = {
@@ -83,7 +83,7 @@ describe('toPath()', () => {
 
     for (const [input, output] of Object.entries(testCases)) {
       it(`'${input}'  ⇨  ${stringArrToString(output)}`, () => {
-        expect(toPath(input)).toEqual(output)
+        expect(parsePath(input)).toEqual(output)
       })
     }
   })
@@ -117,6 +117,9 @@ describe('toPath()', () => {
       'a["]',
       'a.[b]',
       'a[\'b"]',
+      'a[',
+      'a]',
+      'a]]',
       'a[[',
       'a["b\']',
       'a["b`]',
@@ -139,13 +142,13 @@ describe('toPath()', () => {
 
     for (const input of syntaxErrorsCases) {
       it(`throws SyntaxError for "${input}"`, () => {
-        expect(() => toPath(input)).toThrow(SyntaxError)
+        expect(() => parsePath(input)).toThrow(SyntaxError)
       })
     }
 
     it('throws type error for invalid input types', () => {
-      expect(() => toPath((undefined as unknown) as string)).toThrow(TypeError)
-      expect(() => toPath((13 as unknown) as string)).toThrow(TypeError)
+      expect(() => parsePath((undefined as unknown) as string)).toThrow(TypeError)
+      expect(() => parsePath((13 as unknown) as string)).toThrow(TypeError)
     })
   })
 })

@@ -36,10 +36,10 @@ describe('get()', () => {
       foo: 'bar',
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    expect(() => get(obj, 'cux', { propsExist: true })).toThrow()
+    expect(() => get(obj, 'cux', { validateRef: true })).toThrow()
   })
 
-  it('throws if the path is too deep', () => {
+  it('throws if the ref is too deep', () => {
     const obj = {
       a: {
         b: {
@@ -48,9 +48,9 @@ describe('get()', () => {
       },
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    expect(() => get(obj, 'a.b.c', { depth: 2 })).toThrow()
+    expect(() => get(obj, 'a.b.c', { maxRefDepth: 2 })).toThrow()
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    expect(() => get(obj, 'a.b.c', { depth: 3 })).not.toThrow()
+    expect(() => get(obj, 'a.b.c', { maxRefDepth: 3 })).not.toThrow()
   })
 
   it('can access array elements', () => {

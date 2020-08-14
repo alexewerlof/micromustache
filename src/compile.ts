@@ -1,11 +1,11 @@
-import { Renderer, IRendererOptions } from './renderer'
-import { tokenize, ITokenizeOptions } from './tokenize'
+import { Renderer, RendererOptions } from './renderer'
+import { tokenize, TokenizeOptions } from './tokenize'
 
 /**
  * The options that customize the tokenization of the template and the renderer
  * object that is returned
  */
-export interface ICompileOptions extends IRendererOptions, ITokenizeOptions {}
+export interface CompileOptions extends RendererOptions, TokenizeOptions {}
 
 /**
  * Compiles a template and returns an object with functions that render it.
@@ -22,7 +22,7 @@ export interface ICompileOptions extends IRendererOptions, ITokenizeOptions {}
  * @throws any error that [[tokenize]] or [[Renderer.constructor]] may throw
  * @returns a [[Renderer]] object which has render methods
  */
-export function compile(template: string, options: ICompileOptions = {}): Renderer {
+export function compile(template: string, options: CompileOptions = {}): Renderer {
   const tokens = tokenize(template, options)
   return new Renderer(tokens, options)
 }

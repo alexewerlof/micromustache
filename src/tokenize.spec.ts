@@ -4,14 +4,14 @@ describe('tokenize()', () => {
   it('returns the string intact if no interpolation is found', () => {
     expect(tokenize('Hello world')).toEqual({
       strings: ['Hello world'],
-      varNames: [],
+      paths: [],
     })
   })
 
   it('supports customized tags', () => {
     expect(tokenize('Hello {name}!', { tags: ['{', '}'] })).toEqual({
       strings: ['Hello ', '!'],
-      varNames: ['name'],
+      paths: ['name'],
     })
   })
 
@@ -19,46 +19,54 @@ describe('tokenize()', () => {
     expect(() => tokenize('Hello |name|!', { tags: ['|', '|'] })).toThrow(TypeError)
   })
 
-  it('returns an empty string and no varNames when the template is an empty string', () => {
+  it('throws if the open tag contains the close tag', () => {
+    expect(() => tokenize('Hello {{name}!', { tags: ['{{', '{'] })).toThrow(Error)
+  })
+
+  it('throws if the open and close tag are the same', () => {
+    expect(() => tokenize('Hello {name}}!', { tags: ['}', '}}'] })).toThrow(Error)
+  })
+
+  it('returns an empty string and no paths when the template is an empty string', () => {
     expect(tokenize('')).toEqual({
       strings: [''],
-      varNames: [],
+      paths: [],
     })
   })
 
   it('handles interpolation correctly at the start of the template', () => {
     expect(tokenize('{{name}}! How are you?')).toEqual({
       strings: ['', '! How are you?'],
-      varNames: ['name'],
+      paths: ['name'],
     })
   })
 
   it('handles interpolation correctly at the end of the template', () => {
     expect(tokenize('My name is {{name}}')).toEqual({
       strings: ['My name is ', ''],
-      varNames: ['name'],
+      paths: ['name'],
     })
   })
 
-  it('trims value name', () => {
-    const { varNames } = tokenize('My name is {{  name  }}')
-    if (varNames.length) {
-      expect(varNames[0]).toBe('name')
+  it('trims path', () => {
+    const { paths } = tokenize('My name is {{  name  }}')
+    if (paths.length) {
+      expect(paths[0]).toBe('name')
     }
   })
 
-  it('can handle a close symbol without an open symbol', () => {
+  it('can handle a close tag without an open tag', () => {
     expect(tokenize('Hi}} {{name}}')).toEqual({
       strings: ['Hi}} ', ''],
-      varNames: ['name'],
+      paths: ['name'],
     })
     expect(tokenize('Hi {{name}} }}')).toEqual({
       strings: ['Hi ', ' }}'],
-      varNames: ['name'],
+      paths: ['name'],
     })
   })
 
-  it('throws a syntax error if the open symbol is not closed', () => {
+  it('throws a syntax error if the open tag is not closed', () => {
     expect(() => tokenize('Hi {{')).toThrow(
       new SyntaxError(
         'Missing "}}" in the template for the "{{" at position 3 within 1000 characters'
@@ -66,11 +74,11 @@ describe('tokenize()', () => {
     )
   })
 
-  it('does not throw an error if there is a close symbol without an open symbol', () => {
+  it('does not throw an error if there is a close tag without an open tag', () => {
     expect(() => tokenize('Hi}} ')).not.toThrow()
   })
 
-  it('throws a syntax error if the variable name is an empty string', () => {
+  it('throws a syntax error if the path is an empty string', () => {
     expect(() => tokenize('Hi {{}}')).toThrow(
       new SyntaxError('Unexpected "}}" tag found at position 3')
     )
@@ -82,12 +90,12 @@ describe('tokenize()', () => {
     )
   })
 
-  it('throws for nested open and close symbol', () => {
+  it('throws for nested open and close tag', () => {
     expect(() => tokenize('Hello {{ {{name}} }}!')).toThrow()
   })
 
-  it('throws if the variable name is too long', () => {
-    expect(() => tokenize('Hej {{n2345}}!', { maxVarNameLength: 5 })).not.toThrow()
-    expect(() => tokenize('Hej {{n2345}}!', { maxVarNameLength: 4 })).toThrow()
+  it('throws if the path is too long', () => {
+    expect(() => tokenize('Hej {{n2345}}!', { maxPathLen: 5 })).not.toThrow()
+    expect(() => tokenize('Hej {{n2345}}!', { maxPathLen: 4 })).toThrow()
   })
 })
