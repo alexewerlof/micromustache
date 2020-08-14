@@ -6,7 +6,7 @@ Let's get familiar with a few terms as they are used across this repo:
 * **Path**: is an array that is derived from a **Ref** (Example: `['person', 'name']`)
 * **Scope**: The object that'll be used to resolve values (called _view_ in Mustache.JS)
 * **Parsing**: converting a **Ref** to a **Path** that can be used to lookup a value from the **Scope**
-* **Value**: the value that will be used to interpolate a reference in the template
+* **Value**: the value that will be used to interpolate a ref in the template
 * **Resolving**: looking up the **value** for a **Ref** (either from the **Scope** or using your own resolver function)
 * **Rendering**: interpolating the **Refs**s in a template with their resolved value
 * **Tokenization**: breaking the template into constant strings and **Refs** that need resolving

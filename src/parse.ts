@@ -71,7 +71,7 @@ const pathPatterns: Array<RegExp> = [
 ]
 
 /**
- * Breaks a reference to an array of strings.
+ * Breaks a ref to an array of strings.
  * The result can be used to [[get]] a particular value from a [[Scope]] object
  * @param ref - the ref as it occurs in the template.
  * For example `a["b"].c`
