@@ -19,6 +19,14 @@ describe('tokenize()', () => {
     expect(() => tokenize('Hello |name|!', { tags: ['|', '|'] })).toThrow(TypeError)
   })
 
+  it('throws if the open tag contains the close tag', () => {
+    expect(() => tokenize('Hello {{name}!', { tags: ['{{', '{'] })).toThrow(Error)
+  })
+
+  it('throws if the open and close tag are the same', () => {
+    expect(() => tokenize('Hello {name}}!', { tags: ['}', '}}'] })).toThrow(Error)
+  })
+
   it('returns an empty string and no varNames when the template is an empty string', () => {
     expect(tokenize('')).toEqual({
       strings: [''],
