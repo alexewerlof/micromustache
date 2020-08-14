@@ -51,14 +51,15 @@ export class Cache<T> {
 /** @internal */
 const cache = new Cache<string[]>(cacheSize)
 
-/** internal */
+/** @internal */
 interface RegExpWithNameGroup extends RegExpExecArray {
   groups: {
     name: string
   }
 }
 
-const parserPatterns: Array<RegExp> = [
+/** @internal */
+const pathPatterns: Array<RegExp> = [
   // `.a` the most common patter (hence first)
   /\s*\.\s*(?<name>[$_\w]+)\s*/y,
   // `a['b']` or `a["b"]` or `a[\`b\`]`
@@ -94,9 +95,10 @@ export function toPath(varName: string): string[] {
   let currIndex = 0
 
   let patternMatched
+
   do {
     patternMatched = false
-    for (const pattern of parserPatterns) {
+    for (const pattern of pathPatterns) {
       pattern.lastIndex = currIndex
       const parsedResult = pattern.exec(varName)
 
