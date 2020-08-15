@@ -21,6 +21,7 @@ function x(a, b) {
   ret += ' faster)'
   return ret
 }
+
 const ms = (a) => Math.round(a) + 'ms'
 
 function compare(f1, f2) {
@@ -28,33 +29,50 @@ function compare(f1, f2) {
   const f2name = f2.name
 
   console.log(`Comparing ${f1name}() to ${f2name}() for ${ITERATIONS} iterations...`)
+
   let start = process.hrtime()
   for (let i = 0; i < ITERATIONS; i++) {
     f1()
   }
   const f1duration = hrtime2ms(process.hrtime(start))
+
   start = process.hrtime()
   for (let i = 0; i < ITERATIONS; i++) {
     f2()
   }
   const f2duration = hrtime2ms(process.hrtime(start))
 
-  console.log(`${f1name}: ${ms(f1duration)} ${x(f1duration, f2duration)}`)
-  console.log(`${f2name}: ${ms(f2duration)} ${x(f2duration, f1duration)}`)
+  console.log(`1. ${f1name}: ${ms(f1duration)} ${x(f1duration, f2duration)}`)
+  console.log(`2. ${f2name}: ${ms(f2duration)} ${x(f2duration, f1duration)}`)
 }
 
 const LEN = 100
 
-const longRef = 'x'.repeat(LEN)
-const longScope = { [longRef]: 'y'.repeat(LEN) }
-const longTemplate = ('{{' + longRef + '}} and ').repeat(LEN)
+const longPath = 'x'.repeat(LEN)
+const longVal = 'y'.repeat(LEN)
+const longScope = { [longPath]: longVal }
+const longPathTemplate = '{{' + longPath + '}}'
 
-function micromustacheLong() {
-  return micromustache.render(longTemplate, longScope, { maxPathLen: 999999 })
+function micromustacheLongPath() {
+  return micromustache.render(longPathTemplate, longScope, { maxPathLen: 999999 })
 }
 
-function mustacheLong() {
-  return mustache.render(longTemplate, longScope)
+function mustacheLongPath() {
+  return mustache.render(longPathTemplate, longScope)
+}
+
+const longTmplPath = 'w'
+const longTmplScope = {
+  [longTmplPath]: 'j',
+}
+const longTmplTemplate = ('{{' + longTmplPath + '}} and ').repeat(LEN)
+
+function micromustacheLongTmpl() {
+  return micromustache.render(longTmplTemplate, longTmplScope, { maxPathLen: 999999 })
+}
+
+function mustacheLongTmpl() {
+  return mustache.render(longTmplTemplate, longScope)
 }
 
 const diverseScope = {}
@@ -93,6 +111,19 @@ function mustacheDeep() {
   return mustache.render(deepTemplate, deepScope)
 }
 
-compare(micromustacheLong, mustacheLong)
+const allScope = { ...longScope, ...longTmplScope, ...diverseScope, ...deepScope }
+const allTemplate = longPathTemplate + longTmplTemplate + diverseTemplate + deepTemplate
+
+function micromustacheAll() {
+  return micromustache.render(allTemplate, allScope, { maxRefDepth: LEN, maxPathLen: 999999 })
+}
+
+function mustacheAll() {
+  return mustache.render(allTemplate, allScope)
+}
+
+compare(micromustacheLongPath, mustacheLongPath)
+compare(micromustacheLongTmpl, mustacheLongTmpl)
 compare(micromustacheDiverse, mustacheDiverse)
 compare(micromustacheDeep, mustacheDeep)
+compare(micromustacheAll, mustacheAll)
