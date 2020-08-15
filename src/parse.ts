@@ -1,5 +1,7 @@
 import { isStr } from './utils'
 
+export type Ref = string[]
+
 /**
  * @internal
  * The number of different paths that will be cached.
@@ -80,12 +82,12 @@ const pathPatterns: Array<RegExp> = [
  * @returns - an array of property names that can be used to get a particular value.
  * For example `['a', 'b', 'c']`
  */
-export function parsePath(path: string): string[] {
+export function parsePath(path: string): Ref {
   if (!isStr(path)) {
     throw new TypeError(`Cannot parse ref. Expected string. Got a ${typeof path}`)
   }
 
-  const ref: string[] = []
+  const ref: Ref = []
 
   if (path.trim() === '') {
     return ref
@@ -122,7 +124,7 @@ export function parsePath(path: string): string[] {
  * This is just a faster version of `parsePath()`
  * @internal
  */
-function parseRefCached(path: string): string[] {
+function parseRefCached(path: string): Ref {
   let result = cache.get(path)
 
   if (result === undefined) {

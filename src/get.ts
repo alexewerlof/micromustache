@@ -1,4 +1,4 @@
-import { parsePath } from './parse'
+import { parsePath, Ref } from './parse'
 import { isObj, isProp, isNum, isArr } from './utils'
 
 export interface Scope {
@@ -29,7 +29,7 @@ export interface GetOptions {
   readonly maxRefDepth?: number
 }
 
-export function getRef(scope: Scope, ref: string[], options: GetOptions = {}): any {
+export function getRef(scope: Scope, ref: Ref, options: GetOptions = {}): any {
   if (!isObj(options)) {
     throw new TypeError(`get expects an object option. Got ${typeof options}`)
   }

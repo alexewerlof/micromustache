@@ -1,6 +1,6 @@
 import { isFn, isObj, isArr } from './utils'
 import { Scope, GetOptions, getRef } from './get'
-import { parsePath } from './parse'
+import { parsePath, Ref } from './parse'
 import { Tokens } from './tokenize'
 
 /**
@@ -41,7 +41,7 @@ export class Renderer {
   /**
    * Another cache that holds the parsed values for `parsePath()` one per path
    */
-  private parseRefCache: string[][]
+  private parseRefCache: Ref[]
 
   /**
    * Creates a new Renderer instance. This is called internally by the compiler.
@@ -79,7 +79,7 @@ export class Renderer {
   private cacheParsedPaths(): void {
     const { paths } = this.tokens
     if (this.parseRefCache === undefined) {
-      this.parseRefCache = new Array<string[]>(paths.length)
+      this.parseRefCache = new Array<Ref>(paths.length)
 
       for (let i = 0; i < paths.length; i++) {
         this.parseRefCache[i] = parsePath.cached(paths[i])
