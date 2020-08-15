@@ -6,11 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-- Support [optional chaining syntax](https://github.com/tc39/proposal-optional-chaining). But the default behaviour of mustache is like we use `?.` everywhere we write `.`.
-- Support comments: `{{! ...}}` like MustacheJS
-- Reenable tests/ for mustache compatibility and add relevant options
-- Add a string literal tag function (generic render)
-- Add the possibility to process paths before and after they are resolved using `get()`. This can allow HTML escaping for example. Also see #50
+- Now we have a `getRef()` function
 
 ### BREAKING CHANGES
 
