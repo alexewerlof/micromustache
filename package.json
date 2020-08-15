@@ -58,7 +58,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build:ts": "rollup --config",
-    "build:types": "tsc src/index.ts --declaration --emitDeclarationOnly --declarationDir dist/types",
+    "build:types": "tsc src/index.ts --target es5 --declaration --emitDeclarationOnly --declarationDir dist/types",
     "build": "npm run build:ts && npm run build:types",
     "docs": "typedoc src/index.ts",
     "lint": "eslint --ext .ts src",
