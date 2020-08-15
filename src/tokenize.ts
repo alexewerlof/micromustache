@@ -1,5 +1,8 @@
 import { isObj, isStr } from './utils'
 
+/**
+ * The options for the [[tokenizePath]] function
+ */
 export interface TokenizePathOptions {
   /**
    * Drilling a nested object to get the value assigned with a ref is a relatively expensive
@@ -13,6 +16,7 @@ export interface TokenizePathOptions {
 
 /**
  * An array that is derived from a path string
+ *
  * For example, if your template has a path that looks like `'person.name'`, its corresponding Ref
  * looks like `['person', 'name']`
  */
