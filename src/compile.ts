@@ -1,11 +1,16 @@
-import { Renderer, RendererOptions } from './renderer'
 import { tokenize, TokenizeOptions } from './tokenize'
+import { parsePath, Ref, ParseOptions } from './parse'
+
+export interface ParsedTokens {
+  strings: string[]
+  refs: Ref[]
+}
 
 /**
  * The options that customize the tokenization of the template and the renderer
  * object that is returned
  */
-export interface CompileOptions extends RendererOptions, TokenizeOptions {}
+export interface CompileOptions extends TokenizeOptions, ParseOptions {}
 
 /**
  * Compiles a template and returns an object with functions that render it.
@@ -22,7 +27,8 @@ export interface CompileOptions extends RendererOptions, TokenizeOptions {}
  * @throws any error that [[tokenize]] or [[Renderer.constructor]] may throw
  * @returns a [[Renderer]] object which has render methods
  */
-export function compile(template: string, options: CompileOptions = {}): Renderer {
-  const tokens = tokenize(template, options)
-  return new Renderer(tokens, options)
+export function compile(template: string, options: CompileOptions = {}): ParsedTokens {
+  const { strings, paths } = tokenize(template, options)
+  const refs = paths.map((path) => parsePath.cached(path, options))
+  return { strings, refs }
 }

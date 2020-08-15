@@ -1,4 +1,15 @@
-import { isStr } from './utils'
+import { isObj, isStr } from './utils'
+
+export interface ParseOptions {
+  /**
+   * Drilling a nested object to get the value assigned with a ref is a relatively expensive
+   * computation. Therefore you can set a value of how deep you are expecting a template to go and
+   * if the nesting is deeper than that, the computation stops with an error.
+   * This prevents a malicious or erroneous template with deep nesting to block the JavaScript event
+   * loop. The default is 10.
+   */
+  readonly maxRefDepth?: number
+}
 
 /**
  * An array that is derived from a path string
@@ -6,57 +17,6 @@ import { isStr } from './utils'
  * looks like `['person', 'name']`
  */
 export type Ref = string[]
-
-/**
- * @internal
- * The number of different paths that will be cached.
- * If a path is cached, the actual parsing algorithm will not be called
- * which significantly improves performance.
- * However, this cache is size-limited to prevent degrading the user's software
- * over a period of time.
- * If the cache is full, we start removing older paths one at a time.
- */
-const cacheSize = 1000
-
-/**
- * @internal
- */
-export class Cache<T> {
-  private map: {
-    [path: string]: T
-  }
-
-  private cachedKeys: string[]
-  private oldestIndex: number
-
-  constructor(private size: number) {
-    this.reset()
-  }
-
-  public reset(): void {
-    this.oldestIndex = 0
-    this.map = {}
-    this.cachedKeys = new Array<string>(this.size)
-  }
-
-  public get(key: string): T {
-    return this.map[key]
-  }
-
-  public set(key: string, value: T): void {
-    this.map[key] = value
-    const oldestKey = this.cachedKeys[this.oldestIndex]
-    if (oldestKey !== undefined) {
-      delete this.map[oldestKey]
-    }
-    this.cachedKeys[this.oldestIndex] = key
-    this.oldestIndex++
-    this.oldestIndex %= this.size
-  }
-}
-
-/** @internal */
-const cache = new Cache<string[]>(cacheSize)
 
 /** @internal */
 interface RegExpWithNameGroup extends RegExpExecArray {
@@ -79,7 +39,7 @@ const pathPatterns: Array<RegExp> = [
 
 /**
  * Breaks a path to an array of strings.
- * The result can be used to [[get]] a particular value from a [[Scope]] object
+ * The result can be used to [[getPath]] a particular value from a [[Scope]] object
  * @param path - the path as it occurs in the template.
  * For example `a["b"].c`
  * @throws `TypeError` if the path is not a string
@@ -87,10 +47,16 @@ const pathPatterns: Array<RegExp> = [
  * @returns - an array of property names that can be used to get a particular value.
  * For example `['a', 'b', 'c']`
  */
-export function parsePath(path: string): Ref {
+export function parsePath(path: string, options: ParseOptions = {}): Ref {
   if (!isStr(path)) {
-    throw new TypeError(`Cannot parse ref. Expected string. Got a ${typeof path}`)
+    throw new TypeError(`Cannot parse path. Expected string. Got a ${typeof path}`)
   }
+
+  if (!isObj(options)) {
+    throw new TypeError(`parsePath() expected an options object. Got ${options}`)
+  }
+
+  const { maxRefDepth = 10 } = options
 
   const ref: Ref = []
 
@@ -113,6 +79,10 @@ export function parsePath(path: string): Ref {
         currIndex = pattern.lastIndex
         // For perf reasons we assume that all regex groups have a capture group called name
         ref.push((parsedResult as RegExpWithNameGroup).groups.name)
+        if (ref.length > maxRefDepth) {
+          throw new Error(`The reference dept exceeds the configured limit of ${maxRefDepth}`)
+        }
+
         break
       }
     }
@@ -126,14 +96,62 @@ export function parsePath(path: string): Ref {
 }
 
 /**
+ * @internal
+ * The number of different paths that will be cached.
+ * If a path is cached, the actual parsing algorithm will not be called
+ * which significantly improves performance.
+ * However, this cache is size-limited to prevent degrading the user's software
+ * over a period of time.
+ * If the cache is full, we start removing older paths one at a time.
+ */
+const cacheSize = 1000
+
+/**
+ * @internal
+ */
+export class Cache<T> {
+  private readonly map: Record<string, T> = {}
+
+  private cachedKeys: string[]
+  private oldestIndex: number
+
+  constructor(private size: number) {
+    this.reset()
+  }
+
+  public reset(): void {
+    this.oldestIndex = 0
+    this.cachedKeys = new Array<string>(this.size)
+  }
+
+  public getPath(key: string): T {
+    return this.map[key]
+  }
+
+  public set(key: string, value: T): void {
+    this.map[key] = value
+    const oldestKey = this.cachedKeys[this.oldestIndex]
+    if (oldestKey !== undefined) {
+      delete this.map[oldestKey]
+    }
+    this.cachedKeys[this.oldestIndex] = key
+    this.oldestIndex++
+    this.oldestIndex %= this.size
+  }
+}
+
+/** @internal */
+const cache = new Cache<string[]>(cacheSize)
+
+/**
  * This is just a faster version of `parsePath()`
  * @internal
  */
-function parseRefCached(path: string): Ref {
-  let result = cache.get(path)
+function parseRefCached(path: string, options: ParseOptions = {}): Ref {
+  let result = cache.getPath(path)
 
   if (result === undefined) {
-    result = parsePath(path)
+    result = parsePath(path, options)
     cache.set(path, result)
   }
 

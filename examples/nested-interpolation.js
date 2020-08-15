@@ -1,19 +1,21 @@
-const { render, renderFn, get } = require('../')
+const { render, tokenize, stringify, getPath } = require('../')
 
 const scope = {
   names: ['Alex', 'Miranda', 'Jake'],
   idx: 2,
 }
 
-console.log(
-  renderFn(
-    'Hi {{names[<idx>]}}!',
-    function resolveFn(path, scope) {
-      // we'll get names[<idx>] here
-      const interpolateAngleBrackets = render(path, scope, { tags: ['<', '>'] })
-      // Now we have names[2] which we can feed into the render function again
-      return render('{{' + interpolateAngleBrackets + '}}', scope)
-    },
-    scope
-  )
-)
+function doubleRender(template, scope) {
+  // first pass
+  const tokens = tokenize(template)
+  // second pass
+  function secondPass(path) {
+    const result = render(path, scope, { tags: ['<', '>'] })
+    console.log(`second pass got "${path} resulting to ${result}`)
+    return getPath(scope, result, { validateRef: true })
+  }
+
+  return stringify(tokens.strings, tokens.paths.map(secondPass))
+}
+
+console.log(doubleRender('Hi {{names[<idx>]}}!', scope))

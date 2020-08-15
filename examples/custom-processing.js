@@ -1,4 +1,4 @@
-const { renderFn } = require('../')
+const { tokenize, stringify } = require('../')
 
 function beforeLookup(path) {
   switch (path.toLowerCase()) {
@@ -25,18 +25,18 @@ console.log(
   'the number of which correspond to the value of the elements in the array.'
 )
 
+function transform(template, scope) {
+  function transformChain(path) {
+    const arrIndex = beforeLookup(path)
+    const numStars = scope[arrIndex]
+    return afterLookup(numStars)
+  }
+
+  const tokens = tokenize(template)
+  return stringify(tokens.strings, tokens.paths.map(transformChain))
+}
 const arr = [0, 10, 20, 30]
-console.log(
-  renderFn(
-    'zero={{Zero}}\nOne={{one}}\nTwo={{two}}\nThree={{three}}',
-    (path, scope) => {
-      const arrIndex = beforeLookup(path)
-      const numStars = scope[arrIndex]
-      return afterLookup(numStars)
-    },
-    arr
-  )
-)
+console.log(transform('zero={{Zero}}\nOne={{one}}\nTwo={{two}}\nThree={{three}}', arr))
 
 /* output:
 zero=

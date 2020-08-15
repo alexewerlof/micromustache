@@ -1,29 +1,36 @@
-const { renderFn, get } = require('../')
+const { stringify, tokenize, getPath } = require('../')
 
 const processors = {
-  pow: (a, b) => a ** b,
-  add: (a, b) => a + b,
-  abs: (a) => Math.abs(a),
+  rev: (a) => a.split('').reverse().join(''),
+  up: (a) => a.toUpperCase(),
+  low: (a) => a.toLowerCase(),
 }
 
 const scope = {
-  x: 13,
-  y: 42,
-  z: -10,
+  firstName: 'Alex',
+  lastName: 'Ewerlöf',
+  company: 'Simpsons',
 }
 
-const template = 'x²={{pow(x, 2)}} and y³={{pow(y, 3)}} and |z|={{abs(z)}}'
+const template = '{{up(lastName)}}, {{low(firstName)}} works for{{rev(company)}}'
 
-function resolveFn(path, scope) {
-  const matches = path.match(/(\w+)\(([^)]*)\)/)
-  if (matches) {
-    const [, fnName, params] = matches
-    const paramNames = params.split(',').map((p) => p.trim())
-    console.log(`Going to call ${fnName}(${paramNames})`)
-    const paramVals = paramNames.map((paramName) => get(scope, paramName) || paramName)
-    return processors[fnName](...paramVals)
+function callFunctions(template, scope) {
+  function pow(path) {
+    const matches = path.match(/(\w+)\(([^)]*)\)/)
+    if (matches) {
+      const [, fnName, paramName] = matches
+      console.log(`Going to call ${fnName}(${paramName})`)
+      const paramVal = getPath(scope, paramName, {
+        // JUst so we throw for non-existing paths in the template
+        validateRef: true,
+      })
+      return processors[fnName](paramVal)
+    }
+    return '---'
   }
-  return ''
+
+  const tokens = tokenize(template)
+  return stringify(tokens.strings, tokens.paths.map(pow))
 }
 
-console.log(renderFn(template, resolveFn, scope))
+console.log(callFunctions(template, scope))

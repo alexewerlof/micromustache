@@ -1,11 +1,11 @@
-import { parsePath, Ref } from './parse'
+import { parsePath, Ref, ParseOptions } from './parse'
 import { isObj, isProp, isNum, isArr } from './utils'
 
 export interface Scope {
   [key: string]: Scope | any
 }
 
-export interface GetOptions {
+export interface GetOptions extends ParseOptions {
   /**
    * When set to a truthy value, we throw a `ReferenceError` for invalid paths and refs.
    * - An invalid ref specifies an array of properties that does not exist in the scope.
@@ -19,14 +19,6 @@ export interface GetOptions {
    * - if `validateRef` is truthy, a `ReferenceError` will be thrown
    */
   readonly validateRef?: boolean
-  /**
-   * Drilling a nested object to get the value assigned with a ref is a relatively expensive
-   * computation. Therefore you can set a value of how deep you are expecting a template to go and
-   * if the nesting is deeper than that, the computation stops with an error.
-   * This prevents a malicious or erroneous template with deep nesting to block the JavaScript event
-   * loop. The default is 10.
-   */
-  readonly maxRefDepth?: number
 }
 
 /**
@@ -46,8 +38,12 @@ export interface GetOptions {
  * @returns the value or undefined
  */
 export function getRef(scope: Scope, ref: Ref, options: GetOptions = {}): any {
+  if (!isObj(scope)) {
+    throw new TypeError(`getRef() expects an object scope. Got ${typeof options}`)
+  }
+
   if (!isObj(options)) {
-    throw new TypeError(`get expects an object option. Got ${typeof options}`)
+    throw new TypeError(`getRef() expects an object option. Got ${typeof options}`)
   }
 
   if (!isArr(ref)) {
@@ -87,14 +83,14 @@ export function getRef(scope: Scope, ref: Ref, options: GetOptions = {}): any {
  * It can also be used in your custom resolver functions if needed.
  * Under the hood it uses [[getRef]]
  *
- * This is similar to [Lodash's `_.get()`](https://lodash.com/docs/#get)
+ * This is similar to [Lodash's `_.getPath()`](https://lodash.com/docs/#get)
  *
  * @param scope an object to resolve value from
  * @param path the path string as it appeared in the template
  * @throws any error that [[getRef]] may throw
  * @returns the value or undefined
  */
-export function get(scope: Scope, path: string, options: GetOptions = {}): any {
+export function getPath(scope: Scope, path: string, options: GetOptions = {}): any {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return getRef(scope, parsePath(path), options)
+  return getRef(scope, parsePath(path, options), options)
 }

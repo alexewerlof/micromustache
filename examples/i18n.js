@@ -1,4 +1,4 @@
-const { renderFn, get } = require('../')
+const { tokenize, stringify, getPath } = require('../')
 
 const localizationTable = {
   en: {
@@ -12,23 +12,25 @@ const localizationTable = {
 }
 
 function __(key, scope, lang) {
-  return renderFn(
-    localizationTable[lang][key],
-    (path) => {
-      const resolvedValue = get(scope, path)
-      if (resolvedValue instanceof Date) {
-        return localizationTable[lang].dayNames[resolvedValue.getDay()]
-      }
-      return resolvedValue
-    },
-    scope
-  )
+  const template = localizationTable[lang][key]
+
+  function resolve(path) {
+    const resolvedValue = getPath(scope, path)
+    if (resolvedValue instanceof Date) {
+      return localizationTable[lang].dayNames[resolvedValue.getDay()]
+    }
+    return resolvedValue
+  }
+
+  const tokens = tokenize(template)
+  return stringify(tokens.strings, tokens.paths.map(resolve))
 }
 
 const scope = {
   name: 'Alex',
   today: new Date(),
 }
+
 // Hi! My name is Alex and today is Friday
 console.log(__('greet', scope, 'en'))
 // Hej! Jag heter Alex och idag är det fredag

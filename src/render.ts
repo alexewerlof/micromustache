@@ -1,6 +1,65 @@
-import { Renderer, ResolveFn, ResolveFnAsync } from './renderer'
-import { Scope } from './get'
+import { Scope, getRef, GetOptions } from './get'
 import { compile, CompileOptions } from './compile'
+import { isObj, isArr } from './utils'
+
+/**
+ * The options for the stringify() function
+ */
+export interface StringifyOptions {
+  /**
+   * When set to a truthy value, rendering literally puts a 'null' or
+   * 'undefined' for values that are `null` or `undefined`.
+   * By default it swallows those values to be compatible with Mustache.
+   */
+  readonly explicit?: boolean
+}
+
+/**
+ * The options for the render() function
+ */
+export interface RenderOptions extends CompileOptions, StringifyOptions, GetOptions {}
+
+/**
+ * Puts the resolved `values` into the rest of the template (`strings`) and
+ * returns the final result that'll be returned from `render()`, `renderFn()`
+ * and `renderFnAsync()` functions.
+ */
+export function stringify(
+  strings: string[],
+  values: any[],
+  options: StringifyOptions = {}
+): string {
+  if (!isArr(strings) || !isArr(values)) {
+    throw new TypeError(
+      `Expected arrays for strings and values parameters. Got ${strings} and ${values}`
+    )
+  }
+  if (strings.length - 1 !== values.length) {
+    throw new RangeError(
+      `The strings array (${strings.length}) should be one element longer than the values array (${values.length})`
+    )
+  }
+  if (!isObj(options)) {
+    throw new TypeError(`stringify() expected an object option. Got a ${typeof options}`)
+  }
+  const { explicit } = options
+  const { length } = values
+
+  let ret = ''
+  for (let i = 0; i < length; i++) {
+    ret += strings[i]
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const value: any = values[i]
+
+    if (explicit || (value !== null && value !== undefined)) {
+      ret += value
+    }
+  }
+
+  ret += strings[length]
+
+  return ret
+}
 
 /**
  * Replaces every {{path}} inside the template with values from the scope
@@ -14,49 +73,13 @@ import { compile, CompileOptions } from './compile'
  * function too but it won't be called. It'll be treated as an object and its
  * properties will be used for the lookup.
  * @param options same options as the [[compile]] function
- * @throws any error that [[compile]] or [[Renderer.render]] may throw
  * @returns Template where its paths replaced with
  * corresponding values.
+ * @throws any error that [[compile]] or [[getRef]] or [[stringify]] may throw
  */
-export function render(template: string, scope?: Scope, options?: CompileOptions): string {
-  const renderer: Renderer = compile(template, options)
-  return renderer.render(scope)
-}
-
-/**
- * Same as [[render]] but accepts a resolver function which will be responsible
- * for returning a value for every path.
- * @param resolveFn a function that takes a path and resolves it to a value.
- * The value can be a number, string or boolean. If it is not, it'll be "stringified".
- * @throws any error that [[compile]] or [[Renderer.renderFn]] may throw
- * @returns Template where its paths are replaced with the values returned from the resolver
- * function
- */
-export function renderFn(
-  template: string,
-  resolveFn: ResolveFn,
-  scope?: Scope,
-  options?: CompileOptions
-): string {
-  const renderer: Renderer = compile(template, options)
-  return renderer.renderFn(resolveFn, scope)
-}
-
-/**
- * Same as [[renderFn]] but supports asynchronous resolver functions
- * (a function that returns a promise instead of the value).
- * @param resolveFn an async function that takes a path and resolves it to a value.
- * The value can be a number, string or boolean. If it is not, it'll be "stringified".
- * @throws any error that [[compile]] or [[Renderer.renderFnAsync]] may throw
- * @returns a promise that when resolved contains the template where its paths replaced
- * with what is returned from the resolver function for each path.
- */
-export function renderFnAsync(
-  template: string,
-  resolveFnAsync: ResolveFnAsync,
-  scope?: Scope,
-  options?: CompileOptions
-): Promise<string> {
-  const renderer: Renderer = compile(template, options)
-  return renderer.renderFnAsync(resolveFnAsync, scope)
+export function render(template: string, scope: Scope, options?: RenderOptions): string {
+  const { strings, refs } = compile(template, options)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  const values: any[] = refs.map((ref) => getRef(scope, ref, options))
+  return stringify(strings, values, options)
 }

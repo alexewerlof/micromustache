@@ -1,13 +1,13 @@
-import { get } from './get'
+import { getPath } from './get'
 
-describe('get()', () => {
+describe('getPath()', () => {
   it('can resolve 1-level deep object', () => {
     const obj = {
       foo: 'bar',
       baz: 2,
     }
-    expect(get(obj, 'foo')).toBe('bar')
-    expect(get(obj, 'baz')).toBe(2)
+    expect(getPath(obj, 'foo')).toBe('bar')
+    expect(getPath(obj, 'baz')).toBe(2)
   })
 
   it('can resolve multi-level object', () => {
@@ -20,7 +20,7 @@ describe('get()', () => {
         },
       },
     }
-    expect(get(obj, 'a.b.c.foo')).toBe('bar')
+    expect(getPath(obj, 'a.b.c.foo')).toBe('bar')
   })
 
   it('does not throw when the value is supposed to be undefined', () => {
@@ -28,7 +28,7 @@ describe('get()', () => {
       foo: 'bar',
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    expect(() => get(obj, 'hello')).not.toThrow()
+    expect(() => getPath(obj, 'hello')).not.toThrow()
   })
 
   it('throws if it cannot resolve nested objects', () => {
@@ -36,7 +36,7 @@ describe('get()', () => {
       foo: 'bar',
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    expect(() => get(obj, 'cux', { validateRef: true })).toThrow()
+    expect(() => getPath(obj, 'cux', { validateRef: true })).toThrow()
   })
 
   it('throws if the ref is too deep', () => {
@@ -48,21 +48,21 @@ describe('get()', () => {
       },
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    expect(() => get(obj, 'a.b.c', { maxRefDepth: 2 })).toThrow()
+    expect(() => getPath(obj, 'a.b.c', { maxRefDepth: 2 })).toThrow()
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    expect(() => get(obj, 'a.b.c', { maxRefDepth: 3 })).not.toThrow()
+    expect(() => getPath(obj, 'a.b.c', { maxRefDepth: 3 })).not.toThrow()
   })
 
   it('can access array elements', () => {
     const arr = ['banana', 'apple', 'orange', 'pear']
-    expect(get(arr, '[1]')).toBe('apple')
+    expect(getPath(arr, '[1]')).toBe('apple')
   })
 
   it('can access a nested array object', () => {
     const obj = {
       arr: ['banana', 'apple', 'orange', 'pear'],
     }
-    expect(get(obj, 'arr[1]')).toBe('apple')
+    expect(getPath(obj, 'arr[1]')).toBe('apple')
   })
 
   it('supports array indices', () => {
@@ -70,8 +70,8 @@ describe('get()', () => {
     const obj = {
       fruits: ['ananas', 'kiwi'],
     }
-    expect(get(arr, '[1]')).toBe('mandarin')
-    expect(get(obj, 'fruits[1]')).toBe('kiwi')
+    expect(getPath(arr, '[1]')).toBe('mandarin')
+    expect(getPath(obj, 'fruits[1]')).toBe('kiwi')
   })
 
   it('supports array syntax for objects', () => {
@@ -86,15 +86,15 @@ describe('get()', () => {
       },
     }
 
-    expect(get(obj, '["foo"]')).toBe('bar')
-    expect(get(obj, `baz["a"]['b'].c[3]`)).toBe(3)
+    expect(getPath(obj, '["foo"]')).toBe('bar')
+    expect(getPath(obj, `baz["a"]['b'].c[3]`)).toBe(3)
   })
 
   it('behaves the same as javascript when accessing keys with spaces around them', () => {
     const obj = {
       foo: 'bar',
     }
-    expect(get(obj, ' foo ')).toBe(obj.foo)
+    expect(getPath(obj, ' foo ')).toBe(obj.foo)
   })
 
   it('behaves the same as javascript when accessing keys with quotes and spaces around them', () => {
@@ -103,42 +103,42 @@ describe('get()', () => {
         bar: 'baz',
       },
     }
-    expect(get(obj, 'foo[ "bar" ]')).toBe(obj.foo.bar)
+    expect(getPath(obj, 'foo[ "bar" ]')).toBe(obj.foo.bar)
   })
 
   it('behaves the same as javascript when accessing array indices with spaces around them', () => {
     const obj = {
       foo: [10, 20, 30],
     }
-    expect(get(obj, 'foo[ 1 ]')).toBe(obj.foo[1])
+    expect(getPath(obj, 'foo[ 1 ]')).toBe(obj.foo[1])
   })
 
   it('can lookup null from an object', () => {
     const obj = {
       foo: null,
     }
-    expect(get(obj, 'foo')).toBe(obj.foo)
+    expect(getPath(obj, 'foo')).toBe(obj.foo)
   })
 
   it('can lookup undefined from an object', () => {
     const obj = {
       foo: undefined,
     }
-    expect(get(obj, 'foo')).toBe(obj.foo)
+    expect(getPath(obj, 'foo')).toBe(obj.foo)
   })
 
   it('can lookup a key that is literally "null"', () => {
     const obj = {
       null: 'some value for null',
     }
-    expect(get(obj, 'null')).toBe(obj.null)
+    expect(getPath(obj, 'null')).toBe(obj.null)
   })
 
   it('can lookup a key that is literally "undefined"', () => {
     const obj = {
       undefined: 'some value for undefined',
     }
-    expect(get(obj, 'undefined')).toBe(obj.undefined)
+    expect(getPath(obj, 'undefined')).toBe(obj.undefined)
   })
 
   it('supports getts property', () => {
@@ -148,6 +148,6 @@ describe('get()', () => {
       }
     }
     const obj = new A()
-    expect(get(obj, 'x')).toBe('the x value')
+    expect(getPath(obj, 'x')).toBe('the x value')
   })
 })

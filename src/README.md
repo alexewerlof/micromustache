@@ -19,10 +19,11 @@ final string result (in compiler slang it is called _generator_)
 At a high level flow for a typical render looks like this:
 
 ```
-1. render()
-   |__ 2. compile()
-          |__ 3. tokenize()
-          |__ 4. resolve()
-                 |__ 5. get() or resolveFn()
-                 |__ 6. stringify()
+1. render(template, scope)
+  |__ 2. compile(template)
+  |     |__ 3. tokenize(template) -> strings, paths
+  |     |__ 4. parsePath(paths) -> refs
+  |
+  |__ 5. getRef(cope, refs) -> values
+  |__ 6. stringify(strings, values) -> result
 ```

@@ -138,16 +138,16 @@ console.log(renderFn('My name is {{Alex}}!', up))
 // My name is ALEX!
 ```
 
-The resolver gets the scope as its second parameter. If you want to lookup a value, there's a `get()` function as well:
+The resolver gets the scope as its second parameter. If you want to lookup a value, there's a `getPath()` function as well:
 
 ```javascript
-const { renderFn, get } = require('micromustache')
+const { renderFn, getPath } = require('micromustache')
 
 // Looks up the value and converts it to stars
 function star(path, scope) {
   // path comes from the template and is 'password' here
   // scope is { password: 'abc' }
-  const value = get(scope, path) // value is 'abc'
+  const value = getPath(scope, path) // value is 'abc'
   return '*'.repeat(value.length)
 }
 

@@ -1,9 +1,14 @@
-const { renderFn, get } = require('../')
+const { stringify, getPath, tokenize } = require('../')
+
+function renderWithoutComments(template, scope, options) {
+  const tokens = tokenize(template, options)
+  const values = tokens.paths.map((path) => (/^\s*?!/.test(path) ? '' : getPath(scope, path)))
+  return stringify(tokens.strings, values, options)
+}
 
 console.log(
-  renderFn(
-    'This is not commented: "{{a}}" but this is: "{{!b}}"',
-    (path, scope) => (/^\s*?!/.test(path) ? '' : get(scope, path)),
-    { a: 'hello', b: 'world' }
-  )
+  renderWithoutComments('This is not commented: "{{a}}" but this one is commented out: "{{!b}}"', {
+    a: 'A',
+    b: 'B',
+  })
 )

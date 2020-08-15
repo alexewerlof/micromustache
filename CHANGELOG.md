@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### BREAKING CHANGES
 
+- v9.0.0: the Renderer is gone
+- v9.0.0: `get()` is renamed to `getPath()`
 - v9.0.0: all interfaces are renamed to have no "I" prefix. Also the `ITags` interface is removed.
 - v9.0.0: parsing paths is now more accurate. As a result of that, a few edge cases that would pass previously will throw an error. For example `a[-11]` was OK before but it's an error now (`a[11]` or `a[+11]` still work as expected). The bracket accessor will only accept numbers or quoted strings (`a["true"]` or `a['true']` work while `a[true]` is an error). So you might want to ensure that your templates don't have such issues.
 - v9.0.0: The terminology is update. Instead of "VarName", we use "Path" for the string form of it (as it appears in the template) and "Ref" for when it is parsed to an array of strings

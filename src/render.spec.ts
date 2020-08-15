@@ -1,15 +1,15 @@
-import { render, renderFn, renderFnAsync, ResolveFn, ResolveFnAsync } from './index'
+import { render } from './index'
 
 describe('render', () => {
   describe('.render()', () => {
-    it('uses get() by default', () => {
+    it('uses getPath() by default', () => {
       expect(render('Hello! My name is {{name}}!', { name: 'Alex' })).toBe(
         'Hello! My name is Alex!'
       )
     })
 
     it('returns an empty string if the template is empty', () => {
-      expect(render('')).toBe('')
+      expect(render('', {})).toBe('')
     })
 
     it('assumes empty value if the key does not exist', () => {
@@ -287,55 +287,6 @@ describe('render', () => {
           singer
         )
       ).toBe('Michael Jackson had 3 children: Paris-Michael, Prince and Michael')
-    })
-  })
-
-  describe('.renderFn()', () => {
-    it('calls the custom resolve function', () => {
-      // Just returns the reversed path regardless of value
-      const reverseString: ResolveFn = (path) => path.split('').reverse().join('')
-
-      expect(reverseString('Alex')).toBe('xelA')
-      expect(
-        renderFn('Hello! My name is {{name}}!', reverseString, {
-          name: 'Alex',
-        })
-      ).toBe('Hello! My name is eman!')
-    })
-
-    it('passes the scope to the custom resolve function', () => {
-      // Just returns the reversed path regardless of value
-      const resolveFn: ResolveFn = (
-        path,
-        obj: {
-          [path: string]: string
-        }
-      ) => obj[path]
-
-      const scope = { name: 'Alex' }
-      expect(resolveFn('name', scope)).toBe(scope.name)
-      expect(renderFn('Hello! My name is {{name}}!', resolveFn, scope)).toBe(
-        'Hello! My name is Alex!'
-      )
-    })
-  })
-
-  describe('.renderFnAsync()', () => {
-    it('passes the scope to the custom resolve function', async () => {
-      // Just returns the reversed path regardless of value
-      const resolveFn: ResolveFnAsync = async (
-        path,
-        obj: {
-          [path: string]: string
-        }
-        // eslint-disable-next-line @typescript-eslint/require-await
-      ): Promise<string | undefined> => obj[path]
-
-      const scope = { name: 'Alex' }
-      expect(await resolveFn('name', scope)).toBe(scope.name)
-      expect(await renderFnAsync('Hello! My name is {{name}}!', resolveFn, scope)).toBe(
-        'Hello! My name is Alex!'
-      )
     })
   })
 })

@@ -1,4 +1,4 @@
-const { renderFn, get } = require('../')
+const { getPath, tokenize, stringify } = require('../')
 
 function compose(fnArr, initialValue) {
   return fnArr.reduce((input, fn) => fn(input), initialValue)
@@ -13,16 +13,24 @@ const pipes = {
   },
 }
 
-const template = "{{name}}'s password is {{password | charCount | stars}}!"
-
-function resolveFn(path, scope) {
-  const [vn, ...pipeNames] = path.split('|')
-  const value = get(scope, vn)
-  if (pipeNames.length) {
-    const fnArr = pipeNames.map((pipeName) => pipes[pipeName.trim()])
-    return compose(fnArr, value)
+function pipe(template, scope) {
+  function applyPipe(path) {
+    const [initialValuePath, ...pipeNames] = path.split('|')
+    const value = getPath(scope, initialValuePath)
+    if (pipeNames.length) {
+      const fnArr = pipeNames.map((pipeName) => pipes[pipeName.trim()])
+      return compose(fnArr, value)
+    }
+    return value
   }
-  return value
+
+  const tokens = tokenize(template)
+  return stringify(tokens.strings, tokens.paths.map(applyPipe))
 }
 
-console.log(renderFn(template, resolveFn, { name: 'Kathrina', password: 'MonkeyIsland' }))
+console.log(
+  pipe("{{name}}'s password is {{password | charCount | stars}}!", {
+    name: 'Kathrina',
+    password: 'MonkeyIsland',
+  })
+)
