@@ -41,7 +41,7 @@ export class Renderer {
   /**
    * Another cache that holds the parsed values for `parsePath()` one per path
    */
-  private parseRefCache: Ref[]
+  private _refsCache: Ref[]
 
   /**
    * Creates a new Renderer instance. This is called internally by the compiler.
@@ -65,26 +65,28 @@ export class Renderer {
     }
 
     if (options.validatePath) {
-      // trying to initialize parseRefCache parses them which is also validation
-      this.cacheParsedPaths()
+      // trying to get refs parses them which is also a call for validation
+      this.refs
     }
   }
 
   /**
-   * This function is called internally for filling in the `parseRefCache` cache.
+   * This function is called internally for filling in the `refs` cache.
    * If the `validatePath` option for the constructor is set to a truthy
    * value, this function is called immediately which leads to a validation as
    * well because it throws an error if it cannot parse paths.
    */
-  private cacheParsedPaths(): void {
+  private get refs(): Ref[] {
     const { paths } = this.tokens
-    if (this.parseRefCache === undefined) {
-      this.parseRefCache = new Array<Ref>(paths.length)
+    if (this._refsCache === undefined) {
+      this._refsCache = new Array<Ref>(paths.length)
 
       for (let i = 0; i < paths.length; i++) {
-        this.parseRefCache[i] = parsePath.cached(paths[i])
+        this._refsCache[i] = parsePath.cached(paths[i])
       }
     }
+
+    return this._refsCache
   }
 
   /**
@@ -100,13 +102,13 @@ export class Renderer {
     const { paths } = this.tokens
     const { length } = paths
 
-    this.cacheParsedPaths()
+    const { refs } = this
 
     const values = new Array<any>(length)
 
     for (let i = 0; i < length; i++) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      values[i] = getRef(scope, this.parseRefCache[i], this.options)
+      values[i] = getRef(scope, refs[i], this.options)
     }
 
     return this.stringify(values)
@@ -161,7 +163,7 @@ export class Renderer {
     for (let i = 0; i < length; i++) {
       ret += strings[i]
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const value = values[i]
+      const value: any = values[i]
 
       if (explicit || (value !== null && value !== undefined)) {
         ret += value
