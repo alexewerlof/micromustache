@@ -1,5 +1,5 @@
 import { parsePath } from './parse'
-import { isObj, isProp, isNum } from './utils'
+import { isObj, isProp, isNum, isArr } from './utils'
 
 export interface Scope {
   [key: string]: Scope | any
@@ -29,37 +29,19 @@ export interface GetOptions {
   readonly maxRefDepth?: number
 }
 
-/**
- * A useful utility function that is used internally to lookup a path as a ref to a
- * property in an object. It can also be used in your custom resolver functions if needed.
- *
- * This is similar to [Lodash's `_.get()`](https://lodash.com/docs/#get)
- *
- * It has a few differences with plain JavaScript syntax:
- * - No support for keys that include `[` or `]`.
- * - No support for keys that include `'` or `"` or `.`.
- * @see https://github.com/userpixel/micromustache/wiki/Known-issues
- * If it cannot find a value in the specified ref, it may return undefined or throw an error
- * depending on the value of the `validateRef` param.
- * @param scope an object to resolve value from
- * @param refOrPath the path string or a ref array (see [[parsePath]])
- * @throws `SyntaxError` if the path string cannot be parsed
- * @throws `ReferenceError` if the scope does not contain the requested key and the `validateRef`
- * is set to a truthy value
- * @returns the value or undefined. If ref or scope are undefined or scope is null the result is
- * always undefined.
- */
-export function get(scope: Scope, refOrPath: string | string[], options: GetOptions = {}): any {
+export function getRef(scope: Scope, ref: string[], options: GetOptions = {}): any {
   if (!isObj(options)) {
     throw new TypeError(`get expects an object option. Got ${typeof options}`)
+  }
+
+  if (!isArr(ref)) {
+    throw new TypeError(`Expected an array ref. Got ${ref}`)
   }
 
   const { maxRefDepth = 10 } = options
   if (!isNum(maxRefDepth) || maxRefDepth <= 0) {
     throw new RangeError(`Expected a positive number for maxRefDepth. Got ${maxRefDepth}`)
   }
-
-  const ref = Array.isArray(refOrPath) ? refOrPath : parsePath.cached(refOrPath)
 
   const propNamesAsStr = () => ref.join(' > ')
 
@@ -82,4 +64,29 @@ export function get(scope: Scope, refOrPath: string | string[], options: GetOpti
     }
   }
   return currentScope
+}
+
+/**
+ * A useful utility function that is used internally to lookup a path as a ref to a
+ * property in an object. It can also be used in your custom resolver functions if needed.
+ *
+ * This is similar to [Lodash's `_.get()`](https://lodash.com/docs/#get)
+ *
+ * It has a few differences with plain JavaScript syntax:
+ * - No support for keys that include `[` or `]`.
+ * - No support for keys that include `'` or `"` or `.`.
+ * @see https://github.com/userpixel/micromustache/wiki/Known-issues
+ * If it cannot find a value in the specified ref, it may return undefined or throw an error
+ * depending on the value of the `validateRef` param.
+ * @param scope an object to resolve value from
+ * @param path the path string or a ref array (see [[parsePath]])
+ * @throws `SyntaxError` if the path string cannot be parsed
+ * @throws `ReferenceError` if the scope does not contain the requested key and the `validateRef`
+ * is set to a truthy value
+ * @returns the value or undefined. If ref or scope are undefined or scope is null the result is
+ * always undefined.
+ */
+export function get(scope: Scope, path: string, options: GetOptions = {}): any {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return getRef(scope, parsePath(path), options)
 }

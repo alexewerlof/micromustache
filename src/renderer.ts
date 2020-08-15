@@ -1,5 +1,5 @@
 import { isFn, isObj, isArr } from './utils'
-import { Scope, get, GetOptions } from './get'
+import { Scope, GetOptions, getRef } from './get'
 import { parsePath } from './parse'
 import { Tokens } from './tokenize'
 
@@ -106,7 +106,7 @@ export class Renderer {
 
     for (let i = 0; i < length; i++) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      values[i] = get(scope, this.parseRefCache[i], this.options)
+      values[i] = getRef(scope, this.parseRefCache[i], this.options)
     }
 
     return this.stringify(values)
