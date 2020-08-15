@@ -24,6 +24,6 @@ At a high level flow for a typical render looks like this:
 |   |__ 3. parseTemplate(template) -> strings, paths
 |   |__ 4. tokenizePath(paths) -> refs
 |
-|__ 5. getRef(cope, refs) -> values
+|__ 5. getRef(scope, refs) -> values
 |__ 6. stringify(strings, values) -> result
 ```
