@@ -2,12 +2,13 @@
 
 ## Supported Versions
 
-Due to available resources and differences in code, only the recent versions are supported:
+Due to available resources and differences in algorithm, only the last 2 major versions are supported:
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 9.x.x   | :white_check_mark: |
 | 8.x.x   | :white_check_mark: |
-| 7.x.x   | :white_check_mark: |
+| 7.x.x   | :x:                |
 | 6.x.x   | :x:                |
 | < 5.x   | :x:                |
 
