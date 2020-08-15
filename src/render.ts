@@ -1,9 +1,10 @@
 import { Scope, getRef, GetOptions } from './get'
 import { compile, CompileOptions } from './compile'
 import { isObj, isArr } from './utils'
+import { Ref } from './tokenize'
 
 /**
- * The options for the stringify() function
+ * The options for the [[stringify]] function
  */
 export interface StringifyOptions {
   /**
@@ -15,7 +16,12 @@ export interface StringifyOptions {
 }
 
 /**
- * The options for the render() function
+ * The options for the [[resolve]] function
+ */
+export interface ResolveOptions extends StringifyOptions, GetOptions {}
+
+/**
+ * The options for the [[render]] function
  */
 export interface RenderOptions extends CompileOptions, StringifyOptions, GetOptions {}
 
@@ -61,6 +67,19 @@ export function stringify(
   return ret
 }
 
+export function resolve<T = Ref | string>(
+  strings: string[],
+  fn: (scope: Scope, entity: T, options?: ResolveOptions) => any,
+  scope: Scope,
+  entities: T[],
+  options?: ResolveOptions
+): string {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  const values: any[] = entities.map((entity) => fn(scope, entity, options))
+  return stringify(strings, values, options)
+}
+
 /**
  * Replaces every {{path}} inside the template with values from the scope
  * parameter.
@@ -79,7 +98,5 @@ export function stringify(
  */
 export function render(template: string, scope: Scope, options?: RenderOptions): string {
   const { strings, refs } = compile(template, options)
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  const values: any[] = refs.map((ref) => getRef(scope, ref, options))
-  return stringify(strings, values, options)
+  return resolve(strings, getRef, scope, refs, options)
 }
