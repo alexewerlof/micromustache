@@ -1,4 +1,4 @@
-const { stringify, tokenize, getPath } = require('../')
+const { stringify, parseTemplate, getPath } = require('../')
 
 const processors = {
   rev: (a) => a.split('').reverse().join(''),
@@ -29,8 +29,8 @@ function callFunctions(template, scope) {
     return '---'
   }
 
-  const tokens = tokenize(template)
-  return stringify(tokens.strings, tokens.paths.map(pow))
+  const parsedTemplate = parseTemplate(template)
+  return stringify(parsedTemplate.strings, parsedTemplate.paths.map(pow))
 }
 
 console.log(callFunctions(template, scope))

@@ -1,161 +1,126 @@
-import { isObj, isStr } from './utils'
+import { isStr, isArr, isObj, isNum } from './utils'
 
-export interface ParseOptions {
+export interface ParsedTemplate {
+  /** An array of constant strings extracted from the template */
+  readonly strings: string[]
+  /** An array of path strings extracted from the template */
+  readonly paths: string[]
+}
+
+/**
+ * The options that goes to the template parsing algorithm
+ */
+export interface ParseTemplateOptions {
   /**
-   * Drilling a nested object to get the value assigned with a ref is a relatively expensive
-   * computation. Therefore you can set a value of how deep you are expecting a template to go and
-   * if the nesting is deeper than that, the computation stops with an error.
-   * This prevents a malicious or erroneous template with deep nesting to block the JavaScript event
-   * loop. The default is 10.
+   * Maximum allowed path. Set this to a safe value to prevent a bad template from blocking
+   * the template parsing unnecessarily
    */
-  readonly maxRefDepth?: number
+  maxPathLen?: number
+  /**
+   * The string symbols that mark the opening and closing of a path in the template.
+   * It should be an array of exactly two distinct strings otherwise an error is thrown.
+   * It defaults to `['{{', '}}']`
+   */
+  tags?: [string, string]
 }
 
 /**
- * An array that is derived from a path string
- * For example, if your template has a path that looks like `'person.name'`, its corresponding Ref
- * looks like `['person', 'name']`
+ * Parses a template
+ *
+ * @throws `TypeError` if there's an issue with its inputs
+ * @throws `SyntaxError` if there's an issue with the template
+ *
+ * @param template the template
+ * @param openSym the string that marks the start of a path
+ * @param closeSym the string that marks the start of a path
+ * @returns the parsing result as an object
  */
-export type Ref = string[]
-
-/** @internal */
-interface RegExpWithNameGroup extends RegExpExecArray {
-  groups: {
-    name: string
-  }
-}
-
-/** @internal */
-const pathPatterns: Array<RegExp> = [
-  // `.a` the most common patter (hence first)
-  /\s*\.\s*(?<name>[$_\w]+)\s*/y,
-  // `a['b']` or `a["b"]` or `a[\`b\`]`
-  /\s*\[\s*(?<quote>['"`])(?<name>.*?)\k<quote>\s*\]\s*/y,
-  // `a[N]` where N is a positive integer (`String(Number.MAX_SAFE_INTEGER).length` is 16)
-  /\s*\[\s*\+?\s*0*(?<name>\d{1,16}?)\s*\]\s*/y,
-  // `a` at the start of the string
-  /^\s*(?<name>[$_\w]+)\s*/y,
-]
-
-/**
- * Breaks a path to an array of strings.
- * The result can be used to [[getPath]] a particular value from a [[Scope]] object
- * @param path - the path as it occurs in the template.
- * For example `a["b"].c`
- * @throws `TypeError` if the path is not a string
- * @throws `SyntaxError` if the path syntax has a problem
- * @returns - an array of property names that can be used to get a particular value.
- * For example `['a', 'b', 'c']`
- */
-export function parsePath(path: string, options: ParseOptions = {}): Ref {
-  if (!isStr(path)) {
-    throw new TypeError(`Cannot parse path. Expected string. Got a ${typeof path}`)
+export function parseTemplate(
+  template: string,
+  options: ParseTemplateOptions = {}
+): ParsedTemplate {
+  if (!isStr(template)) {
+    throw new TypeError(`The template parameter must be a string. Got a ${typeof template}`)
   }
 
   if (!isObj(options)) {
-    throw new TypeError(`parsePath() expected an options object. Got ${options}`)
+    throw new TypeError(`Options should be an object. Got a ${typeof options}`)
   }
 
-  const { maxRefDepth = 10 } = options
+  const { tags = ['{{', '}}'], maxPathLen = 1000 } = options
 
-  const ref: Ref = []
-
-  if (path.trim() === '') {
-    return ref
+  if (!isArr(tags) || tags.length !== 2) {
+    throw TypeError(`tags should be an array of two elements. Got ${String(tags)}`)
   }
 
-  let currIndex = 0
+  const [openTag, closeTag] = tags
 
-  let patternMatched
+  if (
+    !isStr(openTag, 1) ||
+    !isStr(closeTag, 1) ||
+    openTag === closeTag ||
+    openTag.includes(closeTag) ||
+    closeTag.includes(openTag)
+  ) {
+    throw new TypeError(
+      `The open and close symbols should be two distinct non-empty strings which don't contain each other. Got "${openTag}" and "${closeTag}"`
+    )
+  }
 
-  do {
-    patternMatched = false
-    for (const pattern of pathPatterns) {
-      pattern.lastIndex = currIndex
-      const parsedResult = pattern.exec(path)
+  if (!isNum(maxPathLen) || maxPathLen <= 0) {
+    throw new Error(`Expected a positive number for maxPathLen. Got ${maxPathLen}`)
+  }
 
-      if (parsedResult) {
-        patternMatched = true
-        currIndex = pattern.lastIndex
-        // For perf reasons we assume that all regex groups have a capture group called name
-        ref.push((parsedResult as RegExpWithNameGroup).groups.name)
-        if (ref.length > maxRefDepth) {
-          throw new Error(`The reference dept exceeds the configured limit of ${maxRefDepth}`)
-        }
+  const openTagLen = openTag.length
+  const closeTagLen = closeTag.length
 
-        break
-      }
+  let lastOpenTagIndex: number
+  let lastCloseTagIndex = 0
+  let currentIndex = 0
+  let path: string
+
+  // The result
+  const strings: string[] = []
+  const paths: string[] = []
+
+  while (currentIndex < template.length) {
+    lastOpenTagIndex = template.indexOf(openTag, currentIndex)
+    if (lastOpenTagIndex === -1) {
+      break
     }
-  } while (patternMatched)
 
-  if (currIndex !== path.length) {
-    throw new SyntaxError(`Could not parse path: "${path}"`)
-  }
+    const refStartIndex = lastOpenTagIndex + openTagLen
 
-  return ref
-}
+    lastCloseTagIndex = template.substr(refStartIndex, maxPathLen + closeTagLen).indexOf(closeTag)
 
-/**
- * @internal
- * The number of different paths that will be cached.
- * If a path is cached, the actual parsing algorithm will not be called
- * which significantly improves performance.
- * However, this cache is size-limited to prevent degrading the user's software
- * over a period of time.
- * If the cache is full, we start removing older paths one at a time.
- */
-const cacheSize = 1000
-
-/**
- * @internal
- */
-export class Cache<T> {
-  private readonly map: Record<string, T> = {}
-
-  private cachedKeys: string[]
-  private oldestIndex: number
-
-  constructor(private size: number) {
-    this.reset()
-  }
-
-  public reset(): void {
-    this.oldestIndex = 0
-    this.cachedKeys = new Array<string>(this.size)
-  }
-
-  public getPath(key: string): T {
-    return this.map[key]
-  }
-
-  public set(key: string, value: T): void {
-    this.map[key] = value
-    const oldestKey = this.cachedKeys[this.oldestIndex]
-    if (oldestKey !== undefined) {
-      delete this.map[oldestKey]
+    if (lastCloseTagIndex === -1) {
+      throw new SyntaxError(
+        `Missing "${closeTag}" in the template for the "${openTag}" at position ${lastOpenTagIndex} within ${maxPathLen} characters`
+      )
     }
-    this.cachedKeys[this.oldestIndex] = key
-    this.oldestIndex++
-    this.oldestIndex %= this.size
+
+    lastCloseTagIndex += refStartIndex
+
+    path = template.substring(refStartIndex, lastCloseTagIndex).trim()
+
+    if (path.length === 0) {
+      throw new SyntaxError(`Unexpected "${closeTag}" tag found at position ${lastOpenTagIndex}`)
+    }
+
+    if (path.includes(openTag)) {
+      throw new SyntaxError(
+        `Path cannot have "${openTag}". But at position ${lastOpenTagIndex} got "${path}"`
+      )
+    }
+
+    paths.push(path)
+
+    lastCloseTagIndex += closeTagLen
+    strings.push(template.substring(currentIndex, lastOpenTagIndex))
+    currentIndex = lastCloseTagIndex
   }
+
+  strings.push(template.substring(lastCloseTagIndex))
+
+  return { strings, paths }
 }
-
-/** @internal */
-const cache = new Cache<string[]>(cacheSize)
-
-/**
- * This is just a faster version of `parsePath()`
- * @internal
- */
-function parseRefCached(path: string, options: ParseOptions = {}): Ref {
-  let result = cache.getPath(path)
-
-  if (result === undefined) {
-    result = parsePath(path, options)
-    cache.set(path, result)
-  }
-
-  return result
-}
-
-parsePath.cached = parseRefCached

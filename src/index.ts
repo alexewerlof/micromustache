@@ -1,4 +1,5 @@
 export * from './get'
+export * from './parse'
 export * from './tokenize'
 export * from './compile'
 export * from './render'

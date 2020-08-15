@@ -1,9 +1,11 @@
-const { stringify, getPath, tokenize } = require('../')
+const { stringify, getPath, parseTemplate } = require('../')
 
 function renderWithoutComments(template, scope, options) {
-  const tokens = tokenize(template, options)
-  const values = tokens.paths.map((path) => (/^\s*?!/.test(path) ? '' : getPath(scope, path)))
-  return stringify(tokens.strings, values, options)
+  const parsedTemplate = parseTemplate(template, options)
+  const values = parsedTemplate.paths.map((path) =>
+    /^\s*?!/.test(path) ? '' : getPath(scope, path)
+  )
+  return stringify(parsedTemplate.strings, values, options)
 }
 
 console.log(

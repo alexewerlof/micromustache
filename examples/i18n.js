@@ -1,4 +1,4 @@
-const { tokenize, stringify, getPath } = require('../')
+const { parseTemplate, stringify, getPath } = require('../')
 
 const localizationTable = {
   en: {
@@ -22,8 +22,8 @@ function __(key, scope, lang) {
     return resolvedValue
   }
 
-  const tokens = tokenize(template)
-  return stringify(tokens.strings, tokens.paths.map(resolve))
+  const parsedTemplate = parseTemplate(template)
+  return stringify(parsedTemplate.strings, parsedTemplate.paths.map(resolve))
 }
 
 const scope = {

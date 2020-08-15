@@ -1,4 +1,4 @@
-const { getPath, tokenize, stringify } = require('../')
+const { getPath, parseTemplate, stringify } = require('../')
 
 function compose(fnArr, initialValue) {
   return fnArr.reduce((input, fn) => fn(input), initialValue)
@@ -24,8 +24,8 @@ function pipe(template, scope) {
     return value
   }
 
-  const tokens = tokenize(template)
-  return stringify(tokens.strings, tokens.paths.map(applyPipe))
+  const parsedTemplate = parseTemplate(template)
+  return stringify(parsedTemplate.strings, parsedTemplate.paths.map(applyPipe))
 }
 
 console.log(

@@ -1,15 +1,15 @@
-import { parsePath, Ref, ParseOptions } from './parse'
+import { tokenizePath, Ref, TokenizePathOptions } from './tokenize'
 import { isObj, isProp, isNum, isArr } from './utils'
 
 export interface Scope {
   [key: string]: Scope | any
 }
 
-export interface GetOptions extends ParseOptions {
+export interface GetOptions extends TokenizePathOptions {
   /**
    * When set to a truthy value, we throw a `ReferenceError` for invalid paths and refs.
    * - An invalid ref specifies an array of properties that does not exist in the scope.
-   * - An invalid path is a string that is parsed to an invalid ref.
+   * - An invalid path is a string that is tokenized to an invalid ref.
    *
    * When set to a falsy value, we use an empty string for paths and refs that don't exist in the
    * scope.
@@ -29,9 +29,8 @@ export interface GetOptions extends ParseOptions {
  * If it cannot find a value in the specified ref, it may return undefined or throw an error
  * depending on the value of the `validateRef` option
  * @param scope an object to resolve value from
- * @param ref the parsed path (see [[parsePath]])
- * @throws any error that [[parsePath]] may throw
- * @throws `SyntaxError` if the path string cannot be parsed
+ * @param ref the tokenized path (see [[tokenizePath]])
+ * @throws any error that [[tokenizePath]] may throw
  * @throws `TypeError` if the arguments have the wrong type
  * @throws `ReferenceError` if the scope does not contain the requested key and the `validateRef`
  * is set to a truthy value
@@ -87,10 +86,10 @@ export function getRef(scope: Scope, ref: Ref, options: GetOptions = {}): any {
  *
  * @param scope an object to resolve value from
  * @param path the path string as it appeared in the template
- * @throws any error that [[getRef]] may throw
+ * @throws any error that [[getRef]] or [[tokenizePath]] may throw
  * @returns the value or undefined
  */
 export function getPath(scope: Scope, path: string, options: GetOptions = {}): any {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return getRef(scope, parsePath(path, options), options)
+  return getRef(scope, tokenizePath(path, options), options)
 }

@@ -1,4 +1,4 @@
-const { tokenize, stringify } = require('../')
+const { parseTemplate, stringify } = require('../')
 
 function delayedResolver(path) {
   return new Promise((resolve) => {
@@ -12,11 +12,11 @@ function delayedResolver(path) {
 
 ;(async () => {
   try {
-    const tokens = await tokenize(
+    const parsedTemplate = await parseTemplate(
       'I like {{apples}} and {{oranges}} because {{wood}} does not taste good'
     )
-    const values = await Promise.all(tokens.paths.map(delayedResolver))
-    const result = stringify(tokens.strings, values)
+    const values = await Promise.all(parsedTemplate.paths.map(delayedResolver))
+    const result = stringify(parsedTemplate.strings, values)
     console.log(result)
     // I like APPLES (1002ms) and ORANGES (1003ms) because WOOD (1003ms) does not taste good
   } catch (e) {

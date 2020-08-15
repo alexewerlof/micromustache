@@ -1,4 +1,4 @@
-const { render, tokenize, stringify, getPath } = require('../')
+const { render, parseTemplate, stringify, getPath } = require('../')
 
 const scope = {
   names: ['Alex', 'Miranda', 'Jake'],
@@ -7,7 +7,7 @@ const scope = {
 
 function doubleRender(template, scope) {
   // first pass
-  const tokens = tokenize(template)
+  const parsedTemplate = parseTemplate(template)
   // second pass
   function secondPass(path) {
     const result = render(path, scope, { tags: ['<', '>'] })
@@ -15,7 +15,7 @@ function doubleRender(template, scope) {
     return getPath(scope, result, { validateRef: true })
   }
 
-  return stringify(tokens.strings, tokens.paths.map(secondPass))
+  return stringify(parsedTemplate.strings, parsedTemplate.paths.map(secondPass))
 }
 
 console.log(doubleRender('Hi {{names[<idx>]}}!', scope))

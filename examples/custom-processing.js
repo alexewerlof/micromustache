@@ -1,4 +1,4 @@
-const { tokenize, stringify } = require('../')
+const { parseTemplate, stringify } = require('../')
 
 function beforeLookup(path) {
   switch (path.toLowerCase()) {
@@ -32,8 +32,8 @@ function transform(template, scope) {
     return afterLookup(numStars)
   }
 
-  const tokens = tokenize(template)
-  return stringify(tokens.strings, tokens.paths.map(transformChain))
+  const parsedTemplate = parseTemplate(template)
+  return stringify(parsedTemplate.strings, parsedTemplate.paths.map(transformChain))
 }
 const arr = [0, 10, 20, 30]
 console.log(transform('zero={{Zero}}\nOne={{one}}\nTwo={{two}}\nThree={{three}}', arr))

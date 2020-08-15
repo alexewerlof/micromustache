@@ -10,17 +10,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### BREAKING CHANGES
 
+- v9.0.0: The terminology is update. Instead of "VarName", we use "Path" for the string form of it (as it appears in the template) and "Ref" for when it is tokenized to an array of strings
 - v9.0.0: the Renderer is gone
 - v9.0.0: `get()` is renamed to `getPath()`
+- v9.0.0: `tokenize()` is renamed to `parseTemplate()` and its result looks like `{ strings, paths }` instead of `{ strings, varNames }`
+- v9.0.0: `compile()` no longer returns an instance of `Renderer` (that class is gone).
 - v9.0.0: all interfaces are renamed to have no "I" prefix. Also the `ITags` interface is removed.
 - v9.0.0: parsing paths is now more accurate. As a result of that, a few edge cases that would pass previously will throw an error. For example `a[-11]` was OK before but it's an error now (`a[11]` or `a[+11]` still work as expected). The bracket accessor will only accept numbers or quoted strings (`a["true"]` or `a['true']` work while `a[true]` is an error). So you might want to ensure that your templates don't have such issues.
-- v9.0.0: The terminology is update. Instead of "VarName", we use "Path" for the string form of it (as it appears in the template) and "Ref" for when it is parsed to an array of strings
-- v9.0.0: The result of `tokenize()` now looks like `{ strings, paths }` instead of `{ strings, varNames }`
 - v9.0.0: The `maxVarNameLength` option is renamed to `maxPathLen`
 - v9.0.0: The `propsExist` option is renamed to `validateRef`
 - v9.0.0: The `validateVarNames` option is renamed to `validatePath`
 - v9.0.0: The `depth` option is renamed to `maxRefDepth`
-- v9.0.0: The internal `toPath` function is renamed to `parsePath`
+- v9.0.0: The internal `toPath` function is renamed to `tokenizePath`
 
 ## 8.0.0
 

@@ -1,101 +1,154 @@
-import { tokenize } from './tokenize'
+import { tokenizePath } from './tokenize'
 
-describe('tokenize()', () => {
-  it('returns the string intact if no interpolation is found', () => {
-    expect(tokenize('Hello world')).toEqual({
-      strings: ['Hello world'],
-      paths: [],
-    })
-  })
+interface ISuccessCases {
+  [input: string]: string[]
+}
 
-  it('supports customized tags', () => {
-    expect(tokenize('Hello {name}!', { tags: ['{', '}'] })).toEqual({
-      strings: ['Hello ', '!'],
-      paths: ['name'],
-    })
-  })
+function stringArrToString(arr: string[]): string {
+  return '[' + arr.map((s) => `'${s}'`).join(', ') + ']'
+}
 
-  it('throws if the open and close tag are the same', () => {
-    expect(() => tokenize('Hello |name|!', { tags: ['|', '|'] })).toThrow(TypeError)
-  })
+describe('tokenizePath()', () => {
+  describe('success cases:', () => {
+    // input: expected output
+    const testCases: ISuccessCases = {
+      a: ['a'],
+      ' a': ['a'],
+      '  a': ['a'],
+      'a ': ['a'],
+      'a  ': ['a'],
+      ' a ': ['a'],
+      '  a  ': ['a'],
+      'a.b': ['a', 'b'],
+      'person.name': ['person', 'name'],
+      'a. b ': ['a', 'b'],
+      'a . b ': ['a', 'b'],
+      ' a . b ': ['a', 'b'],
+      'a. b': ['a', 'b'],
+      'a.b ': ['a', 'b'],
+      'a.b.c': ['a', 'b', 'c'],
+      'a["b"]': ['a', 'b'],
+      'a[" b "]': ['a', ' b '],
+      'a[""]': ['a', ''],
+      "a['b']": ['a', 'b'],
+      "a[ 'b' ]": ['a', 'b'],
+      'a["b"].c': ['a', 'b', 'c'],
+      'a[ "b" ].c': ['a', 'b', 'c'],
+      'a [ "b" ] .c': ['a', 'b', 'c'],
+      'a._.c': ['a', '_', 'c'],
+      '.a': ['a'],
+      ' .a': ['a'],
+      '\n.a': ['a'],
+      '\n .a': ['a'],
+      ' \n .a': ['a'],
+      '.\na': ['a'],
+      '.a\n': ['a'],
+      ' . a': ['a'],
+      '. a': ['a'],
+      '_["b"].c': ['_', 'b', 'c'],
+      '__["b"].c': ['__', 'b', 'c'],
+      '_._b.c': ['_', '_b', 'c'],
+      'a.$.c': ['a', '$', 'c'],
+      '': [],
+      ' ': [],
+      '["a"]': ['a'],
+      'a.33': ['a', '33'],
+      'a[0]': ['a', '0'],
+      'a[11]': ['a', '11'],
+      'a[+11]': ['a', '11'],
+      'a[ +12]': ['a', '12'],
+      'a[ + 13]': ['a', '13'],
+      'a[+ 14]': ['a', '14'],
+      'a["15"]': ['a', '15'],
+      'a[ "16"]': ['a', '16'],
+      'a["17" ]': ['a', '17'],
+      'a["b"]["c"]': ['a', 'b', 'c'],
+      '["a"]["b"]["c"]': ['a', 'b', 'c'],
+      '["a"].b["c"]': ['a', 'b', 'c'],
+      'a["b"].c["d"]': ['a', 'b', 'c', 'd'],
+      'a["b"].c["d"].e': ['a', 'b', 'c', 'd', 'e'],
+      'a["+1.1"]': ['a', '+1.1'],
+      '[13]': ['13'],
+      '[17].c': ['17', 'c'],
+      'a["["]': ['a', '['],
+      'a[ "["]': ['a', '['],
+      'a["[" ]': ['a', '['],
+      'a["]"]': ['a', ']'],
+      'a[ "]"]': ['a', ']'],
+      'a["]" ]': ['a', ']'],
+      'a[1234567890123456]': ['a', '1234567890123456'],
+      'a[0001234567890123456]': ['a', '1234567890123456'],
+      'a[001]': ['a', '1'],
+    }
 
-  it('throws if the open tag contains the close tag', () => {
-    expect(() => tokenize('Hello {{name}!', { tags: ['{{', '{'] })).toThrow(Error)
-  })
-
-  it('throws if the open and close tag are the same', () => {
-    expect(() => tokenize('Hello {name}}!', { tags: ['}', '}}'] })).toThrow(Error)
-  })
-
-  it('returns an empty string and no paths when the template is an empty string', () => {
-    expect(tokenize('')).toEqual({
-      strings: [''],
-      paths: [],
-    })
-  })
-
-  it('handles interpolation correctly at the start of the template', () => {
-    expect(tokenize('{{name}}! How are you?')).toEqual({
-      strings: ['', '! How are you?'],
-      paths: ['name'],
-    })
-  })
-
-  it('handles interpolation correctly at the end of the template', () => {
-    expect(tokenize('My name is {{name}}')).toEqual({
-      strings: ['My name is ', ''],
-      paths: ['name'],
-    })
-  })
-
-  it('trims path', () => {
-    const { paths } = tokenize('My name is {{  name  }}')
-    if (paths.length) {
-      expect(paths[0]).toBe('name')
+    for (const [input, output] of Object.entries(testCases)) {
+      it(`'${input}'  ⇨  ${stringArrToString(output)}`, () => {
+        expect(tokenizePath(input)).toEqual(output)
+      })
     }
   })
 
-  it('can handle a close tag without an open tag', () => {
-    expect(tokenize('Hi}} {{name}}')).toEqual({
-      strings: ['Hi}} ', ''],
-      paths: ['name'],
+  describe('SyntaxError cases:', () => {
+    // all these strings throw a syntax error
+    const syntaxErrorsCases: string[] = [
+      'a.',
+      'a..',
+      'a..b',
+      'a ..b',
+      'a . .b',
+      'a . . b',
+      'a .. b',
+      '..',
+      '. .',
+      ' . . ',
+      ' .. ',
+      ' .. . ',
+      ' ... ',
+      '.["a"]',
+      '.',
+      ' . ',
+      'a["b"]c',
+      'a.["b"]c',
+      'a.["b"]c["d"]',
+      'a["b"]c["d"]',
+      'a["b"].c["d"]e',
+      'a["b"].c.',
+      'a ["b"] c',
+      'a["]',
+      'a.[b]',
+      'a[\'b"]',
+      'a[',
+      'a]',
+      'a]]',
+      'a[[',
+      'a["b\']',
+      'a["b`]',
+      'a[11"]',
+      'a[`11]',
+      'a[ `11 ]',
+      'a[[]]',
+      'a[-11]',
+      'a[b]',
+      'a[11x]',
+      'a[1.1]',
+      'a[+1.1]',
+      'a[-1.1]',
+      '.["a"]',
+      'name[a].',
+      'name,',
+      'name;',
+      'a[12345678901234567]',
+    ]
+
+    for (const input of syntaxErrorsCases) {
+      it(`throws SyntaxError for "${input}"`, () => {
+        expect(() => tokenizePath(input)).toThrow(SyntaxError)
+      })
+    }
+
+    it('throws type error for invalid input types', () => {
+      expect(() => tokenizePath((undefined as unknown) as string)).toThrow(TypeError)
+      expect(() => tokenizePath((13 as unknown) as string)).toThrow(TypeError)
     })
-    expect(tokenize('Hi {{name}} }}')).toEqual({
-      strings: ['Hi ', ' }}'],
-      paths: ['name'],
-    })
-  })
-
-  it('throws a syntax error if the open tag is not closed', () => {
-    expect(() => tokenize('Hi {{')).toThrow(
-      new SyntaxError(
-        'Missing "}}" in the template for the "{{" at position 3 within 1000 characters'
-      )
-    )
-  })
-
-  it('does not throw an error if there is a close tag without an open tag', () => {
-    expect(() => tokenize('Hi}} ')).not.toThrow()
-  })
-
-  it('throws a syntax error if the path is an empty string', () => {
-    expect(() => tokenize('Hi {{}}')).toThrow(
-      new SyntaxError('Unexpected "}}" tag found at position 3')
-    )
-  })
-
-  it('throws a syntax error if the value name is just spaces', () => {
-    expect(() => tokenize('Hi {{ }}')).toThrow(
-      new SyntaxError('Unexpected "}}" tag found at position 3')
-    )
-  })
-
-  it('throws for nested open and close tag', () => {
-    expect(() => tokenize('Hello {{ {{name}} }}!')).toThrow()
-  })
-
-  it('throws if the path is too long', () => {
-    expect(() => tokenize('Hej {{n2345}}!', { maxPathLen: 5 })).not.toThrow()
-    expect(() => tokenize('Hej {{n2345}}!', { maxPathLen: 4 })).toThrow()
   })
 })
