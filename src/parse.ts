@@ -1,5 +1,10 @@
 import { isStr } from './utils'
 
+/**
+ * An array that is derived from a path string
+ * For example, if your template has a path that looks like `'person.name'`, its corresponding Ref
+ * looks like `['person', 'name']`
+ */
 export type Ref = string[]
 
 /**
