@@ -15,10 +15,14 @@ export interface TokenizePathOptions {
 }
 
 /**
- * An array that is derived from a path string
  *
- * For example, if your template has a path that looks like `'person.name'`, its corresponding Ref
- * looks like `['person', 'name']`
+ * The parsed path which is called a "Ref" in micromustache lingo. Each Ref is one array of
+ * strings.
+ * @example For `'Hi {{person.firstName}} {{person.lastName}}!'`, there are two paths:
+ * - `'person.firstName'` which gives us `['person', 'firstName']` as a Ref
+ * - `'person.lastName'` which gives us `['person', 'lastName']` as a Ref
+ *
+ * Therefore the `vars` property will be `[['person', 'firstName'], ['person', 'lastName']`
  */
 export type Ref = string[]
 
