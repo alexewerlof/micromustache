@@ -1,10 +1,13 @@
 import { isStr, isArr, isObj, isNum } from './utils'
 
-export interface ParsedTemplate {
+/**
+ * The result of the parsing (and maybe tokenization) process
+ */
+export interface ParsedTemplate<T> {
   /** An array of constant strings extracted from the template */
-  readonly strings: string[]
-  /** An array of path strings extracted from the template */
-  readonly paths: string[]
+  strings: string[]
+  /** An array of path strings extracted from the template or their Ref counterparts */
+  vars: T[]
 }
 
 /**
@@ -24,6 +27,93 @@ export interface ParseTemplateOptions {
   tags?: [string, string]
 }
 
+export function isParsedTemplate(x: unknown): x is ParsedTemplate<any> {
+  if (!isObj(x)) {
+    return false
+  }
+  const parsedTemplate = x as ParsedTemplate<any>
+  return (
+    isArr(parsedTemplate?.strings) &&
+    isArr(parsedTemplate?.vars) &&
+    parsedTemplate.strings.length === parsedTemplate.vars.length + 1
+  )
+}
+
+/**
+ * This is an internal function that is used by [[parseTemplate]] to do the heavy lifting of going
+ * through the template and parsing it to two arrays: one for strings and one for paths
+ * @internal
+ * @param template the template string
+ * @param openTag the opening tag
+ * @param closeTag the close tag
+ * @param maxPathLen maximum path length
+ */
+function pureParser(
+  template: string,
+  openTag: string,
+  closeTag: string,
+  maxPathLen: number
+): ParsedTemplate<string> {
+  const openTagLen = openTag.length
+  const closeTagLen = closeTag.length
+  const templateLen = template.length
+
+  let lastOpenTagIndex: number
+  let lastCloseTagIndex = 0
+  let currentIndex = 0
+  let path: string
+
+  // The result
+  const strings: string[] = []
+  const paths: string[] = []
+
+  while (currentIndex < templateLen) {
+    lastOpenTagIndex = template.indexOf(openTag, currentIndex)
+    if (lastOpenTagIndex === -1) {
+      break
+    }
+
+    const pathStartIndex = lastOpenTagIndex + openTagLen
+
+    lastCloseTagIndex = template.indexOf(closeTag, pathStartIndex)
+
+    if (lastCloseTagIndex === -1) {
+      throw new SyntaxError(
+        `Missing "${closeTag}" in the template for the "${openTag}" at position ${lastOpenTagIndex} within ${maxPathLen} characters`
+      )
+    }
+
+    path = template.substring(pathStartIndex, lastCloseTagIndex).trim()
+
+    const pathLen = path.length
+    if (pathLen === 0) {
+      throw new SyntaxError(`Unexpected "${closeTag}" tag found at position ${lastOpenTagIndex}`)
+    }
+
+    if (path.length > maxPathLen) {
+      throw new SyntaxError(
+        `The path is too long. Expected a maximum of ${maxPathLen} but got ${pathLen} for "${path}"`
+      )
+    }
+
+    if (path.includes(openTag)) {
+      throw new SyntaxError(
+        `Path cannot have "${openTag}". But at position ${lastOpenTagIndex} got "${path}"`
+      )
+    }
+
+    paths.push(path)
+
+    lastCloseTagIndex += closeTagLen
+    strings.push(template.substring(currentIndex, lastOpenTagIndex))
+    currentIndex = lastCloseTagIndex
+  }
+
+  strings.push(template.substring(lastCloseTagIndex))
+
+  return { strings, vars: paths }
+}
+
 /**
  * Parses a template
  *
@@ -38,7 +128,7 @@ export interface ParseTemplateOptions {
 export function parseTemplate(
   template: string,
   options: ParseTemplateOptions = {}
-): ParsedTemplate {
+): ParsedTemplate<string> {
   if (!isStr(template)) {
     throw new TypeError(`The template parameter must be a string. Got a ${typeof template}`)
   }
@@ -71,56 +161,5 @@ export function parseTemplate(
     throw new Error(`Expected a positive number for maxPathLen. Got ${maxPathLen}`)
   }
 
-  const openTagLen = openTag.length
-  const closeTagLen = closeTag.length
-
-  let lastOpenTagIndex: number
-  let lastCloseTagIndex = 0
-  let currentIndex = 0
-  let path: string
-
-  // The result
-  const strings: string[] = []
-  const paths: string[] = []
-
-  while (currentIndex < template.length) {
-    lastOpenTagIndex = template.indexOf(openTag, currentIndex)
-    if (lastOpenTagIndex === -1) {
-      break
-    }
-
-    const refStartIndex = lastOpenTagIndex + openTagLen
-
-    lastCloseTagIndex = template.substr(refStartIndex, maxPathLen + closeTagLen).indexOf(closeTag)
-
-    if (lastCloseTagIndex === -1) {
-      throw new SyntaxError(
-        `Missing "${closeTag}" in the template for the "${openTag}" at position ${lastOpenTagIndex} within ${maxPathLen} characters`
-      )
-    }
-
-    lastCloseTagIndex += refStartIndex
-
-    path = template.substring(refStartIndex, lastCloseTagIndex).trim()
-
-    if (path.length === 0) {
-      throw new SyntaxError(`Unexpected "${closeTag}" tag found at position ${lastOpenTagIndex}`)
-    }
-
-    if (path.includes(openTag)) {
-      throw new SyntaxError(
-        `Path cannot have "${openTag}". But at position ${lastOpenTagIndex} got "${path}"`
-      )
-    }
-
-    paths.push(path)
-
-    lastCloseTagIndex += closeTagLen
-    strings.push(template.substring(currentIndex, lastOpenTagIndex))
-    currentIndex = lastCloseTagIndex
-  }
-
-  strings.push(template.substring(lastCloseTagIndex))
-
-  return { strings, paths }
+  return pureParser(template, openTag, closeTag, maxPathLen)
 }

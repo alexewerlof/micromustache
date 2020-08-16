@@ -1,6 +1,6 @@
-const { stringify, parseTemplate, getPath } = require('../')
+const { stringify, transform, parseTemplate, getPath } = require('../')
 
-const processors = {
+const functions = {
   rev: (a) => a.split('').reverse().join(''),
   up: (a) => a.toUpperCase(),
   low: (a) => a.toLowerCase(),
@@ -12,25 +12,31 @@ const scope = {
   company: 'Simpsons',
 }
 
-const template = '{{up(lastName)}}, {{low(firstName)}} works for{{rev(company)}}'
+const template = '{{up(lastName)}}, {{low(firstName)}} works for {{rev(company)}} {{wat}}'
 
-function callFunctions(template, scope) {
-  function pow(path) {
+function applyFunctions(functions, template, scope) {
+  function resolvePathToFunctionResult(path) {
     const matches = path.match(/(\w+)\(([^)]*)\)/)
+
     if (matches) {
-      const [, fnName, paramName] = matches
-      console.log(`Going to call ${fnName}(${paramName})`)
-      const paramVal = getPath(scope, paramName, {
-        // JUst so we throw for non-existing paths in the template
+      const [, fnName, argPath] = matches
+      console.log(`Going to call ${fnName}(${argPath})`)
+      const argVal = getPath(scope, argPath, {
+        // Just so we throw for non-existing paths in the template
         validateRef: true,
       })
-      return processors[fnName](paramVal)
+      // The result of this call will be used to substitute the path in the template
+      return functions[fnName](argVal)
     }
-    return '---'
+
+    // If we can't parse a path to "function(param)" format, we return it.
+    // We could throw instead to be strict.
+    return `"${path}"???`
   }
 
-  const parsedTemplate = parseTemplate(template)
-  return stringify(parsedTemplate.strings, parsedTemplate.paths.map(pow))
+  // We could use renderFn() as well, but let's demonstrate how parsing path and transform works
+  const parsedTemplate = transform(parseTemplate(template), resolvePathToFunctionResult)
+  return stringify(parsedTemplate)
 }
 
-console.log(callFunctions(template, scope))
+console.log(applyFunctions(functions, template, scope))

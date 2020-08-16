@@ -1,28 +1,6 @@
-import { parseTemplate, ParseTemplateOptions } from './parse'
+import { parseTemplate, ParseTemplateOptions, ParsedTemplate } from './parse'
 import { tokenizePath, Ref, TokenizePathOptions } from './tokenize'
-
-/**
- * This is the result of compilation.
- * It contains the "constant" strings of the template as well as the parsed version of paths in
- * between.
- */
-export interface TokenizedTemplate {
-  /**
-   * Contains the "constant" parts of the template
-   * @example For `'Hi {{person.name}}!'`, `strings` is `['Hi ', '!']`
-   */
-  strings: string[]
-  /**
-   * The parsed path which is called a "Ref" in micromustache lingo. Each Ref is one array of
-   * strings.
-   * @example For `'Hi {{person.firstName}} {{person.lastName}}!'`, there are two paths:
-   * - `'person.firstName'` which gives us `['person', 'firstName']` as a Ref
-   * - `'person.lastName'` which gives us `['person', 'lastName']` as a Ref
-   *
-   * Therefore the `refs` property will be `[['person', 'firstName'], ['person', 'lastName']`
-   */
-  refs: Ref[]
-}
+import { transform } from './transform'
 
 /**
  * The options that customize parsing the template and tokenizing the paths
@@ -45,9 +23,7 @@ export interface CompileOptions extends ParseTemplateOptions, TokenizePathOption
  * @returns an object with `'strings'` and `'refs'` properties that can be used together with
  * [[getRef]] and [[stringify]] to compile the code.
  */
-export function compile(template: string, options: CompileOptions = {}): TokenizedTemplate {
+export function compile(template: string, options: CompileOptions = {}): ParsedTemplate<Ref> {
   // No assertion is required here because these internal functions assert their input
-  const { strings, paths } = parseTemplate(template, options)
-  const refs = paths.map((path) => tokenizePath.cached(path, options))
-  return { strings, refs }
+  return transform(parseTemplate(template, options), (path) => tokenizePath.cached(path, options))
 }

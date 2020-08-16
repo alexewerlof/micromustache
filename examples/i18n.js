@@ -1,4 +1,4 @@
-const { parseTemplate, stringify, getPath } = require('../')
+const { renderFn, getPath } = require('../')
 
 const localizationTable = {
   en: {
@@ -14,16 +14,13 @@ const localizationTable = {
 function __(key, scope, lang) {
   const template = localizationTable[lang][key]
 
-  function resolve(path) {
+  return renderFn(template, (path) => {
     const resolvedValue = getPath(scope, path)
     if (resolvedValue instanceof Date) {
       return localizationTable[lang].dayNames[resolvedValue.getDay()]
     }
     return resolvedValue
-  }
-
-  const parsedTemplate = parseTemplate(template)
-  return stringify(parsedTemplate.strings, parsedTemplate.paths.map(resolve))
+  })
 }
 
 const scope = {

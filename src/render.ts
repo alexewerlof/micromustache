@@ -1,6 +1,8 @@
-import { Scope, getRef, GetOptions } from './get'
+import { Scope, getRef, getPath, GetOptions } from './get'
 import { compile, CompileOptions } from './compile'
-import { isObj, isArr } from './utils'
+import { isObj, isStr, isArr } from './utils'
+import { ParsedTemplate, isParsedTemplate, parseTemplate } from './parse'
+import { transform, transformAsync } from './transform'
 import { Ref } from './tokenize'
 
 /**
@@ -26,36 +28,46 @@ export interface ResolveOptions extends StringifyOptions, GetOptions {}
 export interface RenderOptions extends CompileOptions, StringifyOptions, GetOptions {}
 
 /**
+ * The callback for resolving a value (synchronous)
+ * @param scope the scope object that was passed to .render() function
+ * @param path a string that appeared in the string between open and close tags
+ * @example a template that is `Hi {{a.b.c}}!` leads to `'a.b.c'` as ref
+ * @returns the value to be interpolated.
+ */
+export type ResolveFn = (path: string, scope?: Scope) => any
+
+/**
+ * Same as `ResolveFn` but for asynchronous functions
+ */
+export type ResolveFnAsync = (path: string, scope?: Scope) => Promise<any>
+
+/**
  * Puts the resolved `values` into the rest of the template (`strings`) and
  * returns the final result that'll be returned from `render()`, `renderFn()`
  * and `renderFnAsync()` functions.
  */
 export function stringify(
-  strings: string[],
-  values: any[],
+  parsedTemplate: ParsedTemplate<any>,
   options: StringifyOptions = {}
 ): string {
-  if (!isArr(strings) || !isArr(values)) {
-    throw new TypeError(
-      `Expected arrays for strings and values parameters. Got ${strings} and ${values}`
-    )
+  if (!isParsedTemplate(parsedTemplate)) {
+    throw new TypeError(`Invalid parsedTemplate: ${parsedTemplate}`)
   }
-  if (strings.length - 1 !== values.length) {
-    throw new RangeError(
-      `The strings array (${strings.length}) should be one element longer than the values array (${values.length})`
-    )
-  }
+
   if (!isObj(options)) {
     throw new TypeError(`stringify() expected an object option. Got a ${typeof options}`)
   }
+
   const { explicit } = options
-  const { length } = values
+  const { strings, vars } = parsedTemplate
+  const { length } = vars
 
   let ret = ''
   for (let i = 0; i < length; i++) {
     ret += strings[i]
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const value: any = values[i]
+    const value: any = vars[i]
 
     if (explicit || (value !== null && value !== undefined)) {
       ret += value
@@ -65,19 +77,6 @@ export function stringify(
   ret += strings[length]
 
   return ret
-}
-
-export function resolve<T = Ref | string>(
-  strings: string[],
-  fn: (scope: Scope, entity: T, options?: ResolveOptions) => any,
-  scope: Scope,
-  entities: T[],
-  options?: ResolveOptions
-): string {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  const values: any[] = entities.map((entity) => fn(scope, entity, options))
-  return stringify(strings, values, options)
 }
 
 /**
@@ -96,7 +95,43 @@ export function resolve<T = Ref | string>(
  * corresponding values.
  * @throws any error that [[compile]] or [[getRef]] or [[stringify]] may throw
  */
-export function render(template: string, scope: Scope, options?: RenderOptions): string {
-  const { strings, refs } = compile(template, options)
-  return resolve(strings, getRef, scope, refs, options)
+export function render(
+  template: string | ParsedTemplate<Ref | string>,
+  scope: Scope,
+  options?: RenderOptions
+): string {
+  const parsedTemplate = isStr(template) ? compile(template, options) : template
+  const resolvedTemplate = isArr(parsedTemplate.vars[0])
+    ? // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      transform(parsedTemplate, (ref: Ref) => getRef(scope, ref, options))
+    : // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      transform(parsedTemplate, (path: string) => getPath(scope, path, options))
+  return stringify(resolvedTemplate, options)
+}
+
+export function renderFn(
+  template: string | ParsedTemplate<string>,
+  resolveFn: ResolveFn,
+  scope: Scope,
+  options?: RenderOptions
+): string {
+  const parsedTemplate = isStr(template) ? parseTemplate(template, options) : template
+
+  return stringify(
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    transform<string, any>(parsedTemplate, (path) => resolveFn(path, scope)),
+    options
+  )
+}
+
+export async function renderFnAsync(
+  template: string,
+  resolveFn: ResolveFnAsync,
+  scope: Scope,
+  options?: RenderOptions
+): Promise<string> {
+  const parsedTemplate = isStr(template) ? parseTemplate(template, options) : template
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return stringify(await transformAsync(parsedTemplate, (path) => resolveFn(path, scope)), options)
 }

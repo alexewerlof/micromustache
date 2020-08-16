@@ -48,17 +48,28 @@ function compare(f1, f2) {
 
 const LEN = 100
 
+const noPathTemplate = 'Hello! Nothing is here! Go on...'.repeat(LEN)
+const noPathScope = {}
+
+function micromustacheNoPath() {
+  return micromustache.render(noPathTemplate, noPathScope)
+}
+
+function mustacheNoPath() {
+  return mustache.render(noPathTemplate, noPathScope)
+}
+
 const longPath = 'x'.repeat(LEN)
-const longVal = 'y'.repeat(LEN)
-const longScope = { [longPath]: longVal }
+const longPathVal = 'y'.repeat(LEN)
+const longPathScope = { [longPath]: longPathVal }
 const longPathTemplate = '{{' + longPath + '}}'
 
 function micromustacheLongPath() {
-  return micromustache.render(longPathTemplate, longScope, { maxPathLen: 999999 })
+  return micromustache.render(longPathTemplate, longPathScope, { maxPathLen: 999999 })
 }
 
 function mustacheLongPath() {
-  return mustache.render(longPathTemplate, longScope)
+  return mustache.render(longPathTemplate, longPathScope)
 }
 
 const longTmplPath = 'w'
@@ -72,7 +83,7 @@ function micromustacheLongTmpl() {
 }
 
 function mustacheLongTmpl() {
-  return mustache.render(longTmplTemplate, longScope)
+  return mustache.render(longTmplTemplate, longPathScope)
 }
 
 const diverseScope = {}
@@ -111,8 +122,15 @@ function mustacheDeep() {
   return mustache.render(deepTemplate, deepScope)
 }
 
-const allScope = { ...longScope, ...longTmplScope, ...diverseScope, ...deepScope }
-const allTemplate = longPathTemplate + longTmplTemplate + diverseTemplate + deepTemplate
+const allScope = {
+  ...noPathScope,
+  ...longPathScope,
+  ...longTmplScope,
+  ...diverseScope,
+  ...deepScope,
+}
+const allTemplate =
+  noPathTemplate + longPathTemplate + longTmplTemplate + diverseTemplate + deepTemplate
 
 function micromustacheAll() {
   return micromustache.render(allTemplate, allScope, { maxRefDepth: LEN, maxPathLen: 999999 })
@@ -122,8 +140,30 @@ function mustacheAll() {
   return mustache.render(allTemplate, allScope)
 }
 
+function micromustacheAllRender() {
+  return micromustache.render(allTemplate, allScope, { maxRefDepth: LEN, maxPathLen: 999999 })
+}
+
+const compiled = micromustache.compile(allTemplate, {
+  maxRefDepth: LEN,
+  maxPathLen: 999999,
+})
+
+function micromustacheAllCompiled() {
+  return micromustache.render(
+    compiled,
+    {},
+    {
+      maxRefDepth: LEN,
+      maxPathLen: 999999,
+    }
+  )
+}
+
+compare(micromustacheNoPath, mustacheNoPath)
 compare(micromustacheLongPath, mustacheLongPath)
 compare(micromustacheLongTmpl, mustacheLongTmpl)
 compare(micromustacheDiverse, mustacheDiverse)
 compare(micromustacheDeep, mustacheDeep)
 compare(micromustacheAll, mustacheAll)
+compare(micromustacheAllRender, micromustacheAllCompiled)

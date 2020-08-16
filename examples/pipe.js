@@ -1,4 +1,4 @@
-const { getPath, parseTemplate, stringify } = require('../')
+const { getPath, renderFn } = require('../')
 
 function compose(fnArr, initialValue) {
   return fnArr.reduce((input, fn) => fn(input), initialValue)
@@ -15,6 +15,7 @@ const pipes = {
 
 function pipe(template, scope) {
   function applyPipe(path) {
+    // We are going to let this throw in case it cannot parse it
     const [initialValuePath, ...pipeNames] = path.split('|')
     const value = getPath(scope, initialValuePath)
     if (pipeNames.length) {
@@ -24,8 +25,7 @@ function pipe(template, scope) {
     return value
   }
 
-  const parsedTemplate = parseTemplate(template)
-  return stringify(parsedTemplate.strings, parsedTemplate.paths.map(applyPipe))
+  return renderFn(template, applyPipe)
 }
 
 console.log(

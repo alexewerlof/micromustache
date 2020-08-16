@@ -1,11 +1,11 @@
-import { compile, TokenizedTemplate } from './compile'
+import { compile } from './compile'
 
 describe('compile()', () => {
-  it('returns TokenizedTemplate', () => {
-    const compiledTokens: TokenizedTemplate = compile('Hello {{name}}!')
+  it('returns Parsed', () => {
+    const compiledTokens = compile('Hello {{name}}!')
     expect(compiledTokens).toEqual({
       strings: ['Hello ', '!'],
-      refs: [['name']],
+      vars: [['name']],
     })
   })
 })
