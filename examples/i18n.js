@@ -1,4 +1,4 @@
-const { renderFn, getPath } = require('../')
+const { renderFn, pathGet } = require('../')
 
 const localizationTable = {
   en: {
@@ -15,7 +15,7 @@ function __(key, scope, lang) {
   const template = localizationTable[lang][key]
 
   return renderFn(template, (path) => {
-    const resolvedValue = getPath(scope, path)
+    const resolvedValue = pathGet(scope, path)
     if (resolvedValue instanceof Date) {
       return localizationTable[lang].dayNames[resolvedValue.getDay()]
     }

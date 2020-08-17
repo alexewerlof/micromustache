@@ -2,7 +2,7 @@ import { render } from './index'
 
 describe('render', () => {
   describe('.render()', () => {
-    it('uses getPath() by default', () => {
+    it('uses pathGet() by default', () => {
       expect(render('Hello! My name is {{name}}!', { name: 'Alex' })).toBe(
         'Hello! My name is Alex!'
       )

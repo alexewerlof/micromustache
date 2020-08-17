@@ -47,7 +47,7 @@ const pathPatterns: Array<RegExp> = [
 
 /**
  * Breaks a path to an array of strings.
- * The result can be used to [[getPath]] a particular value from a [[Scope]] object
+ * The result can be used to [[pathGet]] a particular value from a [[Scope]] object
  * @param path - the path as it occurs in the template.
  * For example `a["b"].c`
  * @throws `TypeError` if the path is not a string
@@ -132,7 +132,7 @@ export class Cache<T> {
     this.cachedKeys = new Array<string>(this.size)
   }
 
-  public getPath(key: string): T {
+  public pathGet(key: string): T {
     return this.map[key]
   }
 
@@ -156,7 +156,7 @@ const cache = new Cache<string[]>(cacheSize)
  * @internal
  */
 function tokenizePathCached(path: string, options: TokenizePathOptions = {}): Ref {
-  let result = cache.getPath(path)
+  let result = cache.pathGet(path)
 
   if (result === undefined) {
     result = tokenizePath(path, options)

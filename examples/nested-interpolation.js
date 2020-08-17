@@ -1,4 +1,4 @@
-const { render, parseTemplate, renderFn, getPath } = require('../')
+const { render, parseTemplate, renderFn, pathGet } = require('../')
 
 function doubleRender(template, scope) {
   // first pass
@@ -6,7 +6,7 @@ function doubleRender(template, scope) {
     // Second pass
     const result = render(path, scope, { tags: ['<', '>'] })
     console.log(`second pass got "${path} resulting to ${result}`)
-    return getPath(scope, result, { validateRef: true })
+    return pathGet(scope, result, { validateRef: true })
   })
 }
 

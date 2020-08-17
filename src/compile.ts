@@ -21,7 +21,7 @@ export interface CompileOptions extends ParseTemplateOptions, TokenizePathOption
  * @param options some options for customizing the parsing and tokenization
  * @throws any error that the [[parseTemplate]] or [[tokenizePath]] may throw
  * @returns an object with `'strings'` and `'refs'` properties that can be used together with
- * [[getRef]] and [[stringify]] to compile the code.
+ * [[refGet]] and [[stringify]] to compile the code.
  */
 export function compile(template: string, options: CompileOptions = {}): ParsedTemplate<Ref> {
   // No assertion is required here because these internal functions assert their input

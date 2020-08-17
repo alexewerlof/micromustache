@@ -1,4 +1,4 @@
-const { stringify, transform, parseTemplate, getPath } = require('../')
+const { stringify, transform, parseTemplate, pathGet } = require('../')
 
 const functions = {
   rev: (a) => a.split('').reverse().join(''),
@@ -21,7 +21,7 @@ function applyFunctions(functions, template, scope) {
     if (matches) {
       const [, fnName, argPath] = matches
       console.log(`Going to call ${fnName}(${argPath})`)
-      const argVal = getPath(scope, argPath, {
+      const argVal = pathGet(scope, argPath, {
         // Just so we throw for non-existing paths in the template
         validateRef: true,
       })

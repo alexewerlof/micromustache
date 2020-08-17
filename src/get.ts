@@ -36,13 +36,13 @@ export interface GetOptions extends TokenizePathOptions {
  * is set to a truthy value
  * @returns the value or undefined
  */
-export function getRef(scope: Scope, ref: Ref, options: GetOptions = {}): any {
+export function refGet(scope: Scope, ref: Ref, options: GetOptions = {}): any {
   if (!isObj(scope)) {
-    throw new TypeError(`getRef() expects an object scope. Got ${typeof options}`)
+    throw new TypeError(`refGet() expects an object scope. Got ${typeof options}`)
   }
 
   if (!isObj(options)) {
-    throw new TypeError(`getRef() expects an object option. Got ${typeof options}`)
+    throw new TypeError(`refGet() expects an object option. Got ${typeof options}`)
   }
 
   if (!isArr(ref)) {
@@ -80,16 +80,16 @@ export function getRef(scope: Scope, ref: Ref, options: GetOptions = {}): any {
 /**
  * A useful utility function that is used internally to lookup a path in an object.
  * It can also be used in your custom resolver functions if needed.
- * Under the hood it uses [[getRef]]
+ * Under the hood it uses [[refGet]]
  *
- * This is similar to [Lodash's `_.getPath()`](https://lodash.com/docs/#get)
+ * This is similar to [Lodash's `_.pathGet()`](https://lodash.com/docs/#get)
  *
  * @param scope an object to resolve value from
  * @param path the path string as it appeared in the template
- * @throws any error that [[getRef]] or [[tokenizePath]] may throw
+ * @throws any error that [[refGet]] or [[tokenizePath]] may throw
  * @returns the value or undefined
  */
-export function getPath(scope: Scope, path: string, options: GetOptions = {}): any {
+export function pathGet(scope: Scope, path: string, options: GetOptions = {}): any {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return getRef(scope, tokenizePath(path, options), options)
+  return refGet(scope, tokenizePath(path, options), options)
 }

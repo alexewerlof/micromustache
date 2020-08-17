@@ -1,4 +1,4 @@
-import { Scope, getRef, getPath, GetOptions } from './get'
+import { Scope, refGet, pathGet, GetOptions } from './get'
 import { compile, CompileOptions } from './compile'
 import { isObj, isStr, isArr } from './utils'
 import { ParsedTemplate, isParsedTemplate, parseTemplate } from './parse'
@@ -93,7 +93,7 @@ export function stringify(
  * @param options same options as the [[compile]] function
  * @returns Template where its paths replaced with
  * corresponding values.
- * @throws any error that [[compile]] or [[getRef]] or [[stringify]] may throw
+ * @throws any error that [[compile]] or [[refGet]] or [[stringify]] may throw
  */
 export function render(
   template: string | ParsedTemplate<Ref | string>,
@@ -103,9 +103,9 @@ export function render(
   const parsedTemplate = isStr(template) ? compile(template, options) : template
   const resolvedTemplate = isArr(parsedTemplate.vars[0])
     ? // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      transform(parsedTemplate, (ref: Ref) => getRef(scope, ref, options))
+      transform(parsedTemplate, (ref: Ref) => refGet(scope, ref, options))
     : // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      transform(parsedTemplate, (path: string) => getPath(scope, path, options))
+      transform(parsedTemplate, (path: string) => pathGet(scope, path, options))
   return stringify(resolvedTemplate, options)
 }
 

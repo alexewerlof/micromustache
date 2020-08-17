@@ -6,13 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-- Now we have a `getRef()` function
+- Now we have a `refGet()` function
 
 ### BREAKING CHANGES
 
 - v9.0.0: The terminology is update. Instead of "VarName", we use "Path" for the string form of it (as it appears in the template) and "Ref" for when it is tokenized to an array of strings
 - v9.0.0: the Renderer is gone
-- v9.0.0: `get()` is renamed to `getPath()`
+- v9.0.0: `get()` is renamed to `pathGet()`
 - v9.0.0: `tokenize()` is renamed to `parseTemplate()` and its result looks like `{ strings, paths }` instead of `{ strings, varNames }`
 - v9.0.0: `compile()` no longer returns an instance of `Renderer` (that class is gone).
 - v9.0.0: all interfaces are renamed to have no "I" prefix. Also the `ITags` interface is removed.
