@@ -19,6 +19,11 @@ export async function transformAsync<T, R>(
   parsedTemplate: ParsedTemplate<T>,
   transformer: (value: T, index: number, array: T[]) => Promise<R>
 ): Promise<ParsedTemplate<R>> {
+  if (!isParsedTemplate(parsedTemplate)) {
+    throw new TypeError(`Invalid parsed template: ${parsedTemplate}`)
+  }
+
   const { strings, subs } = transform(parsedTemplate, transformer)
+
   return { strings, subs: await Promise.all(subs) }
 }
