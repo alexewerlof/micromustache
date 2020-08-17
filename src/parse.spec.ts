@@ -4,14 +4,14 @@ describe('parseTemplate()', () => {
   it('returns the string intact if no interpolation is found', () => {
     expect(parseTemplate('Hello world')).toEqual({
       strings: ['Hello world'],
-      vars: [],
+      subs: [],
     })
   })
 
   it('supports customized tags', () => {
     expect(parseTemplate('Hello {name}!', { tags: ['{', '}'] })).toEqual({
       strings: ['Hello ', '!'],
-      vars: ['name'],
+      subs: ['name'],
     })
   })
 
@@ -30,39 +30,39 @@ describe('parseTemplate()', () => {
   it('returns an empty string and no paths when the template is an empty string', () => {
     expect(parseTemplate('')).toEqual({
       strings: [''],
-      vars: [],
+      subs: [],
     })
   })
 
   it('handles interpolation correctly at the start of the template', () => {
     expect(parseTemplate('{{name}}! How are you?')).toEqual({
       strings: ['', '! How are you?'],
-      vars: ['name'],
+      subs: ['name'],
     })
   })
 
   it('handles interpolation correctly at the end of the template', () => {
     expect(parseTemplate('My name is {{name}}')).toEqual({
       strings: ['My name is ', ''],
-      vars: ['name'],
+      subs: ['name'],
     })
   })
 
   it('trims path', () => {
-    const { vars } = parseTemplate('My name is {{  name  }}')
-    if (vars.length) {
-      expect(vars[0]).toBe('name')
+    const { subs } = parseTemplate('My name is {{  name  }}')
+    if (subs.length) {
+      expect(subs[0]).toBe('name')
     }
   })
 
   it('can handle a close tag without an open tag', () => {
     expect(parseTemplate('Hi}} {{name}}')).toEqual({
       strings: ['Hi}} ', ''],
-      vars: ['name'],
+      subs: ['name'],
     })
     expect(parseTemplate('Hi {{name}} }}')).toEqual({
       strings: ['Hi ', ' }}'],
-      vars: ['name'],
+      subs: ['name'],
     })
   })
 

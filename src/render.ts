@@ -59,15 +59,15 @@ export function stringify(
   }
 
   const { explicit } = options
-  const { strings, vars } = parsedTemplate
-  const { length } = vars
+  const { strings, subs } = parsedTemplate
+  const { length } = subs
 
   let ret = ''
   for (let i = 0; i < length; i++) {
     ret += strings[i]
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const value: any = vars[i]
+    const value: any = subs[i]
 
     if (explicit || (value !== null && value !== undefined)) {
       ret += value
@@ -101,7 +101,7 @@ export function render(
   options?: RenderOptions
 ): string {
   const parsedTemplate = isStr(template) ? compile(template, options) : template
-  const resolvedTemplate = isArr(parsedTemplate.vars[0])
+  const resolvedTemplate = isArr(parsedTemplate.subs[0])
     ? // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       transform(parsedTemplate, (ref: Ref) => refGet(ref, scope, options))
     : // eslint-disable-next-line @typescript-eslint/no-unsafe-return

@@ -5,7 +5,7 @@ describe('compile()', () => {
     const compiledTokens = compile('Hello {{name}}!')
     expect(compiledTokens).toEqual({
       strings: ['Hello ', '!'],
-      vars: [['name']],
+      subs: [['name']],
     })
   })
 })

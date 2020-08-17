@@ -13,11 +13,11 @@ describe('transform()', () => {
   it('applies the transformation to the parsedTemplate', () => {
     const parsedTemplate: ParsedTemplate<string> = {
       strings: ['A', 'C', 'E'],
-      vars: ['B', 'D'],
+      subs: ['B', 'D'],
     }
     expect(transform(parsedTemplate, (path, index) => `${path.toLowerCase()}-${index}`)).toEqual({
       strings: ['A', 'C', 'E'],
-      vars: ['b-0', 'd-1'],
+      subs: ['b-0', 'd-1'],
     })
   })
 })
@@ -26,7 +26,7 @@ describe('transformAsync()', () => {
   it('applies the transformation to the parsedTemplate', async () => {
     const parsedTemplate: ParsedTemplate<string> = {
       strings: ['A', 'C', 'E'],
-      vars: ['B', 'D'],
+      subs: ['B', 'D'],
     }
     expect(
       await transformAsync(
@@ -35,7 +35,7 @@ describe('transformAsync()', () => {
       )
     ).toEqual({
       strings: ['A', 'C', 'E'],
-      vars: ['b-0', 'd-1'],
+      subs: ['b-0', 'd-1'],
     })
   })
 })

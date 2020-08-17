@@ -9,7 +9,7 @@ export interface ParsedTemplate<T> {
    */
   strings: string[]
   /**
-   * An array corresponding to the variable part of the template.
+   * An array corresponding to the substitute part of the template.
    *
    * [[parseTemplate]] gives an array of strings while [[compile]] gives an array of [[Ref]]s which
    * are also arrays. Furthermore, any transformation acts on this data structure and may put
@@ -17,7 +17,7 @@ export interface ParsedTemplate<T> {
    *
    * If there are no paths in the template, this will be an empty array.
    */
-  vars: T[]
+  subs: T[]
 }
 
 /**
@@ -43,9 +43,9 @@ export function isParsedTemplate(x: unknown): x is ParsedTemplate<any> {
   }
   const parsedTemplate = x as ParsedTemplate<any>
   return (
-    isArr(parsedTemplate?.strings) &&
-    isArr(parsedTemplate?.vars) &&
-    parsedTemplate.strings.length === parsedTemplate.vars.length + 1
+    isArr(parsedTemplate.strings) &&
+    isArr(parsedTemplate.subs) &&
+    parsedTemplate.strings.length === parsedTemplate.subs.length + 1
   )
 }
 
@@ -121,7 +121,7 @@ function pureParser(
 
   strings.push(template.substring(lastCloseTagIndex))
 
-  return { strings, vars: paths }
+  return { strings, subs: paths }
 }
 
 /**

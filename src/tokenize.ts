@@ -22,7 +22,7 @@ export interface TokenizePathOptions {
  * - `'person.firstName'` which gives us `['person', 'firstName']` as a Ref
  * - `'person.lastName'` which gives us `['person', 'lastName']` as a Ref
  *
- * Therefore the `vars` property will be `[['person', 'firstName'], ['person', 'lastName']`
+ * Therefore the `subs` property will be `[['person', 'firstName'], ['person', 'lastName']`
  */
 export type Ref = string[]
 
