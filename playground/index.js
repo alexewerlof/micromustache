@@ -56,7 +56,7 @@ function runFn(successEl, errorEl, fn) {
 
 function render() {
   // Handle the template errors
-  const renderer = runFn(template, templateError, () =>
+  const compiled = runFn(template, templateError, () =>
     micromustache.compile(getVal(template), {
       validateRef: getVal(id('validateRef')),
       explicit: getVal(id('explicit')),
@@ -68,14 +68,14 @@ function render() {
   // Handle the scope errors
   const scopeObj = runFn(scope, scopeError, () => JSON.parse(getVal(scope)))
 
-  if (!renderer || !scopeObj) {
+  if (!compiled || !scopeObj) {
     return text(result, '')
   }
 
   // If all is well try to generate the results handling the errors
   text(
     result,
-    runFn(result, resultError, () => renderer.render(scopeObj))
+    runFn(result, resultError, () => micromustache.render(compiled, scopeObj))
   )
 }
 
