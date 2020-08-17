@@ -17,7 +17,7 @@ function pipe(template, scope) {
   function applyPipe(path) {
     // We are going to let this throw in case it cannot parse it
     const [initialValuePath, ...pipeNames] = path.split('|')
-    const value = pathGet(scope, initialValuePath)
+    const value = pathGet(initialValuePath, scope)
     if (pipeNames.length) {
       const fnArr = pipeNames.map((pipeName) => pipes[pipeName.trim()])
       return compose(fnArr, value)

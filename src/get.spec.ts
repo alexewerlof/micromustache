@@ -6,8 +6,8 @@ describe('pathGet()', () => {
       foo: 'bar',
       baz: 2,
     }
-    expect(pathGet(obj, 'foo')).toBe('bar')
-    expect(pathGet(obj, 'baz')).toBe(2)
+    expect(pathGet('foo', obj)).toBe('bar')
+    expect(pathGet('baz', obj)).toBe(2)
   })
 
   it('can resolve multi-level object', () => {
@@ -20,7 +20,7 @@ describe('pathGet()', () => {
         },
       },
     }
-    expect(pathGet(obj, 'a.b.c.foo')).toBe('bar')
+    expect(pathGet('a.b.c.foo', obj)).toBe('bar')
   })
 
   it('does not throw when the value is supposed to be undefined', () => {
@@ -28,7 +28,7 @@ describe('pathGet()', () => {
       foo: 'bar',
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    expect(() => pathGet(obj, 'hello')).not.toThrow()
+    expect(() => pathGet('hello', obj)).not.toThrow()
   })
 
   it('throws if it cannot resolve nested objects', () => {
@@ -36,7 +36,7 @@ describe('pathGet()', () => {
       foo: 'bar',
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    expect(() => pathGet(obj, 'cux', { validateRef: true })).toThrow()
+    expect(() => pathGet('cux', obj, { validateRef: true })).toThrow()
   })
 
   it('throws if the ref is too deep', () => {
@@ -48,21 +48,21 @@ describe('pathGet()', () => {
       },
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    expect(() => pathGet(obj, 'a.b.c', { maxRefDepth: 2 })).toThrow()
+    expect(() => pathGet('a.b.c', obj, { maxRefDepth: 2 })).toThrow()
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    expect(() => pathGet(obj, 'a.b.c', { maxRefDepth: 3 })).not.toThrow()
+    expect(() => pathGet('a.b.c', obj, { maxRefDepth: 3 })).not.toThrow()
   })
 
   it('can access array elements', () => {
     const arr = ['banana', 'apple', 'orange', 'pear']
-    expect(pathGet(arr, '[1]')).toBe('apple')
+    expect(pathGet('[1]', arr)).toBe('apple')
   })
 
   it('can access a nested array object', () => {
     const obj = {
       arr: ['banana', 'apple', 'orange', 'pear'],
     }
-    expect(pathGet(obj, 'arr[1]')).toBe('apple')
+    expect(pathGet('arr[1]', obj)).toBe('apple')
   })
 
   it('supports array indices', () => {
@@ -70,8 +70,8 @@ describe('pathGet()', () => {
     const obj = {
       fruits: ['ananas', 'kiwi'],
     }
-    expect(pathGet(arr, '[1]')).toBe('mandarin')
-    expect(pathGet(obj, 'fruits[1]')).toBe('kiwi')
+    expect(pathGet('[1]', arr)).toBe('mandarin')
+    expect(pathGet('fruits[1]', obj)).toBe('kiwi')
   })
 
   it('supports array syntax for objects', () => {
@@ -86,15 +86,15 @@ describe('pathGet()', () => {
       },
     }
 
-    expect(pathGet(obj, '["foo"]')).toBe('bar')
-    expect(pathGet(obj, `baz["a"]['b'].c[3]`)).toBe(3)
+    expect(pathGet('["foo"]', obj)).toBe('bar')
+    expect(pathGet(`baz["a"]['b'].c[3]`, obj)).toBe(3)
   })
 
   it('behaves the same as javascript when accessing keys with spaces around them', () => {
     const obj = {
       foo: 'bar',
     }
-    expect(pathGet(obj, ' foo ')).toBe(obj.foo)
+    expect(pathGet(' foo ', obj)).toBe(obj.foo)
   })
 
   it('behaves the same as javascript when accessing keys with quotes and spaces around them', () => {
@@ -103,42 +103,42 @@ describe('pathGet()', () => {
         bar: 'baz',
       },
     }
-    expect(pathGet(obj, 'foo[ "bar" ]')).toBe(obj.foo.bar)
+    expect(pathGet('foo[ "bar" ]', obj)).toBe(obj.foo.bar)
   })
 
   it('behaves the same as javascript when accessing array indices with spaces around them', () => {
     const obj = {
       foo: [10, 20, 30],
     }
-    expect(pathGet(obj, 'foo[ 1 ]')).toBe(obj.foo[1])
+    expect(pathGet('foo[ 1 ]', obj)).toBe(obj.foo[1])
   })
 
   it('can lookup null from an object', () => {
     const obj = {
       foo: null,
     }
-    expect(pathGet(obj, 'foo')).toBe(obj.foo)
+    expect(pathGet('foo', obj)).toBe(obj.foo)
   })
 
   it('can lookup undefined from an object', () => {
     const obj = {
       foo: undefined,
     }
-    expect(pathGet(obj, 'foo')).toBe(obj.foo)
+    expect(pathGet('foo', obj)).toBe(obj.foo)
   })
 
   it('can lookup a key that is literally "null"', () => {
     const obj = {
       null: 'some value for null',
     }
-    expect(pathGet(obj, 'null')).toBe(obj.null)
+    expect(pathGet('null', obj)).toBe(obj.null)
   })
 
   it('can lookup a key that is literally "undefined"', () => {
     const obj = {
       undefined: 'some value for undefined',
     }
-    expect(pathGet(obj, 'undefined')).toBe(obj.undefined)
+    expect(pathGet('undefined', obj)).toBe(obj.undefined)
   })
 
   it('supports getts property', () => {
@@ -148,6 +148,6 @@ describe('pathGet()', () => {
       }
     }
     const obj = new A()
-    expect(pathGet(obj, 'x')).toBe('the x value')
+    expect(pathGet('x', obj)).toBe('the x value')
   })
 })

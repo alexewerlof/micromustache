@@ -103,9 +103,9 @@ export function render(
   const parsedTemplate = isStr(template) ? compile(template, options) : template
   const resolvedTemplate = isArr(parsedTemplate.vars[0])
     ? // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      transform(parsedTemplate, (ref: Ref) => refGet(scope, ref, options))
+      transform(parsedTemplate, (ref: Ref) => refGet(ref, scope, options))
     : // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      transform(parsedTemplate, (path: string) => pathGet(scope, path, options))
+      transform(parsedTemplate, (path: string) => pathGet(path, scope, options))
   return stringify(resolvedTemplate, options)
 }
 

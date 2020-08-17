@@ -28,15 +28,15 @@ export interface GetOptions extends TokenizePathOptions {
  * @see https://github.com/userpixel/micromustache/wiki/Known-issues
  * If it cannot find a value in the specified ref, it may return undefined or throw an error
  * depending on the value of the `validateRef` option
- * @param scope an object to resolve value from
  * @param ref the tokenized path (see [[tokenizePath]])
+ * @param scope an object to resolve value from
  * @throws any error that [[tokenizePath]] may throw
  * @throws `TypeError` if the arguments have the wrong type
  * @throws `ReferenceError` if the scope does not contain the requested key and the `validateRef`
  * is set to a truthy value
  * @returns the value or undefined
  */
-export function refGet(scope: Scope, ref: Ref, options: GetOptions = {}): any {
+export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
   if (!isObj(scope)) {
     throw new TypeError(`refGet() expects an object scope. Got ${typeof options}`)
   }
@@ -82,14 +82,12 @@ export function refGet(scope: Scope, ref: Ref, options: GetOptions = {}): any {
  * It can also be used in your custom resolver functions if needed.
  * Under the hood it uses [[refGet]]
  *
- * This is similar to [Lodash's `_.pathGet()`](https://lodash.com/docs/#get)
- *
- * @param scope an object to resolve value from
  * @param path the path string as it appeared in the template
+ * @param scope an object to resolve value from
  * @throws any error that [[refGet]] or [[tokenizePath]] may throw
  * @returns the value or undefined
  */
-export function pathGet(scope: Scope, path: string, options: GetOptions = {}): any {
+export function pathGet(path: string, scope: Scope, options: GetOptions = {}): any {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return refGet(scope, tokenizePath(path, options), options)
+  return refGet(tokenizePath(path, options), scope, options)
 }

@@ -6,7 +6,7 @@ function doubleRender(template, scope) {
     // Second pass
     const result = render(path, scope, { tags: ['<', '>'] })
     console.log(`second pass got "${path} resulting to ${result}`)
-    return pathGet(scope, result, { validateRef: true })
+    return pathGet(result, scope, { validateRef: true })
   })
 }
 

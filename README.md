@@ -147,7 +147,7 @@ const { renderFn, pathGet } = require('micromustache')
 function star(path, scope) {
   // path comes from the template and is 'password' here
   // scope is { password: 'abc' }
-  const value = pathGet(scope, path) // value is 'abc'
+  const value = pathGet(path, scope) // value is 'abc'
   return '*'.repeat(value.length)
 }
 

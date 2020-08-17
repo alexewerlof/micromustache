@@ -15,7 +15,7 @@ function __(key, scope, lang) {
   const template = localizationTable[lang][key]
 
   return renderFn(template, (path) => {
-    const resolvedValue = pathGet(scope, path)
+    const resolvedValue = pathGet(path, scope)
     if (resolvedValue instanceof Date) {
       return localizationTable[lang].dayNames[resolvedValue.getDay()]
     }

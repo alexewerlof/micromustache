@@ -21,7 +21,7 @@ function applyFunctions(functions, template, scope) {
     if (matches) {
       const [, fnName, argPath] = matches
       console.log(`Going to call ${fnName}(${argPath})`)
-      const argVal = pathGet(scope, argPath, {
+      const argVal = pathGet(argPath, scope, {
         // Just so we throw for non-existing paths in the template
         validateRef: true,
       })
