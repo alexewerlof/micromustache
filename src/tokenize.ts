@@ -1,4 +1,5 @@
 import { isObj, isStr } from './utils'
+import { MAX_REF_DEPTH, CACHE_SIZE } from './defaults'
 
 /**
  * The options for the [[tokenizePath]] function
@@ -9,7 +10,13 @@ export interface TokenizePathOptions {
    * computation. Therefore you can set a value of how deep you are expecting a template to go and
    * if the nesting is deeper than that, the computation stops with an error.
    * This prevents a malicious or erroneous template with deep nesting to block the JavaScript event
-   * loop. The default is 10.
+   * loop.
+   *
+   * @default defaults.MAX_REF_DEPTH
+   *
+   * @example `path = 'a.b'`, depth = 2
+   * @example `path = 'a.b.c'`, depth = 3
+   * @example `path = 'a['b'].c'`, depth = 3
    */
   readonly maxRefDepth?: number
 }
@@ -66,7 +73,7 @@ export function tokenizePath(path: string, options: TokenizePathOptions = {}): R
     throw new TypeError(`tokenizePath() expected an options object. Got ${options}`)
   }
 
-  const { maxRefDepth = 10 } = options
+  const { maxRefDepth = MAX_REF_DEPTH } = options
 
   const ref: Ref = []
 
@@ -91,7 +98,7 @@ export function tokenizePath(path: string, options: TokenizePathOptions = {}): R
         ref.push((searchResult as RegExpWithNameGroup).groups.name)
         if (ref.length > maxRefDepth) {
           throw new RangeError(
-            `The reference depth for "${path}" exceeds the configured limit of ${maxRefDepth}`
+            `The reference depth for "${path}" exceeds the defaultsured limit of ${maxRefDepth}`
           )
         }
 
@@ -116,7 +123,7 @@ export function tokenizePath(path: string, options: TokenizePathOptions = {}): R
  * time.
  * If the cache is full, we start removing older paths one at a time.
  */
-const cacheSize = 1000
+const cacheSize = CACHE_SIZE
 
 /**
  * @internal

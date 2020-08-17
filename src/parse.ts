@@ -1,4 +1,5 @@
 import { isStr, isArr, isObj, isNum } from './utils'
+import { TAGS, MAX_PATH_LEN } from './defaults'
 
 /**
  * The result of the parsing the template
@@ -21,20 +22,32 @@ export interface ParsedTemplate<T> {
 }
 
 /**
- * The options that goes to the template parsing algorithm
+ * The tags are an array of exactly two strings (that should be different and mutually exclusive)
+ */
+export type Tags = [string, string]
+
+/**
+ * The options for the [[parseTemplate]] function
  */
 export interface ParseTemplateOptions {
   /**
-   * Maximum allowed path. Set this to a safe value to prevent a bad template from blocking
-   * the template parsing unnecessarily
+   * Maximum allowed length for the path string.
+   * Set this to a safe value to throw for paths that are longer than expected.
+   *
+   * @default defaults.MAX_PATH_LEN
+   *
+   * @example `path = 'a.b'`, depth = 3
+   * @example `path = 'a.b.c'`, depth = 5
+   * @example `path = 'a['b'].c'`, depth = 8
    */
   maxPathLen?: number
   /**
    * The string symbols that mark the opening and closing of a path in the template.
    * It should be an array of exactly two distinct strings otherwise an error is thrown.
-   * It defaults to `['{{', '}}']`
+   *
+   * @default defaults.TAGS
    */
-  tags?: [string, string]
+  tags?: Tags
 }
 
 export function isParsedTemplate(x: unknown): x is ParsedTemplate<any> {
@@ -152,7 +165,7 @@ export function parseTemplate(
     throw new TypeError(`Options should be an object. Got a ${typeof options}`)
   }
 
-  const { tags = ['{{', '}}'], maxPathLen = 1000 } = options
+  const { tags = TAGS, maxPathLen = MAX_PATH_LEN } = options
 
   if (!isArr(tags) || tags.length !== 2) {
     throw TypeError(`tags should be an array of two elements. Got ${String(tags)}`)

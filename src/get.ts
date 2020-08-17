@@ -1,5 +1,6 @@
 import { tokenizePath, Ref, TokenizePathOptions } from './tokenize'
 import { isObj, isProp, isNum, isArr } from './utils'
+import { MAX_REF_DEPTH } from './defaults'
 
 export interface Scope {
   [key: string]: Scope | any
@@ -63,7 +64,7 @@ export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
     throw new TypeError(`Expected an array ref. Got ${ref}`)
   }
 
-  const { maxRefDepth = 10 } = options
+  const { maxRefDepth = MAX_REF_DEPTH } = options
   if (!isNum(maxRefDepth) || maxRefDepth <= 0) {
     throw new RangeError(`Expected a positive number for maxRefDepth. Got ${maxRefDepth}`)
   }
