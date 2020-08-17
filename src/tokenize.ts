@@ -52,6 +52,8 @@ const pathPatterns: Array<RegExp> = [
  * For example `a["b"].c`
  * @throws `TypeError` if the path is not a string
  * @throws `SyntaxError` if the path syntax has a problem
+ * @throws `RangeError` if the resulting reference is deeper than the limit specified by the
+ * `maxRefDepth` option
  * @returns - an array of property names that can be used to get a particular value.
  * For example `['a', 'b', 'c']`
  */
@@ -88,7 +90,9 @@ export function tokenizePath(path: string, options: TokenizePathOptions = {}): R
         // For perf reasons we assume that all regex groups have a capture group called name
         ref.push((searchResult as RegExpWithNameGroup).groups.name)
         if (ref.length > maxRefDepth) {
-          throw new Error(`The reference dept exceeds the configured limit of ${maxRefDepth}`)
+          throw new RangeError(
+            `The reference depth for "${path}" exceeds the configured limit of ${maxRefDepth}`
+          )
         }
 
         break

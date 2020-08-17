@@ -1,12 +1,22 @@
 import { isStr, isArr, isObj, isNum } from './utils'
 
 /**
- * The result of the parsing (and maybe tokenization) process
+ * The result of the parsing the template
  */
 export interface ParsedTemplate<T> {
-  /** An array of constant strings extracted from the template */
+  /**
+   * An array of constant strings extracted from the template
+   */
   strings: string[]
-  /** An array of path strings extracted from the template or their Ref counterparts */
+  /**
+   * An array corresponding to the variable part of the template.
+   *
+   * [[parseTemplate]] gives an array of strings while [[compile]] gives an array of [[Ref]]s which
+   * are also arrays. Furthermore, any transformation acts on this data structure and may put
+   * whatever item types in this array.
+   *
+   * If there are no paths in the template, this will be an empty array.
+   */
   vars: T[]
 }
 
@@ -116,6 +126,11 @@ function pureParser(
 
 /**
  * Parses a template
+ *
+ * The result can be directly passed to the [[render]], [[renderFn]] or [[renderFnAsync]] functions
+ * instead of the raw template string.
+ *
+ * @see https://github.com/userpixel/micromustache/wiki/Known-issues
  *
  * @throws `TypeError` if there's an issue with its inputs
  * @throws `SyntaxError` if there's an issue with the template

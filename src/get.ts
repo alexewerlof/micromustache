@@ -5,36 +5,50 @@ export interface Scope {
   [key: string]: Scope | any
 }
 
+/**
+ * Just a small utility function that's used in the [[refGet]] function to generate a string
+ * representation of paths in the errors.
+ *
+ * @internal
+ *
+ * @param ref the reference to convert to string
+ */
+function refToPath(ref: Ref) {
+  return `"${ref.join('.')}"`
+}
+
+/**
+ * The options to the [[pathGet]] and [[refGet]] functions
+ */
 export interface GetOptions extends TokenizePathOptions {
   /**
-   * When set to a truthy value, we throw a `ReferenceError` for invalid paths and refs.
-   * - An invalid ref specifies an array of properties that does not exist in the scope.
-   * - An invalid path is a string that is tokenized to an invalid ref.
-   *
-   * When set to a falsy value, we use an empty string for paths and refs that don't exist in the
-   * scope.
+   * Decides how to deal with references that don't exist in the scope.
    *
    * If a value does not exist in the scope, two things can happen:
    * - if `validateRef` is falsy, the value will be assumed empty string
    * - if `validateRef` is truthy, a `ReferenceError` will be thrown
+   * @default undefined
    */
   readonly validateRef?: boolean
 }
 
 /**
  * Looks up the value of a given [[Ref]] in the [[Scope]]
- * It can also be used in your custom resolver functions if needed.
+ * You can also use this function in your own custom resolvers.
+ *
+ * If it cannot find the value at the specified ref, it returns `undefined`. You can change this
+ * behavior by passing a truthy `validateRef` option.
  *
  * @see https://github.com/userpixel/micromustache/wiki/Known-issues
- * If it cannot find a value in the specified ref, it may return undefined or throw an error
- * depending on the value of the `validateRef` option
+ *
  * @param ref the tokenized path (see [[tokenizePath]])
- * @param scope an object to resolve value from
- * @throws any error that [[tokenizePath]] may throw
+ * @param scope an object to resolve values from
+ *
+ * @returns the value or undefined
+ *
  * @throws `TypeError` if the arguments have the wrong type
  * @throws `ReferenceError` if the scope does not contain the requested key and the `validateRef`
  * is set to a truthy value
- * @returns the value or undefined
  */
 export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
   if (!isObj(scope)) {
@@ -54,11 +68,9 @@ export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
     throw new RangeError(`Expected a positive number for maxRefDepth. Got ${maxRefDepth}`)
   }
 
-  const propNamesAsStr = () => ref.join(' > ')
-
   if (ref.length > maxRefDepth) {
     throw new ReferenceError(
-      `The ref cannot be deeper than ${maxRefDepth} levels. Got "${propNamesAsStr()}"`
+      `The ref cannot be deeper than ${maxRefDepth} levels. Got ${refToPath(ref)}`
     )
   }
 
@@ -68,7 +80,7 @@ export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       currentScope = currentScope[prop]
     } else if (options.validateRef) {
-      throw new ReferenceError(`${prop} is not defined in the scope at ref: "${propNamesAsStr()}"`)
+      throw new ReferenceError(`${prop} is not defined in the scope at ref: ${refToPath(ref)}`)
     } else {
       // This undefined result will be stringified later according to the explicit option
       return
@@ -78,13 +90,17 @@ export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
 }
 
 /**
- * A useful utility function that is used internally to lookup a path in an object.
- * It can also be used in your custom resolver functions if needed.
- * Under the hood it uses [[refGet]]
+ * Looks up the value of a given `path` string in the [[Scope]]
+ *
+ * It uses [[refGet]] under the hood.
+ *
+ * You can also use this function in your own custom resolvers.
  *
  * @param path the path string as it appeared in the template
  * @param scope an object to resolve value from
+ *
  * @throws any error that [[refGet]] or [[tokenizePath]] may throw
+ *
  * @returns the value or undefined
  */
 export function pathGet(path: string, scope: Scope, options: GetOptions = {}): any {

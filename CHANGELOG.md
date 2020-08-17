@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - v9.0.0: parsing paths is now more accurate. As a result of that, a few edge cases that would pass previously will throw an error. For example `a[-11]` was OK before but it's an error now (`a[11]` or `a[+11]` still work as expected). The bracket accessor will only accept numbers or quoted strings (`a["true"]` or `a['true']` work while `a[true]` is an error). So you might want to ensure that your templates don't have such issues.
 - v9.0.0: The `maxVarNameLength` option is renamed to `maxPathLen`
 - v9.0.0: The `propsExist` option is renamed to `validateRef`
-- v9.0.0: The `validateVarNames` option is renamed to `validatePath`
+- v9.0.0: The `validateVarNames` option is removed. Compile always tries to tokenizes paths. If you don't want them tokenized, use the parseTemplate function
 - v9.0.0: The `depth` option is renamed to `maxRefDepth`
 - v9.0.0: The internal `toPath` function is renamed to `tokenizePath`
 
