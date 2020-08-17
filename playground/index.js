@@ -90,6 +90,8 @@ ready(() => {
   onInput(optionsToggle, () => (options.hidden = !optionsToggle.checked))
   onInput(scope, render)
   onInput(template, render)
+  setVal(id('tags0'), micromustache.TAGS[0])
+  setVal(id('tags1'), micromustache.TAGS[1])
   onInput(id('validateRef'), render)
   onInput(id('explicit'), render)
   onInput(id('maxPathLen'), render)
