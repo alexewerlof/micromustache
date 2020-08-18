@@ -42,7 +42,7 @@ export interface GetOptions extends PathToRefOptions {
  *
  * @see https://github.com/userpixel/micromustache/wiki/Known-issues
  *
- * @param ref the tokenized path (see [[pathToRef]])
+ * @param ref the path that is already converted to ref (see [[pathToRef]])
  * @param scope an object to resolve values from
  *
  * @returns the value or undefined

@@ -1,4 +1,4 @@
-const { stringify, transform, parseTemplate, pathGet } = require('../')
+const { stringify, transform, parse, pathGet } = require('../')
 
 const functions = {
   rev: (a) => a.split('').reverse().join(''),
@@ -35,7 +35,7 @@ function applyFunctions(functions, template, scope) {
   }
 
   // We could use renderFn() as well, but let's demonstrate how parsing path and transform works
-  const parsedTemplate = transform(parseTemplate(template), resolvePathToFunctionResult)
+  const parsedTemplate = transform(parse(template), resolvePathToFunctionResult)
   return stringify(parsedTemplate)
 }
 

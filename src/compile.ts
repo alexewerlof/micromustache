@@ -1,19 +1,19 @@
-import { parseTemplate, ParseTemplateOptions, ParsedTemplate } from './parse'
+import { parse, ParseOptions, ParsedTemplate } from './parse'
 import { pathToRef, Ref, PathToRefOptions } from './tokenize'
 import { transform } from './transform'
 
 /**
  * The options that customize parsing the template and tokenizing the paths.
- * Since [[compile]] calls [[parseTemplate]] and [[pathToRef]] functions internally, its accepts
+ * Since [[compile]] calls [[parse]] and [[pathToRef]] functions internally, its accepts
  * any options to those objects
  */
-export interface CompileOptions extends ParseTemplateOptions, PathToRefOptions {}
+export interface CompileOptions extends ParseOptions, PathToRefOptions {}
 
 /**
  * Parses the template and tokenizes its `path`s.
  *
  * If you don't want to tokenize the paths (for example if they are not expected to hold valid
- * JavaScript object references, you can use the [[parseTemplate]] function instead).
+ * JavaScript object references, you can use the [[parse]] function instead).
  * Compilation makes repeated render calls (2-7 times faster).
  *
  * The result can be directly passed to the [[render]], [[renderFn]] or [[renderFnAsync]] functions
@@ -28,9 +28,9 @@ export interface CompileOptions extends ParseTemplateOptions, PathToRefOptions {
  * @returns an object with `'strings'` and `'refs'` properties that can be used together with
  * [[refGet]] and [[stringify]] to compile the code.
  *
- * @throws any error that the [[parseTemplate]] or [[pathToRef]] may throw
+ * @throws any error that the [[parse]] or [[pathToRef]] may throw
  */
 export function compile(template: string, options: CompileOptions = {}): ParsedTemplate<Ref> {
   // No assertion is required here because these internal functions assert their input
-  return transform(parseTemplate(template, options), (path) => pathToRef.cached(path, options))
+  return transform(parse(template, options), (path) => pathToRef.cached(path, options))
 }

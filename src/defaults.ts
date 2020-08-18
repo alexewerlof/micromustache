@@ -15,6 +15,6 @@ export const TAGS = Object.freeze(['{{', '}}'])
 
 /**
  * @internal
- * The size of the tokenize cache
+ * The size of the [[pathToRef]] cache
  */
 export const CACHE_SIZE = 100

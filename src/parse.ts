@@ -12,7 +12,7 @@ export interface ParsedTemplate<T> {
   /**
    * An array corresponding to the substitute part of the template.
    *
-   * [[parseTemplate]] gives an array of strings while [[compile]] gives an array of [[Ref]]s which
+   * [[parse]] gives an array of strings while [[compile]] gives an array of [[Ref]]s which
    * are also arrays. Furthermore, any transformation acts on this data structure and may put
    * whatever item types in this array.
    *
@@ -27,9 +27,9 @@ export interface ParsedTemplate<T> {
 export type Tags = [string, string]
 
 /**
- * The options for the [[parseTemplate]] function
+ * The options for the [[parse]] function
  */
-export interface ParseTemplateOptions {
+export interface ParseOptions {
   /**
    * Maximum allowed length for the path string.
    * Set this to a safe value to throw for paths that are longer than expected.
@@ -63,7 +63,7 @@ export function isParsedTemplate(x: unknown): x is ParsedTemplate<any> {
 }
 
 /**
- * This is an internal function that is used by [[parseTemplate]] to do the heavy lifting of going
+ * This is an internal function that is used by [[parse]] to do the heavy lifting of going
  * through the template and parsing it to two arrays: one for strings and one for paths
  * @internal
  * @param template the template string
@@ -153,10 +153,7 @@ function pureParser(
  * @param closeSym the string that marks the start of a path
  * @returns the parsing result as an object
  */
-export function parseTemplate(
-  template: string,
-  options: ParseTemplateOptions = {}
-): ParsedTemplate<string> {
+export function parse(template: string, options: ParseOptions = {}): ParsedTemplate<string> {
   if (!isStr(template)) {
     throw new TypeError(`The template parameter must be a string. Got a ${typeof template}`)
   }

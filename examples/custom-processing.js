@@ -1,4 +1,4 @@
-const { parseTemplate, transform, stringify } = require('../')
+const { parse, transform, stringify } = require('../')
 
 console.log(
   'This is some semi-advanced processing here.',
@@ -16,7 +16,7 @@ function multiLevelTransformation(template, scope) {
   }
 
   console.log('Parsing the initial string')
-  const parsedTemplate = parseTemplate(template)
+  const parsedTemplate = parse(template)
 
   console.log('Converting paths to lower case')
   const lowerCasePaths = transform(parsedTemplate, (path) => path.toLowerCase())

@@ -1,4 +1,4 @@
-const { render, parseTemplate, renderFn, pathGet } = require('../')
+const { render, parse, renderFn, pathGet } = require('../')
 
 function doubleRender(template, scope) {
   // first pass

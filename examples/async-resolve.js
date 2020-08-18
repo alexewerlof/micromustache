@@ -1,4 +1,4 @@
-const { parseTemplate, renderFnAsync } = require('../')
+const { parse, renderFnAsync } = require('../')
 
 // Just waits a sec and returns the path in uppercase
 function delayedResolver(path) {
@@ -13,7 +13,7 @@ function delayedResolver(path) {
 
 ;(async () => {
   try {
-    const parsedTemplate = await parseTemplate(
+    const parsedTemplate = await parse(
       'I like {{apples}} and {{oranges}} because {{wood}} does not taste good'
     )
     const result = await renderFnAsync(parsedTemplate, delayedResolver)

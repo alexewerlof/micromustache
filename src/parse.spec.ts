@@ -1,73 +1,73 @@
-import { parseTemplate } from './parse'
+import { parse } from './parse'
 
-describe('parseTemplate()', () => {
+describe('parse()', () => {
   it('returns the string intact if no interpolation is found', () => {
-    expect(parseTemplate('Hello world')).toEqual({
+    expect(parse('Hello world')).toEqual({
       strings: ['Hello world'],
       subs: [],
     })
   })
 
   it('supports customized tags', () => {
-    expect(parseTemplate('Hello {name}!', { tags: ['{', '}'] })).toEqual({
+    expect(parse('Hello {name}!', { tags: ['{', '}'] })).toEqual({
       strings: ['Hello ', '!'],
       subs: ['name'],
     })
   })
 
   it('throws if the open and close tag are the same', () => {
-    expect(() => parseTemplate('Hello |name|!', { tags: ['|', '|'] })).toThrow(TypeError)
+    expect(() => parse('Hello |name|!', { tags: ['|', '|'] })).toThrow(TypeError)
   })
 
   it('throws if the open tag contains the close tag', () => {
-    expect(() => parseTemplate('Hello {{name}!', { tags: ['{{', '{'] })).toThrow(Error)
+    expect(() => parse('Hello {{name}!', { tags: ['{{', '{'] })).toThrow(Error)
   })
 
   it('throws if the open and close tag are the same', () => {
-    expect(() => parseTemplate('Hello {name}}!', { tags: ['}', '}}'] })).toThrow(Error)
+    expect(() => parse('Hello {name}}!', { tags: ['}', '}}'] })).toThrow(Error)
   })
 
   it('returns an empty string and no paths when the template is an empty string', () => {
-    expect(parseTemplate('')).toEqual({
+    expect(parse('')).toEqual({
       strings: [''],
       subs: [],
     })
   })
 
   it('handles interpolation correctly at the start of the template', () => {
-    expect(parseTemplate('{{name}}! How are you?')).toEqual({
+    expect(parse('{{name}}! How are you?')).toEqual({
       strings: ['', '! How are you?'],
       subs: ['name'],
     })
   })
 
   it('handles interpolation correctly at the end of the template', () => {
-    expect(parseTemplate('My name is {{name}}')).toEqual({
+    expect(parse('My name is {{name}}')).toEqual({
       strings: ['My name is ', ''],
       subs: ['name'],
     })
   })
 
   it('trims path', () => {
-    const { subs } = parseTemplate('My name is {{  name  }}')
+    const { subs } = parse('My name is {{  name  }}')
     if (subs.length) {
       expect(subs[0]).toBe('name')
     }
   })
 
   it('can handle a close tag without an open tag', () => {
-    expect(parseTemplate('Hi}} {{name}}')).toEqual({
+    expect(parse('Hi}} {{name}}')).toEqual({
       strings: ['Hi}} ', ''],
       subs: ['name'],
     })
-    expect(parseTemplate('Hi {{name}} }}')).toEqual({
+    expect(parse('Hi {{name}} }}')).toEqual({
       strings: ['Hi ', ' }}'],
       subs: ['name'],
     })
   })
 
   it('throws a syntax error if the open tag is not closed', () => {
-    expect(() => parseTemplate('Hi {{')).toThrow(
+    expect(() => parse('Hi {{')).toThrow(
       new SyntaxError(
         'Missing "}}" in the template for the "{{" at position 3 within 1000 characters'
       )
@@ -75,27 +75,27 @@ describe('parseTemplate()', () => {
   })
 
   it('does not throw an error if there is a close tag without an open tag', () => {
-    expect(() => parseTemplate('Hi}} ')).not.toThrow()
+    expect(() => parse('Hi}} ')).not.toThrow()
   })
 
   it('throws a syntax error if the path is an empty string', () => {
-    expect(() => parseTemplate('Hi {{}}')).toThrow(
+    expect(() => parse('Hi {{}}')).toThrow(
       new SyntaxError('Unexpected "}}" tag found at position 3')
     )
   })
 
   it('throws a syntax error if the value name is just spaces', () => {
-    expect(() => parseTemplate('Hi {{ }}')).toThrow(
+    expect(() => parse('Hi {{ }}')).toThrow(
       new SyntaxError('Unexpected "}}" tag found at position 3')
     )
   })
 
   it('throws for nested open and close tag', () => {
-    expect(() => parseTemplate('Hello {{ {{name}} }}!')).toThrow()
+    expect(() => parse('Hello {{ {{name}} }}!')).toThrow()
   })
 
   it('throws if the path is too long', () => {
-    expect(() => parseTemplate('Hej {{n2345}}!', { maxPathLen: 5 })).not.toThrow()
-    expect(() => parseTemplate('Hej {{n2345}}!', { maxPathLen: 4 })).toThrow()
+    expect(() => parse('Hej {{n2345}}!', { maxPathLen: 5 })).not.toThrow()
+    expect(() => parse('Hej {{n2345}}!', { maxPathLen: 4 })).toThrow()
   })
 })

@@ -1,7 +1,7 @@
 import { Scope, refGet, GetOptions } from './get'
 import { compile, CompileOptions } from './compile'
 import { isObj, isStr } from './utils'
-import { ParsedTemplate, isParsedTemplate, parseTemplate } from './parse'
+import { ParsedTemplate, isParsedTemplate, parse } from './parse'
 import { transform, transformAsync } from './transform'
 import { Ref } from './tokenize'
 
@@ -112,7 +112,7 @@ export function renderFn(
   scope: Scope,
   options?: RenderOptions
 ): string {
-  const parsedTemplate = isStr(template) ? parseTemplate(template, options) : template
+  const parsedTemplate = isStr(template) ? parse(template, options) : template
 
   return stringify(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -127,7 +127,7 @@ export async function renderFnAsync(
   scope: Scope,
   options?: RenderOptions
 ): Promise<string> {
-  const parsedTemplate = isStr(template) ? parseTemplate(template, options) : template
+  const parsedTemplate = isStr(template) ? parse(template, options) : template
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return stringify(await transformAsync(parsedTemplate, (path) => resolveFn(path, scope)), options)

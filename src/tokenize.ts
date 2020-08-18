@@ -66,7 +66,9 @@ const pathPatterns: Array<RegExp> = [
  */
 export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
   if (!isStr(path)) {
-    throw new TypeError(`Cannot tokenize path. Expected string. Got a ${typeof path}`)
+    throw new TypeError(
+      `Cannot convert a non-string path to ref. Expected a string. Got a ${typeof path}`
+    )
   }
 
   if (!isObj(options)) {
@@ -108,7 +110,7 @@ export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
   } while (patternMatched)
 
   if (currIndex !== path.length) {
-    throw new SyntaxError(`Could not tokenize path: "${path}"`)
+    throw new SyntaxError(`Could not convert path "${path}" to ref`)
   }
 
   return ref
