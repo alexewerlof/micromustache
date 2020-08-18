@@ -2,9 +2,9 @@ import { isObj, isStr } from './utils'
 import { MAX_REF_DEPTH, CACHE_SIZE } from './defaults'
 
 /**
- * The options for the [[tokenizePath]] function
+ * The options for the [[pathToRef]] function
  */
-export interface TokenizePathOptions {
+export interface PathToRefOptions {
   /**
    * Drilling a nested object to get the value assigned with a ref is a relatively expensive
    * computation. Therefore you can set a value of how deep you are expecting a template to go and
@@ -64,13 +64,13 @@ const pathPatterns: Array<RegExp> = [
  * @returns - an array of property names that can be used to get a particular value.
  * For example `['a', 'b', 'c']`
  */
-export function tokenizePath(path: string, options: TokenizePathOptions = {}): Ref {
+export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
   if (!isStr(path)) {
     throw new TypeError(`Cannot tokenize path. Expected string. Got a ${typeof path}`)
   }
 
   if (!isObj(options)) {
-    throw new TypeError(`tokenizePath() expected an options object. Got ${options}`)
+    throw new TypeError(`pathToRef() expected an options object. Got ${options}`)
   }
 
   const { maxRefDepth = MAX_REF_DEPTH } = options
@@ -163,18 +163,18 @@ export class Cache<T> {
 const cache = new Cache<string[]>(cacheSize)
 
 /**
- * This is just a faster version of `tokenizePath()`
+ * This is just a faster version of `pathToRef()`
  * @internal
  */
-function tokenizePathCached(path: string, options: TokenizePathOptions = {}): Ref {
+function pathToRefCached(path: string, options: PathToRefOptions = {}): Ref {
   let result = cache.pathGet(path)
 
   if (result === undefined) {
-    result = tokenizePath(path, options)
+    result = pathToRef(path, options)
     cache.set(path, result)
   }
 
   return result
 }
 
-tokenizePath.cached = tokenizePathCached
+pathToRef.cached = pathToRefCached

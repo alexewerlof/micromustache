@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - v9.0.0: The `propsExist` option is renamed to `validateRef`
 - v9.0.0: The `validateVarNames` option is removed. Compile always tries to tokenizes paths. If you don't want them tokenized, use the parseTemplate function
 - v9.0.0: The `depth` option is renamed to `maxRefDepth`
-- v9.0.0: The internal `toPath` function is renamed to `tokenizePath`
+- v9.0.0: The internal `toPath` function is renamed to `pathToRef`
 
 ## 8.0.0
 

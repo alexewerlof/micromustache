@@ -1,13 +1,13 @@
 import { parseTemplate, ParseTemplateOptions, ParsedTemplate } from './parse'
-import { tokenizePath, Ref, TokenizePathOptions } from './tokenize'
+import { pathToRef, Ref, PathToRefOptions } from './tokenize'
 import { transform } from './transform'
 
 /**
  * The options that customize parsing the template and tokenizing the paths.
- * Since [[compile]] calls [[parseTemplate]] and [[tokenizePath]] functions internally, its accepts
+ * Since [[compile]] calls [[parseTemplate]] and [[pathToRef]] functions internally, its accepts
  * any options to those objects
  */
-export interface CompileOptions extends ParseTemplateOptions, TokenizePathOptions {}
+export interface CompileOptions extends ParseTemplateOptions, PathToRefOptions {}
 
 /**
  * Parses the template and tokenizes its `path`s.
@@ -28,9 +28,9 @@ export interface CompileOptions extends ParseTemplateOptions, TokenizePathOption
  * @returns an object with `'strings'` and `'refs'` properties that can be used together with
  * [[refGet]] and [[stringify]] to compile the code.
  *
- * @throws any error that the [[parseTemplate]] or [[tokenizePath]] may throw
+ * @throws any error that the [[parseTemplate]] or [[pathToRef]] may throw
  */
 export function compile(template: string, options: CompileOptions = {}): ParsedTemplate<Ref> {
   // No assertion is required here because these internal functions assert their input
-  return transform(parseTemplate(template, options), (path) => tokenizePath.cached(path, options))
+  return transform(parseTemplate(template, options), (path) => pathToRef.cached(path, options))
 }

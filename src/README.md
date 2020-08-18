@@ -30,7 +30,7 @@ At a high level flow for a typical render looks like this:
 1. render(template, scope)
 |__ 2. compile(template)
 |   |__ 3. parseTemplate(template) -> strings, paths
-|   |__ 4. tokenizePath(paths) -> refs
+|   |__ 4. pathToRef(paths) -> refs
 |
 |__ 5. refGet(ref, scope) -> values
 |__ 6. stringify(strings, values) -> result

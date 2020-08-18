@@ -1,4 +1,4 @@
-import { tokenizePath, Ref, TokenizePathOptions } from './tokenize'
+import { pathToRef, Ref, PathToRefOptions } from './tokenize'
 import { isObj, isProp, isNum, isArr } from './utils'
 import { MAX_REF_DEPTH } from './defaults'
 
@@ -21,7 +21,7 @@ function refToPath(ref: Ref) {
 /**
  * The options to the [[pathGet]] and [[refGet]] functions
  */
-export interface GetOptions extends TokenizePathOptions {
+export interface GetOptions extends PathToRefOptions {
   /**
    * Decides how to deal with references that don't exist in the scope.
    *
@@ -42,7 +42,7 @@ export interface GetOptions extends TokenizePathOptions {
  *
  * @see https://github.com/userpixel/micromustache/wiki/Known-issues
  *
- * @param ref the tokenized path (see [[tokenizePath]])
+ * @param ref the tokenized path (see [[pathToRef]])
  * @param scope an object to resolve values from
  *
  * @returns the value or undefined
@@ -100,11 +100,11 @@ export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
  * @param path the path string as it appeared in the template
  * @param scope an object to resolve value from
  *
- * @throws any error that [[refGet]] or [[tokenizePath]] may throw
+ * @throws any error that [[refGet]] or [[pathToRef]] may throw
  *
  * @returns the value or undefined
  */
 export function pathGet(path: string, scope: Scope, options: GetOptions = {}): any {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return refGet(tokenizePath(path, options), scope, options)
+  return refGet(pathToRef(path, options), scope, options)
 }

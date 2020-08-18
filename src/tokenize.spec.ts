@@ -1,4 +1,4 @@
-import { tokenizePath } from './tokenize'
+import { pathToRef } from './tokenize'
 
 interface ISuccessCases {
   [input: string]: string[]
@@ -8,7 +8,7 @@ function stringArrToString(arr: string[]): string {
   return '[' + arr.map((s) => `'${s}'`).join(', ') + ']'
 }
 
-describe('tokenizePath()', () => {
+describe('pathToRef()', () => {
   describe('success cases:', () => {
     // input: expected output
     const testCases: ISuccessCases = {
@@ -83,7 +83,7 @@ describe('tokenizePath()', () => {
 
     for (const [input, output] of Object.entries(testCases)) {
       it(`'${input}'  ⇨  ${stringArrToString(output)}`, () => {
-        expect(tokenizePath(input)).toEqual(output)
+        expect(pathToRef(input)).toEqual(output)
       })
     }
   })
@@ -142,13 +142,13 @@ describe('tokenizePath()', () => {
 
     for (const input of syntaxErrorsCases) {
       it(`throws SyntaxError for "${input}"`, () => {
-        expect(() => tokenizePath(input)).toThrow(SyntaxError)
+        expect(() => pathToRef(input)).toThrow(SyntaxError)
       })
     }
 
     it('throws type error for invalid input types', () => {
-      expect(() => tokenizePath((undefined as unknown) as string)).toThrow(TypeError)
-      expect(() => tokenizePath((13 as unknown) as string)).toThrow(TypeError)
+      expect(() => pathToRef((undefined as unknown) as string)).toThrow(TypeError)
+      expect(() => pathToRef((13 as unknown) as string)).toThrow(TypeError)
     })
   })
 })
