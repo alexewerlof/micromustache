@@ -1,5 +1,8 @@
 const micromustache = require('../')
 const mustache = require('mustache')
+const { readFileSync } = require('fs')
+const path = require('path')
+const realisticScope = require('./realistic/scope.json')
 
 /*
  * Notes to keep in mind:
@@ -7,19 +10,30 @@ const mustache = require('mustache')
  * 2. To Mustache.js defense, it does much more than interpolation so it's not an apple to apple...
  */
 
+const LEN = 100
 const ITERATIONS = 10000
 
 const hrtime2ms = ([sec, nano]) => sec * 1e3 + nano / 1e6
 function x(a, b) {
-  const ratio = b / a
-  if (ratio < 1) {
-    return ''
+  const diff = b - a
+  if (diff < 0) {
+    return '🐢'
   }
 
-  let ret = '🔥 ('
-  ret += ratio < 2 ? (((b - a) * 100) / a).toFixed(0) + '%' : ratio.toFixed(1) + 'x'
-  ret += ' faster)'
-  return ret
+  if (diff === 0) {
+    return '==='
+  }
+
+  if (diff < 10) {
+    return `🐇 ${diff.toFixed(0)}ms`
+  }
+
+  const ratio = b / a
+  if (ratio < 2) {
+    return '🐆 ' + ((diff * 100) / a).toFixed(0) + '% faster!'
+  }
+
+  return '🔥'.repeat(Math.round(ratio)) + ` ${ratio.toFixed(1)}x faster!!!`
 }
 
 const ms = (a) => Math.round(a) + 'ms'
@@ -46,7 +60,18 @@ function compare(f1, f2) {
   console.log(`2. ${f2name}: ${ms(f2duration)} ${x(f2duration, f1duration)}`)
 }
 
-const LEN = 100
+const realisticTemplate = readFileSync(
+  path.resolve(__dirname, './realistic/template.mustache'),
+  'utf8'
+)
+
+function micromustacheRealistic() {
+  return micromustache.render(realisticTemplate, realisticScope)
+}
+
+function mustacheRealistic() {
+  return mustache.render(realisticTemplate, realisticScope)
+}
 
 const noPathTemplate = 'Hello! Nothing is here! Go on...'.repeat(LEN)
 const noPathScope = {}
@@ -160,6 +185,7 @@ function micromustacheAllCompiled() {
   )
 }
 
+compare(micromustacheRealistic, mustacheRealistic)
 compare(micromustacheNoPath, mustacheNoPath)
 compare(micromustacheLongPath, mustacheLongPath)
 compare(micromustacheLongTmpl, mustacheLongTmpl)
