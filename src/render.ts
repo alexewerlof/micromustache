@@ -1,7 +1,7 @@
-import { Scope, refGet, GetOptions } from './get'
-import { compile, CompileOptions } from './compile'
-import { isObj, isStr } from './utils'
-import { ParsedTemplate, isParsedTemplate, parse } from './parse'
+import { Scope, refGet, GetOptions, pathGet } from './get'
+import { compile, CompileOptions, CompiledTemplate } from './compile'
+import { isObj, isStr, isArr } from './utils'
+import { ParsedTemplate, parse } from './parse'
 import { transform, transformAsync } from './transform'
 import { Ref } from './tokenize'
 
@@ -50,7 +50,7 @@ export function stringify(
   parsedTemplate: ParsedTemplate<any>,
   options: StringifyOptions = {}
 ): string {
-  if (!isParsedTemplate(parsedTemplate)) {
+  if (!isParsed(parsedTemplate)) {
     throw new TypeError(`Invalid parsedTemplate: ${parsedTemplate}`)
   }
 
@@ -80,6 +80,38 @@ export function stringify(
 }
 
 /**
+ * @internal
+ * checks if an object is the result of calling [[compile]]
+ */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+const isCompiled = (x: any): x is CompiledTemplate => isArr(x.refs)
+
+/**
+ * @internal
+ * checks if an object is the result of calling [[compile]]
+ */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+const isParsed = (x: any): x is ParsedTemplate<string> => isArr(x.subs)
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+function resolveTemplate(
+  templateObj: CompiledTemplate | ParsedTemplate<string>,
+  scope: Scope,
+  options?: RenderOptions
+) {
+  if (isCompiled(templateObj)) {
+    const { strings, refs } = templateObj
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return { strings, subs: refs.map((ref: Ref) => refGet(ref, scope, options)) }
+  } else if (isParsed(templateObj)) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return transform(templateObj, (path: string) => pathGet(path, scope, options))
+  }
+
+  throw new TypeError(`Expected an object with either .ref and .subs arrays: ${templateObj}`)
+}
+
+/**
  * Replaces every {{path}} inside the template with values from the scope
  * parameter.
  * @warning **When dealing with user input, always make sure to validate it.**
@@ -93,17 +125,18 @@ export function stringify(
  * @param options same options as the [[compile]] function
  * @returns Template where its paths replaced with
  * corresponding values.
- * @throws any error that [[compile]] or [[refGet]] or [[stringify]] may throw
+ * @throws any error that [[compile]] or [[refGet]]/[[pathGet]] or [[stringify]] may throw
  */
 export function render(
-  template: string | ParsedTemplate<Ref>,
+  template: string | CompiledTemplate | ParsedTemplate<string>,
   scope: Scope,
   options?: RenderOptions
 ): string {
-  const parsedTemplate = isStr(template) ? compile(template, options) : template
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  const resolvedTemplate = transform(parsedTemplate, (ref: Ref) => refGet(ref, scope, options))
-  return stringify(resolvedTemplate, options)
+  const templateObj = isStr(template) ? compile(template, options) : template
+  if (!isObj(templateObj)) {
+    throw new TypeError(`render() expects a string or object template. Got ${template}`)
+  }
+  return stringify(resolveTemplate(templateObj, scope, options), options)
 }
 
 export function renderFn(
