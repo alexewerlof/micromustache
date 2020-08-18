@@ -55,16 +55,19 @@ function runFn(successEl, errorEl, fn) {
 }
 
 function render() {
+  const options = {
+    validateRef: getVal(id('validateRef')),
+    explicit: getVal(id('explicit')),
+    maxPathLen: getVal(id('maxPathLen')),
+    maxRefDepth: getVal(id('maxRefDepth')),
+    tags: [getVal(id('tags0')), getVal(id('tags1'))],
+  }
+
   // Handle the template errors
   const compiled = runFn(template, templateError, () =>
-    micromustache.compile(getVal(template), {
-      validateRef: getVal(id('validateRef')),
-      explicit: getVal(id('explicit')),
-      maxPathLen: getVal(id('maxPathLen')),
-      maxRefDepth: getVal(id('maxRefDepth')),
-      tags: [getVal(id('tags0')), getVal(id('tags1'))],
-    })
+    micromustache.compile(getVal(template), options)
   )
+
   // Handle the scope errors
   const scopeObj = runFn(scope, scopeError, () => JSON.parse(getVal(scope)))
 
@@ -75,7 +78,7 @@ function render() {
   // If all is well try to generate the results handling the errors
   text(
     result,
-    runFn(result, resultError, () => micromustache.render(compiled, scopeObj))
+    runFn(result, resultError, () => micromustache.render(compiled, scopeObj, options))
   )
 }
 
