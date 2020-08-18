@@ -25,7 +25,7 @@ export function isCompiledTemplate(x: unknown): x is CompiledTemplate {
 }
 
 /**
- * Parses the template and tokenizes its `path`s.
+ * Parses the template and converts its `path`s to ref arrays.
  *
  * If you don't want to tokenize the paths (for example if they are not expected to hold valid
  * JavaScript object references, you can use the [[parse]] function instead).
