@@ -98,7 +98,7 @@ export function tokenizePath(path: string, options: TokenizePathOptions = {}): R
         ref.push((searchResult as RegExpWithNameGroup).groups.name)
         if (ref.length > maxRefDepth) {
           throw new RangeError(
-            `The reference depth for "${path}" exceeds the defaultsured limit of ${maxRefDepth}`
+            `The reference depth for "${path}" exceeds the configured max ref depth of ${maxRefDepth}`
           )
         }
 
