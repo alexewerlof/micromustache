@@ -1,6 +1,6 @@
-import { Scope, refGet, pathGet, GetOptions } from './get'
+import { Scope, refGet, GetOptions } from './get'
 import { compile, CompileOptions } from './compile'
-import { isObj, isStr, isArr } from './utils'
+import { isObj, isStr } from './utils'
 import { ParsedTemplate, isParsedTemplate, parseTemplate } from './parse'
 import { transform, transformAsync } from './transform'
 import { Ref } from './tokenize'
@@ -96,16 +96,13 @@ export function stringify(
  * @throws any error that [[compile]] or [[refGet]] or [[stringify]] may throw
  */
 export function render(
-  template: string | ParsedTemplate<Ref | string>,
+  template: string | ParsedTemplate<Ref>,
   scope: Scope,
   options?: RenderOptions
 ): string {
   const parsedTemplate = isStr(template) ? compile(template, options) : template
-  const resolvedTemplate = isArr(parsedTemplate.subs[0])
-    ? // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      transform(parsedTemplate, (ref: Ref) => refGet(ref, scope, options))
-    : // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      transform(parsedTemplate, (path: string) => pathGet(path, scope, options))
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  const resolvedTemplate = transform(parsedTemplate, (ref: Ref) => refGet(ref, scope, options))
   return stringify(resolvedTemplate, options)
 }
 
