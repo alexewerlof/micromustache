@@ -24,11 +24,12 @@ function x(a, b) {
     return '==='
   }
 
-  if (diff < 10) {
+  const ratio = b / a
+  // If it's less than 20% and the time difference is less than 10ms
+  if (ratio < 1.2 && diff < 10) {
     return `🐇 ${diff.toFixed(0)}ms`
   }
 
-  const ratio = b / a
   if (ratio < 2) {
     return '🐆 ' + ((diff * 100) / a).toFixed(0) + '% faster!'
   }
