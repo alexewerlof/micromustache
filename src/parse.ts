@@ -31,12 +31,14 @@ export type Tags = [string, string]
  */
 export interface ParseOptions {
   /**
-   * Maximum allowed length for the path string.
+   * Maximum allowed length for the trimmed path string.
    * Set this to a safe value to throw for paths that are longer than expected.
    *
    * @default defaults.MAX_PATH_LEN
    *
    * @example `path = 'a.b'`, depth = 3
+   * @example `path = ' a.b '`, depth = 3 (trimmed path)
+   * @example `path = 'a . b'`, depth = 5
    * @example `path = 'a.b.c'`, depth = 5
    * @example `path = 'a['b'].c'`, depth = 8
    */
@@ -111,7 +113,7 @@ function pureParser(
       throw new SyntaxError(`Unexpected "${closeTag}" tag found at position ${lastOpenTagIndex}`)
     }
 
-    if (path.length > maxPathLen) {
+    if (pathLen > maxPathLen) {
       throw new SyntaxError(
         `The path is too long. Expected a maximum of ${maxPathLen} but got ${pathLen} for "${path}"`
       )
@@ -119,7 +121,7 @@ function pureParser(
 
     if (path.includes(openTag)) {
       throw new SyntaxError(
-        `Path cannot have "${openTag}". But at position ${lastOpenTagIndex} got "${path}"`
+        `Path should not have "${openTag}" but at position ${lastOpenTagIndex} got "${path}"`
       )
     }
 
