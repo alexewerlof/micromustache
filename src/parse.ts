@@ -54,12 +54,10 @@ export function isParsedTemplate(x: unknown): x is ParsedTemplate<any> {
   if (!isObj(x)) {
     return false
   }
-  const parsedTemplate = x as ParsedTemplate<any>
-  return (
-    isArr(parsedTemplate.strings) &&
-    isArr(parsedTemplate.subs) &&
-    parsedTemplate.strings.length === parsedTemplate.subs.length + 1
-  )
+
+  const { strings, subs } = x as ParsedTemplate<any>
+
+  return isArr(strings) && isArr(subs) && strings.length === subs.length + 1
 }
 
 /**

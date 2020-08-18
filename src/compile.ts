@@ -1,5 +1,6 @@
 import { parse, ParseOptions } from './parse'
 import { pathToRef, Ref, PathToRefOptions } from './tokenize'
+import { isObj, isArr } from './utils'
 
 /**
  * The options that customize parsing the template and tokenizing the paths.
@@ -12,6 +13,17 @@ export interface CompiledTemplate {
   strings: string[]
   refs: Ref[]
 }
+
+export function isCompiledTemplate(x: unknown): x is CompiledTemplate {
+  if (!isObj(x)) {
+    return false
+  }
+
+  const { strings, refs } = x as CompiledTemplate
+
+  return isArr(strings) && isArr(refs) && strings.length === refs.length + 1
+}
+
 /**
  * Parses the template and tokenizes its `path`s.
  *

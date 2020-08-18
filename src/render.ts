@@ -1,7 +1,7 @@
 import { Scope, refGet, GetOptions, pathGet } from './get'
-import { compile, CompileOptions, CompiledTemplate } from './compile'
-import { isObj, isStr, isArr } from './utils'
-import { ParsedTemplate, parse } from './parse'
+import { compile, CompileOptions, CompiledTemplate, isCompiledTemplate } from './compile'
+import { isObj, isStr } from './utils'
+import { ParsedTemplate, parse, isParsedTemplate } from './parse'
 import { transform, transformAsync } from './transform'
 import { Ref } from './tokenize'
 
@@ -50,7 +50,7 @@ export function stringify(
   parsedTemplate: ParsedTemplate<any>,
   options: StringifyOptions = {}
 ): string {
-  if (!isParsed(parsedTemplate)) {
+  if (!isParsedTemplate(parsedTemplate)) {
     throw new TypeError(`Invalid parsedTemplate: ${parsedTemplate}`)
   }
 
@@ -79,31 +79,17 @@ export function stringify(
   return ret
 }
 
-/**
- * @internal
- * checks if an object is the result of calling [[compile]]
- */
-// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-const isCompiled = (x: any): x is CompiledTemplate => isArr(x.refs)
-
-/**
- * @internal
- * checks if an object is the result of calling [[compile]]
- */
-// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-const isParsed = (x: any): x is ParsedTemplate<string> => isArr(x.subs)
-
 // eslint-disable-next-line @typescript-eslint/ban-types
 function resolveTemplate(
   templateObj: CompiledTemplate | ParsedTemplate<string>,
   scope: Scope,
   options?: RenderOptions
 ) {
-  if (isCompiled(templateObj)) {
+  if (isCompiledTemplate(templateObj)) {
     const { strings, refs } = templateObj
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return { strings, subs: refs.map((ref: Ref) => refGet(ref, scope, options)) }
-  } else if (isParsed(templateObj)) {
+  } else if (isParsedTemplate(templateObj)) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return transform(templateObj, (path: string) => pathGet(path, scope, options))
   }
