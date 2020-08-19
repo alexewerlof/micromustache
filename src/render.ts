@@ -80,7 +80,7 @@ export function stringify(
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-function resolveTemplate(
+function resolve(
   templateObj: CompiledTemplate | ParsedTemplate<string>,
   scope: Scope,
   options?: RenderOptions
@@ -122,7 +122,7 @@ export function render(
   if (!isObj(templateObj)) {
     throw new TypeError(`render() expects a string or object template. Got ${template}`)
   }
-  return stringify(resolveTemplate(templateObj, scope, options), options)
+  return stringify(resolve(templateObj, scope, options), options)
 }
 
 export function renderFn(
