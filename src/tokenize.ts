@@ -176,6 +176,13 @@ function pathToRefCached(path: string, options: PathToRefOptions = {}): Ref {
     cache.set(path, result)
   }
 
+  const { maxRefDepth = MAX_REF_DEPTH } = options
+  if (maxRefDepth < result.length) {
+    throw new RangeError(
+      `The reference depth for "${path}" exceeds the configured max ref depth of ${maxRefDepth}`
+    )
+  }
+
   return result
 }
 
