@@ -53,11 +53,11 @@ export interface GetOptions extends PathToRefOptions {
  */
 export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
   if (!isObj(scope)) {
-    throw new TypeError(`refGet() expects an object scope. Got ${typeof options}`)
+    throw new TypeError(`refGet() expects an object scope. Got a ${typeof scope}: ${scope}`)
   }
 
   if (!isObj(options)) {
-    throw new TypeError(`refGet() expects an object option. Got ${typeof options}`)
+    throw new TypeError(`refGet() expects an object option. Got a ${typeof options}: ${options}`)
   }
 
   if (!isArr(ref)) {
