@@ -46,7 +46,9 @@ export function stringify(
   }
 
   if (!isObj(options)) {
-    throw new TypeError(`stringify() expected an object option. Got a ${typeof options}`)
+    throw new TypeError(
+      `stringify() expected an object option. Got a ${typeof options}: ${options}`
+    )
   }
 
   const { explicit } = options

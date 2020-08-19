@@ -1,4 +1,4 @@
-const { stringify, transform, parse, pathGet } = require('../')
+const { stringify, parse, pathGet } = require('../')
 
 const functions = {
   rev: (a) => a.split('').reverse().join(''),
@@ -34,8 +34,11 @@ function applyFunctions(functions, template, scope) {
     return `"${path}"???`
   }
 
-  const parsedTemplate = transform(parse(template), resolvePathToFunctionResult)
-  return stringify(parsedTemplate)
+  const { strings, subs } = parse(template)
+  return stringify({
+    strings,
+    subs: subs.map(resolvePathToFunctionResult),
+  })
 }
 
 console.log(applyFunctions(functions, template, scope))

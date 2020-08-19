@@ -13,8 +13,8 @@ export interface ParsedTemplate<T> {
    * An array corresponding to the substitute part of the template.
    *
    * [[parse]] gives an array of strings while [[compile]] gives an array of [[Ref]]s which
-   * are also arrays. Furthermore, any transformation acts on this data structure and may put
-   * whatever item types in this array.
+   * are also arrays. You can map these substitutes to whatever you want and then use [[render]] to
+   * look up their value or just directly pass it to [[stringify]] to create a string from it.
    *
    * If there are no paths in the template, this will be an empty array.
    */
@@ -155,11 +155,13 @@ function pureParser(
  */
 export function parse(template: string, options: ParseOptions = {}): ParsedTemplate<string> {
   if (!isStr(template)) {
-    throw new TypeError(`The template parameter must be a string. Got a ${typeof template}`)
+    throw new TypeError(
+      `The template parameter must be a string. Got a ${typeof template}: ${template}`
+    )
   }
 
   if (!isObj(options)) {
-    throw new TypeError(`Options should be an object. Got a ${typeof options}`)
+    throw new TypeError(`Options should be an object. Got a ${typeof options}: ${options}`)
   }
 
   const { tags = TAGS, maxPathLen = MAX_PATH_LEN } = options

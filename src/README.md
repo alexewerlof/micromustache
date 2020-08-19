@@ -15,7 +15,6 @@ Let's get familiar with a few terms as they are used across this repo:
 * **Compiling**: tokenizing a **template** and converting the **paths** to **ref**s
 * **Stringification**: putting the resolved **Value** for every **path** and creating the
 final string result (in compiler slang it is called _generator_)
-* **transform** maps the variable part of the parsedToken using a function
 
 ---
 
