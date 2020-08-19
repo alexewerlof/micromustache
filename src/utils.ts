@@ -61,3 +61,18 @@ export function isOwnProp<K extends string | number | symbol>(
 ): x is Record<K, any> {
   return isObj(x) && (hasOwnProperty.call(x, propName) as boolean)
 }
+
+/**
+ * @internal
+ * Checks if the provided value is an object and throws an error
+ * Since this is a common pattern in the repo, this function saves a few lines from the distribution
+ * @param where what function needs this guarantee?
+ * @param x supposedly an options value
+ */
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function optObj<T extends object>(where: string, x: unknown): T {
+  if (!isObj(x)) {
+    throw new TypeError(`${where} expected an options object. Got a ${typeof x}: ${x}`)
+  }
+  return x as T
+}

@@ -1,4 +1,4 @@
-import { isStr, isArr, isObj, isNum } from './utils'
+import { isStr, isArr, isObj, isNum, optObj } from './utils'
 import { TAGS, MAX_PATH_LEN } from './defaults'
 
 /**
@@ -75,7 +75,8 @@ function pureParser(
   template: string,
   openTag: string,
   closeTag: string,
-  maxPathLen: number
+  maxPathLen: number,
+  where: string
 ): ParsedTemplate<string> {
   const openTagLen = openTag.length
   const closeTagLen = closeTag.length
@@ -102,7 +103,7 @@ function pureParser(
 
     if (lastCloseTagIndex === -1) {
       throw new SyntaxError(
-        `Missing "${closeTag}" in the template for the "${openTag}" at position ${lastOpenTagIndex} within ${maxPathLen} characters`
+        `${where} Missing "${closeTag}" in the template for the "${openTag}" at position ${lastOpenTagIndex} within ${maxPathLen} characters`
       )
     }
 
@@ -110,18 +111,20 @@ function pureParser(
 
     const pathLen = path.length
     if (pathLen === 0) {
-      throw new SyntaxError(`Unexpected "${closeTag}" tag found at position ${lastOpenTagIndex}`)
+      throw new SyntaxError(
+        `${where} Unexpected "${closeTag}" tag found at position ${lastOpenTagIndex}`
+      )
     }
 
     if (pathLen > maxPathLen) {
       throw new SyntaxError(
-        `The path is too long. Expected a maximum of ${maxPathLen} but got ${pathLen} for "${path}"`
+        `${where} The path is too long. Expected a maximum of ${maxPathLen} but got ${pathLen} for "${path}"`
       )
     }
 
     if (path.includes(openTag)) {
       throw new SyntaxError(
-        `Path should not have "${openTag}" but at position ${lastOpenTagIndex} got "${path}"`
+        `${where} Path should not have "${openTag}" but at position ${lastOpenTagIndex} got "${path}"`
       )
     }
 
@@ -154,20 +157,18 @@ function pureParser(
  * @returns the parsing result as an object
  */
 export function parse(template: string, options: ParseOptions = {}): ParsedTemplate<string> {
+  const where = 'parse()'
+
   if (!isStr(template)) {
     throw new TypeError(
-      `The template parameter must be a string. Got a ${typeof template}: ${template}`
+      `${where} expected a string template. Got a ${typeof template}: ${template}`
     )
   }
 
-  if (!isObj(options)) {
-    throw new TypeError(`Options should be an object. Got a ${typeof options}: ${options}`)
-  }
-
-  const { tags = TAGS, maxPathLen = MAX_PATH_LEN } = options
+  const { tags = TAGS, maxPathLen = MAX_PATH_LEN } = optObj<ParseOptions>(where, options)
 
   if (!isArr(tags) || tags.length !== 2) {
-    throw TypeError(`tags should be an array of two elements. Got ${String(tags)}`)
+    throw TypeError(`${where} expected an array of two elements for tags. Got ${String(tags)}`)
   }
 
   const [openTag, closeTag] = tags
@@ -180,13 +181,13 @@ export function parse(template: string, options: ParseOptions = {}): ParsedTempl
     closeTag.includes(openTag)
   ) {
     throw new TypeError(
-      `The open and close symbols should be two distinct non-empty strings which don't contain each other. Got "${openTag}" and "${closeTag}"`
+      `${where} expects 2 distinct non-empty strings which don't contain each other. Got "${openTag}" and "${closeTag}"`
     )
   }
 
   if (!isNum(maxPathLen) || maxPathLen <= 0) {
-    throw new Error(`Expected a positive number for maxPathLen. Got ${maxPathLen}`)
+    throw new Error(`${where} expected a positive number for maxPathLen. Got ${maxPathLen}`)
   }
 
-  return pureParser(template, openTag, closeTag, maxPathLen)
+  return pureParser(template, openTag, closeTag, maxPathLen, where)
 }

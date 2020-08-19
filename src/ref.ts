@@ -1,4 +1,4 @@
-import { isObj, isStr } from './utils'
+import { isStr, optObj } from './utils'
 import { MAX_REF_DEPTH, CACHE_SIZE } from './defaults'
 
 /**
@@ -65,19 +65,15 @@ const pathPatterns: Array<RegExp> = [
  * For example `['a', 'b', 'c']`
  */
 export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
+  const where = 'pathToRef()'
+
   if (!isStr(path)) {
     throw new TypeError(
-      `pathToRef() cannot convert a non-string path to ref. Expected a string. Got a ${typeof path}: ${path}`
+      `${where} cannot convert a non-string path to ref. Expected a string. Got a ${typeof path}: ${path}`
     )
   }
 
-  if (!isObj(options)) {
-    throw new TypeError(
-      `pathToRef() expected an options object. Got a ${typeof options}: ${options}`
-    )
-  }
-
-  const { maxRefDepth = MAX_REF_DEPTH } = options
+  const { maxRefDepth = MAX_REF_DEPTH } = optObj<PathToRefOptions>(where, options)
 
   const ref: Ref = []
 
@@ -102,7 +98,7 @@ export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
         ref.push((searchResult as RegExpWithNameGroup).groups.name)
         if (ref.length > maxRefDepth) {
           throw new RangeError(
-            `pathToRef() the reference depth for "${path}" exceeds the configured max ref depth of ${maxRefDepth}`
+            `${where} the reference depth for "${path}" exceeds the configured max ref depth of ${maxRefDepth}`
           )
         }
 
@@ -112,7 +108,7 @@ export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
   } while (patternMatched)
 
   if (currIndex !== path.length) {
-    throw new SyntaxError(`pathToRef() could not convert the entire path "${path}" to ref`)
+    throw new SyntaxError(`${where} could not convert the entire path "${path}" to ref`)
   }
 
   return ref

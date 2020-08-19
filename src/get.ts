@@ -1,5 +1,5 @@
 import { pathToRef, Ref, PathToRefOptions } from './ref'
-import { isObj, isProp, isNum, isArr } from './utils'
+import { isObj, isProp, isNum, isArr, optObj } from './utils'
 import { MAX_REF_DEPTH } from './defaults'
 import { CompiledTemplate, isCompiledTemplate } from './compile'
 import { ParsedTemplate, isParsedTemplate } from './parse'
@@ -59,26 +59,25 @@ export interface GetOptions extends PathToRefOptions {
  * is set to a truthy value
  */
 export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
-  if (!isObj(scope)) {
-    throw new TypeError(`refGet() expects an object scope. Got a ${typeof scope}: ${scope}`)
-  }
+  const where = 'refGet()'
 
-  if (!isObj(options)) {
-    throw new TypeError(`refGet() expects an object option. Got a ${typeof options}: ${options}`)
+  if (!isObj(scope)) {
+    throw new TypeError(`${where} expects an object scope. Got a ${typeof scope}: ${scope}`)
   }
 
   if (!isArr(ref)) {
-    throw new TypeError(`Expected an array ref. Got ${ref}`)
+    throw new TypeError(`${where} expected an array ref. Got ${ref}`)
   }
 
-  const { maxRefDepth = MAX_REF_DEPTH } = options
+  const { maxRefDepth = MAX_REF_DEPTH } = optObj<GetOptions>(where, options)
+
   if (!isNum(maxRefDepth) || maxRefDepth <= 0) {
-    throw new RangeError(`Expected a positive number for maxRefDepth. Got ${maxRefDepth}`)
+    throw new RangeError(`${where} expected a positive number for maxRefDepth. Got ${maxRefDepth}`)
   }
 
   if (ref.length > maxRefDepth) {
     throw new ReferenceError(
-      `The ref cannot be deeper than ${maxRefDepth} levels. Got ${refToPath(ref)}`
+      `${where} got a ref deeper than ${maxRefDepth} levels: ${refToPath(ref)}`
     )
   }
 
@@ -88,7 +87,9 @@ export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       currentScope = currentScope[prop]
     } else if (options.validateRef) {
-      throw new ReferenceError(`${prop} is not defined in the scope at ref: ${refToPath(ref)}`)
+      throw new ReferenceError(
+        `${where} ${prop} is not defined in the scope at ref: ${refToPath(ref)}`
+      )
     } else {
       // This undefined result will be stringified later according to the explicit option
       return

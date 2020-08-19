@@ -1,4 +1,4 @@
-import { isObj, isFn, isStr, isNum, isArr, isInt } from './utils'
+import { isObj, isFn, isStr, isNum, isArr, isInt, optObj } from './utils'
 
 describe('utils', () => {
   it.each([
@@ -81,5 +81,16 @@ describe('utils', () => {
     [true, false],
   ])('isArr()', (x, result) => {
     expect(isArr(x)).toBe(result)
+  })
+})
+
+describe('optObj()', () => {
+  it('throws if the provided value is not an object', () => {
+    expect(() => optObj('test', null)).toThrow()
+  })
+
+  it('does not throw if it gets an object', () => {
+    const options = { foo: 'bar' }
+    expect(optObj('test', options)).toBe(options)
   })
 })

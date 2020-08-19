@@ -1,6 +1,6 @@
 import { Scope, ResolveOptions, resolve } from './get'
 import { compile, CompileOptions, CompiledTemplate } from './compile'
-import { isObj, isStr } from './utils'
+import { isObj, isStr, optObj } from './utils'
 import { ParsedTemplate, isParsedTemplate } from './parse'
 
 /**
@@ -41,17 +41,12 @@ export function stringify(
   parsedTemplate: ParsedTemplate<any>,
   options: StringifyOptions = {}
 ): string {
+  const where = 'stringify()'
   if (!isParsedTemplate(parsedTemplate)) {
-    throw new TypeError(`Invalid parsedTemplate: ${parsedTemplate}`)
+    throw new TypeError(`${where} got an invalid parsedTemplate: ${parsedTemplate}`)
   }
 
-  if (!isObj(options)) {
-    throw new TypeError(
-      `stringify() expected an object option. Got a ${typeof options}: ${options}`
-    )
-  }
-
-  const { explicit } = options
+  const { explicit } = optObj<StringifyOptions>(where, options)
   const { strings, subs } = parsedTemplate
   const { length } = subs
 
@@ -89,9 +84,10 @@ export function render(
   scope: Scope,
   options?: RenderOptions
 ): string {
+  const where = 'render()'
   const templateObj = isStr(template) ? compile(template, options) : template
   if (!isObj(templateObj)) {
-    throw new TypeError(`render() expects a string or object template. Got ${template}`)
+    throw new TypeError(`${where} expects a string or object template. Got ${template}`)
   }
   return stringify(resolve(templateObj, scope, options), options)
 }
