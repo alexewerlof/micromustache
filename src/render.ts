@@ -1,8 +1,7 @@
 import { Scope, refGet, GetOptions, pathGet } from './get'
 import { compile, CompileOptions, CompiledTemplate, isCompiledTemplate } from './compile'
 import { isObj, isStr } from './utils'
-import { ParsedTemplate, parse, isParsedTemplate } from './parse'
-import { transform, transformAsync } from './transform'
+import { ParsedTemplate, isParsedTemplate } from './parse'
 import { Ref } from './ref'
 
 /**
@@ -20,12 +19,12 @@ export interface StringifyOptions {
 /**
  * The options for the [[resolve]] function
  */
-export interface ResolveOptions extends StringifyOptions, GetOptions {}
+export type ResolveOptions = GetOptions
 
 /**
  * The options for the [[render]] function
  */
-export interface RenderOptions extends CompileOptions, StringifyOptions, GetOptions {}
+export interface RenderOptions extends CompileOptions, StringifyOptions, ResolveOptions {}
 
 /**
  * The callback for resolving a value (synchronous)
@@ -42,9 +41,7 @@ export type ResolveFn = (path: string, scope?: Scope) => any
 export type ResolveFnAsync = (path: string, scope?: Scope) => Promise<any>
 
 /**
- * Puts the resolved `values` into the rest of the template (`strings`) and
- * returns the final result that'll be returned from `render()`, `renderFn()`
- * and `renderFnAsync()` functions.
+ * Combines `subs` and `strings` to make a string
  */
 export function stringify(
   parsedTemplate: ParsedTemplate<any>,
@@ -79,22 +76,35 @@ export function stringify(
   return ret
 }
 
+/**
+ * Resoles the subs in a parsed or compiled template object from the scope
+ * @param templateObj the parsed or compiled template object
+ * @param scope An object containing values for paths from the the
+ * template. If it's omitted, we default to an empty object.
+ * Since functions are objects in javascript, the `scope` can technically be a
+ * function too but it won't be called. It'll be treated as an object and its
+ * properties will be used for the lookup.
+ * @param options
+ */
 // eslint-disable-next-line @typescript-eslint/ban-types
-function resolve(
+export function resolve(
   templateObj: CompiledTemplate | ParsedTemplate<string>,
   scope: Scope,
-  options?: RenderOptions
-) {
+  options?: ResolveOptions
+): ParsedTemplate<any> {
   if (isCompiledTemplate(templateObj)) {
     const { strings, refs } = templateObj
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return { strings, subs: refs.map((ref: Ref) => refGet(ref, scope, options)) }
   } else if (isParsedTemplate(templateObj)) {
+    const { strings, subs } = templateObj
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return transform(templateObj, (path: string) => pathGet(path, scope, options))
+    return { strings, subs: subs.map((path: string) => pathGet(path, scope, options)) }
   }
 
-  throw new TypeError(`Expected an object with either .ref and .subs arrays: ${templateObj}`)
+  throw new TypeError(
+    `resolve() expected a valid CompiledTemplate or ParsedTemplate object. Got a ${templateObj}: ${templateObj}`
+  )
 }
 
 /**
@@ -103,11 +113,7 @@ function resolve(
  * @warning **When dealing with user input, always make sure to validate it.**
  * @param template The template containing one or more {{path}} as
  * placeholders for values from the `scope` parameter.
- * @param scope An object containing values for paths from the the
- * template. If it's omitted, we default to an empty object.
- * Since functions are objects in javascript, the `scope` can technically be a
- * function too but it won't be called. It'll be treated as an object and its
- * properties will be used for the lookup.
+ * @param scope see the scope parameter to [[resolve]]
  * @param options same options as the [[compile]] function
  * @returns Template where its paths replaced with
  * corresponding values.
@@ -123,31 +129,4 @@ export function render(
     throw new TypeError(`render() expects a string or object template. Got ${template}`)
   }
   return stringify(resolve(templateObj, scope, options), options)
-}
-
-export function renderFn(
-  template: string | ParsedTemplate<string>,
-  resolveFn: ResolveFn,
-  scope: Scope,
-  options?: RenderOptions
-): string {
-  const parsedTemplate = isStr(template) ? parse(template, options) : template
-
-  return stringify(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    transform<string, any>(parsedTemplate, (path) => resolveFn(path, scope)),
-    options
-  )
-}
-
-export async function renderFnAsync(
-  template: string,
-  resolveFn: ResolveFnAsync,
-  scope: Scope,
-  options?: RenderOptions
-): Promise<string> {
-  const parsedTemplate = isStr(template) ? parse(template, options) : template
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return stringify(await transformAsync(parsedTemplate, (path) => resolveFn(path, scope)), options)
 }

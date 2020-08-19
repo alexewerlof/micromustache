@@ -1,4 +1,4 @@
-const { pathGet, renderFn } = require('../')
+const { pathGet, parse, stringify } = require('../')
 
 function compose(fnArr, initialValue) {
   return fnArr.reduce((input, fn) => fn(input), initialValue)
@@ -25,7 +25,11 @@ function pipe(template, scope) {
     return value
   }
 
-  return renderFn(template, applyPipe)
+  const { strings, subs } = parse(template)
+  return stringify({
+    strings,
+    subs: subs.map(applyPipe),
+  })
 }
 
 console.log(

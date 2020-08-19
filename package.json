@@ -67,7 +67,7 @@
     "test:unit": "jest",
     "pretest:dist": "npm run build",
     "test:dist": "cd dist-test && ./run.sh",
-    "test:examples": "for i in examples/*.js;do node \"$i\";done",
+    "test:examples": "for i in examples/*.js;do echo \"$i\" && node \"$i\";done",
     "test": "npm run test:unit && npm run test:dist && npm run test:examples",
     "preversion": "npm test && npm run clean && npm run build && pkg-ok",
     "prepublishOnly": "npm run test && npm run build && pkg-ok",

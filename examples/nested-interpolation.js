@@ -1,13 +1,12 @@
-const { render, parse, renderFn, pathGet } = require('../')
+const { render } = require('../')
 
 function doubleRender(template, scope) {
   // first pass
-  return renderFn(template, (path) => {
-    // Second pass
-    const result = render(path, scope, { tags: ['<', '>'] })
-    console.log(`second pass got "${path} resulting to ${result}`)
-    return pathGet(result, scope, { validateRef: true })
-  })
+  const template1 = render(template, scope, { tags: ['<', '>'] })
+  // Second pass
+  const template2 = render(template1, scope)
+  console.dir({ template1, template2 })
+  return template2
 }
 
 const scope = {

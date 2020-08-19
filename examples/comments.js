@@ -1,7 +1,17 @@
-const { renderFn } = require('../')
+const { parse, stringify, pathGet } = require('../')
 
 function renderWithoutComments(template, scope, options) {
-  return renderFn(template, (path) => (path.trimLeft().startsWith('!') ? '' : path), scope, options)
+  const parsedTemplate = parse(template)
+  return stringify(
+    {
+      strings: parsedTemplate.strings,
+      subs: parsedTemplate.subs.map((sub) =>
+        sub.trimLeft().startsWith('!') ? '' : pathGet(sub, scope)
+      ),
+    },
+    scope,
+    options
+  )
 }
 
 console.log(

@@ -34,7 +34,6 @@ function applyFunctions(functions, template, scope) {
     return `"${path}"???`
   }
 
-  // We could use renderFn() as well, but let's demonstrate how parsing path and transform works
   const parsedTemplate = transform(parse(template), resolvePathToFunctionResult)
   return stringify(parsedTemplate)
 }

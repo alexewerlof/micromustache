@@ -140,7 +140,7 @@ function pureParser(
 /**
  * Parses a template
  *
- * The result can be directly passed to the [[render]], [[renderFn]] or [[renderFnAsync]] functions
+ * The result can be directly passed to the [[render]] or [[resolve]] functions
  * instead of the raw template string.
  *
  * @see https://github.com/userpixel/micromustache/wiki/Known-issues

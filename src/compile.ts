@@ -31,7 +31,7 @@ export function isCompiledTemplate(x: unknown): x is CompiledTemplate {
  * JavaScript object references, you can use the [[parse]] function instead).
  * Compilation makes repeated render calls (2-7 times faster).
  *
- * The result can be directly passed to the [[render]], [[renderFn]] or [[renderFnAsync]] functions
+ * The result can be directly passed to the [[render]] or [[resolve]] functions
  * instead of the raw template string.
  *
  * Caching is stored in the resulting object, so if you free up all the references to that object,

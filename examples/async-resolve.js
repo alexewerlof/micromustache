@@ -1,4 +1,4 @@
-const { parse, renderFnAsync } = require('../')
+const { parse, stringify } = require('../')
 
 // Just waits a sec and returns the path in uppercase
 function delayedResolver(path) {
@@ -16,8 +16,11 @@ function delayedResolver(path) {
     const parsedTemplate = await parse(
       'I like {{apples}} and {{oranges}} because {{wood}} does not taste good'
     )
-    const result = await renderFnAsync(parsedTemplate, delayedResolver)
-    console.log(result)
+    const modifiedTemplate = {
+      strings: parsedTemplate.strings,
+      subs: await Promise.all(parsedTemplate.subs.map(delayedResolver)),
+    }
+    console.log(stringify(modifiedTemplate))
     // I like APPLES (1002ms) and ORANGES (1003ms) because WOOD (1003ms) does not taste good
   } catch (e) {
     console.error(e)
