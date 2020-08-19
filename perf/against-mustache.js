@@ -10,8 +10,8 @@ const realisticScope = require('./realistic/scope.json')
  * 2. To Mustache.js defense, it does much more than interpolation so it's not an apple to apple...
  */
 
-const LEN = 100
-const ITERATIONS = 10000
+const LEN = 10
+const ITERATIONS = 1
 
 const hrtime2ms = ([sec, nano]) => sec * 1e3 + nano / 1e6
 function x(a, b) {
@@ -37,7 +37,7 @@ function x(a, b) {
   return '🔥'.repeat(Math.round(ratio)) + ` ${ratio.toFixed(1)}x faster!!!`
 }
 
-const ms = (a) => Math.round(a) + 'ms'
+const ms = (a) => (Math.round(a) === 0 ? Math.round(a * 1000) + 'ns' : Math.round(a) + 'ms')
 
 function compare(f1, f2) {
   const f1name = f1.name
