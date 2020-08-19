@@ -34,3 +34,27 @@ At a high level flow for a typical render looks like this:
 |__ 5. refGet(ref, scope) -> values
 |__ 6. stringify(strings, values) -> result
 ```
+
+# ParsedTemplate
+
+![template, tags, strings, path and parsedTemplate](https://docs.google.com/drawings/d/e/2PACX-1vRE87bGkAGC4GG-UtPy1pt8Hh_kh0H6l98qFYYgW63CGLzl1NY6pmhturNOsfxn_vp7jpOp268hCT8V/pub?w=1000)
+
+_([edit](https://docs.google.com/drawings/d/16UKBDWKA0StgvWTqcHFlh-gUKFdRezZ_z5mvmKL3bEA/edit))_
+
+# CompiledTemplate
+
+![from parsedTemplate to compiledTemplate](https://docs.google.com/drawings/d/e/2PACX-1vTPA9RUOHkvY31Iq0GFs_LeqDGNtehulQg0Ole4MPxnCVBdwffcEiHDPrY78ZZvbNKxcrPlS6rSrenX/pub?w=1000)
+
+_([edit](https://docs.google.com/drawings/d/1SiY4Yu9QSDd4xULAvuVjPjk0S3TGGruzkjClfSleQeg/edit))_
+
+# resolve()
+
+![rendering a compiledTemplate](https://docs.google.com/drawings/d/e/2PACX-1vSB3dqwHl3svrDPaZz8Czf2aEYB9UywPyZsPOL9QZ6soRa1RAYJvIhvjDuy_hxAMeJiU6dBVD3yFo9a/pub?w=1000)
+
+_([edit](https://docs.google.com/drawings/d/1Yro-Hn3o6zL02HxPFM9hidgGOUa6xU1jbuuHbL3Xle8/edit))_
+
+# strinfigy()
+
+![stringify a parsedTemplate](https://docs.google.com/drawings/d/e/2PACX-1vSCyL6pUpWmHn_q9lfhigtXHQrc0UBZ9bawL9IHFFEcUKsY-ZU0AdSdUgO7Mx9X5tVCJ_ZL8MQzGLFY/pub?w=1000)
+
+_([edit](https://docs.google.com/drawings/d/1XmGzrnhEodS02LcAj5F-KihmkBHj-h-xuGUEGCWFpHE/edit))_
