@@ -1,8 +1,7 @@
-import { Scope, refGet, GetOptions, pathGet } from './get'
-import { compile, CompileOptions, CompiledTemplate, isCompiledTemplate } from './compile'
+import { Scope, ResolveOptions, resolve } from './get'
+import { compile, CompileOptions, CompiledTemplate } from './compile'
 import { isObj, isStr } from './utils'
 import { ParsedTemplate, isParsedTemplate } from './parse'
-import { Ref } from './ref'
 
 /**
  * The options for the [[stringify]] function
@@ -15,11 +14,6 @@ export interface StringifyOptions {
    */
   readonly explicit?: boolean
 }
-
-/**
- * The options for the [[resolve]] function
- */
-export type ResolveOptions = GetOptions
 
 /**
  * The options for the [[render]] function
@@ -74,37 +68,6 @@ export function stringify(
   ret += strings[length]
 
   return ret
-}
-
-/**
- * Resoles the subs in a parsed or compiled template object from the scope
- * @param templateObj the parsed or compiled template object
- * @param scope An object containing values for paths from the the
- * template. If it's omitted, we default to an empty object.
- * Since functions are objects in javascript, the `scope` can technically be a
- * function too but it won't be called. It'll be treated as an object and its
- * properties will be used for the lookup.
- * @param options
- */
-// eslint-disable-next-line @typescript-eslint/ban-types
-export function resolve(
-  templateObj: CompiledTemplate | ParsedTemplate<string>,
-  scope: Scope,
-  options?: ResolveOptions
-): ParsedTemplate<any> {
-  if (isCompiledTemplate(templateObj)) {
-    const { strings, refs } = templateObj
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return { strings, subs: refs.map((ref: Ref) => refGet(ref, scope, options)) }
-  } else if (isParsedTemplate(templateObj)) {
-    const { strings, subs } = templateObj
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return { strings, subs: subs.map((path: string) => pathGet(path, scope, options)) }
-  }
-
-  throw new TypeError(
-    `resolve() expected a valid CompiledTemplate or ParsedTemplate object. Got a ${templateObj}: ${templateObj}`
-  )
 }
 
 /**

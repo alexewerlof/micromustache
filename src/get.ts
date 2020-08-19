@@ -1,10 +1,17 @@
 import { pathToRef, Ref, PathToRefOptions } from './ref'
 import { isObj, isProp, isNum, isArr } from './utils'
 import { MAX_REF_DEPTH } from './defaults'
+import { CompiledTemplate, isCompiledTemplate } from './compile'
+import { ParsedTemplate, isParsedTemplate } from './parse'
 
 export interface Scope {
   [key: string]: Scope | any
 }
+
+/**
+ * The options for the [[resolve]] function
+ */
+export type ResolveOptions = GetOptions
 
 /**
  * Just a small utility function that's used in the [[refGet]] function to generate a string
@@ -107,4 +114,35 @@ export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
 export function pathGet(path: string, scope: Scope, options: GetOptions = {}): any {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return refGet(pathToRef(path, options), scope, options)
+}
+
+/**
+ * Resoles the subs in a parsed or compiled template object from the scope
+ * @param templateObj the parsed or compiled template object
+ * @param scope An object containing values for paths from the the
+ * template. If it's omitted, we default to an empty object.
+ * Since functions are objects in javascript, the `scope` can technically be a
+ * function too but it won't be called. It'll be treated as an object and its
+ * properties will be used for the lookup.
+ * @param options
+ */
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function resolve(
+  templateObj: CompiledTemplate | ParsedTemplate<string>,
+  scope: Scope,
+  options?: ResolveOptions
+): ParsedTemplate<any> {
+  if (isCompiledTemplate(templateObj)) {
+    const { strings, refs } = templateObj
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return { strings, subs: refs.map((ref: Ref) => refGet(ref, scope, options)) }
+  } else if (isParsedTemplate(templateObj)) {
+    const { strings, subs } = templateObj
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return { strings, subs: subs.map((path: string) => pathGet(path, scope, options)) }
+  }
+
+  throw new TypeError(
+    `resolve() expected a valid CompiledTemplate or ParsedTemplate object. Got a ${templateObj}: ${templateObj}`
+  )
 }
