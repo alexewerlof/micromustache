@@ -1,4 +1,4 @@
-import { pathToRef, Ref, PathToRefOptions } from './tokenize'
+import { pathToRef, Ref, PathToRefOptions } from './ref'
 import { isObj, isProp, isNum, isArr } from './utils'
 import { MAX_REF_DEPTH } from './defaults'
 

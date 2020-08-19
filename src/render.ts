@@ -3,7 +3,7 @@ import { compile, CompileOptions, CompiledTemplate, isCompiledTemplate } from '.
 import { isObj, isStr } from './utils'
 import { ParsedTemplate, parse, isParsedTemplate } from './parse'
 import { transform, transformAsync } from './transform'
-import { Ref } from './tokenize'
+import { Ref } from './ref'
 
 /**
  * The options for the [[stringify]] function

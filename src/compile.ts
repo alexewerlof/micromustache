@@ -1,5 +1,5 @@
 import { parse, ParseOptions } from './parse'
-import { pathToRef, Ref, PathToRefOptions } from './tokenize'
+import { pathToRef, Ref, PathToRefOptions } from './ref'
 import { isObj, isArr } from './utils'
 
 /**

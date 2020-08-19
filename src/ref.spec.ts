@@ -1,4 +1,4 @@
-import { pathToRef } from './tokenize'
+import { pathToRef } from './ref'
 
 interface ISuccessCases {
   [input: string]: string[]
