@@ -8,6 +8,11 @@ describe('parse()', () => {
     })
   })
 
+  it('throws if the template is too big', () => {
+    expect(() => parse('123456', { maxLen: 5 })).toThrow(RangeError)
+    expect(() => parse('123456', { maxLen: 6 })).not.toThrow()
+  })
+
   it('supports customized tags', () => {
     expect(parse('Hello {name}!', { tags: ['{', '}'] })).toEqual({
       strings: ['Hello ', '!'],

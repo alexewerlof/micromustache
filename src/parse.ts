@@ -1,5 +1,5 @@
 import { isStr, isArr, isObj, isNum, optObj } from './utils'
-import { TAGS, MAX_PATH_LEN } from './defaults'
+import { TAGS, MAX_PATH_LEN, MAX_TEMPLATE_LEN } from './defaults'
 
 /**
  * The result of the parsing the template
@@ -31,10 +31,16 @@ export type Tags = [string, string]
  */
 export interface ParseOptions {
   /**
+   * Maximum length for the template string
+   *
+   * @default MAX_TEMPLATE_LEN
+   */
+  maxLen?: number
+  /**
    * Maximum allowed length for the trimmed path string.
    * Set this to a safe value to throw for paths that are longer than expected.
    *
-   * @default defaults.MAX_PATH_LEN
+   * @default MAX_PATH_LEN
    *
    * @example `path = 'a.b'`, depth = 3
    * @example `path = ' a.b '`, depth = 3 (trimmed path)
@@ -47,7 +53,7 @@ export interface ParseOptions {
    * The string symbols that mark the opening and closing of a path in the template.
    * It should be an array of exactly two distinct strings otherwise an error is thrown.
    *
-   * @default defaults.TAGS
+   * @default TAGS
    */
   tags?: Tags
 }
@@ -157,7 +163,15 @@ export function parse(template: string, options: ParseOptions = {}): ParsedTempl
     )
   }
 
-  const { tags = TAGS, maxPathLen = MAX_PATH_LEN } = optObj<ParseOptions>(where, options)
+  const { tags = TAGS, maxPathLen = MAX_PATH_LEN, maxLen = MAX_TEMPLATE_LEN } = optObj<
+    ParseOptions
+  >(where, options)
+
+  if (template.length > maxLen) {
+    throw new RangeError(
+      `${where} the max template length is configured ${maxLen}. Got ${template.length}`
+    )
+  }
 
   if (!isArr(tags) || tags.length !== 2) {
     throw TypeError(`${where} expected an array of two elements for tags. Got ${String(tags)}`)
