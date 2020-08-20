@@ -87,7 +87,11 @@ export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       currentScope = currentScope[prop]
     } else if (options.validateRef) {
-      throw new ReferenceError(`${where} no "${prop}" property in the scope at ${refToPath(ref)}`)
+      throw new ReferenceError(
+        `${where} ${refToPath(
+          ref
+        )} is invalid because "${prop}" property does not exist in the scope`
+      )
     } else {
       // This undefined result will be stringified later according to the explicit option
       return
