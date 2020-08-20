@@ -58,6 +58,8 @@ function render() {
   const options = {
     validateRef: getVal(id('validateRef')),
     explicit: getVal(id('explicit')),
+    maxLen: getVal(id('maxLen')),
+    maxPathCount: getVal(id('maxPathCount')),
     maxPathLen: getVal(id('maxPathLen')),
     maxRefDepth: getVal(id('maxRefDepth')),
     tags: [getVal(id('tags0')), getVal(id('tags1'))],
@@ -97,6 +99,8 @@ ready(() => {
   setVal(id('tags1'), micromustache.TAGS[1])
   onInput(id('validateRef'), render)
   onInput(id('explicit'), render)
+  onInput(id('maxLen'), render)
+  onInput(id('maxPathCount'), render)
   onInput(id('maxPathLen'), render)
   onInput(id('maxRefDepth'), render)
   onInput(id('tags0'), render)
