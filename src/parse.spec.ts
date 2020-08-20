@@ -13,7 +13,7 @@ describe('parse()', () => {
     expect(() => parse('123456', { maxLen: 6 })).not.toThrow()
   })
 
-  it('thorws if there are too many paths', () => {
+  it('throws if there are too many paths', () => {
     expect(() => parse('Hi {{name}}! How is {{planet}}?', { maxPathCount: 1 })).toThrow(RangeError)
     expect(() => parse('Hi {{name}}! How is {{planet}}?', { maxPathCount: 2 })).not.toThrow()
   })
