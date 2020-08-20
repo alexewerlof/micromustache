@@ -48,10 +48,10 @@ describe('parse()', () => {
     })
   })
 
-  it('trims path', () => {
+  it('does not trim the path', () => {
     const { subs } = parse('My name is {{  name  }}')
     if (subs.length) {
-      expect(subs[0]).toBe('name')
+      expect(subs[0]).toBe('  name  ')
     }
   })
 

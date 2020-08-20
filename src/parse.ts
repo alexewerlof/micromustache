@@ -107,9 +107,8 @@ function pureParser(
     }
 
     const path = template.substring(pathStartIndex, lastCloseTagIndex)
-    const trimmedPath = path.trim()
 
-    if (trimmedPath.length === 0) {
+    if (path.trim().length === 0) {
       throw new SyntaxError(
         `${where} found an unexpected "${closeTag}" at position ${lastOpenTagIndex}`
       )
@@ -121,13 +120,13 @@ function pureParser(
       )
     }
 
-    if (trimmedPath.includes(openTag)) {
+    if (path.includes(openTag)) {
       throw new SyntaxError(
-        `${where} found an unexpected "${openTag}" at position ${lastOpenTagIndex} in path "${trimmedPath}"`
+        `${where} found an unexpected "${openTag}" at position ${lastOpenTagIndex} in path "${path}"`
       )
     }
 
-    paths.push(trimmedPath)
+    paths.push(path)
 
     lastCloseTagIndex += closeTagLen
     strings.push(template.substring(currentIndex, lastOpenTagIndex))
