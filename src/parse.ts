@@ -85,7 +85,6 @@ function pureParser(
   let lastOpenTagIndex: number
   let lastCloseTagIndex = 0
   let currentIndex = 0
-  let path: string
 
   // The result
   const strings: string[] = []
@@ -103,32 +102,32 @@ function pureParser(
 
     if (lastCloseTagIndex === -1) {
       throw new SyntaxError(
-        `${where} Missing "${closeTag}" in the template for the "${openTag}" at position ${lastOpenTagIndex} within ${maxPathLen} characters`
+        `${where} cannot find "${closeTag}" for the "${openTag}" at position ${lastOpenTagIndex} within ${maxPathLen} characters`
       )
     }
 
-    path = template.substring(pathStartIndex, lastCloseTagIndex).trim()
+    const path = template.substring(pathStartIndex, lastCloseTagIndex)
+    const trimmedPath = path.trim()
 
-    const pathLen = path.length
-    if (pathLen === 0) {
+    if (trimmedPath.length === 0) {
       throw new SyntaxError(
-        `${where} Unexpected "${closeTag}" tag found at position ${lastOpenTagIndex}`
+        `${where} found an unexpected "${closeTag}" at position ${lastOpenTagIndex}`
       )
     }
 
-    if (pathLen > maxPathLen) {
+    if (path.length > maxPathLen) {
       throw new SyntaxError(
-        `${where} The path is too long. Expected a maximum of ${maxPathLen} but got ${pathLen} for "${path}"`
+        `${where} the path max length is configured to ${maxPathLen} but for "${path}" got ${path.length}`
       )
     }
 
-    if (path.includes(openTag)) {
+    if (trimmedPath.includes(openTag)) {
       throw new SyntaxError(
-        `${where} Path should not have "${openTag}" but at position ${lastOpenTagIndex} got "${path}"`
+        `${where} found an unexpected "${openTag}" at position ${lastOpenTagIndex} in path "${trimmedPath}"`
       )
     }
 
-    paths.push(path)
+    paths.push(trimmedPath)
 
     lastCloseTagIndex += closeTagLen
     strings.push(template.substring(currentIndex, lastOpenTagIndex))

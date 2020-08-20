@@ -68,9 +68,7 @@ describe('parse()', () => {
 
   it('throws a syntax error if the open tag is not closed', () => {
     expect(() => parse('Hi {{')).toThrow(
-      new SyntaxError(
-        'Missing "}}" in the template for the "{{" at position 3 within 1000 characters'
-      )
+      new SyntaxError('parse() cannot find "}}" for the "{{" at position 3 within 1000 characters')
     )
   })
 
@@ -80,13 +78,13 @@ describe('parse()', () => {
 
   it('throws a syntax error if the path is an empty string', () => {
     expect(() => parse('Hi {{}}')).toThrow(
-      new SyntaxError('Unexpected "}}" tag found at position 3')
+      new SyntaxError('parse() found an unexpected "}}" at position 3')
     )
   })
 
   it('throws a syntax error if the value name is just spaces', () => {
     expect(() => parse('Hi {{ }}')).toThrow(
-      new SyntaxError('Unexpected "}}" tag found at position 3')
+      new SyntaxError('parse() found an unexpected "}}" at position 3')
     )
   })
 
