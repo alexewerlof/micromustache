@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - v9.0.0: `get()` is renamed to `pathGet()`
 - v9.0.0: `tokenize()` is renamed to `parse()` and its result looks like `{ strings, paths }` instead of `{ strings, varNames }`
 - v9.0.0: `parse()` returns the paths as they appear in the template instead of trimming them
+- v9.0.0: `parse()` does not throw an error for empty paths or paths that are comprised of only spaces
 - v9.0.0: `compile()` no longer returns an instance of `Renderer` (that class is gone).
 - v9.0.0: all interfaces are renamed to have no "I" prefix. Also the `ITags` interface is removed.
 - v9.0.0: parsing paths is now more accurate. As a result of that, a few edge cases that would pass previously will throw an error. For example `a[-11]` was OK before but it's an error now (`a[11]` or `a[+11]` still work as expected). The bracket accessor will only accept numbers or quoted strings (`a["true"]` or `a['true']` work while `a[true]` is an error). So you might want to ensure that your templates don't have such issues.

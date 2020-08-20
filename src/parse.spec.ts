@@ -76,16 +76,16 @@ describe('parse()', () => {
     expect(() => parse('Hi}} ')).not.toThrow()
   })
 
-  it('throws a syntax error if the path is an empty string', () => {
-    expect(() => parse('Hi {{}}')).toThrow(
-      new SyntaxError('parse() found an unexpected "}}" at position 3')
-    )
-  })
+  it('supports empty paths', () => {
+    expect(parse('Hi {{}}')).toEqual({
+      strings: ['Hi ', ''],
+      subs: [''],
+    })
 
-  it('throws a syntax error if the value name is just spaces', () => {
-    expect(() => parse('Hi {{ }}')).toThrow(
-      new SyntaxError('parse() found an unexpected "}}" at position 3')
-    )
+    expect(parse('Hi {{ }}')).toEqual({
+      strings: ['Hi ', ''],
+      subs: [' '],
+    })
   })
 
   it('throws for nested open and close tag', () => {

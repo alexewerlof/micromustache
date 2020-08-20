@@ -108,12 +108,6 @@ function pureParser(
 
     const path = template.substring(pathStartIndex, lastCloseTagIndex)
 
-    if (path.trim().length === 0) {
-      throw new SyntaxError(
-        `${where} found an unexpected "${closeTag}" at position ${lastOpenTagIndex}`
-      )
-    }
-
     if (path.length > maxPathLen) {
       throw new SyntaxError(
         `${where} the path max length is configured to ${maxPathLen} but for "${path}" got ${path.length}`
