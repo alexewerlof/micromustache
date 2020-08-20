@@ -13,8 +13,15 @@ const realisticScope = require('./realistic/scope.json')
 const LEN = 10
 const ITERATIONS = 1
 
-const hrtime2ms = ([sec, nano]) => sec * 1e3 + nano / 1e6
-function x(a, b) {
+function formatTime(a) {
+  return a < 1 ? Math.round(a * 1000) + 'ns' : Math.round(a) + 'ms'
+}
+
+function hrtime2ms([sec, nano]) {
+  return sec * 1e3 + nano / 1e6
+}
+
+function formatTimeDiff(a, b) {
   const diff = b - a
   if (diff < 0) {
     return '🐢'
@@ -27,7 +34,7 @@ function x(a, b) {
   const ratio = b / a
   // If it's less than 20% and the time difference is less than 10ms
   if (ratio < 1.2 && diff < 10) {
-    return `🐇 ${diff.toFixed(0)}ms`
+    return `🐇 ${formatTime(diff)}`
   }
 
   if (ratio < 2) {
@@ -36,8 +43,6 @@ function x(a, b) {
 
   return '🔥'.repeat(Math.round(ratio)) + ` ${ratio.toFixed(1)}x faster!!!`
 }
-
-const ms = (a) => (Math.round(a) === 0 ? Math.round(a * 1000) + 'ns' : Math.round(a) + 'ms')
 
 function compare(f1, f2) {
   const f1name = f1.name
@@ -57,8 +62,8 @@ function compare(f1, f2) {
   }
   const f2duration = hrtime2ms(process.hrtime(start))
 
-  console.log(`1. ${f1name}: ${ms(f1duration)} ${x(f1duration, f2duration)}`)
-  console.log(`2. ${f2name}: ${ms(f2duration)} ${x(f2duration, f1duration)}`)
+  console.log(`1. ${f1name}: ${formatTime(f1duration)} ${formatTimeDiff(f1duration, f2duration)}`)
+  console.log(`2. ${f2name}: ${formatTime(f2duration)} ${formatTimeDiff(f2duration, f1duration)}`)
 }
 
 const realisticTemplate = readFileSync(
