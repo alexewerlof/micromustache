@@ -10,14 +10,17 @@
 
 ![Logo](https://raw.github.com/userpixel/micromustache/master/logo.png)
 
-A **secure**, fast and lightweight template engine with some handy additions.
+A **secure & minimalist** template engine.
 
 ⛹ Check out **[the playground](https://unpkg.com/micromustache/playground/index.html)**
 
 Think of it as a sweet spot between plain text interpolation and [mustache.js](https://github.com/janl/mustache.js); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to reduce potential errors and improve performance. This tool has a limited scope that doesn't attempt to solve everybody's use case, and instead do a specific thing well.
 
+* 🔒 **Secure**
+  - Works in CSP environments (no usage of `eval()` or `new Function()`)
+  - Has limit options to prevent malicious templates from hanging your program
+  - Published only with 2FA.
 * 🏃 Faster than MustacheJS (_Micromustache is the fastest template engine that doesn't need pre-compilation and still works in CSP environments_)
-* 🔒 **Secure** has limits for variable length, number of interpolations, nesting debth and common Javascript pitfalls (`__proto__`, `constructor`, getters/etc). Works in CSP environments (no usage of `eval()` or `new Function()`). Published only with 2FA.
 * ✏ **Bracket notation** support `a[1]['foo']` accessors (mustache.js/handlebar syntax of `a.1.foo` is also supported).
 * 🎈 **Lightweight** less than 350 source lines of code, easy to audit, small API surface, easy to pick up
 * 🏳 **No dependencies**
