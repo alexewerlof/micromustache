@@ -18,9 +18,11 @@ const examples = [
   },
   {
     name: 'Undefined and null',
-    template: 'Try the "explicit" option. Null is "{{n}}" and undefined is "{{u}}"',
+    template:
+      'Try the "explicit" option. Null is "{{n}}" and undefined is "{{u}}" but false is "{{f}}"',
     scope: {
       n: null,
+      f: false,
     },
   },
   {
@@ -29,7 +31,7 @@ const examples = [
     scope: ['Apple', 'Orange', 'Banana', 'Citrun', 'Tomato'],
   },
   {
-    name: 'Nested',
+    name: 'Deep refs',
     template: "{{person.name}}'s mobile nr is: {{person.contacts.tel[1].nr}}!",
     scope: {
       person: {
