@@ -95,8 +95,14 @@ ready(() => {
   onInput(optionsToggle, () => (options.hidden = !optionsToggle.checked))
   onInput(scope, render)
   onInput(template, render)
+  // Set the defaults
   setVal(id('tags0'), micromustache.TAGS[0])
   setVal(id('tags1'), micromustache.TAGS[1])
+  setVal(id('maxLen'), micromustache.MAX_TEMPLATE_LEN)
+  setVal(id('maxPathCount'), micromustache.MAX_PATH_COUNT)
+  setVal(id('maxPathLen'), micromustache.MAX_PATH_LEN)
+  setVal(id('maxRefDepth'), micromustache.MAX_REF_DEPTH)
+
   onInput(id('validateRef'), render)
   onInput(id('explicit'), render)
   onInput(id('maxLen'), render)
