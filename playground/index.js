@@ -28,15 +28,15 @@ const ready = (fn) =>
     ? fn()
     : on(document, 'DOMContentLoaded', fn)
 
-const exampleSelector = id('example-selector')
+const exampleSelector = id('exampleSelector')
 const template = id('template')
-const optionsToggle = id('options-toggle')
+const optionsToggle = id('optionsToggle')
 const options = id('options')
-const templateError = id('template-error')
+const templateError = id('templateError')
 const scope = id('scope')
-const scopeError = id('scope-error')
+const scopeError = id('scopeError')
 const result = id('result')
-const resultError = id('result-error')
+const resultError = id('resultError')
 
 // Runs a function showing its results or errors in appropriate DOM elements
 function runFn(successEl, errorEl, fn) {
