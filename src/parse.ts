@@ -1,5 +1,5 @@
 import { isStr, isArr, isObj, isNum, optObj } from './utils'
-import { TAGS, MAX_PATH_LEN, MAX_TEMPLATE_LEN } from './defaults'
+import { TAGS, MAX_PATH_LEN, MAX_TEMPLATE_LEN, MAX_PATH_COUNT } from './defaults'
 
 /**
  * The result of the parsing the template
@@ -50,6 +50,12 @@ export interface ParseOptions {
    */
   maxPathLen?: number
   /**
+   * Maximum number of paths in a template
+   *
+   * @default MAX_PATH_COUNT
+   */
+  maxPathCount?: number
+  /**
    * The string symbols that mark the opening and closing of a path in the template.
    * It should be an array of exactly two distinct strings otherwise an error is thrown.
    *
@@ -82,6 +88,7 @@ function pureParser(
   openTag: string,
   closeTag: string,
   maxPathLen: number,
+  maxPathCount: number,
   where: string
 ): ParsedTemplate<string> {
   const openTagLen = openTag.length
@@ -126,6 +133,12 @@ function pureParser(
       )
     }
 
+    if (paths.length >= maxPathCount) {
+      throw new RangeError(
+        `${where} the max number of paths is configured to be ${maxPathCount} but we've already reached that limit`
+      )
+    }
+
     paths.push(path)
 
     lastCloseTagIndex += closeTagLen
@@ -163,9 +176,12 @@ export function parse(template: string, options: ParseOptions = {}): ParsedTempl
     )
   }
 
-  const { tags = TAGS, maxPathLen = MAX_PATH_LEN, maxLen = MAX_TEMPLATE_LEN } = optObj<
-    ParseOptions
-  >(where, options)
+  const {
+    tags = TAGS,
+    maxPathLen = MAX_PATH_LEN,
+    maxLen = MAX_TEMPLATE_LEN,
+    maxPathCount = MAX_PATH_COUNT,
+  } = optObj<ParseOptions>(where, options)
 
   if (template.length > maxLen) {
     throw new RangeError(
@@ -195,5 +211,5 @@ export function parse(template: string, options: ParseOptions = {}): ParsedTempl
     throw new Error(`${where} expected a positive number for maxPathLen. Got ${maxPathLen}`)
   }
 
-  return pureParser(template, openTag, closeTag, maxPathLen, where)
+  return pureParser(template, openTag, closeTag, maxPathLen, maxPathCount, where)
 }
