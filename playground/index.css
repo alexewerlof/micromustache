@@ -25,6 +25,7 @@ aside {
     min-width: 8rem;
     border-right: 1px solid #ffffff3d;
     padding: 1em;
+    max-width: 15em;
 }
 
 .io {
