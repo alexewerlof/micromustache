@@ -174,7 +174,7 @@ export function parse(template: string, options: ParseOptions = {}): ParsedTempl
   }
 
   if (!isArr(tags) || tags.length !== 2) {
-    throw TypeError(`${where} expected an array of two elements for tags. Got ${String(tags)}`)
+    throw new TypeError(`${where} expected an array of two elements for tags. Got ${String(tags)}`)
   }
 
   const [openTag, closeTag] = tags
