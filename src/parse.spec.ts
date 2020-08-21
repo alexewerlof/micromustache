@@ -65,25 +65,20 @@ describe('parse()', () => {
     }
   })
 
-  it('can handle a close tag without an open tag', () => {
-    expect(parse('Hi}} {{name}}')).toEqual({
-      strings: ['Hi}} ', ''],
-      subs: ['name'],
-    })
-    expect(parse('Hi {{name}} }}')).toEqual({
-      strings: ['Hi ', ' }}'],
-      subs: ['name'],
-    })
-  })
-
   it('throws a syntax error if the open tag is not closed', () => {
     expect(() => parse('Hi {{')).toThrow(
       new SyntaxError('parse() cannot find "}}" for the "{{" at position 3 within 1000 characters')
     )
   })
 
-  it('does not throw an error if there is a close tag without an open tag', () => {
-    expect(() => parse('Hi}} ')).not.toThrow()
+  it('throws if there is a dangling close tag', () => {
+    expect(() => parse('Molly }} Bark')).toThrow(SyntaxError)
+    expect(() => parse('Molly }}')).toThrow(SyntaxError)
+    expect(() => parse('}}')).toThrow(SyntaxError)
+    expect(() => parse('}} Bark')).toThrow(SyntaxError)
+    expect(() => parse('Molly {{}} }} Bark')).toThrow(SyntaxError)
+    expect(() => parse('Molly }}{{}} Bark')).toThrow(SyntaxError)
+    expect(() => parse('Molly {{}} the }} Bark')).toThrow(SyntaxError)
   })
 
   it('supports empty paths', () => {

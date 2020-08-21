@@ -98,7 +98,9 @@ export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
         ref.push((searchResult as RegExpWithNameGroup).groups.name)
         if (ref.length > maxRefDepth) {
           throw new RangeError(
-            `${where} the reference depth for "${path}" exceeds the configured max ref depth of ${maxRefDepth}`
+            `${where} encountered the path "${path}" which is ${
+              ref.length - maxRefDepth
+            } chars longer than the configured limit of ${maxRefDepth}.`
           )
         }
 
@@ -108,7 +110,7 @@ export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
   } while (patternMatched)
 
   if (currIndex !== path.length) {
-    throw new SyntaxError(`${where} could not convert the entire path "${path}" to ref`)
+    throw new SyntaxError(`${where} cannot convert the entire path "${path}" to a ref`)
   }
 
   return ref

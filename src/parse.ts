@@ -31,28 +31,32 @@ export type Tags = [string, string]
  */
 export interface ParseOptions {
   /**
-   * Maximum length for the template string
+   * Maximum length for the template string (inclusive)
    *
    * @default MAX_TEMPLATE_LEN
    */
   maxLen?: number
   /**
-   * Maximum allowed length for the trimmed path string.
+   * Maximum allowed length for the trimmed path string (inclusive).
    * Set this to a safe value to throw for paths that are longer than expected.
    *
    * @default MAX_PATH_LEN
    *
-   * @example `path = 'a.b'`, depth = 3
-   * @example `path = ' a.b '`, depth = 3 (trimmed path)
-   * @example `path = 'a . b'`, depth = 5
-   * @example `path = 'a.b.c'`, depth = 5
-   * @example `path = 'a['b'].c'`, depth = 8
+   * @example `{{a.b}}` has a length of 3
+   * @example `{{ a.b }}` has a length of 3 (trimmed path)
+   * @example `{{a . b}}` has a length of 5
+   * @example `{{a.b.c}}` has a length of 5
+   * @example `{{a['b'].c}}` has a length of 8
    */
   maxPathLen?: number
   /**
-   * Maximum number of paths in a template
+   * Maximum number of paths in a template (inclusive)
    *
    * @default MAX_PATH_COUNT
+   *
+   * @example `Hi {{name}}` has 1 path
+   * @example `Hi {{fName}} {{lName}}` has 2 paths
+   * @example `Hi {{person.name}}` has 1 path
    */
   maxPathCount?: number
   /**
@@ -115,7 +119,7 @@ function pureParser(
 
     if (lastCloseTagIndex === -1) {
       throw new SyntaxError(
-        `${where} cannot find "${closeTag}" for the "${openTag}" at position ${lastOpenTagIndex} within ${maxPathLen} characters`
+        `${where} cannot find "${closeTag}" matching the "${openTag}" at position ${lastOpenTagIndex}`
       )
     }
 
@@ -123,13 +127,17 @@ function pureParser(
 
     if (path.length > maxPathLen) {
       throw new SyntaxError(
-        `${where} the path max length is configured to ${maxPathLen} but for "${path}" got ${path.length}`
+        `${where} encountered the path "${path}" at position ${pathStartIndex} which is ${
+          path.length - maxPathLen
+        } characters longer than the configured limit of ${maxPathLen}.`
       )
     }
 
     if (path.includes(openTag)) {
       throw new SyntaxError(
-        `${where} found an unexpected "${openTag}" at position ${lastOpenTagIndex} in path "${path}"`
+        `${where} found an unexpected "${openTag}" in "${path}" at position ${
+          pathStartIndex + lastOpenTagIndex
+        }`
       )
     }
 
@@ -142,11 +150,30 @@ function pureParser(
     paths.push(path)
 
     lastCloseTagIndex += closeTagLen
-    strings.push(template.substring(currentIndex, lastOpenTagIndex))
+    const beforePath = template.substring(currentIndex, lastOpenTagIndex)
+    const danglingCloseTagIndex = beforePath.indexOf(closeTag)
+    if (danglingCloseTagIndex !== -1) {
+      throw new SyntaxError(
+        `${where} encountered a dangling "${closeTag}" at position ${danglingCloseTagIndex}`
+      )
+    }
+
+    strings.push(beforePath)
     currentIndex = lastCloseTagIndex
   }
 
-  strings.push(template.substring(lastCloseTagIndex))
+  const rest = template.substring(lastCloseTagIndex)
+  const danglingTagIndex = rest.indexOf(closeTag)
+
+  if (danglingTagIndex !== -1) {
+    throw new SyntaxError(
+      `${where} encountered a dangling "${closeTag}" at position ${
+        danglingTagIndex + lastCloseTagIndex
+      }`
+    )
+  }
+
+  strings.push(rest)
 
   return { strings, subs: paths }
 }
@@ -185,7 +212,9 @@ export function parse(template: string, options: ParseOptions = {}): ParsedTempl
 
   if (template.length > maxLen) {
     throw new RangeError(
-      `${where} the max template length is configured ${maxLen}. Got ${template.length}`
+      `${where} got a template that is ${
+        template.length - maxLen
+      } characters longer than the configured limit of ${maxLen}.`
     )
   }
 
