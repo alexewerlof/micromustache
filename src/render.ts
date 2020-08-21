@@ -1,23 +1,8 @@
 import { Scope, ResolveOptions, resolve } from './get'
 import { compile, CompileOptions, CompiledTemplate } from './compile'
-import { isObj, isStr, optObj } from './utils'
-import { ParsedTemplate, isParsedTemplate } from './parse'
-
-/**
- * The options for the [[stringify]] function
- */
-export interface StringifyOptions {
-  /**
-   * When set to a truthy value, rendering literally puts a 'null' or
-   * 'undefined' for values that are `null` or `undefined`.
-   * By default it swallows those values to be compatible with Mustache.
-   */
-  readonly explicit?: boolean
-  /**
-   * When set to a truthy value, it stringifies object values using `JSON.stringify()`
-   */
-  readonly json?: boolean
-}
+import { isObj, isStr } from './utils'
+import { ParsedTemplate } from './parse'
+import { StringifyOptions, stringify } from './stringify'
 
 /**
  * The options for the [[render]] function
@@ -37,39 +22,6 @@ export type ResolveFn = (path: string, scope?: Scope) => any
  * Same as `ResolveFn` but for asynchronous functions
  */
 export type ResolveFnAsync = (path: string, scope?: Scope) => Promise<any>
-
-/**
- * Combines `subs` and `strings` to make a string
- */
-export function stringify(
-  parsedTemplate: ParsedTemplate<any>,
-  options: StringifyOptions = {}
-): string {
-  const where = 'stringify()'
-  if (!isParsedTemplate(parsedTemplate)) {
-    throw new TypeError(`${where} got an invalid parsedTemplate: ${parsedTemplate}`)
-  }
-
-  const { explicit, json } = optObj<StringifyOptions>(where, options)
-  const { strings, subs } = parsedTemplate
-  const { length } = subs
-
-  let ret = ''
-  for (let i = 0; i < length; i++) {
-    ret += strings[i]
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const value: any = subs[i]
-
-    if (explicit || (value !== null && value !== undefined)) {
-      ret += json && isObj(value) ? JSON.stringify(value) : value
-    }
-  }
-
-  ret += strings[length]
-
-  return ret
-}
 
 /**
  * Replaces every {{path}} inside the template with values from the scope
