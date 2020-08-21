@@ -1,6 +1,6 @@
-import { parse, ParseOptions } from './parse'
+import { parse, ParseOptions, isParsedTemplate, ParsedTemplate } from './parse'
 import { pathToRef, Ref, PathToRefOptions } from './ref'
-import { isObj, isArr } from './utils'
+import { isObj, isArr, isStr } from './utils'
 
 /**
  * The options that customize parsing the template and tokenizing the paths.
@@ -10,8 +10,14 @@ import { isObj, isArr } from './utils'
 export interface CompileOptions extends ParseOptions, PathToRefOptions {}
 
 export interface CompiledTemplate {
-  strings: string[]
-  refs: Ref[]
+  /**
+   * See the `strings` property of [[ParsedOptions]]
+   */
+  readonly strings: string[]
+  /**
+   * The paths of the template converted to [[Ref]] objects
+   */
+  readonly refs: Ref[]
 }
 
 export function isCompiledTemplate(x: unknown): x is CompiledTemplate {
@@ -45,8 +51,19 @@ export function isCompiledTemplate(x: unknown): x is CompiledTemplate {
  *
  * @throws any error that the [[parse]] or [[pathToRef]] may throw
  */
-export function compile(template: string, options: CompileOptions = {}): CompiledTemplate {
+export function compile(
+  template: string | ParsedTemplate<string>,
+  options: CompileOptions = {}
+): CompiledTemplate {
   // No assertion is required here because these internal functions assert their input
-  const { strings, subs } = parse(template, options)
+  let parsedTemplate
+  if (isStr(template)) {
+    parsedTemplate = parse(template, options)
+  } else if (isParsedTemplate(template)) {
+    parsedTemplate = template
+  } else {
+    throw new TypeError(`compile() expected a string or ParsedTemplate. Got: ${template}`)
+  }
+  const { strings, subs } = parsedTemplate
   return { strings, refs: subs.map((path) => pathToRef.cached(path, options)) }
 }
