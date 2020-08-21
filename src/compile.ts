@@ -13,11 +13,11 @@ export interface CompiledTemplate {
   /**
    * See the `strings` property of [[ParsedOptions]]
    */
-  readonly strings: string[]
+  strings: string[]
   /**
    * The paths of the template converted to [[Ref]] objects
    */
-  readonly refs: Ref[]
+  refs: Ref[]
 }
 
 export function isCompiledTemplate(x: unknown): x is CompiledTemplate {
