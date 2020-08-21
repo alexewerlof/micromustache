@@ -35,7 +35,7 @@ export interface ParseOptions {
    *
    * @default MAX_TEMPLATE_LEN
    */
-  maxTemplateLen?: number
+  readonly maxTemplateLen?: number
   /**
    * Maximum allowed length for the trimmed path string (inclusive).
    * Set this to a safe value to throw for paths that are longer than expected.
@@ -48,7 +48,7 @@ export interface ParseOptions {
    * @example `{{a.b.c}}` has a length of 5
    * @example `{{a['b'].c}}` has a length of 8
    */
-  maxPathLen?: number
+  readonly maxPathLen?: number
   /**
    * Maximum number of paths in a template (inclusive)
    *
@@ -58,14 +58,14 @@ export interface ParseOptions {
    * @example `Hi {{fName}} {{lName}}` has 2 paths
    * @example `Hi {{person.name}}` has 1 path
    */
-  maxPathCount?: number
+  readonly maxPathCount?: number
   /**
    * The string symbols that mark the opening and closing of a path in the template.
    * It should be an array of exactly two distinct strings otherwise an error is thrown.
    *
    * @default TAGS
    */
-  tags?: Tags
+  readonly tags?: Tags
 }
 
 export function isParsedTemplate(x: unknown): x is ParsedTemplate<any> {
