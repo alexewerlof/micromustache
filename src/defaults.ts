@@ -1,5 +1,5 @@
 /**
- * The default value for the `maxLen` option
+ * The default value for the `maxTemplateLen` option
  */
 export const MAX_TEMPLATE_LEN = 1 << 20 // 1MiB
 /**

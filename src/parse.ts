@@ -35,7 +35,7 @@ export interface ParseOptions {
    *
    * @default MAX_TEMPLATE_LEN
    */
-  maxLen?: number
+  maxTemplateLen?: number
   /**
    * Maximum allowed length for the trimmed path string (inclusive).
    * Set this to a safe value to throw for paths that are longer than expected.
@@ -206,15 +206,15 @@ export function parse(template: string, options: ParseOptions = {}): ParsedTempl
   const {
     tags = TAGS,
     maxPathLen = MAX_PATH_LEN,
-    maxLen = MAX_TEMPLATE_LEN,
+    maxTemplateLen = MAX_TEMPLATE_LEN,
     maxPathCount = MAX_PATH_COUNT,
   } = optObj<ParseOptions>(where, options)
 
-  if (template.length > maxLen) {
+  if (template.length > maxTemplateLen) {
     throw new RangeError(
       `${where} got a template that is ${
-        template.length - maxLen
-      } characters longer than the configured limit of ${maxLen}.`
+        template.length - maxTemplateLen
+      } characters longer than the configured limit of ${maxTemplateLen}.`
     )
   }
 

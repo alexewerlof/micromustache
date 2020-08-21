@@ -9,8 +9,8 @@ describe('parse()', () => {
   })
 
   it('throws if the template is too big', () => {
-    expect(() => parse('123456', { maxLen: 5 })).toThrow(RangeError)
-    expect(() => parse('123456', { maxLen: 6 })).not.toThrow()
+    expect(() => parse('123456', { maxTemplateLen: 5 })).toThrow(RangeError)
+    expect(() => parse('123456', { maxTemplateLen: 6 })).not.toThrow()
   })
 
   it('throws if there are too many paths', () => {

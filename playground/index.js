@@ -59,7 +59,7 @@ function render() {
     validateRef: getVal(id('validateRef')),
     explicit: getVal(id('explicit')),
     json: getVal(id('json')),
-    maxLen: getVal(id('maxLen')),
+    maxTemplateLen: getVal(id('maxTemplateLen')),
     maxPathCount: getVal(id('maxPathCount')),
     maxPathLen: getVal(id('maxPathLen')),
     maxRefDepth: getVal(id('maxRefDepth')),
@@ -99,7 +99,7 @@ ready(() => {
   // Set the defaults
   setVal(id('tags0'), micromustache.TAGS[0])
   setVal(id('tags1'), micromustache.TAGS[1])
-  setVal(id('maxLen'), micromustache.MAX_TEMPLATE_LEN)
+  setVal(id('maxTemplateLen'), micromustache.MAX_TEMPLATE_LEN)
   setVal(id('maxPathCount'), micromustache.MAX_PATH_COUNT)
   setVal(id('maxPathLen'), micromustache.MAX_PATH_LEN)
   setVal(id('maxRefDepth'), micromustache.MAX_REF_DEPTH)
@@ -107,7 +107,7 @@ ready(() => {
   onInput(id('validateRef'), render)
   onInput(id('explicit'), render)
   onInput(id('json'), render)
-  onInput(id('maxLen'), render)
+  onInput(id('maxTemplateLen'), render)
   onInput(id('maxPathCount'), render)
   onInput(id('maxPathLen'), render)
   onInput(id('maxRefDepth'), render)
