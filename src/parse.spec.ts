@@ -67,7 +67,7 @@ describe('parse()', () => {
 
   it('throws a syntax error if the open tag is not closed', () => {
     expect(() => parse('Hi {{')).toThrow(
-      new SyntaxError('parse() cannot find "}}" for the "{{" at position 3 within 1000 characters')
+      new SyntaxError('parse() cannot find "}}" matching the "{{" at position 3')
     )
   })
 
