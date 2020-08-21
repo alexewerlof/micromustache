@@ -13,6 +13,10 @@ export interface StringifyOptions {
    * By default it swallows those values to be compatible with Mustache.
    */
   readonly explicit?: boolean
+  /**
+   * When set to a truthy value, it stringifies object values using `JSON.stringify()`
+   */
+  readonly json?: boolean
 }
 
 /**
@@ -46,7 +50,7 @@ export function stringify(
     throw new TypeError(`${where} got an invalid parsedTemplate: ${parsedTemplate}`)
   }
 
-  const { explicit } = optObj<StringifyOptions>(where, options)
+  const { explicit, json } = optObj<StringifyOptions>(where, options)
   const { strings, subs } = parsedTemplate
   const { length } = subs
 
@@ -58,7 +62,7 @@ export function stringify(
     const value: any = subs[i]
 
     if (explicit || (value !== null && value !== undefined)) {
-      ret += value
+      ret += json && isObj(value) ? JSON.stringify(value) : value
     }
   }
 

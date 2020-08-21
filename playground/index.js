@@ -58,6 +58,7 @@ function render() {
   const options = {
     validateRef: getVal(id('validateRef')),
     explicit: getVal(id('explicit')),
+    json: getVal(id('json')),
     maxLen: getVal(id('maxLen')),
     maxPathCount: getVal(id('maxPathCount')),
     maxPathLen: getVal(id('maxPathLen')),
@@ -105,6 +106,7 @@ ready(() => {
 
   onInput(id('validateRef'), render)
   onInput(id('explicit'), render)
+  onInput(id('json'), render)
   onInput(id('maxLen'), render)
   onInput(id('maxPathCount'), render)
   onInput(id('maxPathLen'), render)
