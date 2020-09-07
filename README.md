@@ -226,5 +226,5 @@ _Note that they need you to build the project locally._
 _Made in Sweden 🇸🇪 by [@alexewerlof](https://mobile.twitter.com/alexewerlof)_
 
 <a href="https://opencollective.com/micromustache" target="_blank">
-  <img src="https://opencollective.com/micromustache/donate/button@2x.png?color=white" width=300 />
+  <img src="https://opencollective.com/micromustache/donate/button@2x.png?color=white" width=200 />
 </a>
