@@ -1,3 +1,5 @@
+![Micromustache Logo](https://docs.google.com/drawings/d/e/2PACX-1vQrgP-STn3eY_BpKE4wf9Hu4a1PPx-7XIkz3AucJLOY1Oigk2iqcXpq5nzu4-CpJx9nM5322Zl6A5eb/pub?w=200)
+
 [![Downloads](https://img.shields.io/npm/dm/micromustache.svg?style=flat-square)](http://npm-stat.com/charts.html?package=micromustache&from=2017-01-01)
 [![GitHub stars](https://img.shields.io/github/stars/userpixel/micromustache?style=flat-square)](https://github.com/userpixel/micromustache/stargazers)
 [![Known Vulnerabilities](https://snyk.io/test/github/userpixel/micromustache/badge.svg?style=flat-square)](https://snyk.io/test/github/userpixel/micromustache)
@@ -7,8 +9,6 @@
 [![GitHub issues](https://img.shields.io/github/issues/userpixel/micromustache.svg?style=flat-square)](https://github.com/userpixel/micromustache/issues)
 
 # micromustache
-
-![Logo](https://raw.github.com/userpixel/micromustache/master/logo.png)
 
 A **secure & minimalist** template engine.
 
