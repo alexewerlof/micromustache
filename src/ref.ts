@@ -42,7 +42,7 @@ interface RegExpWithNameGroup extends RegExpExecArray {
 
 /** @internal */
 const pathPatterns: Array<RegExp> = [
-  // `.a` the most common patter (hence first)
+  // `.a` the most common pattern (hence first)
   /\s*\.\s*(?<name>[$_\w]+)\s*/y,
   // `a['b']` or `a["b"]` or `a[\`b\`]`
   /\s*\[\s*(?<quote>['"`])(?<name>.*?)\k<quote>\s*\]\s*/y,
