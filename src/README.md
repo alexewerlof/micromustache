@@ -3,7 +3,7 @@
 Let's get familiar with a few terms as they are used across this repo:
 
 * **Template**: is a string that contains paths between open and close tags (Example: `Hi {{person.name}}!`). A template is parsed to `strings` (the fixed parts) and `subs` (the substitutions part).
-* **Tag** the strings that are used for marking **path**s in the **template**. By default they are '{{' and '}}' respectively
+* **Tag** the strings that are used for marking **path**s in the **template**. By default they are `'{{'` and `'}}'` respectively
 * **Path**: is a string that is used in the **template** to refer to a value (Example: `person.name`)
 * **Ref**: is an array that is derived from a **path** (Example: `['person', 'name']`)
 * **Scope**: The object that'll be used to resolve values (called _view_ in Mustache.JS)
