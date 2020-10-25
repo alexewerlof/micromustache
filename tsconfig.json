@@ -9,6 +9,6 @@
     "noUnusedParameters": true,
     "newLine": "LF",
     "listEmittedFiles": true,
-    "target": "es5",
+    "target": "es6",
   }
 }
