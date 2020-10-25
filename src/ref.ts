@@ -118,62 +118,45 @@ export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
 
 /**
  * @internal
- * The number of different paths that will be cached.
- * If a path is cached, the actual tokenization algorithm will not be called which significantly
- * improves performance.
- * However, this cache is size-limited to prevent degrading the user's software over a period of
- * time.
- * If the cache is full, we start removing older paths one at a time.
  */
-const cacheSize = CACHE_SIZE
-
-/**
- * @internal
- */
-export class Cache<T> {
-  private readonly map: Record<string, T> = {}
-
+export class Cache<T> extends Map<string, T> {
   private cachedKeys: string[]
-  private oldestIndex: number
+  private oldestIndex = 0
 
-  constructor(private size: number) {
-    this.reset()
+  constructor(limit: number) {
+    super()
+    this.cachedKeys = new Array<string>(limit)
   }
 
-  public reset(): void {
-    this.oldestIndex = 0
-    this.cachedKeys = new Array<string>(this.size)
+  get limit(): number {
+    return this.cachedKeys.length
   }
 
-  public pathGet(key: string): T {
-    return this.map[key]
-  }
-
-  public set(key: string, value: T): void {
-    this.map[key] = value
+  public set(key: string, value: T): this {
+    super.set(key, value)
     const oldestKey = this.cachedKeys[this.oldestIndex]
     if (oldestKey !== undefined) {
-      delete this.map[oldestKey]
+      this.delete(oldestKey)
     }
     this.cachedKeys[this.oldestIndex] = key
-    this.oldestIndex++
-    this.oldestIndex %= this.size
+    this.oldestIndex = (this.oldestIndex+ 1) % this.limit
+    return this
   }
 }
 
 /** @internal */
-const cache = new Cache<string[]>(cacheSize)
+const pathToRefCache = new Cache<string[]>(CACHE_SIZE)
 
 /**
  * This is just a faster version of `pathToRef()`
  * @internal
  */
 function pathToRefCached(path: string, options: PathToRefOptions = {}): Ref {
-  let result = cache.pathGet(path)
+  let result = pathToRefCache.get(path)
 
   if (result === undefined) {
     result = pathToRef(path, options)
-    cache.set(path, result)
+    pathToRefCache.set(path, result)
   }
 
   const { maxRefDepth = MAX_REF_DEPTH } = options

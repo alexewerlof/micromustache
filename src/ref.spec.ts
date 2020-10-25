@@ -1,4 +1,4 @@
-import { pathToRef } from './ref'
+import { pathToRef, Cache } from './ref'
 
 interface ISuccessCases {
   [input: string]: string[]
@@ -150,5 +150,32 @@ describe('pathToRef()', () => {
       expect(() => pathToRef((undefined as unknown) as string)).toThrow(TypeError)
       expect(() => pathToRef((13 as unknown) as string)).toThrow(TypeError)
     })
+  })
+})
+
+
+describe('Cache', () => {
+  it('stores items', () => {
+    const c = new Cache<number>(3)
+    expect(c.limit).toBe(3)
+    c.set('one', 1)
+    c.set('two', 2)
+    expect(c.size).toBe(2)
+  })
+
+  it('removes old items', () => {
+    const c = new Cache<string>(3)
+    c.set('one', 'ett')
+    c.set('two', 'två')
+    c.set('three', 'tre')
+    expect(c.get('one')).toEqual('ett')
+    expect(c.get('two')).toEqual('två')
+    expect(c.get('three')).toEqual('tre')
+    c.set('four', 'fyra')
+    expect(c.get('one')).toEqual(undefined)
+    expect(c.get('two')).toEqual('två')
+    expect(c.get('three')).toEqual('tre')
+    expect(c.get('four')).toEqual('fyra')
+    expect(c.limit).toEqual(c.size)
   })
 })
