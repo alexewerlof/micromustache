@@ -24,5 +24,10 @@ export const TAGS = Object.freeze(['{{', '}}'])
 /**
  * @internal
  * The size of the [[pathToRef]] cache
+ * If a path is cached, the actual tokenization algorithm will not be called which significantly
+ * improves performance.
+ * However, this cache is size-limited to prevent degrading the user's software over a period of
+ * time.
+ * If the cache is full, we start removing older paths one at a time.
  */
 export const CACHE_SIZE = 100
