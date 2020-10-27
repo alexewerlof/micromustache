@@ -1,5 +1,5 @@
 import { parse, ParseOptions, isParsedTemplate, ParsedTemplate } from './parse'
-import { pathToRef, Ref, PathToRefOptions } from './ref'
+import { cachedPathToRef, Ref, PathToRefOptions } from './ref'
 import { isObj, isArr, isStr } from './utils'
 
 /**
@@ -65,5 +65,5 @@ export function compile(
     throw new TypeError(`compile() expected a string or ParsedTemplate. Got: ${template}`)
   }
   const { strings, subs } = parsedTemplate
-  return { strings, refs: subs.map((path) => pathToRef.cached(path, options)) }
+  return { strings, refs: subs.map((path) => cachedPathToRef(path, options)) }
 }

@@ -151,7 +151,7 @@ const pathToRefCache = new Cache<string[]>(CACHE_SIZE)
  * This is just a faster version of `pathToRef()`
  * @internal
  */
-function pathToRefCached(path: string, options: PathToRefOptions = {}): Ref {
+export function cachedPathToRef(path: string, options: PathToRefOptions = {}): Ref {
   let result = pathToRefCache.get(path)
 
   if (result === undefined) {
@@ -162,11 +162,9 @@ function pathToRefCached(path: string, options: PathToRefOptions = {}): Ref {
   const { maxRefDepth = MAX_REF_DEPTH } = options
   if (maxRefDepth < result.length) {
     throw new RangeError(
-      `pathToRefCached() the reference depth for "${path}" exceeds the configured max ref depth of ${maxRefDepth}`
+      `cachedPathToRef() the reference depth for "${path}" exceeds the configured max ref depth of ${maxRefDepth}`
     )
   }
 
   return result
 }
-
-pathToRef.cached = pathToRefCached
