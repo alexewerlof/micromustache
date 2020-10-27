@@ -2,10 +2,12 @@
  * The default value for the `maxTemplateLen` option
  */
 export const MAX_TEMPLATE_LEN = 1 << 20 // 1MiB
+
 /**
  * The default value for the `maxPathCount` option
  */
 export const MAX_PATH_COUNT = 5000
+
 /**
  * The default value for the `maxPathLen` option
  */
