@@ -8,7 +8,7 @@ Let's get familiar with a few terms as they are used across this repo:
 * **Ref**: is an array that is derived from a **path** (Example: `['person', 'name']`)
 * **Scope**: The object that'll be used to resolve values (called _view_ in Mustache.JS)
 * **Value**: the value that will be used to interpolate a path in the **template**
-* **Resolving**: looking up the **value** for a **path** (either from the **Scope** or using your own resolver function). You can provide your own resolving functions using [[resolveFn]] and [[resolveFnAsync]].
+* **Resolving**: looking up the **value** for a **path** (either from the **Scope** or using your own resolver function).
 * **Rendering**: interpolating the **Paths**s in a **template** with their resolved value
 * **Parsing**: breaking the **template** into constant strings and **Paths** that need resolving
 * **Renderer**: an object that holds a tokenized **template** and have methods for rendering

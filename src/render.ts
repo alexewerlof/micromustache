@@ -10,20 +10,6 @@ import { StringifyOptions, stringify } from './stringify'
 export interface RenderOptions extends CompileOptions, StringifyOptions, ResolveOptions {}
 
 /**
- * The callback for resolving a value (synchronous)
- * @param scope the scope object that was passed to .render() function
- * @param path a string that appeared in the string between open and close tags
- * @example a template that is `Hi {{a.b.c}}!` leads to `'a.b.c'` as ref
- * @returns the value to be interpolated.
- */
-export type ResolveFn = (path: string, scope?: Scope) => any
-
-/**
- * Same as `ResolveFn` but for asynchronous functions
- */
-export type ResolveFnAsync = (path: string, scope?: Scope) => Promise<any>
-
-/**
  * Replaces every {{path}} inside the template with values from the scope
  * parameter.
  * @warning **When dealing with user input, always make sure to validate it.**
