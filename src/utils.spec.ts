@@ -1,4 +1,4 @@
-import { isObj, isFn, isStr, isPos, isArr, optObj } from './utils'
+import { isObj, isStr, isPos, isArr, optObj } from './utils'
 
 describe('utils', () => {
   it.each([
@@ -9,22 +9,6 @@ describe('utils', () => {
     [true, false],
   ])('isObj()', (x, result) => {
     expect(isObj(x)).toBe(result)
-  })
-
-  it.each([
-    [{}, false],
-    [[], false],
-    [null, false],
-    ['', false],
-    [(): undefined => undefined, true],
-    [
-      function noOp(): undefined {
-        return undefined
-      },
-      true,
-    ],
-  ])('isFn()', (x, result) => {
-    expect(isFn(x)).toBe(result)
   })
 
   it.each([

@@ -19,12 +19,6 @@ export function isObj(x: unknown): x is object {
 }
 
 /** @internal */
-// eslint-disable-next-line @typescript-eslint/ban-types
-export function isFn<T extends Function>(x: unknown): x is T {
-  return typeof x === 'function'
-}
-
-/** @internal */
 export function isStr(x: unknown, minLength = 0): x is string {
   return typeof x === 'string' && x.length >= minLength
 }
