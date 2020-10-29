@@ -1,8 +1,5 @@
 /** @internal */
 // eslint-disable-next-line @typescript-eslint/unbound-method
-const hasOwnProperty = {}.hasOwnProperty
-/** @internal */
-// eslint-disable-next-line @typescript-eslint/unbound-method
 const numberConstructor = (0).constructor as NumberConstructor
 /** @internal */
 // eslint-disable-next-line @typescript-eslint/unbound-method
