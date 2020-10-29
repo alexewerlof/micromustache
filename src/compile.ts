@@ -30,6 +30,19 @@ export function isCompiledTemplate(x: unknown): x is CompiledTemplate {
   return isArr(strings) && isArr(refs) && strings.length === refs.length + 1
 }
 
+function parsedTemplate(
+  template: string | ParsedTemplate<string>,
+  options: CompileOptions = {}
+) {
+  if (isStr(template)) {
+    return parse(template, options)
+  } else if (isParsedTemplate(template)) {
+    return template
+  }
+
+  throw new TypeError(`compile() expected a string or ParsedTemplate. Got: ${template}`)
+}
+
 /**
  * Parses the template and converts its `path`s to ref arrays.
  *
@@ -56,14 +69,6 @@ export function compile(
   options: CompileOptions = {}
 ): CompiledTemplate {
   // No assertion is required here because these internal functions assert their input
-  let parsedTemplate
-  if (isStr(template)) {
-    parsedTemplate = parse(template, options)
-  } else if (isParsedTemplate(template)) {
-    parsedTemplate = template
-  } else {
-    throw new TypeError(`compile() expected a string or ParsedTemplate. Got: ${template}`)
-  }
-  const { strings, subs } = parsedTemplate
+  const { strings, subs } = parsedTemplate(template, options)
   return { strings, refs: subs.map((path) => cachedPathToRef(path, options)) }
 }
