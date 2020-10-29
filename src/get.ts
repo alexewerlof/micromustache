@@ -1,5 +1,5 @@
 import { pathToRef, Ref, PathToRefOptions } from './ref'
-import { isObj, isProp, isNum, isArr, optObj } from './utils'
+import { isObj, isProp, isNum, isArr, optObj, newTypeError } from './utils'
 import { MAX_REF_DEPTH } from './defaults'
 import { CompiledTemplate, isCompiledTemplate } from './compile'
 import { ParsedTemplate, isParsedTemplate } from './parse'
@@ -62,14 +62,14 @@ export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
   const where = 'refGet()'
 
   if (!isObj(scope)) {
-    throw new TypeError(`${where} expects an object scope. Got a ${typeof scope}: ${scope}`)
+    throw newTypeError(refGet, 'an object scope', scope)
   }
 
   if (!isArr(ref)) {
-    throw new TypeError(`${where} expected an array ref. Got ${ref}`)
+    throw newTypeError(refGet, 'an array ref', ref)
   }
 
-  const { maxRefDepth = MAX_REF_DEPTH } = optObj<GetOptions>(where, options)
+  const { maxRefDepth = MAX_REF_DEPTH } = optObj<GetOptions>(refGet, options)
 
   if (!isNum(maxRefDepth) || maxRefDepth <= 0) {
     throw new RangeError(`${where} expected a positive number for maxRefDepth. Got ${maxRefDepth}`)
@@ -145,7 +145,7 @@ export function resolve(
     return { strings, subs: subs.map((path: string) => pathGet(path, scope, options)) }
   }
 
-  throw new TypeError(
-    `resolve() expected a valid CompiledTemplate or ParsedTemplate object. Got a ${templateObj}: ${templateObj}`
+  throw newTypeError(
+    resolve, 'a valid CompiledTemplate or ParsedTemplate', templateObj
   )
 }

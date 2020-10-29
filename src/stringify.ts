@@ -1,5 +1,5 @@
 import { ParsedTemplate, isParsedTemplate } from './parse'
-import { optObj, isObj } from './utils'
+import { optObj, isObj, newTypeError } from './utils'
 
 /**
  * The options for the [[stringify]] function
@@ -24,12 +24,11 @@ export function stringify(
   parsedTemplate: ParsedTemplate<any>,
   options: StringifyOptions = {}
 ): string {
-  const where = 'stringify()'
   if (!isParsedTemplate(parsedTemplate)) {
-    throw new TypeError(`${where} got an invalid parsedTemplate: ${parsedTemplate}`)
+    throw newTypeError(stringify, 'a valid ParsedTemplate object', parsedTemplate)
   }
 
-  const { explicit, json } = optObj<StringifyOptions>(where, options)
+  const { explicit, json } = optObj<StringifyOptions>(stringify, options)
   const { strings, subs } = parsedTemplate
   const { length } = subs
 

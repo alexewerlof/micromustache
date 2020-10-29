@@ -1,4 +1,4 @@
-import { isStr, optObj } from './utils'
+import { isStr, newTypeError, optObj } from './utils'
 import { MAX_REF_DEPTH, CACHE_SIZE } from './defaults'
 
 /**
@@ -68,12 +68,10 @@ export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
   const where = 'pathToRef()'
 
   if (!isStr(path)) {
-    throw new TypeError(
-      `${where} cannot convert a non-string path to ref. Expected a string. Got a ${typeof path}: ${path}`
-    )
+    throw newTypeError(pathToRef, 'a path string', path)
   }
 
-  const { maxRefDepth = MAX_REF_DEPTH } = optObj<PathToRefOptions>(where, options)
+  const { maxRefDepth = MAX_REF_DEPTH } = optObj<PathToRefOptions>(pathToRef, options)
 
   const ref: Ref = []
 

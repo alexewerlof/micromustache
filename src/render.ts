@@ -1,6 +1,6 @@
 import { Scope, ResolveOptions, resolve } from './get'
 import { compile, CompileOptions, CompiledTemplate } from './compile'
-import { isObj, isStr } from './utils'
+import { isObj, isStr, newTypeError } from './utils'
 import { ParsedTemplate } from './parse'
 import { StringifyOptions, stringify } from './stringify'
 
@@ -40,10 +40,9 @@ export function render(
   scope: Scope,
   options?: RenderOptions
 ): string {
-  const where = 'render()'
   const templateObj = isStr(template) ? compile(template, options) : template
   if (!isObj(templateObj)) {
-    throw new TypeError(`${where} expects a string or object template. Got ${template}`)
+    throw newTypeError(render, 'a string or CompiledTemplate object', template)
   }
   return stringify(resolve(templateObj, scope, options), options)
 }

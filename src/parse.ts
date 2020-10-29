@@ -1,4 +1,4 @@
-import { isStr, isArr, isObj, isNum, optObj } from './utils'
+import { isStr, isArr, isObj, isNum, optObj, newTypeError } from './utils'
 import { TAGS, MAX_PATH_LEN, MAX_TEMPLATE_LEN, MAX_PATH_COUNT } from './defaults'
 
 /**
@@ -187,6 +187,7 @@ function pureParser(
  * @see https://github.com/userpixel/micromustache/wiki/Known-issues
  *
  * @throws `TypeError` if there's an issue with its inputs
+ * @throws `RangeError` if maxPathLen is invalid
  * @throws `SyntaxError` if there's an issue with the template
  *
  * @param template the template
@@ -198,9 +199,7 @@ export function parse(template: string, options: ParseOptions = {}): ParsedTempl
   const where = 'parse()'
 
   if (!isStr(template)) {
-    throw new TypeError(
-      `${where} expected a string template. Got a ${typeof template}: ${template}`
-    )
+    throw newTypeError(parse, 'a string template', template)
   }
 
   const {
@@ -208,7 +207,7 @@ export function parse(template: string, options: ParseOptions = {}): ParsedTempl
     maxPathLen = MAX_PATH_LEN,
     maxTemplateLen = MAX_TEMPLATE_LEN,
     maxPathCount = MAX_PATH_COUNT,
-  } = optObj<ParseOptions>(where, options)
+  } = optObj<ParseOptions>(parse, options)
 
   if (template.length > maxTemplateLen) {
     throw new RangeError(
@@ -219,7 +218,7 @@ export function parse(template: string, options: ParseOptions = {}): ParsedTempl
   }
 
   if (!isArr(tags) || tags.length !== 2) {
-    throw new TypeError(`${where} expected an array of two elements for tags. Got ${String(tags)}`)
+    throw newTypeError(parse, 'an array of two elements for tags', tags)
   }
 
   const [openTag, closeTag] = tags
@@ -231,13 +230,11 @@ export function parse(template: string, options: ParseOptions = {}): ParsedTempl
     openTag.includes(closeTag) ||
     closeTag.includes(openTag)
   ) {
-    throw new TypeError(
-      `${where} expects 2 distinct non-empty strings which don't contain each other. Got "${openTag}" and "${closeTag}"`
-    )
+    throw newTypeError(parse, '2 distinct non-empty strings which do not contain each other', tags)
   }
 
   if (!isNum(maxPathLen) || maxPathLen <= 0) {
-    throw new Error(`${where} expected a positive number for maxPathLen. Got ${maxPathLen}`)
+    throw new RangeError(`${where} expected a positive number for maxPathLen. Got ${maxPathLen}`)
   }
 
   return pureParser(template, openTag, closeTag, maxPathLen, maxPathCount, where)

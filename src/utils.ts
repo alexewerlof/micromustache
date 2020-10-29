@@ -63,6 +63,15 @@ export function isOwnProp<K extends string | number | symbol>(
 }
 
 /**
+ * Creates a TypeError object
+ * @param fn the function where the type error is going to be thrown from
+ * @param msg the message
+ */
+export function newTypeError(fn: { name: string; }, msg: string, target: any): TypeError {
+  return new TypeError(`${fn.name}() expected ${msg} but got a ${typeof target}: ${target}`)
+}
+
+/**
  * @internal
  * Checks if the provided value is an object and throws an error
  * Since this is a common pattern in the repo, this function saves a few lines from the distribution
@@ -70,9 +79,9 @@ export function isOwnProp<K extends string | number | symbol>(
  * @param x supposedly an options value
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
-export function optObj<T extends object>(where: string, x: unknown): T {
+export function optObj<T extends object>(fn: { name: string; }, x: unknown): T {
   if (!isObj(x)) {
-    throw new TypeError(`${where} expected an options object. Got a ${typeof x}: ${x}`)
+    throw newTypeError(fn, 'an options object', x)
   }
   return x as T
 }
