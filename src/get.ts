@@ -1,5 +1,5 @@
 import { pathToRef, Ref, PathToRefOptions } from './ref'
-import { isObj, isProp, isNum, isArr, optObj, typErr, rngErr, refErr } from './utils'
+import { isObj, isProp, isPos, isArr, optObj, typErr, rngErr, refErr } from './utils'
 import { MAX_REF_DEPTH } from './defaults'
 import { CompiledTemplate, isCompiledTemplate } from './compile'
 import { ParsedTemplate, isParsedTemplate } from './parse'
@@ -69,7 +69,7 @@ export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
 
   const { maxRefDepth = MAX_REF_DEPTH } = optObj<GetOptions>(refGet, options)
 
-  if (!isNum(maxRefDepth) || maxRefDepth <= 0) {
+  if (!isPos(maxRefDepth)) {
     throw rngErr(refGet, 'expected a positive number for maxRefDepth but got', maxRefDepth)
   }
 

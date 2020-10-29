@@ -1,4 +1,4 @@
-import { isStr, isArr, isObj, isNum, optObj, typErr, synErr, rngErr } from './utils'
+import { isStr, isArr, isObj, isPos, optObj, typErr, synErr, rngErr } from './utils'
 import { TAGS, MAX_PATH_LEN, MAX_TEMPLATE_LEN, MAX_PATH_COUNT } from './defaults'
 
 /**
@@ -228,7 +228,7 @@ export function parse(template: string, options: ParseOptions = {}): ParsedTempl
     throw typErr(parse, '2 distinct non-empty strings which do not contain each other', tags)
   }
 
-  if (!isNum(maxPathLen) || maxPathLen <= 0) {
+  if (!isPos(maxPathLen)) {
     throw rngErr(parse, 'expected a positive number for maxPathLen but got', maxPathLen)
   }
 

@@ -31,9 +31,12 @@ export function isStr(x: unknown, minLength = 0): x is string {
   return typeof x === 'string' && x.length >= minLength
 }
 
-/** @internal */
-export function isNum(x: unknown): x is number {
-  return isFinite(x as number)
+/**
+ * @internal
+ * Checks that a given value is a finite positive number
+ */
+export function isPos(x: unknown): x is number {
+  return isFinite(x as number) && 0 < (x as number)
 }
 
 /** @internal */

@@ -1,4 +1,4 @@
-import { isObj, isFn, isStr, isNum, isArr, isInt, optObj } from './utils'
+import { isObj, isFn, isStr, isPos, isArr, isInt, optObj } from './utils'
 
 describe('utils', () => {
   it.each([
@@ -40,18 +40,18 @@ describe('utils', () => {
   it.each([
     [1, true],
     [1.1, true],
-    [0, true],
-    [-1, true],
+    [0, false],
+    [-1, false],
     [Number.MAX_SAFE_INTEGER, true],
-    [Number.MIN_SAFE_INTEGER, true],
+    [Number.MIN_SAFE_INTEGER, false],
     [null, false],
     [NaN, false],
     [undefined, false],
     ['-1', false],
     ['0', false],
     ['1', false],
-  ])('isNum()', (x, result) => {
-    expect(isNum(x)).toBe(result)
+  ])('isPos()', (x, result) => {
+    expect(isPos(x)).toBe(result)
   })
 
   it.each([
