@@ -62,8 +62,8 @@ export function isOwnProp<K extends string | number | symbol>(
   return isObj(x) && (hasOwnProperty.call(x, propName) as boolean)
 }
 
-function errMsg(fn: { name: string; }, msgArr: (string|number)[]) {
-  return `${fn.name}() ${msgArr.join(' ')}`
+function errMsg(errConst: ErrorConstructor, fn: { name: string; }, msgArr: (string|number)[]): Error {
+  return new errConst(`${fn.name}() ${msgArr.join(' ')}`)
 }
 
 /**
@@ -73,7 +73,7 @@ function errMsg(fn: { name: string; }, msgArr: (string|number)[]) {
  * @param msg the message
  */
 export function typErr(fn: { name: string; }, msg: string, target: unknown): TypeError {
-  return new TypeError(errMsg(fn, ['expected', msg, 'but got a', typeof target,':', String(target)]))
+  return errMsg(TypeError, fn, ['expected', msg, 'but got a', typeof target,':', String(target)])
 }
 
 /**
@@ -83,7 +83,7 @@ export function typErr(fn: { name: string; }, msg: string, target: unknown): Typ
  * @param msg the message
  */
 export function synErr(fn: { name: string; }, ...msg: (string|number)[]): SyntaxError {
-  return new SyntaxError(errMsg(fn, msg))
+  return errMsg(SyntaxError, fn, msg)
 }
 
 /**
@@ -93,7 +93,7 @@ export function synErr(fn: { name: string; }, ...msg: (string|number)[]): Syntax
  * @param msg the message
  */
 export function rngErr(fn: { name: string; }, ...msg: (string|number)[]): RangeError {
-  return new RangeError(errMsg(fn, msg))
+  return errMsg(RangeError, fn, msg)
 }
 
 /**
@@ -103,7 +103,7 @@ export function rngErr(fn: { name: string; }, ...msg: (string|number)[]): RangeE
  * @param msg the message
  */
 export function refErr(fn: { name: string; }, ...msg: (string|number)[]): ReferenceError {
-  return new ReferenceError(errMsg(fn, msg))
+  return errMsg(ReferenceError, fn, msg)
 }
 
 /**
