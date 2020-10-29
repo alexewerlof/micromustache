@@ -8,8 +8,6 @@ const numberConstructor = (0).constructor as NumberConstructor
 // eslint-disable-next-line @typescript-eslint/unbound-method
 const isFinite = numberConstructor.isFinite
 /** @internal */
-// eslint-disable-next-line @typescript-eslint/unbound-method
-const isInteger = numberConstructor.isInteger
 /** @internal */
 // eslint-disable-next-line @typescript-eslint/unbound-method
 const isArray = ([].constructor as ArrayConstructor).isArray
@@ -37,11 +35,6 @@ export function isStr(x: unknown, minLength = 0): x is string {
  */
 export function isPos(x: unknown): x is number {
   return isFinite(x as number) && 0 < (x as number)
-}
-
-/** @internal */
-export function isInt(x: unknown): x is number {
-  return isInteger(x)
 }
 
 /** @internal */
