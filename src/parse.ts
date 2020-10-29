@@ -1,4 +1,4 @@
-import { isStr, isArr, isObj, isNum, optObj, newTypeError } from './utils'
+import { isStr, isArr, isObj, isNum, optObj, newTypeError, newSyntaxError, newRangeError } from './utils'
 import { TAGS, MAX_PATH_LEN, MAX_TEMPLATE_LEN, MAX_PATH_COUNT } from './defaults'
 
 /**
@@ -93,7 +93,6 @@ function pureParser(
   closeTag: string,
   maxPathLen: number,
   maxPathCount: number,
-  where: string
 ): ParsedTemplate<string> {
   const openTagLen = openTag.length
   const closeTagLen = closeTag.length
@@ -118,32 +117,32 @@ function pureParser(
     lastCloseTagIndex = template.indexOf(closeTag, pathStartIndex)
 
     if (lastCloseTagIndex === -1) {
-      throw new SyntaxError(
-        `${where} cannot find "${closeTag}" matching the "${openTag}" at position ${lastOpenTagIndex}`
+      throw newSyntaxError(
+        parse, 'cannot find', closeTag, 'matching the', openTag, 'at position', lastOpenTagIndex
       )
     }
 
     const path = template.substring(pathStartIndex, lastCloseTagIndex)
 
     if (path.length > maxPathLen) {
-      throw new SyntaxError(
-        `${where} encountered the path "${path}" at position ${pathStartIndex} which is ${
-          path.length - maxPathLen
-        } characters longer than the configured limit of ${maxPathLen}.`
+      throw newSyntaxError(
+        parse, 'encountered the path', path, 'at position', pathStartIndex, 'which is',
+        path.length - maxPathLen
+        , 'characters longer than the configured limit of', maxPathLen
       )
     }
 
     if (path.includes(openTag)) {
-      throw new SyntaxError(
-        `${where} found an unexpected "${openTag}" in "${path}" at position ${
-          pathStartIndex + lastOpenTagIndex
-        }`
+      throw newSyntaxError(
+        parse, 'found an unexpected', openTag, 'in', path, 'at position',
+        pathStartIndex + lastOpenTagIndex
       )
     }
 
     if (paths.length >= maxPathCount) {
-      throw new RangeError(
-        `${where} the max number of paths is configured to be ${maxPathCount} but we've already reached that limit`
+      throw newRangeError(
+        parse,
+        'the max number of paths is configured to be', maxPathCount, 'but we have already reached that limit'
       )
     }
 
@@ -153,8 +152,8 @@ function pureParser(
     const beforePath = template.substring(currentIndex, lastOpenTagIndex)
     const danglingCloseTagIndex = beforePath.indexOf(closeTag)
     if (danglingCloseTagIndex !== -1) {
-      throw new SyntaxError(
-        `${where} encountered a dangling "${closeTag}" at position ${danglingCloseTagIndex}`
+      throw newSyntaxError(
+        parse,'encountered a dangling', closeTag, 'at position', danglingCloseTagIndex
       )
     }
 
@@ -166,10 +165,9 @@ function pureParser(
   const danglingTagIndex = rest.indexOf(closeTag)
 
   if (danglingTagIndex !== -1) {
-    throw new SyntaxError(
-      `${where} encountered a dangling "${closeTag}" at position ${
-        danglingTagIndex + lastCloseTagIndex
-      }`
+    throw newSyntaxError(
+      parse, 'encountered a dangling', closeTag, 'at position',
+      danglingTagIndex + lastCloseTagIndex
     )
   }
 
@@ -196,8 +194,6 @@ function pureParser(
  * @returns the parsing result as an object
  */
 export function parse(template: string, options: ParseOptions = {}): ParsedTemplate<string> {
-  const where = 'parse()'
-
   if (!isStr(template)) {
     throw newTypeError(parse, 'a string template', template)
   }
@@ -210,10 +206,10 @@ export function parse(template: string, options: ParseOptions = {}): ParsedTempl
   } = optObj<ParseOptions>(parse, options)
 
   if (template.length > maxTemplateLen) {
-    throw new RangeError(
-      `${where} got a template that is ${
-        template.length - maxTemplateLen
-      } characters longer than the configured limit of ${maxTemplateLen}.`
+    throw newRangeError(
+      parse, 'got a template that is',
+      template.length - maxTemplateLen,
+      'characters longer than the configured limit of', maxTemplateLen
     )
   }
 
@@ -234,8 +230,8 @@ export function parse(template: string, options: ParseOptions = {}): ParsedTempl
   }
 
   if (!isNum(maxPathLen) || maxPathLen <= 0) {
-    throw new RangeError(`${where} expected a positive number for maxPathLen. Got ${maxPathLen}`)
+    throw newRangeError(parse, 'expected a positive number for maxPathLen but got', maxPathLen)
   }
 
-  return pureParser(template, openTag, closeTag, maxPathLen, maxPathCount, where)
+  return pureParser(template, openTag, closeTag, maxPathLen, maxPathCount)
 }

@@ -62,20 +62,55 @@ export function isOwnProp<K extends string | number | symbol>(
   return isObj(x) && (hasOwnProperty.call(x, propName) as boolean)
 }
 
+function errMsg(fn: { name: string; }, msgArr: (string|number)[]) {
+  return `${fn.name}() ${msgArr.join(' ')}`
+}
+
 /**
+ * @internal
  * Creates a TypeError object
  * @param fn the function where the type error is going to be thrown from
  * @param msg the message
  */
-export function newTypeError(fn: { name: string; }, msg: string, target: any): TypeError {
-  return new TypeError(`${fn.name}() expected ${msg} but got a ${typeof target}: ${target}`)
+export function newTypeError(fn: { name: string; }, msg: string, target: unknown): TypeError {
+  return new TypeError(errMsg(fn, ['expected', msg, 'but got a', typeof target,':', String(target)]))
+}
+
+/**
+ * @internal
+ * Creates a SyntaxError object
+ * @param fn the function where the type error is going to be thrown from
+ * @param msg the message
+ */
+export function newSyntaxError(fn: { name: string; }, ...msg: (string|number)[]): SyntaxError {
+  return new SyntaxError(errMsg(fn, msg))
+}
+
+/**
+ * @internal
+ * Creates a RangeError object
+ * @param fn the function where the type error is going to be thrown from
+ * @param msg the message
+ */
+export function newRangeError(fn: { name: string; }, ...msg: (string|number)[]): RangeError {
+  return new RangeError(errMsg(fn, msg))
+}
+
+/**
+ * @internal
+ * Creates a ReferenceError object
+ * @param fn the function where the type error is going to be thrown from
+ * @param msg the message
+ */
+export function newReferenceError(fn: { name: string; }, ...msg: (string|number)[]): ReferenceError {
+  return new ReferenceError(errMsg(fn, msg))
 }
 
 /**
  * @internal
  * Checks if the provided value is an object and throws an error
  * Since this is a common pattern in the repo, this function saves a few lines from the distribution
- * @param where what function needs this guarantee?
+ * @param fn the function that expects the options object
  * @param x supposedly an options value
  */
 // eslint-disable-next-line @typescript-eslint/ban-types

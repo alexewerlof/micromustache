@@ -1,5 +1,5 @@
 import { pathToRef, Ref, PathToRefOptions } from './ref'
-import { isObj, isProp, isNum, isArr, optObj, newTypeError } from './utils'
+import { isObj, isProp, isNum, isArr, optObj, newTypeError, newRangeError, newReferenceError } from './utils'
 import { MAX_REF_DEPTH } from './defaults'
 import { CompiledTemplate, isCompiledTemplate } from './compile'
 import { ParsedTemplate, isParsedTemplate } from './parse'
@@ -59,8 +59,6 @@ export interface GetOptions extends PathToRefOptions {
  * is set to a truthy value
  */
 export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
-  const where = 'refGet()'
-
   if (!isObj(scope)) {
     throw newTypeError(refGet, 'an object scope', scope)
   }
@@ -72,13 +70,11 @@ export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
   const { maxRefDepth = MAX_REF_DEPTH } = optObj<GetOptions>(refGet, options)
 
   if (!isNum(maxRefDepth) || maxRefDepth <= 0) {
-    throw new RangeError(`${where} expected a positive number for maxRefDepth. Got ${maxRefDepth}`)
+    throw newRangeError(refGet, 'expected a positive number for maxRefDepth but got', maxRefDepth)
   }
 
   if (ref.length > maxRefDepth) {
-    throw new ReferenceError(
-      `${where} got a ref deeper than ${maxRefDepth} levels: ${refToPath(ref)}`
-    )
+    throw newReferenceError(refGet, 'got a ref deeper than', maxRefDepth, 'levels:', refToPath(ref))
   }
 
   let currentScope = scope
@@ -87,10 +83,8 @@ export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       currentScope = currentScope[prop]
     } else if (options.validateRef) {
-      throw new ReferenceError(
-        `${where} ${refToPath(
-          ref
-        )} is invalid because "${prop}" property does not exist in the scope`
+      throw newReferenceError(
+        refGet, refToPath(ref), 'is invalid because', prop, 'property does not exist in the scope'
       )
     } else {
       // This undefined result will be stringified later according to the explicit option

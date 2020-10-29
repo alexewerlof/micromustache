@@ -86,11 +86,13 @@ describe('utils', () => {
 
 describe('optObj()', () => {
   it('throws if the provided value is not an object', () => {
-    expect(() => optObj('test', null)).toThrow()
+    const test1 = () => void 0
+    expect(() => optObj(test1, null)).toThrow()
   })
 
   it('does not throw if it gets an object', () => {
     const options = { foo: 'bar' }
-    expect(optObj('test', options)).toBe(options)
+    const test2 = () => void 0
+    expect(optObj(test2, options)).toBe(options)
   })
 })

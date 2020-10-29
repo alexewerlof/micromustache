@@ -1,4 +1,4 @@
-import { isStr, newTypeError, optObj } from './utils'
+import { isStr, newRangeError, newSyntaxError, newTypeError, optObj } from './utils'
 import { MAX_REF_DEPTH, CACHE_SIZE } from './defaults'
 
 /**
@@ -65,8 +65,6 @@ const pathPatterns: Array<RegExp> = [
  * For example `['a', 'b', 'c']`
  */
 export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
-  const where = 'pathToRef()'
-
   if (!isStr(path)) {
     throw newTypeError(pathToRef, 'a path string', path)
   }
@@ -95,10 +93,11 @@ export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
         // For perf reasons we assume that all regex groups have a capture group called name
         ref.push((searchResult as RegExpWithNameGroup).groups.name)
         if (ref.length > maxRefDepth) {
-          throw new RangeError(
-            `${where} encountered the path "${path}" which is ${
-              ref.length - maxRefDepth
-            } chars longer than the configured limit of ${maxRefDepth}.`
+          throw newRangeError(
+            pathToRef,
+            'encountered the path', path, 'which is',
+            ref.length - maxRefDepth,
+            'chars longer than the configured limit of', maxRefDepth
           )
         }
 
@@ -108,7 +107,7 @@ export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
   } while (patternMatched)
 
   if (currIndex !== path.length) {
-    throw new SyntaxError(`${where} cannot convert the entire path "${path}" to a ref`)
+    throw newSyntaxError(pathToRef, 'cannot convert the entire path', path, 'to a ref')
   }
 
   return ref
@@ -159,8 +158,8 @@ export function cachedPathToRef(path: string, options: PathToRefOptions = {}): R
 
   const { maxRefDepth = MAX_REF_DEPTH } = options
   if (maxRefDepth < result.length) {
-    throw new RangeError(
-      `cachedPathToRef() the reference depth for "${path}" exceeds the configured max ref depth of ${maxRefDepth}`
+    throw newRangeError(
+      cachedPathToRef, 'the reference depth for', path, 'exceeds the configured max ref depth of', maxRefDepth
     )
   }
 
