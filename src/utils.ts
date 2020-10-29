@@ -32,9 +32,7 @@ export function isPos(x: unknown): x is number {
 }
 
 /** @internal */
-export function isArr(x: unknown): x is unknown[] {
-  return isArray(x)
-}
+export const isArr: (x: unknown) => x is unknown[] = isArray
 
 /** @internal */
 export function isProp<K extends string | number | symbol>(
