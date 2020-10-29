@@ -1,5 +1,5 @@
 import { pathToRef, Ref, PathToRefOptions } from './ref'
-import { isObj, isProp, isNum, isArr, optObj, newTypeError, newRangeError, newReferenceError } from './utils'
+import { isObj, isProp, isNum, isArr, optObj, typErr, rngErr, refErr } from './utils'
 import { MAX_REF_DEPTH } from './defaults'
 import { CompiledTemplate, isCompiledTemplate } from './compile'
 import { ParsedTemplate, isParsedTemplate } from './parse'
@@ -60,21 +60,21 @@ export interface GetOptions extends PathToRefOptions {
  */
 export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
   if (!isObj(scope)) {
-    throw newTypeError(refGet, 'an object scope', scope)
+    throw typErr(refGet, 'an object scope', scope)
   }
 
   if (!isArr(ref)) {
-    throw newTypeError(refGet, 'an array ref', ref)
+    throw typErr(refGet, 'an array ref', ref)
   }
 
   const { maxRefDepth = MAX_REF_DEPTH } = optObj<GetOptions>(refGet, options)
 
   if (!isNum(maxRefDepth) || maxRefDepth <= 0) {
-    throw newRangeError(refGet, 'expected a positive number for maxRefDepth but got', maxRefDepth)
+    throw rngErr(refGet, 'expected a positive number for maxRefDepth but got', maxRefDepth)
   }
 
   if (ref.length > maxRefDepth) {
-    throw newReferenceError(refGet, 'got a ref deeper than', maxRefDepth, 'levels:', refToPath(ref))
+    throw refErr(refGet, 'got a ref deeper than', maxRefDepth, 'levels:', refToPath(ref))
   }
 
   let currentScope = scope
@@ -83,7 +83,7 @@ export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       currentScope = currentScope[prop]
     } else if (options.validateRef) {
-      throw newReferenceError(
+      throw refErr(
         refGet, refToPath(ref), 'is invalid because', prop, 'property does not exist in the scope'
       )
     } else {
@@ -139,7 +139,5 @@ export function resolve(
     return { strings, subs: subs.map((path: string) => pathGet(path, scope, options)) }
   }
 
-  throw newTypeError(
-    resolve, 'a valid CompiledTemplate or ParsedTemplate', templateObj
-  )
+  throw typErr(resolve, 'a valid CompiledTemplate or ParsedTemplate', templateObj)
 }

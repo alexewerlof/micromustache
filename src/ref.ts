@@ -1,4 +1,4 @@
-import { isStr, newRangeError, newSyntaxError, newTypeError, optObj } from './utils'
+import { isStr, rngErr, synErr, typErr, optObj } from './utils'
 import { MAX_REF_DEPTH, CACHE_SIZE } from './defaults'
 
 /**
@@ -66,7 +66,7 @@ const pathPatterns: Array<RegExp> = [
  */
 export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
   if (!isStr(path)) {
-    throw newTypeError(pathToRef, 'a path string', path)
+    throw typErr(pathToRef, 'a path string', path)
   }
 
   const { maxRefDepth = MAX_REF_DEPTH } = optObj<PathToRefOptions>(pathToRef, options)
@@ -93,10 +93,8 @@ export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
         // For perf reasons we assume that all regex groups have a capture group called name
         ref.push((searchResult as RegExpWithNameGroup).groups.name)
         if (ref.length > maxRefDepth) {
-          throw newRangeError(
-            pathToRef,
-            'encountered the path', path, 'which is',
-            ref.length - maxRefDepth,
+          throw rngErr(
+            pathToRef, 'encountered the path', path, 'which is', ref.length - maxRefDepth,
             'chars longer than the configured limit of', maxRefDepth
           )
         }
@@ -107,7 +105,7 @@ export function pathToRef(path: string, options: PathToRefOptions = {}): Ref {
   } while (patternMatched)
 
   if (currIndex !== path.length) {
-    throw newSyntaxError(pathToRef, 'cannot convert the entire path', path, 'to a ref')
+    throw synErr(pathToRef, 'cannot convert the entire path', path, 'to a ref')
   }
 
   return ref
@@ -158,8 +156,9 @@ export function cachedPathToRef(path: string, options: PathToRefOptions = {}): R
 
   const { maxRefDepth = MAX_REF_DEPTH } = options
   if (maxRefDepth < result.length) {
-    throw newRangeError(
-      cachedPathToRef, 'the reference depth for', path, 'exceeds the configured max ref depth of', maxRefDepth
+    throw rngErr(
+      cachedPathToRef, 'the reference depth for', path,
+      'exceeds the configured max ref depth of', maxRefDepth
     )
   }
 

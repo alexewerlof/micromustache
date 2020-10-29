@@ -1,6 +1,6 @@
 import { Scope, ResolveOptions, resolve } from './get'
 import { compile, CompileOptions, CompiledTemplate } from './compile'
-import { isObj, isStr, newTypeError } from './utils'
+import { isObj, isStr, typErr } from './utils'
 import { ParsedTemplate } from './parse'
 import { StringifyOptions, stringify } from './stringify'
 
@@ -42,7 +42,7 @@ export function render(
 ): string {
   const templateObj = isStr(template) ? compile(template, options) : template
   if (!isObj(templateObj)) {
-    throw newTypeError(render, 'a string or CompiledTemplate object', template)
+    throw typErr(render, 'a string or CompiledTemplate object', template)
   }
   return stringify(resolve(templateObj, scope, options), options)
 }

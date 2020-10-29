@@ -1,5 +1,5 @@
 import { ParsedTemplate, isParsedTemplate } from './parse'
-import { optObj, isObj, newTypeError } from './utils'
+import { optObj, isObj, typErr } from './utils'
 
 /**
  * The options for the [[stringify]] function
@@ -25,7 +25,7 @@ export function stringify(
   options: StringifyOptions = {}
 ): string {
   if (!isParsedTemplate(parsedTemplate)) {
-    throw newTypeError(stringify, 'a valid ParsedTemplate object', parsedTemplate)
+    throw typErr(stringify, 'a valid ParsedTemplate object', parsedTemplate)
   }
 
   const { explicit, json } = optObj<StringifyOptions>(stringify, options)

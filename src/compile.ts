@@ -1,6 +1,6 @@
 import { parse, ParseOptions, isParsedTemplate, ParsedTemplate } from './parse'
 import { cachedPathToRef, Ref, PathToRefOptions } from './ref'
-import { isObj, isArr, isStr, newTypeError } from './utils'
+import { isObj, isArr, isStr, typErr } from './utils'
 
 /**
  * The options that customize parsing the template and tokenizing the paths.
@@ -40,7 +40,7 @@ function parsedTemplate(
     return template
   }
 
-  throw newTypeError(compile, 'a string or ParsedTemplate', template)
+  throw typErr(compile, 'a string or ParsedTemplate', template)
 }
 
 /**

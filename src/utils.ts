@@ -72,7 +72,7 @@ function errMsg(fn: { name: string; }, msgArr: (string|number)[]) {
  * @param fn the function where the type error is going to be thrown from
  * @param msg the message
  */
-export function newTypeError(fn: { name: string; }, msg: string, target: unknown): TypeError {
+export function typErr(fn: { name: string; }, msg: string, target: unknown): TypeError {
   return new TypeError(errMsg(fn, ['expected', msg, 'but got a', typeof target,':', String(target)]))
 }
 
@@ -82,7 +82,7 @@ export function newTypeError(fn: { name: string; }, msg: string, target: unknown
  * @param fn the function where the type error is going to be thrown from
  * @param msg the message
  */
-export function newSyntaxError(fn: { name: string; }, ...msg: (string|number)[]): SyntaxError {
+export function synErr(fn: { name: string; }, ...msg: (string|number)[]): SyntaxError {
   return new SyntaxError(errMsg(fn, msg))
 }
 
@@ -92,7 +92,7 @@ export function newSyntaxError(fn: { name: string; }, ...msg: (string|number)[])
  * @param fn the function where the type error is going to be thrown from
  * @param msg the message
  */
-export function newRangeError(fn: { name: string; }, ...msg: (string|number)[]): RangeError {
+export function rngErr(fn: { name: string; }, ...msg: (string|number)[]): RangeError {
   return new RangeError(errMsg(fn, msg))
 }
 
@@ -102,7 +102,7 @@ export function newRangeError(fn: { name: string; }, ...msg: (string|number)[]):
  * @param fn the function where the type error is going to be thrown from
  * @param msg the message
  */
-export function newReferenceError(fn: { name: string; }, ...msg: (string|number)[]): ReferenceError {
+export function refErr(fn: { name: string; }, ...msg: (string|number)[]): ReferenceError {
   return new ReferenceError(errMsg(fn, msg))
 }
 
@@ -116,7 +116,7 @@ export function newReferenceError(fn: { name: string; }, ...msg: (string|number)
 // eslint-disable-next-line @typescript-eslint/ban-types
 export function optObj<T extends object>(fn: { name: string; }, x: unknown): T {
   if (!isObj(x)) {
-    throw newTypeError(fn, 'an options object', x)
+    throw typErr(fn, 'an options object', x)
   }
   return x as T
 }
