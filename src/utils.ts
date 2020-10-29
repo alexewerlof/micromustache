@@ -1,13 +1,6 @@
 /** @internal */
 // eslint-disable-next-line @typescript-eslint/unbound-method
-const numberConstructor = (0).constructor as NumberConstructor
-/** @internal */
-// eslint-disable-next-line @typescript-eslint/unbound-method
-const isFinite = numberConstructor.isFinite
-/** @internal */
-/** @internal */
-// eslint-disable-next-line @typescript-eslint/unbound-method
-const isArray = ([].constructor as ArrayConstructor).isArray
+const isFinite = ((0).constructor as NumberConstructor).isFinite
 
 /** @internal */
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -29,7 +22,8 @@ export function isPos(x: unknown): x is number {
 }
 
 /** @internal */
-export const isArr: (x: unknown) => x is unknown[] = isArray
+// eslint-disable-next-line @typescript-eslint/unbound-method
+export const isArr: (x: unknown) => x is unknown[] = ([].constructor as ArrayConstructor).isArray
 
 /** @internal */
 export function isProp<K extends string | number | symbol>(
