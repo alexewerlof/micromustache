@@ -42,14 +42,6 @@ export function isProp<K extends string | number | symbol>(
   return isObj(x) && propName in x
 }
 
-/** @internal */
-export function isOwnProp<K extends string | number | symbol>(
-  x: unknown,
-  propName: K
-): x is Record<K, any> {
-  return isObj(x) && (hasOwnProperty.call(x, propName) as boolean)
-}
-
 function errMsg(errConst: ErrorConstructor, fn: { name: string; }, msgArr: (string|number)[]): Error {
   return new errConst(`${fn.name}() ${msgArr.join(' ')}`)
 }
