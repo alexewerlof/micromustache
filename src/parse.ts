@@ -12,8 +12,7 @@ export interface ParsedTemplate<T> {
   /**
    * An array corresponding to the substitute part of the template.
    *
-   * [[parse]] gives an array of strings while [[compile]] gives an array of [[Ref]]s which
-   * are also arrays. You can map these substitutes to whatever you want and then use [[render]] to
+   * You can map these substitutes to whatever you want and then use [[render]] to
    * look up their value or just directly pass it to [[stringify]] to create a string from it.
    *
    * If there are no paths in the template, this will be an empty array.
