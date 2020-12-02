@@ -33,8 +33,12 @@ export function isProp<K extends string | number | symbol>(
   return isObj(x) && propName in x
 }
 
+/**
+ * @internal
+ * Create an error message that contains the function name
+ */
 function errMsg(errConst: ErrorConstructor, fn: { name: string; }, msgArr: (string|number)[]): Error {
-  return new errConst(`${fn.name}() ${msgArr.join(' ')}`)
+  return new errConst(`micromustache ${fn.name}() ${msgArr.join(' ')}`)
 }
 
 /**

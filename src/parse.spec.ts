@@ -67,7 +67,7 @@ describe('parse()', () => {
 
   it('throws a syntax error if the open tag is not closed', () => {
     expect(() => parse('Hi {{')).toThrow(
-      new SyntaxError('parse() cannot find }} matching the {{ at position 3')
+      new SyntaxError('micromustache parse() cannot find }} matching the {{ at position 3')
     )
   })
 
