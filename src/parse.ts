@@ -163,16 +163,15 @@ function pureParser(
   const rest = template.substring(lastCloseTagIndex)
   const danglingTagIndex = rest.indexOf(closeTag)
 
-  if (danglingTagIndex !== -1) {
-    throw synErr(
-      parse, 'encountered a dangling', closeTag, 'at position',
-      danglingTagIndex + lastCloseTagIndex
-    )
+  if (danglingTagIndex === -1) {
+    strings.push(rest)
+    return { strings, subs: paths }
   }
 
-  strings.push(rest)
-
-  return { strings, subs: paths }
+  throw synErr(
+    parse, 'encountered a dangling', closeTag, 'at position',
+    danglingTagIndex + lastCloseTagIndex
+  )
 }
 
 /**
