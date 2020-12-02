@@ -30,7 +30,7 @@ export function isCompiledTemplate(x: unknown): x is CompiledTemplate {
   return isArr(strings) && isArr(refs) && strings.length === refs.length + 1
 }
 
-function parsedTemplate(
+function getParsedTemplate(
   template: string | ParsedTemplate<string>,
   options: CompileOptions = {}
 ) {
@@ -69,6 +69,6 @@ export function compile(
   options: CompileOptions = {}
 ): CompiledTemplate {
   // No assertion is required here because these internal functions assert their input
-  const { strings, subs } = parsedTemplate(template, options)
+  const { strings, subs } = getParsedTemplate(template, options)
   return { strings, refs: subs.map((path) => cachedPathToRef(path, options)) }
 }
