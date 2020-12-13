@@ -20,6 +20,7 @@ export interface CompiledTemplate {
   refs: Ref[]
 }
 
+/** @internal */
 export function isCompiledTemplate(x: unknown): x is CompiledTemplate {
   if (!isObj(x)) {
     return false
@@ -30,6 +31,7 @@ export function isCompiledTemplate(x: unknown): x is CompiledTemplate {
   return isArr(strings) && isArr(refs) && strings.length === refs.length + 1
 }
 
+/** @internal */
 function getParsedTemplate(
   template: string | ParsedTemplate<string>,
   options: CompileOptions = {}

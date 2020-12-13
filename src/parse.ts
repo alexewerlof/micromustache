@@ -67,6 +67,7 @@ export interface ParseOptions {
   readonly tags?: Tags
 }
 
+/** @internal */
 export function isParsedTemplate(x: unknown): x is ParsedTemplate<any> {
   if (!isObj(x)) {
     return false
