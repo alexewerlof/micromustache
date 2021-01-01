@@ -12,7 +12,7 @@
 
 A **secure & minimalist** template engine.
 
-⛹ Check out **[the playground](https://unpkg.com/micromustache/playground/index.html)**
+<a style="background-color:blue;padding:1em;color:white;border-radius:0.3em" href="https://unpkg.com/micromustache/playground/index.html">⛹ Playground</a>
 
 Think of it as a sweet spot between plain text interpolation and [mustache.js](https://github.com/janl/mustache.js); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to reduce potential errors and improve performance. This tool has a limited scope that doesn't attempt to solve everybody's use case, and instead do a specific thing well.
 
