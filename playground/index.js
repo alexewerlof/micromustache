@@ -28,15 +28,15 @@ const ready = (fn) =>
     ? fn()
     : on(document, 'DOMContentLoaded', fn)
 
-const exampleSelector = id('example-selector')
+const exampleSelector = id('exampleSelector')
 const template = id('template')
-const optionsToggle = id('options-toggle')
+const optionsToggle = id('optionsToggle')
 const options = id('options')
-const templateError = id('template-error')
+const templateError = id('templateError')
 const scope = id('scope')
-const scopeError = id('scope-error')
+const scopeError = id('scopeError')
 const result = id('result')
-const resultError = id('result-error')
+const resultError = id('resultError')
 
 // Runs a function showing its results or errors in appropriate DOM elements
 function runFn(successEl, errorEl, fn) {
@@ -55,29 +55,33 @@ function runFn(successEl, errorEl, fn) {
 }
 
 function render() {
-  console.log('Render', getVal(id('validatePath')))
+  const options = {
+    validateRef: getVal(id('validateRef')),
+    explicit: getVal(id('explicit')),
+    json: getVal(id('json')),
+    maxTemplateLen: getVal(id('maxTemplateLen')),
+    maxPathCount: getVal(id('maxPathCount')),
+    maxPathLen: getVal(id('maxPathLen')),
+    maxRefDepth: getVal(id('maxRefDepth')),
+    tags: [getVal(id('tags0')), getVal(id('tags1'))],
+  }
+
   // Handle the template errors
-  const renderer = runFn(template, templateError, () =>
-    micromustache.compile(getVal(template), {
-      validatePath: getVal(id('validatePath')),
-      validateRef: getVal(id('validateRef')),
-      explicit: getVal(id('explicit')),
-      maxPathLen: getVal(id('maxPathLen')),
-      maxRefDepth: getVal(id('maxRefDepth')),
-      tags: [getVal(id('tags0')), getVal(id('tags1'))],
-    })
+  const compiled = runFn(template, templateError, () =>
+    micromustache.compile(getVal(template), options)
   )
+
   // Handle the scope errors
   const scopeObj = runFn(scope, scopeError, () => JSON.parse(getVal(scope)))
 
-  if (!renderer || !scopeObj) {
+  if (!compiled || !scopeObj) {
     return text(result, '')
   }
 
   // If all is well try to generate the results handling the errors
   text(
     result,
-    runFn(result, resultError, () => renderer.render(scopeObj))
+    runFn(result, resultError, () => micromustache.render(compiled, scopeObj, options))
   )
 }
 
@@ -92,9 +96,19 @@ ready(() => {
   onInput(optionsToggle, () => (options.hidden = !optionsToggle.checked))
   onInput(scope, render)
   onInput(template, render)
-  onInput(id('validatePath'), render)
+  // Set the defaults
+  setVal(id('tags0'), micromustache.TAGS[0])
+  setVal(id('tags1'), micromustache.TAGS[1])
+  setVal(id('maxTemplateLen'), micromustache.MAX_TEMPLATE_LEN)
+  setVal(id('maxPathCount'), micromustache.MAX_PATH_COUNT)
+  setVal(id('maxPathLen'), micromustache.MAX_PATH_LEN)
+  setVal(id('maxRefDepth'), micromustache.MAX_REF_DEPTH)
+
   onInput(id('validateRef'), render)
   onInput(id('explicit'), render)
+  onInput(id('json'), render)
+  onInput(id('maxTemplateLen'), render)
+  onInput(id('maxPathCount'), render)
   onInput(id('maxPathLen'), render)
   onInput(id('maxRefDepth'), render)
   onInput(id('tags0'), render)

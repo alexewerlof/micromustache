@@ -1,70 +1,80 @@
-import { parsePath, Ref } from './parse'
-import { isObj, isProp, isNum, isArr } from './utils'
+import { pathToRef, Ref, PathToRefOptions } from './ref'
+import { isObj, isProp, isPos, isArr, optObj, typErr, rngErr, refErr } from './utils'
+import { MAX_REF_DEPTH } from './defaults'
+import { CompiledTemplate, isCompiledTemplate } from './compile'
+import { ParsedTemplate, isParsedTemplate } from './parse'
 
 export interface Scope {
   [key: string]: Scope | any
 }
 
-export interface GetOptions {
+/**
+ * The options for the [[resolve]] function
+ */
+export type ResolveOptions = GetOptions
+
+/**
+ * Just a small utility function that's used in the [[refGet]] function to generate a string
+ * representation of paths in the errors.
+ *
+ * @internal
+ *
+ * @param ref the reference to convert to string
+ */
+function refToPath(ref: Ref) {
+  return `"${ref.join('.')}"`
+}
+
+/**
+ * The options to the [[pathGet]] and [[refGet]] functions
+ */
+export interface GetOptions extends PathToRefOptions {
   /**
-   * When set to a truthy value, we throw a `ReferenceError` for invalid paths and refs.
-   * - An invalid ref specifies an array of properties that does not exist in the scope.
-   * - An invalid path is a string that is parsed to an invalid ref.
-   *
-   * When set to a falsy value, we use an empty string for paths and refs that don't exist in the
-   * scope.
+   * Decides how to deal with references that don't exist in the scope.
    *
    * If a value does not exist in the scope, two things can happen:
    * - if `validateRef` is falsy, the value will be assumed empty string
    * - if `validateRef` is truthy, a `ReferenceError` will be thrown
+   * @default undefined
    */
   readonly validateRef?: boolean
-  /**
-   * Drilling a nested object to get the value assigned with a ref is a relatively expensive
-   * computation. Therefore you can set a value of how deep you are expecting a template to go and
-   * if the nesting is deeper than that, the computation stops with an error.
-   * This prevents a malicious or erroneous template with deep nesting to block the JavaScript event
-   * loop. The default is 10.
-   */
-  readonly maxRefDepth?: number
 }
 
 /**
  * Looks up the value of a given [[Ref]] in the [[Scope]]
- * It can also be used in your custom resolver functions if needed.
+ * You can also use this function in your own custom resolvers.
+ *
+ * If it cannot find the value at the specified ref, it returns `undefined`. You can change this
+ * behavior by passing a truthy `validateRef` option.
  *
  * @see https://github.com/userpixel/micromustache/wiki/Known-issues
- * If it cannot find a value in the specified ref, it may return undefined or throw an error
- * depending on the value of the `validateRef` option
- * @param scope an object to resolve value from
- * @param ref the parsed path (see [[parsePath]])
- * @throws any error that [[parsePath]] may throw
- * @throws `SyntaxError` if the path string cannot be parsed
+ *
+ * @param ref the path that is already converted to ref (see [[pathToRef]])
+ * @param scope an object to resolve values from
+ *
+ * @returns the value or undefined
+ *
  * @throws `TypeError` if the arguments have the wrong type
  * @throws `ReferenceError` if the scope does not contain the requested key and the `validateRef`
  * is set to a truthy value
- * @returns the value or undefined
  */
-export function getRef(scope: Scope, ref: Ref, options: GetOptions = {}): any {
-  if (!isObj(options)) {
-    throw new TypeError(`get expects an object option. Got ${typeof options}`)
+export function refGet(ref: Ref, scope: Scope, options: GetOptions = {}): any {
+  if (!isObj(scope)) {
+    throw typErr(refGet, 'an object scope', scope)
   }
 
   if (!isArr(ref)) {
-    throw new TypeError(`Expected an array ref. Got ${ref}`)
+    throw typErr(refGet, 'an array ref', ref)
   }
 
-  const { maxRefDepth = 10 } = options
-  if (!isNum(maxRefDepth) || maxRefDepth <= 0) {
-    throw new RangeError(`Expected a positive number for maxRefDepth. Got ${maxRefDepth}`)
-  }
+  const { maxRefDepth = MAX_REF_DEPTH } = optObj<GetOptions>(refGet, options)
 
-  const propNamesAsStr = () => ref.join(' > ')
+  if (!isPos(maxRefDepth)) {
+    throw rngErr(refGet, 'expected a positive number for maxRefDepth but got', maxRefDepth)
+  }
 
   if (ref.length > maxRefDepth) {
-    throw new ReferenceError(
-      `The ref cannot be deeper than ${maxRefDepth} levels. Got "${propNamesAsStr()}"`
-    )
+    throw refErr(refGet, 'got a ref deeper than', maxRefDepth, 'levels:', refToPath(ref))
   }
 
   let currentScope = scope
@@ -73,7 +83,9 @@ export function getRef(scope: Scope, ref: Ref, options: GetOptions = {}): any {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       currentScope = currentScope[prop]
     } else if (options.validateRef) {
-      throw new ReferenceError(`${prop} is not defined in the scope at ref: "${propNamesAsStr()}"`)
+      throw refErr(
+        refGet, refToPath(ref), 'is invalid because', prop, 'property does not exist in the scope'
+      )
     } else {
       // This undefined result will be stringified later according to the explicit option
       return
@@ -83,18 +95,49 @@ export function getRef(scope: Scope, ref: Ref, options: GetOptions = {}): any {
 }
 
 /**
- * A useful utility function that is used internally to lookup a path in an object.
- * It can also be used in your custom resolver functions if needed.
- * Under the hood it uses [[getRef]]
+ * Looks up the value of a given `path` string in the [[Scope]]
  *
- * This is similar to [Lodash's `_.get()`](https://lodash.com/docs/#get)
+ * It uses [[refGet]] under the hood.
  *
- * @param scope an object to resolve value from
+ * You can also use this function in your own custom resolvers.
+ *
  * @param path the path string as it appeared in the template
- * @throws any error that [[getRef]] may throw
+ * @param scope an object to resolve value from
+ *
+ * @throws any error that [[refGet]] or [[pathToRef]] may throw
+ *
  * @returns the value or undefined
  */
-export function get(scope: Scope, path: string, options: GetOptions = {}): any {
+export function pathGet(path: string, scope: Scope, options: GetOptions = {}): any {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return getRef(scope, parsePath(path), options)
+  return refGet(pathToRef(path, options), scope, options)
+}
+
+/**
+ * Resoles the subs in a parsed or compiled template object from the scope
+ * @param templateObj the parsed or compiled template object
+ * @param scope An object containing values for paths from the the
+ * template. If it's omitted, we default to an empty object.
+ * Since functions are objects in javascript, the `scope` can technically be a
+ * function too but it won't be called. It'll be treated as an object and its
+ * properties will be used for the lookup.
+ * @param options
+ */
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function resolve(
+  templateObj: CompiledTemplate | ParsedTemplate<string>,
+  scope: Scope,
+  options?: ResolveOptions
+): ParsedTemplate<any> {
+  if (isCompiledTemplate(templateObj)) {
+    const { strings, refs } = templateObj
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return { strings, subs: refs.map((ref: Ref) => refGet(ref, scope, options)) }
+  } else if (isParsedTemplate(templateObj)) {
+    const { strings, subs } = templateObj
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return { strings, subs: subs.map((path: string) => pathGet(path, scope, options)) }
+  }
+
+  throw typErr(resolve, 'a valid CompiledTemplate or ParsedTemplate', templateObj)
 }

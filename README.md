@@ -1,3 +1,5 @@
+![Micromustache Logo](https://docs.google.com/drawings/d/e/2PACX-1vQrgP-STn3eY_BpKE4wf9Hu4a1PPx-7XIkz3AucJLOY1Oigk2iqcXpq5nzu4-CpJx9nM5322Zl6A5eb/pub?w=200)
+
 [![Downloads](https://img.shields.io/npm/dm/micromustache.svg?style=flat-square)](http://npm-stat.com/charts.html?package=micromustache&from=2017-01-01)
 [![GitHub stars](https://img.shields.io/github/stars/userpixel/micromustache?style=flat-square)](https://github.com/userpixel/micromustache/stargazers)
 [![Known Vulnerabilities](https://snyk.io/test/github/userpixel/micromustache/badge.svg?style=flat-square)](https://snyk.io/test/github/userpixel/micromustache)
@@ -8,16 +10,17 @@
 
 # micromustache
 
-![Logo](https://raw.github.com/userpixel/micromustache/master/logo.png)
+A **secure & minimalist** template engine.
 
-A **secure**, fast and lightweight template engine with some handy additions.
-
-⛹ Check out **[the playground](https://unpkg.com/micromustache/playground/index.html)**
+<a style="background-color:blue;padding:1em;color:white;border-radius:0.3em" href="https://unpkg.com/micromustache/playground/index.html">⛹ Playground</a>
 
 Think of it as a sweet spot between plain text interpolation and [mustache.js](https://github.com/janl/mustache.js); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to reduce potential errors and improve performance. This tool has a limited scope that doesn't attempt to solve everybody's use case, and instead do a specific thing well.
 
+* 🔒 **Secure**
+  - Works in CSP environments (no usage of `eval()` or `new Function()`)
+  - Has limit options to prevent malicious templates from hanging your program
+  - Published only with 2FA.
 * 🏃 Faster than MustacheJS (_Micromustache is the fastest template engine that doesn't need pre-compilation and still works in CSP environments_)
-* 🔒 **Secure** has limits for variable length, number of interpolations, nesting debth and common Javascript pitfalls (`__proto__`, `constructor`, getters/etc). Works in CSP environments (no usage of `eval()` or `new Function()`). Published only with 2FA.
 * ✏ **Bracket notation** support `a[1]['foo']` accessors (mustache.js/handlebar syntax of `a.1.foo` is also supported).
 * 🎈 **Lightweight** less than 350 source lines of code, easy to audit, small API surface, easy to pick up
 * 🏳 **No dependencies**
@@ -138,16 +141,16 @@ console.log(renderFn('My name is {{Alex}}!', up))
 // My name is ALEX!
 ```
 
-The resolver gets the scope as its second parameter. If you want to lookup a value, there's a `get()` function as well:
+The resolver gets the scope as its second parameter. If you want to lookup a value, there's a `pathGet()` function as well:
 
 ```javascript
-const { renderFn, get } = require('micromustache')
+const { renderFn, pathGet } = require('micromustache')
 
 // Looks up the value and converts it to stars
 function star(path, scope) {
   // path comes from the template and is 'password' here
   // scope is { password: 'abc' }
-  const value = get(scope, path) // value is 'abc'
+  const value = pathGet(path, scope) // value is 'abc'
   return '*'.repeat(value.length)
 }
 
@@ -223,5 +226,5 @@ _Note that they need you to build the project locally._
 _Made in Sweden 🇸🇪 by [@alexewerlof](https://mobile.twitter.com/alexewerlof)_
 
 <a href="https://opencollective.com/micromustache" target="_blank">
-  <img src="https://opencollective.com/micromustache/donate/button@2x.png?color=white" width=300 />
+  <img src="https://opencollective.com/micromustache/donate/button@2x.png?color=white" width=200 />
 </a>

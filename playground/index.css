@@ -25,6 +25,7 @@ aside {
     min-width: 8rem;
     border-right: 1px solid #ffffff3d;
     padding: 1em;
+    max-width: 15em;
 }
 
 .io {
@@ -64,6 +65,7 @@ textarea.error {
 .error {
     background-color: #ffbdbd;
     color: red;
+    white-space: pre-wrap;
 }
 
 h1, h2, h3 {

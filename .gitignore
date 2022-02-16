@@ -3,3 +3,5 @@ lib/
 docs/
 npm-debug.log
 dist/
+*.cpuprofile
+TODO

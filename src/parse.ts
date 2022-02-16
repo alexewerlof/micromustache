@@ -1,143 +1,235 @@
-import { isStr } from './utils'
+import { isStr, isArr, isObj, isPos, optObj, typErr, synErr, rngErr } from './utils'
+import { TAGS, MAX_PATH_LEN, MAX_TEMPLATE_LEN, MAX_PATH_COUNT } from './defaults'
 
 /**
- * An array that is derived from a path string
- * For example, if your template has a path that looks like `'person.name'`, its corresponding Ref
- * looks like `['person', 'name']`
+ * The result of the parsing the template
  */
-export type Ref = string[]
+export interface ParsedTemplate<T> {
+  /**
+   * An array of constant strings extracted from the template
+   */
+  strings: string[]
+  /**
+   * An array corresponding to the substitute part of the template.
+   *
+   * You can map these substitutes to whatever you want and then use [[render]] to
+   * look up their value or just directly pass it to [[stringify]] to create a string from it.
+   *
+   * If there are no paths in the template, this will be an empty array.
+   */
+  subs: T[]
+}
 
 /**
+ * The tags are an array of exactly two strings (that should be different and mutually exclusive)
+ */
+export type Tags = [string, string]
+
+/**
+ * The options for the [[parse]] function
+ */
+export interface ParseOptions {
+  /**
+   * Maximum length for the template string (inclusive)
+   *
+   * @default MAX_TEMPLATE_LEN
+   */
+  readonly maxTemplateLen?: number
+  /**
+   * Maximum allowed length for the trimmed path string (inclusive).
+   * Set this to a safe value to throw for paths that are longer than expected.
+   *
+   * @default MAX_PATH_LEN
+   *
+   * @example `{{a.b}}` has a length of 3
+   * @example `{{ a.b }}` has a length of 3 (trimmed path)
+   * @example `{{a . b}}` has a length of 5
+   * @example `{{a.b.c}}` has a length of 5
+   * @example `{{a['b'].c}}` has a length of 8
+   */
+  readonly maxPathLen?: number
+  /**
+   * Maximum number of paths in a template (inclusive)
+   *
+   * @default MAX_PATH_COUNT
+   *
+   * @example `Hi {{name}}` has 1 path
+   * @example `Hi {{fName}} {{lName}}` has 2 paths
+   * @example `Hi {{person.name}}` has 1 path
+   */
+  readonly maxPathCount?: number
+  /**
+   * The string symbols that mark the opening and closing of a path in the template.
+   * It should be an array of exactly two distinct strings otherwise an error is thrown.
+   *
+   * @default TAGS
+   */
+  readonly tags?: Tags
+}
+
+/** @internal */
+export function isParsedTemplate(x: unknown): x is ParsedTemplate<any> {
+  if (!isObj(x)) {
+    return false
+  }
+
+  const { strings, subs } = x as ParsedTemplate<any>
+
+  return isArr(strings) && isArr(subs) && strings.length === subs.length + 1
+}
+
+/**
+ * This is an internal function that is used by [[parse]] to do the heavy lifting of going
+ * through the template and parsing it to two arrays: one for strings and one for paths
  * @internal
- * The number of different paths that will be cached.
- * If a path is cached, the actual parsing algorithm will not be called
- * which significantly improves performance.
- * However, this cache is size-limited to prevent degrading the user's software
- * over a period of time.
- * If the cache is full, we start removing older paths one at a time.
+ * @param template the template string
+ * @param openTag the opening tag
+ * @param closeTag the close tag
+ * @param maxPathLen maximum path length
  */
-const cacheSize = 1000
+function pureParser(
+  template: string,
+  openTag: string,
+  closeTag: string,
+  maxPathLen: number,
+  maxPathCount: number,
+): ParsedTemplate<string> {
+  const openTagLen = openTag.length
+  const closeTagLen = closeTag.length
+  const templateLen = template.length
 
-/**
- * @internal
- */
-export class Cache<T> {
-  private map: {
-    [path: string]: T
-  }
+  let lastOpenTagIndex: number
+  let lastCloseTagIndex = 0
+  let currentIndex = 0
 
-  private cachedKeys: string[]
-  private oldestIndex: number
+  // The result
+  const strings: string[] = []
+  const paths: string[] = []
 
-  constructor(private size: number) {
-    this.reset()
-  }
-
-  public reset(): void {
-    this.oldestIndex = 0
-    this.map = {}
-    this.cachedKeys = new Array<string>(this.size)
-  }
-
-  public get(key: string): T {
-    return this.map[key]
-  }
-
-  public set(key: string, value: T): void {
-    this.map[key] = value
-    const oldestKey = this.cachedKeys[this.oldestIndex]
-    if (oldestKey !== undefined) {
-      delete this.map[oldestKey]
+  while (currentIndex < templateLen) {
+    lastOpenTagIndex = template.indexOf(openTag, currentIndex)
+    if (lastOpenTagIndex === -1) {
+      break
     }
-    this.cachedKeys[this.oldestIndex] = key
-    this.oldestIndex++
-    this.oldestIndex %= this.size
-  }
-}
 
-/** @internal */
-const cache = new Cache<string[]>(cacheSize)
+    const pathStartIndex = lastOpenTagIndex + openTagLen
 
-/** @internal */
-interface RegExpWithNameGroup extends RegExpExecArray {
-  groups: {
-    name: string
-  }
-}
+    lastCloseTagIndex = template.indexOf(closeTag, pathStartIndex)
 
-/** @internal */
-const pathPatterns: Array<RegExp> = [
-  // `.a` the most common patter (hence first)
-  /\s*\.\s*(?<name>[$_\w]+)\s*/y,
-  // `a['b']` or `a["b"]` or `a[\`b\`]`
-  /\s*\[\s*(?<quote>['"`])(?<name>.*?)\k<quote>\s*\]\s*/y,
-  // `a[N]` where N is a positive integer (`String(Number.MAX_SAFE_INTEGER).length` is 16)
-  /\s*\[\s*\+?\s*0*(?<name>\d{1,16}?)\s*\]\s*/y,
-  // `a` at the start of the string
-  /^\s*(?<name>[$_\w]+)\s*/y,
-]
-
-/**
- * Breaks a path to an array of strings.
- * The result can be used to [[get]] a particular value from a [[Scope]] object
- * @param path - the path as it occurs in the template.
- * For example `a["b"].c`
- * @throws `TypeError` if the path is not a string
- * @throws `SyntaxError` if the path syntax has a problem
- * @returns - an array of property names that can be used to get a particular value.
- * For example `['a', 'b', 'c']`
- */
-export function parsePath(path: string): Ref {
-  if (!isStr(path)) {
-    throw new TypeError(`Cannot parse ref. Expected string. Got a ${typeof path}`)
-  }
-
-  const ref: Ref = []
-
-  if (path.trim() === '') {
-    return ref
-  }
-
-  let currIndex = 0
-
-  let patternMatched
-
-  do {
-    patternMatched = false
-    for (const pattern of pathPatterns) {
-      pattern.lastIndex = currIndex
-      const parsedResult = pattern.exec(path)
-
-      if (parsedResult) {
-        patternMatched = true
-        currIndex = pattern.lastIndex
-        // For perf reasons we assume that all regex groups have a capture group called name
-        ref.push((parsedResult as RegExpWithNameGroup).groups.name)
-        break
-      }
+    if (lastCloseTagIndex === -1) {
+      throw synErr(
+        parse, 'cannot find', closeTag, 'matching the', openTag, 'at position', lastOpenTagIndex
+      )
     }
-  } while (patternMatched)
 
-  if (currIndex !== path.length) {
-    throw new SyntaxError(`Could not parse path: "${path}"`)
+    const path = template.substring(pathStartIndex, lastCloseTagIndex)
+
+    if (path.length > maxPathLen) {
+      throw synErr(
+        parse, 'encountered the path', path, 'at position', pathStartIndex, 'which is',
+        path.length - maxPathLen
+        , 'characters longer than the configured limit of', maxPathLen
+      )
+    }
+
+    if (path.includes(openTag)) {
+      throw synErr(
+        parse, 'found an unexpected', openTag, 'in', path, 'at position',
+        pathStartIndex + lastOpenTagIndex
+      )
+    }
+
+    if (paths.length >= maxPathCount) {
+      throw rngErr(
+        parse,
+        'the max number of paths is configured to be', maxPathCount, 'but we have already reached that limit'
+      )
+    }
+
+    paths.push(path)
+
+    lastCloseTagIndex += closeTagLen
+    const beforePath = template.substring(currentIndex, lastOpenTagIndex)
+    const danglingCloseTagIndex = beforePath.indexOf(closeTag)
+    if (danglingCloseTagIndex !== -1) {
+      throw synErr(
+        parse,'encountered a dangling', closeTag, 'at position', danglingCloseTagIndex
+      )
+    }
+
+    strings.push(beforePath)
+    currentIndex = lastCloseTagIndex
   }
 
-  return ref
+  const rest = template.substring(lastCloseTagIndex)
+  const danglingTagIndex = rest.indexOf(closeTag)
+
+  if (danglingTagIndex === -1) {
+    strings.push(rest)
+    return { strings, subs: paths }
+  }
+
+  throw synErr(
+    parse, 'encountered a dangling', closeTag, 'at position',
+    danglingTagIndex + lastCloseTagIndex
+  )
 }
 
 /**
- * This is just a faster version of `parsePath()`
- * @internal
+ * Parses a template
+ *
+ * The result can be directly passed to the [[render]] or [[resolve]] functions
+ * instead of the raw template string.
+ *
+ * @see https://github.com/userpixel/micromustache/wiki/Known-issues
+ *
+ * @throws `TypeError` if there's an issue with its inputs
+ * @throws `RangeError` if maxPathLen is invalid
+ * @throws `SyntaxError` if there's an issue with the template
+ *
+ * @param template the template
+ * @param openSym the string that marks the start of a path
+ * @param closeSym the string that marks the start of a path
+ * @returns the parsing result as an object
  */
-function parseRefCached(path: string): Ref {
-  let result = cache.get(path)
-
-  if (result === undefined) {
-    result = parsePath(path)
-    cache.set(path, result)
+export function parse(template: string, options: ParseOptions = {}): ParsedTemplate<string> {
+  if (!isStr(template)) {
+    throw typErr(parse, 'a string template', template)
   }
 
-  return result
-}
+  const {
+    tags = TAGS,
+    maxPathLen = MAX_PATH_LEN,
+    maxTemplateLen = MAX_TEMPLATE_LEN,
+    maxPathCount = MAX_PATH_COUNT,
+  } = optObj<ParseOptions>(parse, options)
 
-parsePath.cached = parseRefCached
+  if (template.length > maxTemplateLen) {
+    throw rngErr(
+      parse, 'got a template that is', template.length - maxTemplateLen,
+      'characters longer than the configured limit of', maxTemplateLen
+    )
+  }
+
+  if (!isArr(tags) || tags.length !== 2) {
+    throw typErr(parse, 'an array of two elements for tags', tags)
+  }
+
+  const [openTag, closeTag] = tags
+
+  if (
+    !isStr(openTag, 1) ||
+    !isStr(closeTag, 1) ||
+    openTag === closeTag ||
+    openTag.includes(closeTag) ||
+    closeTag.includes(openTag)
+  ) {
+    throw typErr(parse, '2 distinct non-empty strings which do not contain each other', tags)
+  }
+
+  if (!isPos(maxPathLen)) {
+    throw rngErr(parse, 'expected a positive number for maxPathLen but got', maxPathLen)
+  }
+
+  return pureParser(template, openTag, closeTag, maxPathLen, maxPathCount)
+}

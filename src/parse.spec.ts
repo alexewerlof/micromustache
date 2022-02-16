@@ -1,154 +1,104 @@
-import { parsePath } from './parse'
+import { parse } from './parse'
 
-interface ISuccessCases {
-  [input: string]: string[]
-}
+describe('parse()', () => {
+  it('returns the string intact if no interpolation is found', () => {
+    expect(parse('Hello world')).toEqual({
+      strings: ['Hello world'],
+      subs: [],
+    })
+  })
 
-function stringArrToString(arr: string[]): string {
-  return '[' + arr.map((s) => `'${s}'`).join(', ') + ']'
-}
+  it('throws if the template is too big', () => {
+    expect(() => parse('123456', { maxTemplateLen: 5 })).toThrow(RangeError)
+    expect(() => parse('123456', { maxTemplateLen: 6 })).not.toThrow()
+  })
 
-describe('parsePath()', () => {
-  describe('success cases:', () => {
-    // input: expected output
-    const testCases: ISuccessCases = {
-      a: ['a'],
-      ' a': ['a'],
-      '  a': ['a'],
-      'a ': ['a'],
-      'a  ': ['a'],
-      ' a ': ['a'],
-      '  a  ': ['a'],
-      'a.b': ['a', 'b'],
-      'person.name': ['person', 'name'],
-      'a. b ': ['a', 'b'],
-      'a . b ': ['a', 'b'],
-      ' a . b ': ['a', 'b'],
-      'a. b': ['a', 'b'],
-      'a.b ': ['a', 'b'],
-      'a.b.c': ['a', 'b', 'c'],
-      'a["b"]': ['a', 'b'],
-      'a[" b "]': ['a', ' b '],
-      'a[""]': ['a', ''],
-      "a['b']": ['a', 'b'],
-      "a[ 'b' ]": ['a', 'b'],
-      'a["b"].c': ['a', 'b', 'c'],
-      'a[ "b" ].c': ['a', 'b', 'c'],
-      'a [ "b" ] .c': ['a', 'b', 'c'],
-      'a._.c': ['a', '_', 'c'],
-      '.a': ['a'],
-      ' .a': ['a'],
-      '\n.a': ['a'],
-      '\n .a': ['a'],
-      ' \n .a': ['a'],
-      '.\na': ['a'],
-      '.a\n': ['a'],
-      ' . a': ['a'],
-      '. a': ['a'],
-      '_["b"].c': ['_', 'b', 'c'],
-      '__["b"].c': ['__', 'b', 'c'],
-      '_._b.c': ['_', '_b', 'c'],
-      'a.$.c': ['a', '$', 'c'],
-      '': [],
-      ' ': [],
-      '["a"]': ['a'],
-      'a.33': ['a', '33'],
-      'a[0]': ['a', '0'],
-      'a[11]': ['a', '11'],
-      'a[+11]': ['a', '11'],
-      'a[ +12]': ['a', '12'],
-      'a[ + 13]': ['a', '13'],
-      'a[+ 14]': ['a', '14'],
-      'a["15"]': ['a', '15'],
-      'a[ "16"]': ['a', '16'],
-      'a["17" ]': ['a', '17'],
-      'a["b"]["c"]': ['a', 'b', 'c'],
-      '["a"]["b"]["c"]': ['a', 'b', 'c'],
-      '["a"].b["c"]': ['a', 'b', 'c'],
-      'a["b"].c["d"]': ['a', 'b', 'c', 'd'],
-      'a["b"].c["d"].e': ['a', 'b', 'c', 'd', 'e'],
-      'a["+1.1"]': ['a', '+1.1'],
-      '[13]': ['13'],
-      '[17].c': ['17', 'c'],
-      'a["["]': ['a', '['],
-      'a[ "["]': ['a', '['],
-      'a["[" ]': ['a', '['],
-      'a["]"]': ['a', ']'],
-      'a[ "]"]': ['a', ']'],
-      'a["]" ]': ['a', ']'],
-      'a[1234567890123456]': ['a', '1234567890123456'],
-      'a[0001234567890123456]': ['a', '1234567890123456'],
-      'a[001]': ['a', '1'],
-    }
+  it('throws if there are too many paths', () => {
+    expect(() => parse('Hi {{name}}! How is {{planet}}?', { maxPathCount: 1 })).toThrow(RangeError)
+    expect(() => parse('Hi {{name}}! How is {{planet}}?', { maxPathCount: 2 })).not.toThrow()
+  })
 
-    for (const [input, output] of Object.entries(testCases)) {
-      it(`'${input}'  ⇨  ${stringArrToString(output)}`, () => {
-        expect(parsePath(input)).toEqual(output)
-      })
+  it('supports customized tags', () => {
+    expect(parse('Hello {name}!', { tags: ['{', '}'] })).toEqual({
+      strings: ['Hello ', '!'],
+      subs: ['name'],
+    })
+  })
+
+  it('throws if the open and close tag are the same', () => {
+    expect(() => parse('Hello |name|!', { tags: ['|', '|'] })).toThrow(TypeError)
+  })
+
+  it('throws if the open tag contains the close tag', () => {
+    expect(() => parse('Hello {{name}!', { tags: ['{{', '{'] })).toThrow(Error)
+  })
+
+  it('throws if the open and close tag are the same', () => {
+    expect(() => parse('Hello {name}}!', { tags: ['}', '}}'] })).toThrow(Error)
+  })
+
+  it('returns an empty string and no paths when the template is an empty string', () => {
+    expect(parse('')).toEqual({
+      strings: [''],
+      subs: [],
+    })
+  })
+
+  it('handles interpolation correctly at the start of the template', () => {
+    expect(parse('{{name}}! How are you?')).toEqual({
+      strings: ['', '! How are you?'],
+      subs: ['name'],
+    })
+  })
+
+  it('handles interpolation correctly at the end of the template', () => {
+    expect(parse('My name is {{name}}')).toEqual({
+      strings: ['My name is ', ''],
+      subs: ['name'],
+    })
+  })
+
+  it('does not trim the path', () => {
+    const { subs } = parse('My name is {{  name  }}')
+    if (subs.length) {
+      expect(subs[0]).toBe('  name  ')
     }
   })
 
-  describe('SyntaxError cases:', () => {
-    // all these strings throw a syntax error
-    const syntaxErrorsCases: string[] = [
-      'a.',
-      'a..',
-      'a..b',
-      'a ..b',
-      'a . .b',
-      'a . . b',
-      'a .. b',
-      '..',
-      '. .',
-      ' . . ',
-      ' .. ',
-      ' .. . ',
-      ' ... ',
-      '.["a"]',
-      '.',
-      ' . ',
-      'a["b"]c',
-      'a.["b"]c',
-      'a.["b"]c["d"]',
-      'a["b"]c["d"]',
-      'a["b"].c["d"]e',
-      'a["b"].c.',
-      'a ["b"] c',
-      'a["]',
-      'a.[b]',
-      'a[\'b"]',
-      'a[',
-      'a]',
-      'a]]',
-      'a[[',
-      'a["b\']',
-      'a["b`]',
-      'a[11"]',
-      'a[`11]',
-      'a[ `11 ]',
-      'a[[]]',
-      'a[-11]',
-      'a[b]',
-      'a[11x]',
-      'a[1.1]',
-      'a[+1.1]',
-      'a[-1.1]',
-      '.["a"]',
-      'name[a].',
-      'name,',
-      'name;',
-      'a[12345678901234567]',
-    ]
+  it('throws a syntax error if the open tag is not closed', () => {
+    expect(() => parse('Hi {{')).toThrow(
+      new SyntaxError('micromustache parse() cannot find }} matching the {{ at position 3')
+    )
+  })
 
-    for (const input of syntaxErrorsCases) {
-      it(`throws SyntaxError for "${input}"`, () => {
-        expect(() => parsePath(input)).toThrow(SyntaxError)
-      })
-    }
+  it('throws if there is a dangling close tag', () => {
+    expect(() => parse('Molly }} Bark')).toThrow(SyntaxError)
+    expect(() => parse('Molly }}')).toThrow(SyntaxError)
+    expect(() => parse('}}')).toThrow(SyntaxError)
+    expect(() => parse('}} Bark')).toThrow(SyntaxError)
+    expect(() => parse('Molly {{}} }} Bark')).toThrow(SyntaxError)
+    expect(() => parse('Molly }}{{}} Bark')).toThrow(SyntaxError)
+    expect(() => parse('Molly {{}} the }} Bark')).toThrow(SyntaxError)
+  })
 
-    it('throws type error for invalid input types', () => {
-      expect(() => parsePath((undefined as unknown) as string)).toThrow(TypeError)
-      expect(() => parsePath((13 as unknown) as string)).toThrow(TypeError)
+  it('supports empty paths', () => {
+    expect(parse('Hi {{}}')).toEqual({
+      strings: ['Hi ', ''],
+      subs: [''],
     })
+
+    expect(parse('Hi {{ }}')).toEqual({
+      strings: ['Hi ', ''],
+      subs: [' '],
+    })
+  })
+
+  it('throws for nested open and close tag', () => {
+    expect(() => parse('Hello {{ {{name}} }}!')).toThrow()
+  })
+
+  it('throws if the path is too long', () => {
+    expect(() => parse('Hej {{n2345}}!', { maxPathLen: 5 })).not.toThrow()
+    expect(() => parse('Hej {{n2345}}!', { maxPathLen: 4 })).toThrow()
   })
 })

@@ -1,29 +1,44 @@
-const { renderFn, get } = require('../')
+const { stringify, parse, pathGet } = require('../')
 
-const processors = {
-  pow: (a, b) => a ** b,
-  add: (a, b) => a + b,
-  abs: (a) => Math.abs(a),
+const functions = {
+  rev: (a) => a.split('').reverse().join(''),
+  up: (a) => a.toUpperCase(),
+  low: (a) => a.toLowerCase(),
 }
 
 const scope = {
-  x: 13,
-  y: 42,
-  z: -10,
+  firstName: 'Alex',
+  lastName: 'Ewerlöf',
+  company: 'Simpsons',
 }
 
-const template = 'x²={{pow(x, 2)}} and y³={{pow(y, 3)}} and |z|={{abs(z)}}'
+const template = '{{up(lastName)}}, {{low(firstName)}} works for {{rev(company)}} {{wat}}'
 
-function resolveFn(path, scope) {
-  const matches = path.match(/(\w+)\(([^)]*)\)/)
-  if (matches) {
-    const [, fnName, params] = matches
-    const paramNames = params.split(',').map((p) => p.trim())
-    console.log(`Going to call ${fnName}(${paramNames})`)
-    const paramVals = paramNames.map((paramName) => get(scope, paramName) || paramName)
-    return processors[fnName](...paramVals)
+function applyFunctions(functions, template, scope) {
+  function resolvePathToFunctionResult(path) {
+    const matches = path.match(/(\w+)\(([^)]*)\)/)
+
+    if (matches) {
+      const [, fnName, argPath] = matches
+      console.log(`Going to call ${fnName}(${argPath})`)
+      const argVal = pathGet(argPath, scope, {
+        // Just so we throw for non-existing paths in the template
+        validateRef: true,
+      })
+      // The result of this call will be used to substitute the path in the template
+      return functions[fnName](argVal)
+    }
+
+    // If we can't parse a path to "function(param)" format, we return it.
+    // We could throw instead to be strict.
+    return `"${path}"???`
   }
-  return ''
+
+  const { strings, subs } = parse(template)
+  return stringify({
+    strings,
+    subs: subs.map(resolvePathToFunctionResult),
+  })
 }
 
-console.log(renderFn(template, resolveFn, scope))
+console.log(applyFunctions(functions, template, scope))

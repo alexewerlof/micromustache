@@ -1,0 +1,9 @@
+{
+  "person": {
+    "name": "John",
+    "address": "12345 New York"
+  },
+  "totalCost": 23,
+  "currency": "$",
+  "dateOfDelivery": "2020/04/03"
+}

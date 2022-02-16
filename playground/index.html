@@ -10,45 +10,47 @@
     <header>
         <h1>
             <label title="Options">
-            <input type="checkbox" id="options-toggle" hidden /><span>⚙</span>
+            <input type="checkbox" id="optionsToggle" hidden /><span>⚙</span>
             </label>&nbsp;Micromustache <span class="hide-on-small-screens">Playground</span>
         </h1>
     </header>
     <main>
         <aside id="options" hidden>
             <h2>Options</h2>
-            <label><input type="checkbox" id="validatePath" /><code>validatePath</code></label>
-            <br/>
             <label><input type="checkbox" id="validateRef" /><code>validateRef</code></label>
             <br/>
             <label><input type="checkbox" id="explicit" /><code>explicit</code></label>
             <br/>
-            <label><h3><code>maxPathLen</code></h3><input id="maxPathLen" class="io entry" type="number" min="0" max="100" value="30"/></label>
-            <label><h3><code>maxRefDepth</code></h3><input id="maxRefDepth" class="io entry" type="number" min="0" max="20" value="5"/></label>
+            <label><input type="checkbox" id="json" /><code>json</code></label>
+            <br/>
+            <label><h3><code>maxTemplateLen</code></h3><input id="maxTemplateLen" class="io entry" type="number"/></label>
+            <label><h3><code>maxPathLen</code></h3><input id="maxPathLen" class="io entry" type="number"/></label>
+            <label><h3><code>maxRefDepth</code></h3><input id="maxRefDepth" class="io entry" type="number"/></label>
+            <label><h3><code>maxPathCount</code></h3><input id="maxPathCount" class="io entry" type="number"/></label>
             <label>
                 <h3><code>Open Tag</code></h3>
-                <input id="tags0" class="io entry" type="text" value="{{"/>
+                <input id="tags0" class="io entry" type="text"/>
             </label>
             <label>
                 <h3><code>Close Tag</code></h3>
-                <input id="tags1" class="io entry" type="text" value="}}"/>
+                <input id="tags1" class="io entry" type="text"/>
             </label>
         </aside>
         <section>
-            <label for="example-selector" class="hide-on-small-screens"><h2>Examples</h2></label>
-            <select id="example-selector" class="io entry"></select>
+            <label for="exampleSelector" class="hide-on-small-screens"><h2>Examples</h2></label>
+            <select id="exampleSelector" class="io entry"></select>
 
             <label for="template"><h2>Template</h2></label>
             <textarea id="template" class="io entry"></textarea>
-            <div id="template-error" class="error"></div>
+            <div id="templateError" class="error"></div>
 
             <label for="scope"><h2>Scope</h2></label>
             <textarea id="scope" class="io entry"></textarea>
-            <div id="scope-error" class="error"></div>
+            <div id="scopeError" class="error"></div>
 
             <label><h2>Result</h2></label>
             <div id="result" class="io"></div>
-            <div id="result-error" class="error"></div>
+            <div id="resultError" class="error"></div>
         </section>
     </main>
     <footer>

@@ -1,5 +1,8 @@
 const micromustache = require('../')
 const mustache = require('mustache')
+const { readFileSync } = require('fs')
+const path = require('path')
+const realisticScope = require('./realistic/scope.json')
 
 /*
  * Notes to keep in mind:
@@ -7,54 +10,111 @@ const mustache = require('mustache')
  * 2. To Mustache.js defense, it does much more than interpolation so it's not an apple to apple...
  */
 
-const ITERATIONS = 10000
+const LEN = 10
+const ITERATIONS = 1
 
-const hrtime2ms = ([sec, nano]) => sec * 1e3 + nano / 1e6
-function x(a, b) {
-  const ratio = b / a
-  if (ratio < 1) {
-    return ''
+function formatTime(a) {
+  return a < 1 ? Math.round(a * 1000) + 'ns' : Math.round(a) + 'ms'
+}
+
+function hrtime2ms([sec, nano]) {
+  return sec * 1e3 + nano / 1e6
+}
+
+function formatTimeDiff(a, b) {
+  const diff = b - a
+  if (diff < 0) {
+    return '🐢'
   }
 
-  let ret = '🔥 ('
-  ret += ratio < 2 ? (((b - a) * 100) / a).toFixed(0) + '%' : ratio.toFixed(1) + 'x'
-  ret += ' faster)'
-  return ret
+  if (diff === 0) {
+    return '==='
+  }
+
+  const ratio = b / a
+  // If it's less than 20% and the time difference is less than 10ms
+  if (ratio < 1.2 && diff < 10) {
+    return `🐇 ${formatTime(diff)}`
+  }
+
+  if (ratio < 2) {
+    return '🐆 ' + ((diff * 100) / a).toFixed(0) + '% faster!'
+  }
+
+  return '🔥'.repeat(Math.round(ratio)) + ` ${ratio.toFixed(1)}x faster!!!`
 }
-const ms = (a) => Math.round(a) + 'ms'
 
 function compare(f1, f2) {
   const f1name = f1.name
   const f2name = f2.name
 
   console.log(`Comparing ${f1name}() to ${f2name}() for ${ITERATIONS} iterations...`)
+
   let start = process.hrtime()
   for (let i = 0; i < ITERATIONS; i++) {
     f1()
   }
   const f1duration = hrtime2ms(process.hrtime(start))
+
   start = process.hrtime()
   for (let i = 0; i < ITERATIONS; i++) {
     f2()
   }
   const f2duration = hrtime2ms(process.hrtime(start))
 
-  console.log(`${f1name}: ${ms(f1duration)} ${x(f1duration, f2duration)}`)
-  console.log(`${f2name}: ${ms(f2duration)} ${x(f2duration, f1duration)}`)
+  console.log(`1. ${f1name}: ${formatTime(f1duration)} ${formatTimeDiff(f1duration, f2duration)}`)
+  console.log(`2. ${f2name}: ${formatTime(f2duration)} ${formatTimeDiff(f2duration, f1duration)}`)
 }
 
-const LEN = 100
+const realisticTemplate = readFileSync(
+  path.resolve(__dirname, './realistic/template.mustache'),
+  'utf8'
+)
 
-const longRef = 'x'.repeat(LEN)
-const longScope = { [longRef]: 'y'.repeat(LEN) }
-const longTemplate = ('{{' + longRef + '}} and ').repeat(LEN)
-
-function micromustacheLong() {
-  return micromustache.render(longTemplate, longScope, { maxPathLen: 999999 })
+function micromustacheRealistic() {
+  return micromustache.render(realisticTemplate, realisticScope)
 }
 
-function mustacheLong() {
-  return mustache.render(longTemplate, longScope)
+function mustacheRealistic() {
+  return mustache.render(realisticTemplate, realisticScope)
+}
+
+const noPathTemplate = 'Hello! Nothing is here! Go on...'.repeat(LEN)
+const noPathScope = {}
+
+function micromustacheNoPath() {
+  return micromustache.render(noPathTemplate, noPathScope)
+}
+
+function mustacheNoPath() {
+  return mustache.render(noPathTemplate, noPathScope)
+}
+
+const longPath = 'x'.repeat(LEN)
+const longPathVal = 'y'.repeat(LEN)
+const longPathScope = { [longPath]: longPathVal }
+const longPathTemplate = '{{' + longPath + '}}'
+
+function micromustacheLongPath() {
+  return micromustache.render(longPathTemplate, longPathScope, { maxPathLen: 999999 })
+}
+
+function mustacheLongPath() {
+  return mustache.render(longPathTemplate, longPathScope)
+}
+
+const longTmplPath = 'w'
+const longTmplScope = {
+  [longTmplPath]: 'j',
+}
+const longTmplTemplate = ('{{' + longTmplPath + '}} and ').repeat(LEN)
+
+function micromustacheLongTmpl() {
+  return micromustache.render(longTmplTemplate, longTmplScope, { maxPathLen: 999999 })
+}
+
+function mustacheLongTmpl() {
+  return mustache.render(longTmplTemplate, longPathScope)
 }
 
 const diverseScope = {}
@@ -93,6 +153,49 @@ function mustacheDeep() {
   return mustache.render(deepTemplate, deepScope)
 }
 
-compare(micromustacheLong, mustacheLong)
+const allScope = {
+  ...noPathScope,
+  ...longPathScope,
+  ...longTmplScope,
+  ...diverseScope,
+  ...deepScope,
+}
+const allTemplate =
+  noPathTemplate + longPathTemplate + longTmplTemplate + diverseTemplate + deepTemplate
+
+function micromustacheAll() {
+  return micromustache.render(allTemplate, allScope, { maxRefDepth: LEN, maxPathLen: 999999 })
+}
+
+function mustacheAll() {
+  return mustache.render(allTemplate, allScope)
+}
+
+function micromustacheAllRender() {
+  return micromustache.render(allTemplate, allScope, { maxRefDepth: LEN, maxPathLen: 999999 })
+}
+
+const compiled = micromustache.compile(allTemplate, {
+  maxRefDepth: LEN,
+  maxPathLen: 999999,
+})
+
+function micromustacheAllCompiled() {
+  return micromustache.render(
+    compiled,
+    {},
+    {
+      maxRefDepth: LEN,
+      maxPathLen: 999999,
+    }
+  )
+}
+
+compare(micromustacheRealistic, mustacheRealistic)
+compare(micromustacheNoPath, mustacheNoPath)
+compare(micromustacheLongPath, mustacheLongPath)
+compare(micromustacheLongTmpl, mustacheLongTmpl)
 compare(micromustacheDiverse, mustacheDiverse)
 compare(micromustacheDeep, mustacheDeep)
+compare(micromustacheAll, mustacheAll)
+compare(micromustacheAllRender, micromustacheAllCompiled)

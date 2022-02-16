@@ -1,5 +1,6 @@
-const { renderFnAsync } = require('../')
+const { parse, stringify } = require('../')
 
+// Just waits a sec and returns the path in uppercase
 function delayedResolver(path) {
   return new Promise((resolve) => {
     const start = Date.now()
@@ -12,12 +13,14 @@ function delayedResolver(path) {
 
 ;(async () => {
   try {
-    const result = await renderFnAsync(
-      'I like {{apples}} and {{oranges}} because {{wood}} does not taste good',
-      // All resolve functions run in parallel
-      delayedResolver
+    const parsedTemplate = await parse(
+      'I like {{apples}} and {{oranges}} because {{wood}} does not taste good'
     )
-    console.log(result)
+    const modifiedTemplate = {
+      strings: parsedTemplate.strings,
+      subs: await Promise.all(parsedTemplate.subs.map(delayedResolver)),
+    }
+    console.log(stringify(modifiedTemplate))
     // I like APPLES (1002ms) and ORANGES (1003ms) because WOOD (1003ms) does not taste good
   } catch (e) {
     console.error(e)

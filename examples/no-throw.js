@@ -4,7 +4,7 @@ try {
   console.log(
     'We claim that all paths refer to properties that should exist: ',
     render(
-      'There is no {{a.b.c}}!',
+      'This path does not exist but it does not throw: "{{a.b.c}}"!',
       {},
       {
         validateRef: true,

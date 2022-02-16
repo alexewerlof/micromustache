@@ -1,4 +1,4 @@
-import { isObj, isFn, isStr, isNum, isArr, isInt } from './utils'
+import { isObj, isStr, isPos, isArr, optObj } from './utils'
 
 describe('utils', () => {
   it.each([
@@ -9,22 +9,6 @@ describe('utils', () => {
     [true, false],
   ])('isObj()', (x, result) => {
     expect(isObj(x)).toBe(result)
-  })
-
-  it.each([
-    [{}, false],
-    [[], false],
-    [null, false],
-    ['', false],
-    [(): undefined => undefined, true],
-    [
-      function noOp(): undefined {
-        return undefined
-      },
-      true,
-    ],
-  ])('isFn()', (x, result) => {
-    expect(isFn(x)).toBe(result)
   })
 
   it.each([
@@ -40,36 +24,18 @@ describe('utils', () => {
   it.each([
     [1, true],
     [1.1, true],
-    [0, true],
-    [-1, true],
+    [0, false],
+    [-1, false],
     [Number.MAX_SAFE_INTEGER, true],
-    [Number.MIN_SAFE_INTEGER, true],
+    [Number.MIN_SAFE_INTEGER, false],
     [null, false],
     [NaN, false],
     [undefined, false],
     ['-1', false],
     ['0', false],
     ['1', false],
-  ])('isNum()', (x, result) => {
-    expect(isNum(x)).toBe(result)
-  })
-
-  it.each([
-    [1, true],
-    [1.1, false],
-    [0, true],
-    [-1, true],
-    [-1.1, false],
-    [Number.MAX_SAFE_INTEGER, true],
-    [Number.MIN_SAFE_INTEGER, true],
-    [null, false],
-    [NaN, false],
-    [undefined, false],
-    ['-1', false],
-    ['0', false],
-    ['1', false],
-  ])('isInt()', (x, result) => {
-    expect(isInt(x)).toBe(result)
+  ])('isPos()', (x, result) => {
+    expect(isPos(x)).toBe(result)
   })
 
   it.each([
@@ -81,5 +47,18 @@ describe('utils', () => {
     [true, false],
   ])('isArr()', (x, result) => {
     expect(isArr(x)).toBe(result)
+  })
+})
+
+describe('optObj()', () => {
+  it('throws if the provided value is not an object', () => {
+    const test1 = () => void 0
+    expect(() => optObj(test1, null)).toThrow()
+  })
+
+  it('does not throw if it gets an object', () => {
+    const options = { foo: 'bar' }
+    const test2 = () => void 0
+    expect(optObj(test2, options)).toBe(options)
   })
 })
