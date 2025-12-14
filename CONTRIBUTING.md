@@ -6,7 +6,8 @@ The goal of MicroMustache is to be minimalist but if there's something that is t
 
 # Tests
 
-We use Jest for tests. If you want to run the tests, install dependencies and run them:
+We use Node.js native test framework for tests.
+If you want to run the tests, install dependencies and run them:
 
 ```bash
 npm it
