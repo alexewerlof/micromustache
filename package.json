@@ -1,80 +1,57 @@
 {
-  "name": "micromustache",
-  "version": "8.0.3",
-  "description": "A fast, minimal and secure template engine for JavaScript",
-  "keywords": [
-    "template",
-    "mustache",
-    "string processing",
-    "string interpolation",
-    "template engine",
-    "lodash get",
-    "lodash toPath",
-    "lodash template",
-    "microlibrary"
-  ],
-  "types": "dist/types/index.d.ts",
-  "type": "commonjs",
-  "main": "dist/micromustache.cjs",
-  "module": "dist/micromustache.mjs",
-  "directories": {
-    "example": "examples",
-    "lib": "./dist"
-  },
-  "engines": {
-    "node": ">=8"
-  },
-  "devDependencies": {
-    "@rollup/plugin-typescript": "^5.0.2",
-    "@types/jest": "^26.0.9",
-    "@types/mustache": "^4.0.1",
-    "@types/node": "^14.0.27",
-    "@typescript-eslint/eslint-plugin": "^3.8.0",
-    "@typescript-eslint/parser": "^3.8.0",
-    "am": "^1.0.2",
-    "eslint": "^7.6.0",
-    "eslint-config-prettier": "^6.11.0",
-    "jest": "^26.2.2",
-    "mustache": "^4.0.1",
-    "pkg-ok": "^2.3.1",
-    "prettier": "^2.0.5",
-    "rimraf": "^3.0.2",
-    "rollup": "^2.23.0",
-    "rollup-plugin-terser": "^6.1.0",
-    "sloc": "^0.2.1",
-    "ts-jest": "^26.1.4",
-    "ts-node": "^8.10.2",
-    "tslib": "^2.0.0",
-    "typedoc": "^0.17.8",
-    "typescript": "^3.9.7"
-  },
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/userpixel/micromustache.git"
-  },
-  "funding": "https://github.com/userpixel/micromustache/blob/master/.github/FUNDING.yml",
-  "author": "Alex Ewerlöf",
-  "license": "MIT",
-  "scripts": {
-    "clean": "rimraf dist",
-    "build:ts": "rollup --config",
-    "build:types": "tsc src/index.ts --target es5 --declaration --emitDeclarationOnly --declarationDir dist/types",
-    "build": "npm run build:ts && npm run build:types",
-    "docs": "typedoc src/index.ts",
-    "lint": "eslint --ext .ts src",
-    "lint:fix": "npm run lint -- --fix",
-    "pretest": "npm run lint",
-    "test:unit": "jest",
-    "pretest:dist": "npm run build",
-    "test:dist": "cd dist-test && ./run.sh",
-    "test:examples": "for i in examples/*.js;do node \"$i\";done",
-    "test": "npm run test:unit && npm run test:dist && npm run test:examples",
-    "preversion": "npm test && npm run clean && npm run build && pkg-ok",
-    "prepublishOnly": "npm run test && npm run build && pkg-ok",
-    "postversion": "git push && git push --tags",
-    "api-extractor": "api-extractor run --local",
-    "sloc": "sloc src -e .*spec.* -k source --format cli-table",
-    "perf": "npm run build:ts && node perf/against-mustache.js"
-  },
-  "dependencies": {}
+    "name": "micromustache",
+    "version": "8.0.3",
+    "description": "A fast, minimal and secure template engine for JavaScript",
+    "keywords": [
+        "template",
+        "mustache",
+        "string processing",
+        "string interpolation",
+        "template engine",
+        "lodash get",
+        "lodash toPath",
+        "lodash template",
+        "microlibrary"
+    ],
+    "type": "module",
+    "exports": {
+        "import": "./lib/index.js",
+        "types": "./lib/index.d.ts"
+    },
+    "directories": {
+        "lib": "lib",
+        "doc": "doc",
+        "test": "test",
+        "example": "examples"
+    },
+    "files": [
+        "lib"
+    ],
+    "scripts": {
+        "doc": "typedoc src/index.ts",
+        "build": "tsc",
+        "typecheck": "tsc --noEmit",
+        "fmt": "prettier --write .",
+        "test": "npm run typecheck && node --import tsx --test",
+        "test:watch": "npm run typecheck && node --import tsx --test --watch",
+        "test:coverage": "npm run typecheck && node --import tsx --test --experimental-test-coverage",
+        "preversion": "npm t",
+        "prepublishOnly": "npm run build",
+        "postversion": "git push && git push --tags"
+    },
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/alexewerlof/micromustache.git"
+    },
+    "author": "Alex Ewerlöf",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/mustache": "^4.2.6",
+        "@types/node": "^24.7.2",
+        "mustache": "^4.2.0",
+        "prettier": "^3.6.2",
+        "tsx": "^4.20.6",
+        "typedoc": "^0.28.14",
+        "typescript": "^5.9.3"
+    }
 }

@@ -1,20 +1,20 @@
-import { isFn, isObj, isArr } from './utils'
-import { Scope, GetOptions, getRef } from './get'
-import { parsePath, Ref } from './parse'
-import { Tokens } from './tokenize'
+import { isFn, isObj, isArr } from './utils.js'
+import { Scope, GetOptions, getRef } from './get.js'
+import { parsePath, Ref } from './parse.js'
+import { Tokens } from './tokenize.js'
 
 /**
  * The options for the Renderer's constructor
  */
 export interface RendererOptions extends GetOptions {
-  /**
-   * When set to a truthy value, rendering literally puts a 'null' or
-   * 'undefined' for values that are `null` or `undefined`.
-   * By default it swallows those values to be compatible with Mustache.
-   */
-  readonly explicit?: boolean
-  /** when set to a truthy value, validates the paths */
-  readonly validatePath?: boolean
+    /**
+     * When set to a truthy value, rendering literally puts a 'null' or
+     * 'undefined' for values that are `null` or `undefined`.
+     * By default it swallows those values to be compatible with Mustache.
+     */
+    readonly explicit?: boolean
+    /** when set to a truthy value, validates the paths */
+    readonly validatePath?: boolean
 }
 
 /**
@@ -38,140 +38,141 @@ export type ResolveFnAsync = (path: string, scope?: Scope) => Promise<any>
  * `.render()`, `renderFn()` and `renderFnAsync()` functions.
  */
 export class Renderer {
-  /**
-   * Another cache that holds the parsed values for `parsePath()` one per path
-   */
-  private _refsCache: Ref[]
+    /**
+     * Another cache that holds the parsed values for `parsePath()` one per path
+     */
+    private _refsCache?: Ref[]
 
-  /**
-   * Creates a new Renderer instance. This is called internally by the compiler.
-   * @param tokens - the result of the `.tokenize()` function
-   * @param options - some options for customizing the rendering process
-   * @throws `TypeError` if the token is invalid
-   */
-  constructor(private readonly tokens: Tokens, private readonly options: RendererOptions = {}) {
-    if (
-      !isObj(tokens) ||
-      !isArr(tokens.strings) ||
-      !isArr(tokens.paths) ||
-      tokens.strings.length !== tokens.paths.length + 1
+    /**
+     * Creates a new Renderer instance. This is called internally by the compiler.
+     * @param tokens - the result of the `.tokenize()` function
+     * @param options - some options for customizing the rendering process
+     * @throws `TypeError` if the token is invalid
+     */
+    constructor(
+        private readonly tokens: Tokens,
+        private readonly options: RendererOptions = {},
     ) {
-      // This is most likely an internal error from tokenization algorithm
-      throw new TypeError(`Invalid tokens object`)
+        if (
+            !isObj(tokens) ||
+            !isArr(tokens.strings) ||
+            !isArr(tokens.paths) ||
+            tokens.strings.length !== tokens.paths.length + 1
+        ) {
+            // This is most likely an internal error from tokenization algorithm
+            throw new TypeError(`Invalid tokens object`)
+        }
+
+        if (!isObj(options)) {
+            throw new TypeError(`Options should be an object. Got a ${typeof options}`)
+        }
+
+        if (options.validatePath) {
+            // trying to get refs parses them which is also a call for validation
+            this.refs
+        }
     }
 
-    if (!isObj(options)) {
-      throw new TypeError(`Options should be an object. Got a ${typeof options}`)
+    /**
+     * This function is called internally for filling in the `refs` cache.
+     * If the `validatePath` option for the constructor is set to a truthy
+     * value, this function is called immediately which leads to a validation as
+     * well because it throws an error if it cannot parse paths.
+     */
+    private get refs(): Ref[] {
+        const { paths } = this.tokens
+        if (this._refsCache === undefined) {
+            this._refsCache = new Array<Ref>(paths.length)
+
+            for (let i = 0; i < paths.length; i++) {
+                this._refsCache[i] = parsePath.cached(paths[i])
+            }
+        }
+
+        return this._refsCache
     }
 
-    if (options.validatePath) {
-      // trying to get refs parses them which is also a call for validation
-      this.refs
-    }
-  }
+    /**
+     * Replaces every path inside the template with values from the scope
+     * parameter.
+     *
+     * @param template The template containing one or more path as placeholders for values from the
+     * `scope` parameter.
+     * @param scope An object containing values for paths from the the template.
+     * If it's omitted, we default to an empty object.
+     */
+    public render = (scope: Scope = {}): string => {
+        const { paths } = this.tokens
+        const { length } = paths
 
-  /**
-   * This function is called internally for filling in the `refs` cache.
-   * If the `validatePath` option for the constructor is set to a truthy
-   * value, this function is called immediately which leads to a validation as
-   * well because it throws an error if it cannot parse paths.
-   */
-  private get refs(): Ref[] {
-    const { paths } = this.tokens
-    if (this._refsCache === undefined) {
-      this._refsCache = new Array<Ref>(paths.length)
+        const { refs } = this
 
-      for (let i = 0; i < paths.length; i++) {
-        this._refsCache[i] = parsePath.cached(paths[i])
-      }
-    }
+        const values = new Array<any>(length)
 
-    return this._refsCache
-  }
+        for (let i = 0; i < length; i++) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            values[i] = getRef(scope, refs[i], this.options)
+        }
 
-  /**
-   * Replaces every path inside the template with values from the scope
-   * parameter.
-   *
-   * @param template The template containing one or more path as placeholders for values from the
-   * `scope` parameter.
-   * @param scope An object containing values for paths from the the template.
-   * If it's omitted, we default to an empty object.
-   */
-  public render = (scope: Scope = {}): string => {
-    const { paths } = this.tokens
-    const { length } = paths
-
-    const { refs } = this
-
-    const values = new Array<any>(length)
-
-    for (let i = 0; i < length; i++) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      values[i] = getRef(scope, refs[i], this.options)
+        return this.stringify(values)
     }
 
-    return this.stringify(values)
-  }
-
-  /**
-   * Same as [[render]] but accepts a resolver function which returns a value for every path.
-   */
-  public renderFn = (resolveFn: ResolveFn, scope: Scope = {}): string => {
-    const values = this.resolveRefs(resolveFn, scope)
-    return this.stringify(values)
-  }
-
-  /**
-   * Same as [[render]] but accepts a resolver function which returns a promise that resolves to a
-   * value for every path.
-   */
-  public renderFnAsync = (resolveFnAsync: ResolveFnAsync, scope: Scope = {}): Promise<string> => {
-    return Promise.all(this.resolveRefs(resolveFnAsync, scope)).then((values) =>
-      this.stringify(values)
-    )
-  }
-
-  private resolveRefs(resolveFn: ResolveFn, scope: Scope = {}): any[] {
-    const { paths } = this.tokens
-    if (!isFn<ResolveFnAsync>(resolveFn)) {
-      throw new TypeError(`Expected a resolver function. Got ${String(resolveFn)}`)
+    /**
+     * Same as [[render]] but accepts a resolver function which returns a value for every path.
+     */
+    public renderFn = (resolveFn: ResolveFn, scope: Scope = {}): string => {
+        const values = this.resolveRefs(resolveFn, scope)
+        return this.stringify(values)
     }
 
-    const { length } = paths
-    const values = new Array<any>(length)
-    for (let i = 0; i < length; i++) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      values[i] = resolveFn.call(null, paths[i], scope)
+    /**
+     * Same as [[render]] but accepts a resolver function which returns a promise that resolves to a
+     * value for every path.
+     */
+    public renderFnAsync = (resolveFnAsync: ResolveFnAsync, scope: Scope = {}): Promise<string> => {
+        return Promise.all(this.resolveRefs(resolveFnAsync, scope)).then((values) => this.stringify(values))
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return values
-  }
+    private resolveRefs(resolveFn: ResolveFn, scope: Scope = {}): any[] {
+        const { paths } = this.tokens
+        if (!isFn<ResolveFnAsync>(resolveFn)) {
+            throw new TypeError(`Expected a resolver function. Got ${String(resolveFn)}`)
+        }
 
-  /**
-   * Puts the resolved `values` into the rest of the template (`strings`) and
-   * returns the final result that'll be returned from `render()`, `renderFn()`
-   * and `renderFnAsync()` functions.
-   */
-  private stringify(values: any[]): string {
-    const { strings } = this.tokens
-    const { explicit } = this.options
-    const { length } = values
+        const { length } = paths
+        const values = new Array<any>(length)
+        for (let i = 0; i < length; i++) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            values[i] = resolveFn.call(null, paths[i], scope)
+        }
 
-    let ret = ''
-    for (let i = 0; i < length; i++) {
-      ret += strings[i]
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const value: any = values[i]
-
-      if (explicit || (value !== null && value !== undefined)) {
-        ret += value
-      }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return values
     }
 
-    ret += strings[length]
+    /**
+     * Puts the resolved `values` into the rest of the template (`strings`) and
+     * returns the final result that'll be returned from `render()`, `renderFn()`
+     * and `renderFnAsync()` functions.
+     */
+    private stringify(values: any[]): string {
+        const { strings } = this.tokens
+        const { explicit } = this.options
+        const { length } = values
 
-    return ret
-  }
+        let ret = ''
+        for (let i = 0; i < length; i++) {
+            ret += strings[i]
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            const value: any = values[i]
+
+            if (explicit || (value !== null && value !== undefined)) {
+                ret += value
+            }
+        }
+
+        ret += strings[length]
+
+        return ret
+    }
 }

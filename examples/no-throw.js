@@ -1,18 +1,18 @@
-const { render } = require('../')
+import { render } from '../lib/index.js'
 
 try {
-  console.log(
-    'We claim that all paths refer to properties that should exist: ',
-    render(
-      'There is no {{a.b.c}}!',
-      {},
-      {
-        validateRef: true,
-      }
+    console.log(
+        'We claim that all paths refer to properties that should exist: ',
+        render(
+            'There is no {{a.b.c}}!',
+            {},
+            {
+                validateRef: true,
+            },
+        ),
     )
-  )
 } catch (e) {
-  console.log('That is why it throws:', e.message)
+    console.log('That is why it throws:', e.message)
 }
 
 console.log('But without validateRef flag it is more forgiving:')

@@ -1,4 +1,5 @@
 # Change Log
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
@@ -51,6 +52,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Expose a CommonJS build for the browser limited to ECMAScript 5 features.
 
 ### BREAKING CHANGES:
+
 - **The biggest change is that if you used `compile()` in version 5, it returned a function but since version 6, it returns an object that _has_ a `render()` function**
 - The behaviour of the resolver function has changed: In v5 if the resolver threw an error we fell back to the standard `.get()` functionality but v6 just throws that error in an effort to make debugging easier.
 - We don't use default exports anymore so `const render = require('micromustache/render')`
@@ -61,12 +63,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - If one of the nested keys do not exist, we throw and will not swallow that error
 
 ## 5.4.0
+
 - Modernize the the dependencies and build system
 
 ## 5.1.0 2017-01-08
+
 - Add command line support
 
 ## 5.0.0 2017-01-08
+
 - Update readme
 - remove building browser packages (use webpack, browserify or any other modern method to build)
 - Command line interface

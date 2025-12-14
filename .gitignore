@@ -1,5 +1,7 @@
-node_modules/
-lib/
-docs/
-npm-debug.log
+.TODO
 dist/
+doc/
+docs/
+lib/
+node_modules/
+npm-debug.log

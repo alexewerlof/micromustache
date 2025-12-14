@@ -1,14 +1,18 @@
 {
-  "compilerOptions": {
-    "noImplicitAny": true,
-    "sourceMap": true,
-    "strictNullChecks": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "newLine": "LF",
-    "listEmittedFiles": true,
-    "target": "es5",
-  }
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+
+        /* Emitting Files */
+        "declaration": true,
+        "sourceMap": true,
+        "outDir": "lib",
+        "newLine": "LF"
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "lib"]
 }

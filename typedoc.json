@@ -1,0 +1,9 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "name": "jty",
+    "entryPoints": ["src/index.ts"],
+    "customCss": "typedoc.css",
+    "hostedBaseUrl": "https://alexewerlof.github.io/jty/",
+    "customFooterHtml": "Made with ❤️ by <a href='https://alexewerlof.com/'>Alex Ewerlöf</a>",
+    "out": "./doc"
+}

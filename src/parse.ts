@@ -1,4 +1,4 @@
-import { isStr } from './utils'
+import { isStr } from './utils.js'
 
 /**
  * An array that is derived from a path string
@@ -22,37 +22,37 @@ const cacheSize = 1000
  * @internal
  */
 export class Cache<T> {
-  private map: {
-    [path: string]: T
-  }
-
-  private cachedKeys: string[]
-  private oldestIndex: number
-
-  constructor(private size: number) {
-    this.reset()
-  }
-
-  public reset(): void {
-    this.oldestIndex = 0
-    this.map = {}
-    this.cachedKeys = new Array<string>(this.size)
-  }
-
-  public get(key: string): T {
-    return this.map[key]
-  }
-
-  public set(key: string, value: T): void {
-    this.map[key] = value
-    const oldestKey = this.cachedKeys[this.oldestIndex]
-    if (oldestKey !== undefined) {
-      delete this.map[oldestKey]
+    private map!: {
+        [path: string]: T
     }
-    this.cachedKeys[this.oldestIndex] = key
-    this.oldestIndex++
-    this.oldestIndex %= this.size
-  }
+
+    private cachedKeys!: string[]
+    private oldestIndex!: number
+
+    constructor(private size: number) {
+        this.reset()
+    }
+
+    public reset(): void {
+        this.oldestIndex = 0
+        this.map = {}
+        this.cachedKeys = new Array<string>(this.size)
+    }
+
+    public get(key: string): T {
+        return this.map[key]
+    }
+
+    public set(key: string, value: T): void {
+        this.map[key] = value
+        const oldestKey = this.cachedKeys[this.oldestIndex]
+        if (oldestKey !== undefined) {
+            delete this.map[oldestKey]
+        }
+        this.cachedKeys[this.oldestIndex] = key
+        this.oldestIndex++
+        this.oldestIndex %= this.size
+    }
 }
 
 /** @internal */
@@ -60,21 +60,21 @@ const cache = new Cache<string[]>(cacheSize)
 
 /** @internal */
 interface RegExpWithNameGroup extends RegExpExecArray {
-  groups: {
-    name: string
-  }
+    groups: {
+        name: string
+    }
 }
 
 /** @internal */
 const pathPatterns: Array<RegExp> = [
-  // `.a` the most common patter (hence first)
-  /\s*\.\s*(?<name>[$_\w]+)\s*/y,
-  // `a['b']` or `a["b"]` or `a[\`b\`]`
-  /\s*\[\s*(?<quote>['"`])(?<name>.*?)\k<quote>\s*\]\s*/y,
-  // `a[N]` where N is a positive integer (`String(Number.MAX_SAFE_INTEGER).length` is 16)
-  /\s*\[\s*\+?\s*0*(?<name>\d{1,16}?)\s*\]\s*/y,
-  // `a` at the start of the string
-  /^\s*(?<name>[$_\w]+)\s*/y,
+    // `.a` the most common pattern (hence first)
+    /\s*\.\s*(?<name>[$_\w]+)\s*/y,
+    // `a['b']` or `a["b"]` or `a[\`b\`]`
+    /\s*\[\s*(?<quote>['"`])(?<name>.*?)\k<quote>\s*\]\s*/y,
+    // `a[N]` where N is a positive integer (`String(Number.MAX_SAFE_INTEGER).length` is 16)
+    /\s*\[\s*\+?\s*0*(?<name>\d{1,16}?)\s*\]\s*/y,
+    // `a` at the start of the string
+    /^\s*(?<name>[$_\w]+)\s*/y,
 ]
 
 /**
@@ -88,41 +88,41 @@ const pathPatterns: Array<RegExp> = [
  * For example `['a', 'b', 'c']`
  */
 export function parsePath(path: string): Ref {
-  if (!isStr(path)) {
-    throw new TypeError(`Cannot parse ref. Expected string. Got a ${typeof path}`)
-  }
-
-  const ref: Ref = []
-
-  if (path.trim() === '') {
-    return ref
-  }
-
-  let currIndex = 0
-
-  let patternMatched
-
-  do {
-    patternMatched = false
-    for (const pattern of pathPatterns) {
-      pattern.lastIndex = currIndex
-      const parsedResult = pattern.exec(path)
-
-      if (parsedResult) {
-        patternMatched = true
-        currIndex = pattern.lastIndex
-        // For perf reasons we assume that all regex groups have a capture group called name
-        ref.push((parsedResult as RegExpWithNameGroup).groups.name)
-        break
-      }
+    if (!isStr(path)) {
+        throw new TypeError(`Cannot parse ref. Expected string. Got a ${typeof path}`)
     }
-  } while (patternMatched)
 
-  if (currIndex !== path.length) {
-    throw new SyntaxError(`Could not parse path: "${path}"`)
-  }
+    const ref: Ref = []
 
-  return ref
+    if (path.trim() === '') {
+        return ref
+    }
+
+    let currIndex = 0
+
+    let patternMatched
+
+    do {
+        patternMatched = false
+        for (const pattern of pathPatterns) {
+            pattern.lastIndex = currIndex
+            const parsedResult = pattern.exec(path)
+
+            if (parsedResult) {
+                patternMatched = true
+                currIndex = pattern.lastIndex
+                // For perf reasons we assume that all regex groups have a capture group called name
+                ref.push((parsedResult as RegExpWithNameGroup).groups.name)
+                break
+            }
+        }
+    } while (patternMatched)
+
+    if (currIndex !== path.length) {
+        throw new SyntaxError(`Could not parse path: "${path}"`)
+    }
+
+    return ref
 }
 
 /**
@@ -130,14 +130,14 @@ export function parsePath(path: string): Ref {
  * @internal
  */
 function parseRefCached(path: string): Ref {
-  let result = cache.get(path)
+    let result = cache.get(path)
 
-  if (result === undefined) {
-    result = parsePath(path)
-    cache.set(path, result)
-  }
+    if (result === undefined) {
+        result = parsePath(path)
+        cache.set(path, result)
+    }
 
-  return result
+    return result
 }
 
 parsePath.cached = parseRefCached

@@ -1,5 +1,5 @@
-import { Renderer, RendererOptions } from './renderer'
-import { tokenize, TokenizeOptions } from './tokenize'
+import { Renderer, RendererOptions } from './renderer.js'
+import { tokenize, TokenizeOptions } from './tokenize.js'
 
 /**
  * The options that customize the tokenization of the template and the renderer
@@ -23,6 +23,6 @@ export interface CompileOptions extends RendererOptions, TokenizeOptions {}
  * @returns a [[Renderer]] object which has render methods
  */
 export function compile(template: string, options: CompileOptions = {}): Renderer {
-  const tokens = tokenize(template, options)
-  return new Renderer(tokens, options)
+    const tokens = tokenize(template, options)
+    return new Renderer(tokens, options)
 }

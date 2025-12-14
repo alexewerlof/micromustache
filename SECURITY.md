@@ -13,5 +13,5 @@ Due to available resources and differences in code, only the recent versions are
 
 ## Reporting a Vulnerability
 
-* If you have found a security vulnerability in the library you can mail the main author at: hanifbbz@gmail.com
-* If an example is promoting bad security practices, you can make an issue or PR
+- If you have found a security vulnerability in the library you can mail the main author at: hanifbbz@gmail.com
+- If an example is promoting bad security practices, you can make an issue or PR

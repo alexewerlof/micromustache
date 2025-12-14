@@ -16,19 +16,19 @@ A **secure**, fast and lightweight template engine with some handy additions.
 
 Think of it as a sweet spot between plain text interpolation and [mustache.js](https://github.com/janl/mustache.js); Certainly not as logic-ful as [Handlebars](http://handlebarsjs.com/)! Sometimes a stricter syntax is the right boundary to reduce potential errors and improve performance. This tool has a limited scope that doesn't attempt to solve everybody's use case, and instead do a specific thing well.
 
-* 🏃 Faster than MustacheJS (_Micromustache is the fastest template engine that doesn't need pre-compilation and still works in CSP environments_)
-* 🔒 **Secure** has limits for variable length, number of interpolations, nesting debth and common Javascript pitfalls (`__proto__`, `constructor`, getters/etc). Works in CSP environments (no usage of `eval()` or `new Function()`). Published only with 2FA.
-* ✏ **Bracket notation** support `a[1]['foo']` accessors (mustache.js/handlebar syntax of `a.1.foo` is also supported).
-* 🎈 **Lightweight** less than 350 source lines of code, easy to audit, small API surface, easy to pick up
-* 🏳 **No dependencies**
-* 🐁 **Small memory footprint** sane caching strategy, no memory leak
-* 🚩 **Meaningful errors** to improve developer experience. All functions test their input contracts and throw meaningful errors to improve developer experience (DX).
-* ⚡ **TypeScript** types included out of the box and updated with every version of the library
-* 🐇 Works in node (CommonJS) and Browser (UMD) and EcmaScript 6 Modules (ESM)
-* 🛠 Thoroughly tested (full test coverage over 120+ tests). Also tested to produce the same results as [Mustache.js](https://github.com/janl/mustache.js/).
-* 📖 Full JSDoc documentation
+- 🏃 Faster than MustacheJS (_Micromustache is the fastest template engine that doesn't need pre-compilation and still works in CSP environments_)
+- 🔒 **Secure** has limits for variable length, number of interpolations, nesting debth and common Javascript pitfalls (`__proto__`, `constructor`, getters/etc). Works in CSP environments (no usage of `eval()` or `new Function()`). Published only with 2FA.
+- ✏ **Bracket notation** support `a[1]['foo']` accessors (mustache.js/handlebar syntax of `a.1.foo` is also supported).
+- 🎈 **Lightweight** less than 350 source lines of code, easy to audit, small API surface, easy to pick up
+- 🏳 **No dependencies**
+- 🐁 **Small memory footprint** sane caching strategy, no memory leak
+- 🚩 **Meaningful errors** to improve developer experience. All functions test their input contracts and throw meaningful errors to improve developer experience (DX).
+- ⚡ **TypeScript** types included out of the box and updated with every version of the library
+- 🐇 Works in node (CommonJS) and Browser (UMD) and EcmaScript 6 Modules (ESM)
+- 🛠 Thoroughly tested (full test coverage over 120+ tests). Also tested to produce the same results as [Mustache.js](https://github.com/janl/mustache.js/).
+- 📖 Full JSDoc documentation
 
-If variable interpolation is all you need, *micromustache* is a [drop-in replacement](src/mustachejs.spec.ts) for MustacheJS (see its differences with [Mustache.js](https://github.com/userpixel/micromustache/wiki/Differences-with-Mustache.js))
+If variable interpolation is all you need, _micromustache_ is a [drop-in replacement](src/mustachejs.spec.ts) for MustacheJS (see its differences with [Mustache.js](https://github.com/userpixel/micromustache/wiki/Differences-with-Mustache.js))
 
 [Try it in your browser!](https://npm.runkit.com/micromustache)
 
@@ -62,7 +62,7 @@ Template literals work great when the template and the variables are in the same
 
 ```javascript
 function greet(name) {
-  return `Hi ${name}!`
+    return `Hi ${name}!`
 }
 ```
 
@@ -70,8 +70,8 @@ After your function became successful and you got rich 🤑 you may decide to do
 
 ```javascript
 function greet(name, lang) {
-  // Note the lang parameter that contains a language code
-  return lang === 'sv' ? `Hej ${name}!` : `Hi ${name}!`
+    // Note the lang parameter that contains a language code
+    return lang === 'sv' ? `Hej ${name}!` : `Hi ${name}!`
 }
 ```
 
@@ -79,12 +79,15 @@ But how about a bunch of them?
 
 ```javascript
 function greet(name, lang) {
-  switch (lang) {
-    case 'sv': return `Hej ${name}!`
-    case 'es': return `Hola ${name}!`
-    default:
-    case 'en': return `Hi ${name}!`
-  }
+    switch (lang) {
+        case 'sv':
+            return `Hej ${name}!`
+        case 'es':
+            return `Hola ${name}!`
+        default:
+        case 'en':
+            return `Hi ${name}!`
+    }
 }
 ```
 
@@ -94,19 +97,19 @@ That doesn't scale well as you dominate country after country and need to suppor
 const { render } = require('micromustache')
 // A very simplified i18n database
 const db = {
-  en: {
-    greeting: 'Hi {{name}}!',
+    en: {
+        greeting: 'Hi {{name}}!',
+        // ...
+    },
+    sv: {
+        greeting: 'Hej {{name}}!',
+        // ...
+    },
     // ...
-  },
-  sv: {
-    greeting: 'Hej {{name}}!',
-    // ...
-  },
-  // ...
 }
 
 function greet(name, lang) {
-  return render(db[lang].greeting, { name } )
+    return render(db[lang].greeting, { name })
 }
 ```
 
@@ -116,23 +119,23 @@ Just like template literals, you can of course reference deep nested objects:
 ```javascript
 const { render } = require('micromustache')
 const scope = {
-  fruits: [
-    { name: 'Apple', color: 'red' },
-    { name: 'Banana', color: 'yellow' },
-  ]
+    fruits: [
+        { name: 'Apple', color: 'red' },
+        { name: 'Banana', color: 'yellow' },
+    ],
 }
 console.log(render('I like {{fruits[1].color}}!', scope))
 // I like Bababa!
 ```
 
-*It worth to note that Mustache and Handlebars don't support `fruits[1].color` syntax and rather expect you to write it as `fruits.1.color`.*
+_It worth to note that Mustache and Handlebars don't support `fruits[1].color` syntax and rather expect you to write it as `fruits.1.color`._
 
 The real power of micromustache comes from letting you resolve a path using your own functions! To pass a resolver function, you can use `renderFn()` instead of `render()`:
 
 ```javascript
 const { renderFn } = require('micromustache')
 // Just converts the path to upper case
-const up = str => str.toUpperCase()
+const up = (str) => str.toUpperCase()
 
 console.log(renderFn('My name is {{Alex}}!', up))
 // My name is ALEX!
@@ -145,10 +148,10 @@ const { renderFn, get } = require('micromustache')
 
 // Looks up the value and converts it to stars
 function star(path, scope) {
-  // path comes from the template and is 'password' here
-  // scope is { password: 'abc' }
-  const value = get(scope, path) // value is 'abc'
-  return '*'.repeat(value.length)
+    // path comes from the template and is 'password' here
+    // scope is { password: 'abc' }
+    const value = get(scope, path) // value is 'abc'
+    return '*'.repeat(value.length)
 }
 
 console.log(renderFn('My password is {{password}}!', star, { password: 'abc' }))
@@ -162,9 +165,9 @@ const { renderFnAsync } = require('micromustache')
 const fetch = require('node-fetch')
 
 async function taskTitleFromUrl(url) {
-  const response = await fetch(url)
-  const obj = await response.json()
-  return obj.title
+    const response = await fetch(url)
+    const obj = await response.json()
+    return obj.title
 }
 
 console.log(await renderFnAsync('Got {{https://jsonplaceholder.typicode.com/todos/1}}!', fetch))
@@ -184,13 +187,13 @@ console.log(render({ name: 'world', age: 42 }))
 // Hello world! I'm 42
 ```
 
-*If the `compiled` variable above is garbage collected, the cache is freed (unlike some other template engines that dearly keep hold of the compiled result in their cache which may leads to memory leaks or **out of memory errors** over longer usage).*
+_If the `compiled` variable above is garbage collected, the cache is freed (unlike some other template engines that dearly keep hold of the compiled result in their cache which may leads to memory leaks or **out of memory errors** over longer usage)._
 
 Using the options you can do all sorts of fancy stuff. For example, here is an imitation of the **C#** string interpolation syntax:
 
 ```javascript
 const { render } = require('micromustache')
-const $ = scope => strings => render(strings[0], scope, { tags: ['{', '}'] })
+const $ = (scope) => (strings) => render(strings[0], scope, { tags: ['{', '}'] })
 
 const name = 'Michael'
 console.log($({ name })`Hello {name}!`)

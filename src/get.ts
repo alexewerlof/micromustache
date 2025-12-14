@@ -1,32 +1,32 @@
-import { parsePath, Ref } from './parse'
-import { isObj, isProp, isNum, isArr } from './utils'
+import { parsePath, Ref } from './parse.js'
+import { isObj, isProp, isNum, isArr } from './utils.js'
 
 export interface Scope {
-  [key: string]: Scope | any
+    [key: string]: Scope | any
 }
 
 export interface GetOptions {
-  /**
-   * When set to a truthy value, we throw a `ReferenceError` for invalid paths and refs.
-   * - An invalid ref specifies an array of properties that does not exist in the scope.
-   * - An invalid path is a string that is parsed to an invalid ref.
-   *
-   * When set to a falsy value, we use an empty string for paths and refs that don't exist in the
-   * scope.
-   *
-   * If a value does not exist in the scope, two things can happen:
-   * - if `validateRef` is falsy, the value will be assumed empty string
-   * - if `validateRef` is truthy, a `ReferenceError` will be thrown
-   */
-  readonly validateRef?: boolean
-  /**
-   * Drilling a nested object to get the value assigned with a ref is a relatively expensive
-   * computation. Therefore you can set a value of how deep you are expecting a template to go and
-   * if the nesting is deeper than that, the computation stops with an error.
-   * This prevents a malicious or erroneous template with deep nesting to block the JavaScript event
-   * loop. The default is 10.
-   */
-  readonly maxRefDepth?: number
+    /**
+     * When set to a truthy value, we throw a `ReferenceError` for invalid paths and refs.
+     * - An invalid ref specifies an array of properties that does not exist in the scope.
+     * - An invalid path is a string that is parsed to an invalid ref.
+     *
+     * When set to a falsy value, we use an empty string for paths and refs that don't exist in the
+     * scope.
+     *
+     * If a value does not exist in the scope, two things can happen:
+     * - if `validateRef` is falsy, the value will be assumed empty string
+     * - if `validateRef` is truthy, a `ReferenceError` will be thrown
+     */
+    readonly validateRef?: boolean
+    /**
+     * Drilling a nested object to get the value assigned with a ref is a relatively expensive
+     * computation. Therefore you can set a value of how deep you are expecting a template to go and
+     * if the nesting is deeper than that, the computation stops with an error.
+     * This prevents a malicious or erroneous template with deep nesting to block the JavaScript event
+     * loop. The default is 10.
+     */
+    readonly maxRefDepth?: number
 }
 
 /**
@@ -46,40 +46,38 @@ export interface GetOptions {
  * @returns the value or undefined
  */
 export function getRef(scope: Scope, ref: Ref, options: GetOptions = {}): any {
-  if (!isObj(options)) {
-    throw new TypeError(`get expects an object option. Got ${typeof options}`)
-  }
-
-  if (!isArr(ref)) {
-    throw new TypeError(`Expected an array ref. Got ${ref}`)
-  }
-
-  const { maxRefDepth = 10 } = options
-  if (!isNum(maxRefDepth) || maxRefDepth <= 0) {
-    throw new RangeError(`Expected a positive number for maxRefDepth. Got ${maxRefDepth}`)
-  }
-
-  const propNamesAsStr = () => ref.join(' > ')
-
-  if (ref.length > maxRefDepth) {
-    throw new ReferenceError(
-      `The ref cannot be deeper than ${maxRefDepth} levels. Got "${propNamesAsStr()}"`
-    )
-  }
-
-  let currentScope = scope
-  for (const prop of ref) {
-    if (isProp(currentScope, prop)) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      currentScope = currentScope[prop]
-    } else if (options.validateRef) {
-      throw new ReferenceError(`${prop} is not defined in the scope at ref: "${propNamesAsStr()}"`)
-    } else {
-      // This undefined result will be stringified later according to the explicit option
-      return
+    if (!isObj(options)) {
+        throw new TypeError(`get expects an object option. Got ${typeof options}`)
     }
-  }
-  return currentScope
+
+    if (!isArr(ref)) {
+        throw new TypeError(`Expected an array ref. Got ${ref}`)
+    }
+
+    const { maxRefDepth = 10 } = options
+    if (!isNum(maxRefDepth) || maxRefDepth <= 0) {
+        throw new RangeError(`Expected a positive number for maxRefDepth. Got ${maxRefDepth}`)
+    }
+
+    const propNamesAsStr = () => ref.join(' > ')
+
+    if (ref.length > maxRefDepth) {
+        throw new ReferenceError(`The ref cannot be deeper than ${maxRefDepth} levels. Got "${propNamesAsStr()}"`)
+    }
+
+    let currentScope = scope
+    for (const prop of ref) {
+        if (isProp(currentScope, prop)) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            currentScope = currentScope[prop]
+        } else if (options.validateRef) {
+            throw new ReferenceError(`${prop} is not defined in the scope at ref: "${propNamesAsStr()}"`)
+        } else {
+            // This undefined result will be stringified later according to the explicit option
+            return
+        }
+    }
+    return currentScope
 }
 
 /**
@@ -95,6 +93,6 @@ export function getRef(scope: Scope, ref: Ref, options: GetOptions = {}): any {
  * @returns the value or undefined
  */
 export function get(scope: Scope, path: string, options: GetOptions = {}): any {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return getRef(scope, parsePath(path), options)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return getRef(scope, parsePath(path), options)
 }

@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Alata&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-optical-sizing: auto;
+    font-weight: normal;
+    font-style: normal;
+    font-variation-settings: 'wdth' 100;
+}
+
+pre,
+code {
+    font-family: 'Roboto Mono', monospace;
+    font-optical-sizing: auto;
+    font-weight: normal;
+    font-style: normal;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Alata', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+:root,
+:root[data-theme='light'] {
+    --code-background: inherit;
+    --color-accent: #ffbc52;
+    --color-active-menu-item: #47a9ff;
+    --color-background-secondary: #47a9ff;
+    --color-background: #fff5e6;
+    --color-contrast-text: #fff5e6;
+    --color-link: #47a9ff;
+    --color-text: #001426;
+    --color-ts-call-signature: #1bc554;
+    --color-ts-function: #47a9ff;
+    --color-ts-keyword: #f86262;
+    --color-ts-parameter: #b469f2;
+    --color-contrast-text: #001426;
+}
+
+:root[data-theme='dark'] {
+    --color-background: #001426;
+    --color-text: #fff5e6;
+    --color-background-secondary: #001b33;
+    --code-background: #000c17;
+    --dark-color-accent: #ffbc52;
+    --dark-color-active-menu-item: #001b33;
+    --dark-color-background-secondary: #001b33;
+    --dark-color-ts-call-signature: #1bc554;
+    --dark-color-ts-keyword: #47a9ff;
+    --dark-color-ts-parameter: #f86262;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /** This is just manually copied over from :root[data-theme='dark'] because I don't know a better way */
+        --color-background: #001426;
+        --color-text: #fff5e6;
+        --color-background-secondary: #001b33;
+        --code-background: #000c17;
+        --dark-color-accent: #ffbc52;
+        --dark-color-active-menu-item: #001b33;
+        --dark-color-background-secondary: #001b33;
+        --dark-color-ts-call-signature: #1bc554;
+        --dark-color-ts-keyword: #47a9ff;
+        --dark-color-ts-parameter: #f86262;
+    }
+}

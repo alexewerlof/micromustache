@@ -1,6 +1,6 @@
-import { Renderer, ResolveFn, ResolveFnAsync } from './renderer'
-import { Scope } from './get'
-import { compile, CompileOptions } from './compile'
+import { Renderer, ResolveFn, ResolveFnAsync } from './renderer.js'
+import { Scope } from './get.js'
+import { compile, CompileOptions } from './compile.js'
 
 /**
  * Replaces every {{path}} inside the template with values from the scope
@@ -19,8 +19,8 @@ import { compile, CompileOptions } from './compile'
  * corresponding values.
  */
 export function render(template: string, scope?: Scope, options?: CompileOptions): string {
-  const renderer: Renderer = compile(template, options)
-  return renderer.render(scope)
+    const renderer: Renderer = compile(template, options)
+    return renderer.render(scope)
 }
 
 /**
@@ -32,14 +32,9 @@ export function render(template: string, scope?: Scope, options?: CompileOptions
  * @returns Template where its paths are replaced with the values returned from the resolver
  * function
  */
-export function renderFn(
-  template: string,
-  resolveFn: ResolveFn,
-  scope?: Scope,
-  options?: CompileOptions
-): string {
-  const renderer: Renderer = compile(template, options)
-  return renderer.renderFn(resolveFn, scope)
+export function renderFn(template: string, resolveFn: ResolveFn, scope?: Scope, options?: CompileOptions): string {
+    const renderer: Renderer = compile(template, options)
+    return renderer.renderFn(resolveFn, scope)
 }
 
 /**
@@ -52,11 +47,11 @@ export function renderFn(
  * with what is returned from the resolver function for each path.
  */
 export function renderFnAsync(
-  template: string,
-  resolveFnAsync: ResolveFnAsync,
-  scope?: Scope,
-  options?: CompileOptions
+    template: string,
+    resolveFnAsync: ResolveFnAsync,
+    scope?: Scope,
+    options?: CompileOptions,
 ): Promise<string> {
-  const renderer: Renderer = compile(template, options)
-  return renderer.renderFnAsync(resolveFnAsync, scope)
+    const renderer: Renderer = compile(template, options)
+    return renderer.renderFnAsync(resolveFnAsync, scope)
 }
