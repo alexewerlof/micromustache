@@ -35,7 +35,8 @@
         "test": "npm run typecheck && node --import tsx --test",
         "test:watch": "npm run typecheck && node --import tsx --test --watch",
         "test:coverage": "npm run typecheck && node --import tsx --test --experimental-test-coverage",
-        "test:examples": "for i in examples/*.js;do echo \"$i\" && node \"$i\";done",
+        "test:examples": "npm run build && for i in examples/*.js;do echo \"$i\" && node \"$i\";done",
+        "perf": "npm run build && node --cpu-prof perf/against-mustache.js",
         "preversion": "npm t",
         "prepublishOnly": "npm run build",
         "postversion": "git push && git push --tags"

@@ -5,3 +5,4 @@ docs/
 lib/
 node_modules/
 npm-debug.log
+*.cpuprofile
