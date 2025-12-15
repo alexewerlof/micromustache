@@ -110,7 +110,6 @@ export class Renderer {
         const values = new Array<any>(length)
 
         for (let i = 0; i < length; i++) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             values[i] = getRef(scope, refs[i], this.options)
         }
 
@@ -142,11 +141,9 @@ export class Renderer {
         const { length } = paths
         const values = new Array<any>(length)
         for (let i = 0; i < length; i++) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             values[i] = resolveFn.call(null, paths[i], scope)
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return values
     }
 
@@ -163,7 +160,6 @@ export class Renderer {
         let ret = ''
         for (let i = 0; i < length; i++) {
             ret += strings[i]
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const value: any = values[i]
 
             if (explicit || (value !== null && value !== undefined)) {

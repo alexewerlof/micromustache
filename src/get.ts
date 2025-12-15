@@ -68,7 +68,6 @@ export function getRef(scope: Scope, ref: Ref, options: GetOptions = {}): any {
     let currentScope = scope
     for (const prop of ref) {
         if (isProp(currentScope, prop)) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             currentScope = currentScope[prop]
         } else if (options.validateRef) {
             throw new ReferenceError(`${prop} is not defined in the scope at ref: "${propNamesAsStr()}"`)
@@ -93,6 +92,5 @@ export function getRef(scope: Scope, ref: Ref, options: GetOptions = {}): any {
  * @returns the value or undefined
  */
 export function get(scope: Scope, path: string, options: GetOptions = {}): any {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return getRef(scope, parsePath(path), options)
 }

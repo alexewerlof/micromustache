@@ -346,7 +346,6 @@ describe('render', () => {
             const resolveFn: ResolveFnAsync = async (
                 path,
                 obj: any,
-                // eslint-disable-next-line @typescript-eslint/require-await
             ): Promise<string | undefined> => obj[path]
 
             const scope = { name: 'Alex' }

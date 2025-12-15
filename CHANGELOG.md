@@ -76,7 +76,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - remove building browser packages (use webpack, browserify or any other modern method to build)
 - Command line interface
 - Add travis build
-- Use linting rules from Schibsted
 - Converted to CommonJS (dropped AMD and UMD in favor of modern build tools)
 - Use yarn
 - Rewrote test with chai.expect instead of chai.assert

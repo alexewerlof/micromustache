@@ -45,7 +45,6 @@ describe('Renderer', () => {
             const resolveFn: ResolveFnAsync = async (
                 path,
                 obj: any,
-                // eslint-disable-next-line @typescript-eslint/require-await
             ) => obj[path]
 
             const scope = { name: 'Alex' }

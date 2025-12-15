@@ -1,11 +1,3 @@
-/*global micromustache,examples*/
-
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-
 const id = (id) => document.getElementById(id)
 const createEl = (tagName) => document.createElement(tagName)
 const text = (el, contents) => (el.innerText = contents)
